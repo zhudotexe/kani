@@ -1,0 +1,6 @@
+aiohttp>=3.0.0,<4.0.0
+cachetools>=5.0.0,<6.0.0
+pydantic>=2.0.0,<3.0.0
+
+# openai
+tiktoken~=0.4.0;extra == 'openai'

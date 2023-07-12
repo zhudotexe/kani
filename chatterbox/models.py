@@ -1,0 +1,52 @@
+import enum
+import json
+
+from pydantic import BaseModel, ConfigDict
+
+
+# ==== chat ====
+class ChatRole(enum.Enum):
+    SYSTEM = "system"
+    USER = "user"
+    ASSISTANT = "assistant"
+    FUNCTION = "function"
+
+
+class FunctionCall(BaseModel):
+    name: str
+    arguments: str
+
+    @property
+    def kwargs(self):
+        return json.loads(self.arguments)
+
+
+class ChatMessage(BaseModel):
+    model_config = ConfigDict(use_enum_values=True)
+
+    role: ChatRole
+    content: str
+    name: str | None = None
+    function_call: FunctionCall | None = None
+
+    @classmethod
+    def system(cls, content):
+        return cls(role=ChatRole.SYSTEM, content=content)
+
+    @classmethod
+    def user(cls, content):
+        return cls(role=ChatRole.USER, content=content)
+
+    @classmethod
+    def assistant(cls, content):
+        return cls(role=ChatRole.ASSISTANT, content=content)
+
+    @classmethod
+    def function(cls, name, content):
+        return cls(role=ChatRole.FUNCTION, content=content, name=name)
+
+
+class FunctionSpec(BaseModel):
+    name: str
+    description: str | None = None
+    parameters: dict
