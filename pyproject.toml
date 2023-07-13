@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-function"
+version = "0.0.1"
+authors = [
+    { name = "Andrew Zhu", email = "andrew@zhu.codes" },
+]
+description = "Chatterbox is a slim and fast harness for chat-based language models with tool usage."
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    # https://pypi.org/classifiers/
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "aiohttp>=3.0.0,<4.0.0",
+    "cachetools>=5.0.0,<6.0.0",
+    "pydantic>=2.0.0,<3.0.0",
+]
+
+[project.optional-dependencies]
+openai = [
+    "tiktoken~=0.4.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/zhudotexe/chatterbox"
+"Bug Tracker" = "https://github.com/zhudotexe/chatterbox/issues"
+
+[tool.black]
+line-length = 120
+preview = true

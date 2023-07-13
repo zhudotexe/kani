@@ -1,10 +1,12 @@
 import enum
 from typing import Annotated, List
 
-from chatterbox import AIParam
+from chatterbox import AIParam, ai_function
+from chatterbox.chatterbox import AIFunction
+from .utils import dict_at_least
 
 
-# setup
+# ==== setup ====
 class EnumS(enum.Enum):
     APPLE = "apple"
     BANANA = "banana"
@@ -28,16 +30,18 @@ class BadEnum(enum.Enum):
     BAR = "two"
 
 
+# noinspection PyUnusedLocal
 async def example_primitives(
     a: str,
     b: float,
     c: Annotated[str, AIParam(desc="I am C")],
-    d: Annotated[int, "I am not an AIParam"],
+    d: Annotated[int, "I am not an AIParam"] = 2,
 ):
     """description!"""
     pass
 
 
+# noinspection PyUnusedLocal
 async def example_collections(
     a: list[str],
     b: dict[str, int],
@@ -49,6 +53,7 @@ async def example_collections(
     pass
 
 
+# noinspection PyUnusedLocal
 async def example_enums(
     a: EnumS,
     b: EnumI,
@@ -60,4 +65,58 @@ async def example_enums(
     pass
 
 
-# tests
+# ==== tests ====
+def test_schema_primitives():
+    f = ai_function(example_primitives)
+    assert isinstance(f, AIFunction)
+    assert dict_at_least(
+        f.json_schema,
+        {
+            "properties": {
+                "a": {"type": "string"},
+                "b": {"type": "number"},
+                "c": {"description": "I am C", "type": "string"},
+                "d": {"type": "integer"},
+            },
+            "required": ["a", "b", "c"],
+            "type": "object",
+        },
+    )
+
+
+def test_schema_collections():
+    f = ai_function(example_collections)
+    assert isinstance(f, AIFunction)
+    assert dict_at_least(
+        f.json_schema,
+        {
+            "properties": {
+                "a": {"items": {"type": "string"}, "type": "array"},
+                "b": {"additionalProperties": {"type": "integer"}, "type": "object"},
+                "c": {"description": "I am C", "items": {"type": "string"}, "type": "array"},
+                "d": {"items": {"type": "integer"}, "type": "array"},
+                "e": {"items": {"type": "string"}, "type": "array"},
+            },
+            "required": ["a", "b", "c", "d", "e"],
+            "type": "object",
+        },
+    )
+
+
+def test_schema_enums():
+    f = ai_function(example_enums)
+    assert isinstance(f, AIFunction)
+    assert dict_at_least(
+        f.json_schema,
+        {
+            "properties": {
+                "a": {"enum": ["apple", "banana", "coconut"], "type": "string"},
+                "b": {"enum": [1, 2, 3], "type": "integer"},
+                "c": {"enum": [1, 2, 3], "type": "integer"},
+                "d": {"enum": ["apple", "banana", "coconut"], "type": "string", "description": "I am D"},
+                "e": {"enum": [1, 2, 3], "type": "integer"},
+            },
+            "required": ["a", "b", "c", "d", "e"],
+            "type": "object",
+        },
+    )

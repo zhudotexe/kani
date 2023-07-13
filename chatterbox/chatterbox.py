@@ -10,7 +10,7 @@ from pydantic import validate_call
 from .aiparam import get_aiparam
 from .engines.openai.client import OpenAIClient
 from .exceptions import NoSuchFunction, WrappedCallException, FunctionCallException, FunctionSpecError
-from .json_schema import AIParamSchema, JSONSchemaGenerator
+from .json_schema import AIParamSchema, create_json_schema
 from .models import ChatMessage, FunctionSpec, FunctionCall, ChatRole
 
 
@@ -275,13 +275,9 @@ class AIFunction:
 
             # get aiparam and add it to the list
             ai_param = get_aiparam(annotation)
-            params.append(
-                AIParamSchema(
-                    name=name, t=type_hints[name], required=param.default is inspect.Parameter.empty, aiparam=ai_param
-                )
-            )
+            params.append(AIParamSchema(name=name, t=type_hints[name], default=param.default, aiparam=ai_param))
         # create a schema generator and generate
-        return JSONSchemaGenerator(params).generate()
+        return create_json_schema(params)
 
 
 def ai_function(
