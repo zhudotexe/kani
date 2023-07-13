@@ -1,8 +1,8 @@
-# Chatterbox
+# kani (カニ)
 
 ## Quickstart
 
-install: pip install chatterbox\[openai]
+install: pip install kani\[openai]
 
 code block here
 

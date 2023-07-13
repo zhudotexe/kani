@@ -3,11 +3,14 @@ import typing
 
 import pydantic
 
-from .aiparam import AIParam
+from .ai_function import AIParam
 
 
 class AIParamSchema:
-    """Used to annotate parameters of AIFunctions in order to make generating their schema nicer."""
+    """Used to annotate parameters of AIFunctions in order to make generating their schema nicer.
+
+    This class is only used internally within kani and generally shouldn't be constructed manually.
+    """
 
     def __init__(self, name: str, t: type, default, aiparam: AIParam | None = None):
         self.name = name

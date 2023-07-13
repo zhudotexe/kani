@@ -2,9 +2,9 @@ import os
 
 import d20  # pip install d20
 
-from chatterbox import ChatterboxWithFunctions, ai_function
-from chatterbox.engines import OpenAIClient
-from chatterbox.utils.cli import chat_in_terminal
+from kani import ChatterboxWithFunctions, ai_function
+from kani.engines import OpenAIClient
+from kani.utils.cli import chat_in_terminal
 
 client = OpenAIClient(os.getenv("OPENAI_API_KEY"))
 

@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from chatterbox.models import ChatMessage
+from kani.models import ChatMessage
 
 
 # ==== text completions ====

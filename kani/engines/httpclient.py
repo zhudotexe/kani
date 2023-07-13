@@ -3,7 +3,7 @@ import logging
 
 import aiohttp
 
-from chatterbox.exceptions import HTTPStatusException, HTTPException, HTTPTimeout
+from kani.exceptions import HTTPStatusException, HTTPException, HTTPTimeout
 
 
 class BaseClient(abc.ABC):

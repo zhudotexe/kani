@@ -1,8 +1,8 @@
 import enum
 from typing import Annotated, List
 
-from chatterbox import AIParam, ai_function
-from chatterbox.chatterbox import AIFunction
+from kani import AIParam, ai_function
+from kani.chatterbox import AIFunction
 from .utils import dict_at_least
 
 
@@ -65,9 +65,14 @@ async def example_enums(
     pass
 
 
+def create_ai_function(f):
+    decorated = ai_function(f)
+    return AIFunction(decorated, **decorated.__ai_function__)
+
+
 # ==== tests ====
 def test_schema_primitives():
-    f = ai_function(example_primitives)
+    f = create_ai_function(example_primitives)
     assert isinstance(f, AIFunction)
     assert dict_at_least(
         f.json_schema,
@@ -85,7 +90,7 @@ def test_schema_primitives():
 
 
 def test_schema_collections():
-    f = ai_function(example_collections)
+    f = create_ai_function(example_collections)
     assert isinstance(f, AIFunction)
     assert dict_at_least(
         f.json_schema,
@@ -104,7 +109,7 @@ def test_schema_collections():
 
 
 def test_schema_enums():
-    f = ai_function(example_enums)
+    f = create_ai_function(example_enums)
     assert isinstance(f, AIFunction)
     assert dict_at_least(
         f.json_schema,

@@ -1,31 +1,35 @@
-class ChatterboxException(Exception):
-    """Base class for all Chatterbox exceptions/errors."""
-
-    pass
+class KaniException(Exception):
+    """Base class for all Kani exceptions/errors."""
 
 
 # ==== HTTP ====
-class HTTPException(ChatterboxException):
-    pass
+class HTTPException(KaniException):
+    """Base class for all HTTP errors (for HTTP engines)."""
 
 
 class HTTPTimeout(HTTPException):
-    pass
+    """Timeout occurred connecting to or waiting for a response from an HTTP request."""
 
 
 class HTTPStatusException(HTTPException):
+    """The HTTP server returned a non-200 status code."""
+
     def __init__(self, status_code: int, msg: str):
         super().__init__(msg)
         self.status_code = status_code
 
 
 # ==== function calling ====
-class FunctionCallException(ChatterboxException):
+class FunctionCallException(KaniException):
+    """Base class for exceptions that occur when a model calls an @ai_function."""
+
     def __init__(self, retry: bool):
         self.retry = retry
 
 
 class WrappedCallException(FunctionCallException):
+    """The @ai_function raised an exception."""
+
     def __init__(self, retry, original):
         super().__init__(retry)
         self.original = original
@@ -35,11 +39,13 @@ class WrappedCallException(FunctionCallException):
 
 
 class NoSuchFunction(FunctionCallException):
+    """The model attempted to call a function that does not exist."""
+
     def __init__(self, name):
         super().__init__(True)
         self.name = name
 
 
 # ==== programmer errors ====
-class FunctionSpecError(ChatterboxException):
-    pass
+class FunctionSpecError(KaniException):
+    """This @ai_function spec is invalid."""

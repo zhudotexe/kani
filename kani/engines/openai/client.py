@@ -4,7 +4,7 @@ from typing import Literal, overload
 import aiohttp
 import pydantic
 
-from chatterbox.models import ChatMessage, FunctionSpec
+from kani.models import ChatMessage, FunctionSpec
 from .models import SpecificFunctionCall, ChatCompletion, Completion
 from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTimeout
 
