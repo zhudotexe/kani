@@ -12,7 +12,7 @@ from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTim
 class OpenAIClient(BaseClient):
     SERVICE_BASE = "https://api.openai.com/v1"
 
-    def __init__(self, http: aiohttp.ClientSession, api_key: str):
+    def __init__(self, api_key: str, http: aiohttp.ClientSession = None):
         super().__init__(http)
         self.api_key = api_key
 
@@ -81,15 +81,22 @@ class OpenAIClient(BaseClient):
     ) -> ChatCompletion:
         ...
 
-    async def create_chat_completion(self, model: str, messages: list[ChatMessage], **kwargs) -> ChatCompletion:
+    async def create_chat_completion(
+        self,
+        model: str,
+        messages: list[ChatMessage],
+        functions: list[FunctionSpec] | None = None,
+        **kwargs,
+    ) -> ChatCompletion:
         # transform pydantic models
-        if "functions" in kwargs:
-            kwargs["functions"] = [f.model_dump() for f in kwargs["functions"]]
+        if functions:
+            kwargs["functions"] = [f.model_dump(exclude_unset=True) for f in functions]
         if "function_call" in kwargs and isinstance(kwargs["function_call"], SpecificFunctionCall):
-            kwargs["function_call"] = kwargs["function_call"].model_dump()
+            kwargs["function_call"] = kwargs["function_call"].model_dump(exclude_unset=True)
         # call API
         data = await self.post(
-            "/chat/completions", json={"model": model, "messages": [cm.model_dump() for cm in messages], **kwargs}
+            "/chat/completions",
+            json={"model": model, "messages": [cm.model_dump(exclude_unset=True) for cm in messages], **kwargs},
         )
         try:
             return ChatCompletion.model_validate(data)

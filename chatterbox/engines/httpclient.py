@@ -10,7 +10,7 @@ class BaseClient(abc.ABC):
     SERVICE_BASE: str = ...
     logger: logging.Logger
 
-    def __init__(self, http: aiohttp.ClientSession):
+    def __init__(self, http: aiohttp.ClientSession = None):
         self.http = http
 
     def __init_subclass__(cls, **kwargs):
@@ -19,6 +19,8 @@ class BaseClient(abc.ABC):
         cls.logger = logging.getLogger(cls.__module__)
 
     async def request(self, method: str, route: str, response_as_text=False, **kwargs):
+        if self.http is None:
+            self.http = aiohttp.ClientSession()
         try:
             async with self.http.request(method, f"{self.SERVICE_BASE}{route}", **kwargs) as resp:
                 self.logger.debug(f"{method} {self.SERVICE_BASE}{route} returned {resp.status}")

@@ -13,6 +13,8 @@ class ChatRole(enum.Enum):
 
 
 class FunctionCall(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
     name: str
     arguments: str
 
@@ -22,10 +24,10 @@ class FunctionCall(BaseModel):
 
 
 class ChatMessage(BaseModel):
-    model_config = ConfigDict(use_enum_values=True)
+    model_config = ConfigDict(use_enum_values=True, frozen=True)
 
     role: ChatRole
-    content: str
+    content: str | None
     name: str | None = None
     function_call: FunctionCall | None = None
 

@@ -18,7 +18,7 @@ class Chatterbox:
     def __init__(
         self,
         client: OpenAIClient,
-        system_prompt: str,
+        system_prompt: str = None,
         always_include_messages: list[ChatMessage] = None,
         model="gpt-4",
         desired_response_tokens: int = 450,  # roughly the size of a discord message
@@ -28,11 +28,13 @@ class Chatterbox:
     ):
         self.client = client
         self.tokenizer = None
-        self.system_prompt = system_prompt.strip()
+        self.system_prompt = system_prompt.strip() if system_prompt else None
         self.model = model
         self.desired_response_tokens = desired_response_tokens
         self.max_context_size = max_context_size
-        self.always_include_messages = [ChatMessage.system(self.system_prompt)] + (always_include_messages or [])
+        self.always_include_messages = ([ChatMessage.system(self.system_prompt)] if system_prompt else []) + (
+            always_include_messages or []
+        )
         self.chat_history: list[ChatMessage] = chat_history or []
         self.hyperparams = hyperparams
 
@@ -43,6 +45,8 @@ class Chatterbox:
         self._oldest_idx = 0
         self._reserve_tokens = 0  # something is adding N tokens to our prompt, e.g. func calling
         self._message_tokens = cachetools.FIFOCache(256)
+        # todo move
+        self._load_tokenizer()
 
     def _load_tokenizer(self):
         """
@@ -139,12 +143,13 @@ class ChatterboxWithFunctions(Chatterbox):
         self.functions = {}
         self.functions_spec = []
         for name, member in inspect.getmembers(self, predicate=inspect.ismethod):
-            if not getattr(member, "__chatterbox_func", None):
+            if not getattr(member, "__ai_function__", None):
                 continue
-            f: AIFunction = member
+            inner = validate_call(member)
+            f: AIFunction = AIFunction(inner, **member.__ai_function__)
             if f.name in self.functions:
                 raise ValueError(f"FunctionSpec {f.name!r} is already registered!")
-            self.functions[f.name] = member
+            self.functions[f.name] = f
             self.functions_spec.append(FunctionSpec(name=f.name, description=f.desc, parameters=f.json_schema))
 
     async def full_round(
@@ -228,8 +233,6 @@ class ChatterboxWithFunctions(Chatterbox):
 
 
 class AIFunction:
-    __chatterbox_func = True
-
     def __init__(self, inner, after: ChatRole, name: str, desc: str, auto_retry: bool, json_schema: dict = None):
         self.inner = inner
         self.after = after
@@ -245,8 +248,11 @@ class AIFunction:
         self.__module__ = inner.__module__
         self.__doc__ = inner.__doc__
 
-    def __call__(self, *args, **kwargs):
-        return self.inner(*args, **kwargs)
+    async def __call__(self, *args, **kwargs):
+        result = self.inner(*args, **kwargs)
+        if inspect.iscoroutine(result):
+            return await result
+        return result
 
     def create_json_schema(self) -> dict:
         """create a JSON schema representing this function's parameters as a JSON object."""
@@ -333,10 +339,14 @@ def ai_function(
     """
 
     def deco(f):
-        if not inspect.iscoroutinefunction(f):
-            raise TypeError(f"AI function must be a coroutine ({f.__name__})")
-        inner = validate_call(f)
-        return AIFunction(inner, after, name, desc, auto_retry, json_schema)
+        f.__ai_function__ = {
+            "after": after,
+            "name": name or f.__name__,
+            "desc": desc or inspect.getdoc(f),
+            "auto_retry": auto_retry,
+            "json_schema": json_schema,
+        }
+        return f
 
     if func is not None:
         return deco(func)
