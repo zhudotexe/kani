@@ -3,7 +3,7 @@ import logging
 
 import aiohttp
 
-from kani.exceptions import HTTPStatusException, HTTPException, HTTPTimeout
+from ..exceptions import HTTPStatusException, HTTPException, HTTPTimeout
 
 
 class BaseClient(abc.ABC):
@@ -15,7 +15,7 @@ class BaseClient(abc.ABC):
 
     def __init_subclass__(cls, **kwargs):
         # to initialize the logger with the right name, set it when the subclass is initialized
-        # this prevents all loggers logging as chatterbox.engines.httpclient
+        # this prevents all loggers logging as kani.engines.httpclient
         cls.logger = logging.getLogger(cls.__module__)
 
     async def request(self, method: str, route: str, response_as_text=False, **kwargs):

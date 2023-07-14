@@ -8,4 +8,5 @@ tiktoken~=0.4.0;extra == 'openai'
 # dev
 black
 build
+sphinx~=7.0.0
 twine

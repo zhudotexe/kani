@@ -1,9 +1,11 @@
 import inspect
 import typing
+from typing import TYPE_CHECKING, Optional
 
 import pydantic
 
-from .ai_function import AIParam
+if TYPE_CHECKING:
+    from .ai_function import AIParam
 
 
 class AIParamSchema:
@@ -12,7 +14,7 @@ class AIParamSchema:
     This class is only used internally within kani and generally shouldn't be constructed manually.
     """
 
-    def __init__(self, name: str, t: type, default, aiparam: AIParam | None = None):
+    def __init__(self, name: str, t: type, default, aiparam: Optional["AIParam"] = None):
         self.name = name
         self.type = t
         self.default = default

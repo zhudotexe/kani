@@ -3,6 +3,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 from kani.models import ChatMessage
+from ..base import BaseCompletion
 
 
 # ==== text completions ====
@@ -52,7 +53,7 @@ class ChatCompletionChoice(BaseModel):
     finish_reason: str | None = None
 
 
-class ChatCompletion(BaseModel):
+class ChatCompletion(BaseCompletion, BaseModel):
     id: str
     object: Literal["chat.completion"]
     created: int
@@ -63,6 +64,16 @@ class ChatCompletion(BaseModel):
     @property
     def message(self):
         return self.choices[0].message
+
+    @property
+    def prompt_tokens(self):
+        return self.usage.prompt_tokens
+
+    @property
+    def completion_tokens(self):
+        # for some reason, the OpenAI API doesn't return the tokens used by ChatML
+        # so we add on the length of "<|im_start|>assistant" and "<|im_end|>" here
+        return self.usage.completion_tokens + 5
 
     @property
     def text(self):

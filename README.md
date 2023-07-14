@@ -1,5 +1,18 @@
 # kani (カニ)
 
+kani (カニ) is a lightweight but high-level harness for chat-based language models with tool usage/function calling.
+
+## Features
+
+- lightweight
+- built by academics, for academics
+- automatic chat memory management
+- highly extensible
+- fast to iterate and intuitive to learn
+- high-level api
+- automatic retry of function calls with model feedback
+- async
+
 ## Quickstart
 
 install: pip install kani\[openai]

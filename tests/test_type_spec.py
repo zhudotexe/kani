@@ -2,7 +2,7 @@ import enum
 from typing import Annotated, List
 
 from kani import AIParam, ai_function
-from kani.chatterbox import AIFunction
+from kani.ai_function import AIFunction
 from .utils import dict_at_least
 
 

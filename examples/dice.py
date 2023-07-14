@@ -2,21 +2,20 @@ import os
 
 import d20  # pip install d20
 
-from kani import ChatterboxWithFunctions, ai_function
-from kani.engines import OpenAIClient
-from kani.utils.cli import chat_in_terminal
+from kani import Kani, ai_function, chat_in_terminal
+from kani.engines import OpenAIEngine
 
-client = OpenAIClient(os.getenv("OPENAI_API_KEY"))
+engine = OpenAIEngine(os.getenv("OPENAI_API_KEY"), "gpt-4")
 
 
-class DiceChatterbox(ChatterboxWithFunctions):
+class DiceKani(Kani):
     @ai_function
-    async def roll(self, dice: str):
+    def roll(self, dice: str):
         """Roll some dice or do math. Dice should be specified in the XdY format."""
         return d20.roll(dice).result
 
 
-box = DiceChatterbox(client)
+ai = DiceKani(engine)
 
 if __name__ == "__main__":
-    chat_in_terminal(box)
+    chat_in_terminal(ai)

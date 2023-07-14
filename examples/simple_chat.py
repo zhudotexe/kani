@@ -1,11 +1,10 @@
 import os
 
-from kani import ChatterboxWithFunctions
-from kani.engines.openai.client import OpenAIClient
-from kani.utils.cli import chat_in_terminal
+from kani import Kani, chat_in_terminal
+from kani.engines import OpenAIEngine
 
-client = OpenAIClient(os.getenv("OPENAI_API_KEY"))
-box = ChatterboxWithFunctions(client)
+engine = OpenAIEngine(os.getenv("OPENAI_API_KEY"), "gpt-3.5-turbo")
+ai = Kani(engine)
 
 if __name__ == "__main__":
-    chat_in_terminal(box)
+    chat_in_terminal(ai)
