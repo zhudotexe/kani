@@ -8,5 +8,9 @@ tiktoken~=0.4.0;extra == 'openai'
 # dev
 black
 build
+furo~=2023.5.20
 sphinx~=7.0.0
+sphinx-copybutton~=0.5.2
+sphinx-inline-tabs~=2023.4.21
+sphinxext-opengraph~=0.8.2
 twine
