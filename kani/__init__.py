@@ -1,4 +1,4 @@
-from . import engines, utils
+from . import engines, utils, exceptions
 from .ai_function import AIParam, ai_function
 from .kani import Kani
 from .models import ChatMessage, ChatRole

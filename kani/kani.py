@@ -50,7 +50,8 @@ class Kani:
         :param always_include_messages: A list of messages to always include as a prefix in all chat rounds (i.e.,
             evict newer messages rather than these to manage context length).
         :param desired_response_tokens: The minimum amount of space to leave in ``max context size - tokens in prompt``.
-        :param chat_history: The current chat history (None to start a new conversation).
+        :param chat_history: The current chat history (None to start a new conversation). Will not include system
+            messages or always_include_messages.
         :param retry_attempts: How many attempts the LM may take if a function call raises an exception.
         """
         self.engine = engine
@@ -94,29 +95,6 @@ class Kani:
             mlen = self.engine.message_len(message)
             self._message_tokens[message] = mlen
             return mlen
-
-    async def get_truncated_chat_history(self) -> list[ChatMessage]:
-        """
-        Returns a list of messages such that the total token count in the messages is less than
-        (max_context_size - desired_response_tokens).
-        Always includes the system prompt plus any always_include_messages.
-
-        You may override this to get more fine-grained control over what is exposed in the model's memory at any given
-        call.
-        """
-        reversed_history = []
-        always_len = sum(self.message_token_len(m) for m in self.always_include_messages) + self._reserve_tokens
-        remaining = self.max_context_size - (always_len + self.desired_response_tokens)
-        for idx in range(len(self.chat_history) - 1, self._oldest_idx - 1, -1):
-            message = self.chat_history[idx]
-            message_len = self.message_token_len(message)
-            remaining -= message_len
-            if remaining > 0:
-                reversed_history.append(message)
-            else:
-                self._oldest_idx = idx + 1
-                break
-        return self.always_include_messages + reversed_history[::-1]
 
     # === main entrypoints ===
     async def chat_round(self, query: str, **kwargs) -> str:
@@ -192,28 +170,49 @@ class Kani:
                     yield fn_msg
 
                 try:
-                    is_model_turn = await self._do_function_call(message.function_call)
+                    is_model_turn = await self.do_function_call(message.function_call)
                 except FunctionCallException as e:
-                    # tell the model what went wrong
-                    if isinstance(e, NoSuchFunction):
-                        self.chat_history.append(
-                            ChatMessage.system(
-                                f"The function {e.name!r} is not defined. Only use the provided functions."
-                            )
-                        )
-                    else:
-                        self.chat_history.append(ChatMessage.function(message.function_call.name, str(e)))
+                    should_retry = await self.handle_function_call_exception(message.function_call, e, retry)
                     # retry if we have retry attempts left
                     retry += 1
-                    if retry > self.retry_attempts or not e.retry:
+                    if not should_retry:
                         # disable function calling on the next go
                         kwargs = {**kwargs, "function_call": "none"}
                     continue
                 else:
                     retry = 0
 
-    async def _do_function_call(self, call: FunctionCall) -> bool:
+    # ==== overridable methods ====
+    async def get_truncated_chat_history(self) -> list[ChatMessage]:
+        """
+        Returns a list of messages such that the total token count in the messages is less than
+        (max_context_size - desired_response_tokens).
+        Always includes the system prompt plus any always_include_messages.
+
+        You may override this to get more fine-grained control over what is exposed in the model's memory at any given
+        call.
+        """
+        reversed_history = []
+        always_len = sum(self.message_token_len(m) for m in self.always_include_messages) + self._reserve_tokens
+        remaining = self.max_context_size - (always_len + self.desired_response_tokens)
+        for idx in range(len(self.chat_history) - 1, self._oldest_idx - 1, -1):
+            message = self.chat_history[idx]
+            message_len = self.message_token_len(message)
+            remaining -= message_len
+            if remaining > 0:
+                reversed_history.append(message)
+            else:
+                self._oldest_idx = idx + 1
+                break
+        return self.always_include_messages + reversed_history[::-1]
+
+    async def do_function_call(self, call: FunctionCall) -> bool:
         """Resolve a single function call.
+
+        You may implement an override to add instrumentation around function calls (e.g. tracking success counts
+        for varying prompts).
+
+        By default, any exception raised from this method will be an instance of a :cls:`FunctionCallException`.
 
         :returns: True (default) if the model should immediately react; False if the user speaks next.
         """
@@ -230,3 +229,29 @@ class Kani:
         self.chat_history.append(ChatMessage.function(f.name, str(result)))
         # yield whose turn it is
         return f.after == ChatRole.ASSISTANT
+
+    async def handle_function_call_exception(
+        self, call: FunctionCall, err: FunctionCallException, attempt: int
+    ) -> bool:
+        """Called when a function call raises an exception.
+
+        By default, this adds a message to the chat telling the LM about the error and allows a retry if the error
+        is recoverable and there are remaining retry attempts.
+
+        You may implement an override to customize the error prompt, log the error, or use custom retry logic.
+
+        :param call: The :cls:`FunctionCall` the model was attempting to make.
+        :param err: The error the call raised. Usually this is :cls:`NoSuchFunction` or :cls:`WrappedCallException`,
+            although it may be any exception raised by :meth:`do_function_call`.
+        :param attempt: The attempt number for the current call (1-indexed).
+        :returns: True if the model should retry the call; False if not.
+        """
+        # tell the model what went wrong
+        if isinstance(err, NoSuchFunction):
+            self.chat_history.append(
+                ChatMessage.system(f"The function {err.name!r} is not defined. Only use the provided functions.")
+            )
+        else:
+            self.chat_history.append(ChatMessage.function(call.name, str(err)))
+
+        return attempt <= self.retry_attempts and err.retry
