@@ -25,7 +25,15 @@ CONTEXT_SIZES_BY_PREFIX = [
 
 
 class OpenAIEngine(BaseEngine):
+    """Engine for using the OpenAI API."""
     def __init__(self, api_key: str, model="gpt-3.5-turbo", max_context_size: int = None, **hyperparams):
+        """
+        :param api_key: Your OpenAI API key.
+        :param model: The key of the model to use.
+        :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
+            model's full context size.
+        :param hyperparams: Any additional parameters to pass to :meth:`OpenAIClient.create_chat_completion`.
+        """
         if max_context_size is None:
             max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))
         self.client = OpenAIClient(api_key)

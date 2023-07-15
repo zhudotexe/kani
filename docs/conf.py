@@ -17,6 +17,7 @@ extensions = [
     "sphinxext.opengraph",  # https://sphinxext-opengraph.readthedocs.io/en/latest/
     "sphinx_inline_tabs",  # https://sphinx-inline-tabs.readthedocs.io/en/latest/usage.html
     "sphinx_copybutton",  # https://sphinx-copybutton.readthedocs.io/en/latest/
+    "sphinxemoji.sphinxemoji",  # https://sphinxemojicodes.readthedocs.io/en/stable/
 ]
 
 templates_path = ["_templates"]

@@ -10,27 +10,24 @@ class BaseCompletion(abc.ABC):
     @property
     @abc.abstractmethod
     def message(self) -> ChatMessage:
+        """The message returned by the LM."""
         raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def prompt_tokens(self) -> int | None:
+        """How many tokens are in the prompt. Can be None for kani to estimate using tokenizer."""
         raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def completion_tokens(self) -> int | None:
+        """How many tokens are in the completion. Can be None for kani to estimate using tokenizer."""
         raise NotImplementedError
 
 
 class Completion(BaseCompletion):
     def __init__(self, message: ChatMessage, prompt_tokens: int | None = None, completion_tokens: int | None = None):
-        """
-        :param message: The message returned by the LM.
-        :param prompt_tokens: How many tokens are in the prompt. Can be None for kami to estimate using tokenizer.
-        :param completion_tokens: How many tokens are in the completion. Can be None for kami to estimate using
-            tokenizer.
-        """
         self._message = message
         self._prompt_tokens = prompt_tokens
         self._completion_tokens = completion_tokens
@@ -70,7 +67,10 @@ class BaseEngine(abc.ABC):
         """
         Given the current context of messages and available functions, get the next predicted chat message from the LM.
 
-        sum(message_len(m) for m in messages) is guaranteed to be less than max_context_size.
+        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+            guaranteed to be less than max_context_size.
+        :param functions: The functions the LM is allowed to call.
+        :param hyperparams: Any additional parameters to pass to the engine.
         """
         raise NotImplementedError
 

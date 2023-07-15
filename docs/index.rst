@@ -13,8 +13,8 @@ developers alike.
     :maxdepth: 2
     :caption: Pages
 
-    install (and models)
-    kani (entrypoints)
+    install
+    kani
     function_calling (and how to @ai_function)
     customization (overrides and implementing them)
     engines (the builtin ones and how to build them)
@@ -32,8 +32,8 @@ Features
   kani elegantly provides feedback about hallucinated parameters and errors and allows the model to retry calls.
 - **Model agnostic** - kani provides a simple interface to implement: token counting and completion generation.
   Implement these two, and kani can run with any language model.
-- **You are in control** - You have the ability to override and provide a custom implementation for all
-  of these features, allowing you to run experiments just the way you want to.
+- **You are in control** - You can override and provide a custom implementation for all
+  of these features, allowing you to run experiments just the way you want to. There are no hidden prompt hacks.
 - **Fast to iterate and intuitive to learn** - With kani, you only write Python - we handle the rest.
 - **Asynchronous design from the start** - kani can scale to run multiple chat sessions in parallel easily, without
   having to manage multiple processes or programs.
@@ -42,23 +42,39 @@ Quickstart
 ----------
 kani requires Python 3.10 or above.
 
+First, install the library. In this quickstart, we'll use the OpenAI engine, though kani is model-agnostic.
+
 .. code-block:: console
 
     $ pip install "kani[openai]"
 
+Then, let's use kani to create a simple chatbot using ChatGPT as a backend.
+
 .. code-block:: python
 
-    import os
-
+    # import the library
     from kani import Kani, chat_in_terminal
     from kani.engines import OpenAIEngine
 
+    # Replace this with your OpenAI API key: https://platform.openai.com/account/api-keys
     api_key = "sk-..."
+
+    # kani uses an Engine to interact with the language model. You can specify other model
+    # parameters here, like temperature=0.7.
     engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+
+    # The kani manages the chat state, prompting, and function calling. Here, we only give
+    # it the engine to call ChatGPT, but you can specify other parameters like system_prompt="You are..." here.
     ai = Kani(engine)
+
+    # kani comes with a utility to interact with a kani through your terminal! Check out
+    # the docs for how to use kani programmatically.
     chat_in_terminal(ai)
 
 kani makes the time to set up a working chat model short, while offering the programmer deep customizability over
 every prompt, function call, and even the underlying language model.
 
-To learn more about how to customize kani, read on!
+To learn more about how to customize kani with your own prompt wrappers, function calling, and more, read on!
+
+Hands-on examples are available in the `kani repository <https://github.com/zhudotexe/kani/tree/main/examples>`_.
+
