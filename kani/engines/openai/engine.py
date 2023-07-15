@@ -1,10 +1,16 @@
-import tiktoken
-
 from kani.ai_function import AIFunction
+from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from .client import OpenAIClient
 from .models import FunctionSpec, ChatCompletion
 from ..base import BaseEngine
+
+try:
+    import tiktoken
+except ImportError as e:
+    raise MissingModelDependencies(
+        'The OpenAIEngine requires extra dependencies. Please install kani with "pip install kani[openai]".'
+    ) from None
 
 # https://platform.openai.com/docs/models
 CONTEXT_SIZES_BY_PREFIX = [

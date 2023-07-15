@@ -49,3 +49,7 @@ class NoSuchFunction(FunctionCallException):
 # ==== programmer errors ====
 class FunctionSpecError(KaniException):
     """This @ai_function spec is invalid."""
+
+
+class MissingModelDependencies(KaniException):
+    """You are trying to use an engine but do not have engine-specific packages installed."""
