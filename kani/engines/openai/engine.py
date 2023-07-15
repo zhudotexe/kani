@@ -1,8 +1,9 @@
 import tiktoken
 
-from kani.models import ChatMessage, FunctionSpec
+from kani.ai_function import AIFunction
+from kani.models import ChatMessage
 from .client import OpenAIClient
-from .models import ChatCompletion
+from .models import FunctionSpec, ChatCompletion
 from ..base import BaseEngine
 
 # https://platform.openai.com/docs/models
@@ -26,6 +27,7 @@ class OpenAIEngine(BaseEngine):
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
         self.tokenizer = None
+        self.token_reserve = 0
         self._load_tokenizer()
 
     def _load_tokenizer(self):
@@ -44,11 +46,16 @@ class OpenAIEngine(BaseEngine):
         return mlen
 
     async def predict(
-        self, messages: list[ChatMessage], functions: list[FunctionSpec] | None = None, **hyperparams
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> ChatCompletion:
-        return await self.client.create_chat_completion(
-            model=self.model, messages=messages, functions=functions, **self.hyperparams, **hyperparams
+        function_spec = [FunctionSpec(name=f.name, description=f.desc, parameters=f.json_schema) for f in functions]
+        completion = await self.client.create_chat_completion(
+            model=self.model, messages=messages, functions=function_spec, **self.hyperparams, **hyperparams
         )
+        # calculate function calling reserve tokens on first run
+        if functions and self.token_reserve == 0:
+            self.token_reserve = max(completion.prompt_tokens - sum(self.message_len(m) for m in messages), 0)
+        return completion
 
     async def close(self):
         await self.client.close()

@@ -42,6 +42,12 @@ class Completion(BaseModel):
 
 
 # ==== chat completions ====
+class FunctionSpec(BaseModel):
+    name: str
+    description: str | None = None
+    parameters: dict
+
+
 class SpecificFunctionCall(BaseModel):
     name: str
 

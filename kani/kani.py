@@ -8,7 +8,7 @@ from pydantic import validate_call
 from .ai_function import AIFunction
 from .engines import BaseEngine
 from .exceptions import NoSuchFunction, WrappedCallException, FunctionCallException
-from .models import ChatMessage, FunctionSpec, FunctionCall, ChatRole
+from .models import ChatMessage, FunctionCall, ChatRole
 
 
 class Kani:
@@ -42,6 +42,7 @@ class Kani:
         always_include_messages: list[ChatMessage] = None,
         desired_response_tokens: int = 450,
         chat_history: list[ChatMessage] = None,
+        functions: list[AIFunction] = None,
         retry_attempts: int = 1,
     ):
         """
@@ -52,6 +53,8 @@ class Kani:
         :param desired_response_tokens: The minimum amount of space to leave in ``max context size - tokens in prompt``.
         :param chat_history: The current chat history (None to start a new conversation). Will not include system
             messages or always_include_messages.
+        :param functions: A list of :cls:`AIFunction` to expose to the model (if additional static @ai_function are
+            defined, merges the two).
         :param retry_attempts: How many attempts the LM may take if a function call raises an exception.
         """
         self.engine = engine
@@ -70,21 +73,20 @@ class Kani:
         self.retry_attempts = retry_attempts
 
         # find all registered ai_functions and save them
-        self.functions = {}
-        self.functions_spec = []
+        if functions is None:
+            functions = []
+        self.functions = {f.name: f for f in functions}
         for name, member in inspect.getmembers(self, predicate=inspect.ismethod):
             if not getattr(member, "__ai_function__", None):
                 continue
             inner = validate_call(member)
             f: AIFunction = AIFunction(inner, **member.__ai_function__)
             if f.name in self.functions:
-                raise ValueError(f"FunctionSpec {f.name!r} is already registered!")
+                raise ValueError(f"AIFunction {f.name!r} is already registered!")
             self.functions[f.name] = f
-            self.functions_spec.append(FunctionSpec(name=f.name, description=f.desc, parameters=f.json_schema))
 
         # cache
         self._oldest_idx = 0
-        self._reserve_tokens = 0  # something is adding N tokens to our prompt, e.g. func calling
         self._message_tokens = cachetools.FIFOCache(256)
 
     def message_token_len(self, message: ChatMessage):
@@ -149,12 +151,9 @@ class Kani:
 
                 # do the model prediction
                 messages = await self.get_truncated_chat_history()
-                completion = await self.engine.predict(messages=messages, functions=self.functions_spec, **kwargs)
-                # calculate function calling reserve tokens on first run
-                if self._reserve_tokens == 0 and self.functions and completion.prompt_tokens is not None:
-                    self._reserve_tokens = max(
-                        completion.prompt_tokens - sum(self.message_token_len(m) for m in messages), 0
-                    )
+                completion = await self.engine.predict(
+                    messages=messages, functions=list(self.functions.values()), **kwargs
+                )
                 # bookkeeping
                 message = completion.message
                 self._message_tokens[message] = completion.completion_tokens or self.message_token_len(message)
@@ -193,7 +192,7 @@ class Kani:
         call.
         """
         reversed_history = []
-        always_len = sum(self.message_token_len(m) for m in self.always_include_messages) + self._reserve_tokens
+        always_len = sum(self.message_token_len(m) for m in self.always_include_messages) + self.engine.token_reserve
         remaining = self.max_context_size - (always_len + self.desired_response_tokens)
         for idx in range(len(self.chat_history) - 1, self._oldest_idx - 1, -1):
             message = self.chat_history[idx]

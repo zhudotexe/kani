@@ -4,8 +4,8 @@ from typing import Literal, overload
 import aiohttp
 import pydantic
 
-from kani.models import ChatMessage, FunctionSpec
-from .models import SpecificFunctionCall, ChatCompletion, Completion
+from kani.models import ChatMessage
+from .models import SpecificFunctionCall, ChatCompletion, Completion, FunctionSpec
 from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTimeout
 
 

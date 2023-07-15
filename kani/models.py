@@ -47,9 +47,3 @@ class ChatMessage(BaseModel):
     @classmethod
     def function(cls, name, content):
         return cls(role=ChatRole.FUNCTION, content=content, name=name)
-
-
-class FunctionSpec(BaseModel):
-    name: str
-    description: str | None = None
-    parameters: dict

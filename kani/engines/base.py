@@ -1,6 +1,7 @@
 import abc
 
-from kani.models import ChatMessage, FunctionSpec
+from kani.ai_function import AIFunction
+from kani.models import ChatMessage
 
 
 class BaseCompletion(abc.ABC):
@@ -56,12 +57,15 @@ class BaseEngine(abc.ABC):
     max_context_size: int
     """The maximum context size supported by this engine's LM."""
 
+    token_reserve: int = 0
+    """The number of tokens to reserve for internal engine mechanisms (e.g. OpenAI's function calling prompt)."""
+
     def message_len(self, message: ChatMessage) -> int:
         """Return the length, in tokens, of the given chat message."""
         raise NotImplementedError
 
     async def predict(
-        self, messages: list[ChatMessage], functions: list[FunctionSpec] | None = None, **hyperparams
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> BaseCompletion:
         """
         Given the current context of messages and available functions, get the next predicted chat message from the LM.
