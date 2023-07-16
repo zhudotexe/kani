@@ -93,8 +93,9 @@ The two standard entrypoints are :meth:`Kani.chat_round` and :meth:`Kani.full_ro
         ai = Kani(engine, system_prompt="You are a helpful assistant.")
 
         async def chat_with_kani():
-            message = await ai.chat_round("Hello kani!")
+            message = await ai.chat_round_str("Hello kani!")
             print(message)
+            await ai.close()
 
         asyncio.run(chat_with_kani())
 

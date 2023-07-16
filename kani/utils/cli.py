@@ -15,7 +15,7 @@ async def _chat_in_terminal(kani: Kani, rounds: int = 0):
         while round_num < rounds or not rounds:
             round_num += 1
             query = input("USER: ")
-            async for msg in kani.full_round(query, function_call_formatter=_function_formatter):
+            async for msg in kani.full_round_str(query, function_call_formatter=_function_formatter):
                 print(f"AI: {msg}")
     finally:
         if not rounds:
