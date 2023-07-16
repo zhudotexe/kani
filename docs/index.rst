@@ -15,7 +15,7 @@ developers alike.
 
     install
     kani
-    function_calling (and how to @ai_function)
+    function_calling
     customization (overrides and implementing them)
     engines (the builtin ones and how to build them)
     advanced (sub-kanis)

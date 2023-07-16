@@ -15,15 +15,6 @@ Let's take a look back at the quickstart program:
 kani is comprised of two main parts: the *engine*, which is the interface between kani and the language model,
 and the *kani*, which is responsible for tracking chat history, prompting the engine, and handling function calls.
 
-ChatMessage
------------
-Before we dive into what methods are available in the engine and kani, let's take a look at :cls:`ChatMessage`s,
-a core component of representing the chat context.
-
-Each message contains the ``role`` (a :cls:`ChatRole`: system, assistant, user, or function) that sent the message
-and the ``content`` of the message. Optionally, a user message can also contain a ``name`` (for multi-user
-conversations), and an assistant message can contain a ``function_call`` (discussed in :doc:`function_calling`).
-
 Engine
 ------
 This table lists the engines built in to kani:
@@ -33,21 +24,21 @@ This table lists the engines built in to kani:
 .. seealso::
 
     We won't go too far into implementation details here - if you are interested in implementing your own engine, check
-    out :doc:`engines` or the :cls:`BaseEngine` API documentation.
+    out :doc:`engines` or the :class:`BaseEngine` API documentation.
 
-Each engine must implement two methods: :meth:`BaseEngine.message_len`, which takes a single :cls:`ChatMessage` and
+Each engine must implement two methods: :meth:`BaseEngine.message_len`, which takes a single :class:`ChatMessage` and
 returns the length of that message, in tokens, and :meth:`BaseEngine.predict`, which is responsible for taking
-a list of :cls:`ChatMessage`s and :cls:`AIFunction`s (discussed in the next section) and returning a new
-:cls:`Completion <BaseCompletion>`.
+a list of :class:`ChatMessage` and :class:`AIFunction` (discussed in the next section) and returning a new
+:class:`BaseCompletion`.
 
-These methods are lower-level and used by :cls:`Kani` to manage the chat, but you can also call them yourself.
+These methods are lower-level and used by :class:`Kani` to manage the chat, but you can also call them yourself.
 
 Kani
 ----
 
 .. seealso::
 
-    The :cls:`Kani` API documentation.
+    The :class:`Kani` API documentation.
 
 To initialize a kani, only the ``engine`` is required, though you can configure much more:
 
@@ -66,9 +57,10 @@ To initialize a kani, only the ``engine`` is required, though you can configure 
 
 When you are finished with a kani instance, release its resources with :meth:`Kani.close`.
 
-Programmatic Chat
-^^^^^^^^^^^^^^^^^
-While :func:`chat_in_terminal` is a helpful toy, let's look at how to use a :cls:`Kani` in a larger application.
+In Larger Programs
+^^^^^^^^^^^^^^^^^^
+While :func:`chat_in_terminal` is helpful in development, let's look at how to use a :class:`Kani` in a larger
+application.
 
 The two standard entrypoints are :meth:`Kani.chat_round` and :meth:`Kani.full_round`, and their ``_str`` counterparts:
 
@@ -105,7 +97,11 @@ The two standard entrypoints are :meth:`Kani.chat_round` and :meth:`Kani.full_ro
 
 Chat Messages
 ^^^^^^^^^^^^^
-At a high level, a :cls:`Kani` is responsible for managing a list of :cls:`ChatMessage`s: the chat session associated
+Each message contains the ``role`` (a :class:`ChatRole`: system, assistant, user, or function) that sent the message
+and the ``content`` of the message. Optionally, a user message can also contain a ``name`` (for multi-user
+conversations), and an assistant message can contain a ``function_call`` (discussed in :doc:`function_calling`).
+
+At a high level, a :class:`Kani` is responsible for managing a list of :class:`ChatMessage`: the chat session associated
 with it. You can access the chat messages through the :attr:`Kani.chat_history` attribute.
 
 You may even modify the chat history (i.e. append or delete ChatMessages) to change the prompt at any time.
@@ -135,6 +131,6 @@ You may even modify the chat history (i.e. append or delete ChatMessages) to cha
 
 Next Steps
 ----------
-In the next section, we'll look at subclassing :cls:`Kani` in order to supply functions to the language model.
+In the next section, we'll look at subclassing :class:`Kani` in order to supply functions to the language model.
 Then, we'll look at how you can override and/or extend the implementations of kani methods to control each part of
 a chat round.

@@ -29,7 +29,7 @@ class Kani:
         async for msg in kani.full_round(prompt):
             # responses...
 
-    Each response will be a :cls:`ChatMessage`.
+    Each response will be a :class:`ChatMessage`.
     Alternatively, you can use :meth:`full_round_str` and control the format of a yielded function call with
     ``function_call_formatter``.
 
@@ -61,7 +61,7 @@ class Kani:
             (e.g. ``OpenAIEngine(..., max_tokens=250)``).
         :param chat_history: The chat history to start with (not including system prompt or always include messages),
             for advanced use cases. By default, each kani starts with a new conversation session.
-        :param functions: A list of :cls:`AIFunction` to expose to the model (for dynamic function calling).
+        :param functions: A list of :class:`AIFunction` to expose to the model (for dynamic function calling).
             Use :func:`ai_function` to define static functions (see :doc:`function_calling`).
         :param retry_attempts: How many attempts the LM may take if a function call raises an exception.
         """
@@ -236,7 +236,7 @@ class Kani:
         You may implement an override to add instrumentation around function calls (e.g. tracking success counts
         for varying prompts).
 
-        By default, any exception raised from this method will be an instance of a :cls:`FunctionCallException`.
+        By default, any exception raised from this method will be an instance of a :class:`FunctionCallException`.
 
         :returns: True (default) if the model should immediately react; False if the user speaks next.
         """
@@ -264,8 +264,8 @@ class Kani:
 
         You may implement an override to customize the error prompt, log the error, or use custom retry logic.
 
-        :param call: The :cls:`FunctionCall` the model was attempting to make.
-        :param err: The error the call raised. Usually this is :cls:`NoSuchFunction` or :cls:`WrappedCallException`,
+        :param call: The :class:`FunctionCall` the model was attempting to make.
+        :param err: The error the call raised. Usually this is :class:`NoSuchFunction` or :class:`WrappedCallException`,
             although it may be any exception raised by :meth:`do_function_call`.
         :param attempt: The attempt number for the current call (1-indexed).
         :returns: True if the model should retry the call; False if not.
