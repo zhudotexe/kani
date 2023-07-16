@@ -47,14 +47,18 @@ class Kani:
     ):
         """
         :param engine: The LM engine implementation to use.
-        :param system_prompt: The system prompt to provide to the LM.
+        :param system_prompt: The system prompt to provide to the LM. The prompt will not be included in
+            :attr:`chat_history`.
         :param always_include_messages: A list of messages to always include as a prefix in all chat rounds (i.e.,
-            evict newer messages rather than these to manage context length).
+            evict newer messages rather than these to manage context length). These will not be included in
+            :attr:`chat_history`.
         :param desired_response_tokens: The minimum amount of space to leave in ``max context size - tokens in prompt``.
-        :param chat_history: The current chat history (None to start a new conversation). Will not include system
-            messages or always_include_messages.
-        :param functions: A list of :cls:`AIFunction` to expose to the model (if additional static @ai_function are
-            defined, merges the two).
+            To control the maximum number of tokens generated more precisely, you may be able to configure the engine
+            (e.g. ``OpenAIEngine(..., max_tokens=250)``).
+        :param chat_history: The chat history to start with (not including system prompt or always include messages),
+            for advanced use cases. By default, each kani starts with a new conversation session.
+        :param functions: A list of :cls:`AIFunction` to expose to the model (for dynamic function calling).
+            Use :func:`ai_function` to define static functions (see :doc:`function_calling`).
         :param retry_attempts: How many attempts the LM may take if a function call raises an exception.
         """
         self.engine = engine
@@ -102,9 +106,11 @@ class Kani:
     async def chat_round(self, query: str, **kwargs) -> str:
         """Perform a single chat round (user -> model -> user, no functions allowed).
 
-        :param query: The user's query
-        :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters)
-        :returns: The model's reply
+        This is slightly faster when you are chatting with a kani with no AI functions defined.
+
+        :param query: The contents of the user's chat message.
+        :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
+        :returns: The model's reply.
         """
         async with self.lock:
             # get the user's chat input
@@ -136,10 +142,10 @@ class Kani:
             async for msg in kani.full_round("How's the weather?"):
                 print(msg)
 
-        :param query: The user's query
-        :param function_call_formatter: A function that returns the message to yield when the model decides to call a
-            function (or None to yield nothing)
-        :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters)
+        :param query: The content of the user's chat message.
+        :param function_call_formatter: A function that returns a string to yield when the model decides to call a
+            function (or None to yield nothing). By default, ``full_round`` does not yield on a function call.
+        :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
         """
         retry = 0
         is_model_turn = True
@@ -186,7 +192,8 @@ class Kani:
         """
         Returns a list of messages such that the total token count in the messages is less than
         (max_context_size - desired_response_tokens).
-        Always includes the system prompt plus any always_include_messages.
+
+        Always includes the system prompt plus any always_include_messages at the start of the prompt.
 
         You may override this to get more fine-grained control over what is exposed in the model's memory at any given
         call.
