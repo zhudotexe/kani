@@ -2,6 +2,10 @@
 #
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
+import sys
+
+# ensure kani is available in path
+sys.path.append("..")
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -14,6 +18,8 @@ author = "Andrew Zhu and Liam Dugan"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
     "sphinxext.opengraph",  # https://sphinxext-opengraph.readthedocs.io/en/latest/
     "sphinx_inline_tabs",  # https://sphinx-inline-tabs.readthedocs.io/en/latest/usage.html
     "sphinx_copybutton",  # https://sphinx-copybutton.readthedocs.io/en/latest/
@@ -29,6 +35,23 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "furo"
 html_static_path = ["_static"]
 
+maximum_signature_line_length = 88
+add_module_names = False
+nitpicky = True
+nitpick_ignore_regex = [
+    (r"py:class", r"aiohttp\..*"),  # aiohttp intersphinx is borked
+    (r"py:class", r"kani\.engines\.openai\.models\..*"),  # internal models are just pydantic models of the oai api
+]
+
+# sphinx.ext.autodoc
+autoclass_content = "both"
+autodoc_member_order = "bysource"
+
+# sphinx.ext.intersphinx
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}
+
 # spinxext.opengraph
 ogp_social_cards = {
     "enable": False,  # the bundled Roboto font does not support kanji
@@ -36,3 +59,5 @@ ogp_social_cards = {
 
 # sphinx_copybutton
 copybutton_exclude = ".linenos, .gp, .go"
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_is_regexp = True

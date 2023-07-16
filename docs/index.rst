@@ -9,18 +9,6 @@ developers alike.
 
 .. todo information about the paper and citations
 
-.. toctree::
-    :maxdepth: 2
-    :caption: Pages
-
-    install
-    kani
-    function_calling
-    customization (overrides and implementing them)
-    engines (the builtin ones and how to build them)
-    advanced (sub-kanis)
-    api_reference (autodoc)
-
 Features
 --------
 
@@ -78,3 +66,15 @@ To learn more about how to customize kani with your own prompt wrappers, functio
 
 Hands-on examples are available in the `kani repository <https://github.com/zhudotexe/kani/tree/main/examples>`_.
 
+.. toctree::
+    :maxdepth: 2
+    :caption: Pages
+
+    install
+    kani
+    function_calling
+    customization
+    engines
+    advanced
+    api_reference
+    genindex

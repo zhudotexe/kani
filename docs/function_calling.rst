@@ -8,12 +8,13 @@ With kani, you can write functions in Python and expose them to the model with j
 
 Step 1: Subclass Kani
 ---------------------
-To create a kani with function calling, make a *subclass* of :class:`Kani` and write your functions as methods.
+To create a kani with function calling, make a *subclass* of :class:`.Kani` and write your functions as methods.
 
 For example, you might call an API, perform some math, or retrieve information from the internet - the possibilities
 are limitless.
 
 .. code-block:: python
+    :emphasize-lines: 7, 9
 
     from kani import Kani, chat_in_terminal
     from kani.engines import OpenAIEngine
@@ -41,7 +42,7 @@ inline in the function: through type annotations and the docstring.
 The allowed types are:
 
 - Python primitive types (``None``, :class:`bool`, :class:`str`, :class:`int`, :class:`float`)
-- an enum (subclass of ``enum.Enum``)
+- an enum (:class:`enum.Enum`)
 - a list or dict of the above types (e.g. ``list[str]``, ``dict[str, int]``, ``list[SomeEnum]``)
 
 When the AI calls into the function, kani validates the AI's requested parameters and *guarantees* that the passed
@@ -51,7 +52,7 @@ Name & Descriptions
 ^^^^^^^^^^^^^^^^^^^
 By default, the function's description will be taken from its docstring, and name from the source.
 
-To specify the descriptions of parameters, you can provide an :class:`AIParam` annotation using a
+To specify the descriptions of parameters, you can provide an :class:`.AIParam` annotation using a
 :class:`typing.Annotated` type annotation.
 
 For example, you might annotate a parameter ``timezone: str`` with an example, like
@@ -63,6 +64,7 @@ Now, let's put this all together: let's tell the language model what we expect i
 should be either fahrenheit or celsius.
 
 .. code-block:: python
+    :emphasize-lines: 10, 11, 12, 17, 19, 22
 
     import enum
     from typing import Annotated
@@ -97,14 +99,11 @@ decorator.
 
 Here, you can set some options for how kani should expose your function by passing these keyword args:
 
-- ``after``: Who should speak next after the function call completes (see :ref:`next_actor`). Defaults to the model.
-- ``name``: The name of the function (defaults to the name of the function in source code)
-- ``desc``: The function's description (defaults to the function's docstring)
-- ``auto_retry``: Whether the model should retry calling the function if it gets it wrong (see :ref:`auto_retry`).
-- ``json_schema``: A JSON Schema document describing the function's parameters. By default, kani will automatically
-  generate one, but this can be helpful for overriding it in any tricky cases.
+.. autofunction:: kani.ai_function
+    :noindex:
 
 .. code-block:: python
+    :emphasize-lines: 7
 
     # don't forget to import ai_function!
     from kani import AIParam, Kani, ai_function, chat_in_terminal
@@ -124,7 +123,9 @@ Here, you can set some options for how kani should expose your function by passi
 
 .. seealso::
 
-    The :func:`ai_function` API reference.
+    The :func:`.ai_function` API reference.
+
+.. _next_actor:
 
 Next Actor
 ^^^^^^^^^^
@@ -136,6 +137,9 @@ Example
 Here's the full example of how you might implement a function to get weather that we built in the last few steps:
 
 .. code-block:: python
+
+    import enum
+    from typing import Annotated
 
     from kani import AIParam, Kani, ai_function, chat_in_terminal
     from kani.engines import OpenAIEngine
@@ -164,9 +168,9 @@ Here's the full example of how you might implement a function to get weather tha
 Dynamic Functions
 -----------------
 Rather than statically defining the list of functions a kani can use in a class, you can also pass a list of
-:class:`AIFunction` when you initialize a kani.
+:class:`.AIFunction` when you initialize a kani.
 
-The API for the :class:`AIFunction` class is similar to :func:`ai_function`.
+The API for the :class:`.AIFunction` class is similar to :func:`.ai_function`.
 
 .. code-block:: python
 
@@ -175,6 +179,8 @@ The API for the :class:`AIFunction` class is similar to :func:`ai_function`.
 
     functions = [AIFunction(my_cool_function)]
     ai = Kani(engine, functions=functions)
+
+.. _auto_retry:
 
 Retry & Model Feedback
 ----------------------

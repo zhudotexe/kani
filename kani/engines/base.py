@@ -57,10 +57,12 @@ class BaseEngine(abc.ABC):
     token_reserve: int = 0
     """The number of tokens to reserve for internal engine mechanisms (e.g. OpenAI's function calling prompt)."""
 
+    @abc.abstractmethod
     def message_len(self, message: ChatMessage) -> int:
         """Return the length, in tokens, of the given chat message."""
         raise NotImplementedError
 
+    @abc.abstractmethod
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> BaseCompletion:

@@ -17,15 +17,7 @@ To install these dependencies along with kani, you should specify one or more ex
 (e.g. ``pip install "kani[openai]"``). The table below lists the engines that are included with kani and the extra you
 should use to install its dependencies.
 
-.. todo: template this
-
-+----------------------+------------+-----------------------+
-| Model Name           | Extra      | Engine                |
-+======================+============+=======================+
-| gpt-3.5-turbo, gpt-4 | ``openai`` | :class:`OpenAIEngine` |
-+----------------------+------------+-----------------------+
-| LLaMA                | WIP        | WIP                   |
-+----------------------+------------+-----------------------+
+.. include:: shared/engine_table.rst
 
 .. seealso::
 

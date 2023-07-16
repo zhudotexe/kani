@@ -19,32 +19,35 @@ Engine
 ------
 This table lists the engines built in to kani:
 
-.. todo: engine template here
+.. include:: shared/engine_table.rst
 
 .. seealso::
 
     We won't go too far into implementation details here - if you are interested in implementing your own engine, check
-    out :doc:`engines` or the :class:`BaseEngine` API documentation.
+    out :doc:`engines` or the :class:`.BaseEngine` API documentation.
 
-Each engine must implement two methods: :meth:`BaseEngine.message_len`, which takes a single :class:`ChatMessage` and
-returns the length of that message, in tokens, and :meth:`BaseEngine.predict`, which is responsible for taking
-a list of :class:`ChatMessage` and :class:`AIFunction` (discussed in the next section) and returning a new
-:class:`BaseCompletion`.
+Each engine must implement two methods: :meth:`.BaseEngine.message_len`, which takes a single :class:`.ChatMessage` and
+returns the length of that message, in tokens, and :meth:`.BaseEngine.predict`, which is responsible for taking
+a list of :class:`.ChatMessage` and :class:`.AIFunction` (discussed in the next section) and returning a new
+:class:`.BaseCompletion`.
 
-These methods are lower-level and used by :class:`Kani` to manage the chat, but you can also call them yourself.
+When you are finished with an engine, release its resources with :meth:`.BaseEngine.close`.
+
+These methods are lower-level and used by :class:`.Kani` to manage the chat, but you can also call them yourself.
 
 Kani
 ----
 
 .. seealso::
 
-    The :class:`Kani` API documentation.
+    The :class:`.Kani` API documentation.
 
 To initialize a kani, only the ``engine`` is required, though you can configure much more:
 
-.. todo autodoc Kani.__init__ here, also actually do the examples
+.. automethod:: kani.Kani.__init__
+    :noindex:
 
-.. code-block:: pythonconsole
+.. code-block:: pycon
 
     >>> from kani import Kani, chat_in_terminal
     >>> from kani.engines import OpenAIEngine
@@ -53,18 +56,20 @@ To initialize a kani, only the ``engine`` is required, though you can configure 
     >>> ai = Kani(engine, system_prompt="You are a sarcastic assistant.")
     >>> chat_in_terminal(ai, rounds=1)
     USER: Hello kani!
-    AI: What do you want now?
-
-When you are finished with a kani instance, release its resources with :meth:`Kani.close`.
+    AI: Is there something I can assist you with today, or are you just here for more of my delightful company?
 
 In Larger Programs
 ^^^^^^^^^^^^^^^^^^
-While :func:`chat_in_terminal` is helpful in development, let's look at how to use a :class:`Kani` in a larger
+While :func:`.chat_in_terminal` is helpful in development, let's look at how to use a :class:`.Kani` in a larger
 application.
 
-The two standard entrypoints are :meth:`Kani.chat_round` and :meth:`Kani.full_round`, and their ``_str`` counterparts:
+The two standard entrypoints are :meth:`.Kani.chat_round` and :meth:`.Kani.full_round`, and their ``_str`` counterparts:
 
-.. todo autodoc those here
+.. automethod:: kani.Kani.chat_round
+    :noindex:
+
+.. automethod:: kani.Kani.full_round
+    :noindex:
 
 .. hint::
 
@@ -73,7 +78,7 @@ The two standard entrypoints are :meth:`Kani.chat_round` and :meth:`Kani.full_ro
     Web frameworks like FastAPI and Flask 2 allow your route methods to be async, meaning you can await a kani method
     from within your route method without having to get too in the weeds with asyncio.
 
-    Otherwise, you can create an async context by defining an async function and using :func:`asyncio.run`: .. todo intersphinx
+    Otherwise, you can create an async context by defining an async function and using :func:`asyncio.run`:
 
     .. code-block:: python
 
@@ -93,20 +98,20 @@ The two standard entrypoints are :meth:`Kani.chat_round` and :meth:`Kani.full_ro
 
 .. seealso::
 
-    The source code of :func:`chat_in_terminal`.
+    The source code of :func:`.chat_in_terminal`.
 
 Chat Messages
 ^^^^^^^^^^^^^
-Each message contains the ``role`` (a :class:`ChatRole`: system, assistant, user, or function) that sent the message
+Each message contains the ``role`` (a :class:`.ChatRole`: system, assistant, user, or function) that sent the message
 and the ``content`` of the message. Optionally, a user message can also contain a ``name`` (for multi-user
 conversations), and an assistant message can contain a ``function_call`` (discussed in :doc:`function_calling`).
 
-At a high level, a :class:`Kani` is responsible for managing a list of :class:`ChatMessage`: the chat session associated
-with it. You can access the chat messages through the :attr:`Kani.chat_history` attribute.
+At a high level, a :class:`.Kani` is responsible for managing a list of :class:`.ChatMessage`: the chat session associated
+with it. You can access the chat messages through the :attr:`.Kani.chat_history` attribute.
 
 You may even modify the chat history (i.e. append or delete ChatMessages) to change the prompt at any time.
 
-.. code-block:: pythonconsole
+.. code-block:: pycon
 
     >>> from kani import Kani, chat_in_terminal
     >>> from kani.engines import OpenAIEngine
@@ -115,22 +120,22 @@ You may even modify the chat history (i.e. append or delete ChatMessages) to cha
     >>> ai = Kani(engine, system_prompt="You are a helpful assistant.")
     >>> chat_in_terminal(ai, rounds=1)
     USER: Hello kani!
-    AI: Hello! How can I help?
+    AI: Hello! How can I assist you today?
     >>> ai.chat_history
     [
         ChatMessage(role=ChatRole.USER, content="Hello kani!"),
-        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I help?"),
+        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
     ]
     >>> await ai.get_truncated_chat_history()
     # The system prompt is passed to the engine, but not chat_history - this will be useful later in advanced use cases.
     [
         ChatMessage(role=ChatRole.SYSTEM, content="You are a helpful assistant."),
         ChatMessage(role=ChatRole.USER, content="Hello kani!"),
-        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I help?"),
+        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
     ]
 
 Next Steps
 ----------
-In the next section, we'll look at subclassing :class:`Kani` in order to supply functions to the language model.
+In the next section, we'll look at subclassing :class:`.Kani` in order to supply functions to the language model.
 Then, we'll look at how you can override and/or extend the implementations of kani methods to control each part of
 a chat round.

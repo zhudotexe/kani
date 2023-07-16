@@ -10,6 +10,7 @@ from .models import ChatRole
 
 
 class AIFunction:
+    """Wrapper around a function to expose to a language model."""
     def __init__(
         self,
         inner,
@@ -21,11 +22,14 @@ class AIFunction:
     ):
         """
         :param inner: The function implementation.
-        :param after: After completing the function call, who should speak next.
-        :param name: The name of the function (defaults to inner.__name__)
-        :param desc: The desc of the function (defaults to docstring)
-        :param auto_retry: Whether the model should retry calling the function if it gets it wrong.
-        :param json_schema: If not using autogeneration, the JSON Schema to provide the model.
+        :param after: Who should speak next after the function call completes (see :ref:`next_actor`). Defaults to the
+            model.
+        :param name: The name of the function (defaults to the name of the function in source code).
+        :param desc: The function's description (defaults to the function's docstring).
+        :param auto_retry: Whether the model should retry calling the function if it gets it wrong
+            (see :ref:`auto_retry`).
+        :param json_schema: A JSON Schema document describing the function's parameters. By default, kani will
+            automatically generate one, but this can be helpful for overriding it in any tricky cases.
         """
         self.inner = validate_call(inner)
         self.after = after
@@ -48,7 +52,7 @@ class AIFunction:
         return result
 
     def create_json_schema(self) -> dict:
-        """create a JSON schema representing this function's parameters as a JSON object."""
+        """Create a JSON schema representing this function's parameters as a JSON object."""
         # get list of params
         params = []
         sig = inspect.signature(self.inner)
@@ -90,11 +94,13 @@ def ai_function(
 ):
     """Decorator to mark a method of a Kani to expose to the AI.
 
-    :param after: After completing the function call, who should speak next.
-    :param name: The name of the function (defaults to f.__name__)
-    :param desc: The desc of the function (defaults to docstring)
-    :param auto_retry: Whether the model should retry calling the function if it gets it wrong.
-    :param json_schema: If not using autogeneration, the JSON Schema to provide the model.
+    :param after: Who should speak next after the function call completes (see :ref:`next_actor`). Defaults to the
+        model.
+    :param name: The name of the function (defaults to the name of the function in source code).
+    :param desc: The function's description (defaults to the function's docstring).
+    :param auto_retry: Whether the model should retry calling the function if it gets it wrong (see :ref:`auto_retry`).
+    :param json_schema: A JSON Schema document describing the function's parameters. By default, kani will automatically
+        generate one, but this can be helpful for overriding it in any tricky cases.
     """
 
     def deco(f):

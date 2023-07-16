@@ -10,6 +10,8 @@ from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTim
 
 
 class OpenAIClient(BaseClient):
+    """Simple HTTP client to interface with the OpenAI API."""
+
     SERVICE_BASE = "https://api.openai.com/v1"
 
     def __init__(self, api_key: str, http: aiohttp.ClientSession = None):
@@ -88,6 +90,10 @@ class OpenAIClient(BaseClient):
         functions: list[FunctionSpec] | None = None,
         **kwargs,
     ) -> ChatCompletion:
+        """Create a chat completion.
+
+        See https://platform.openai.com/docs/api-reference/chat/create.
+        """
         # transform pydantic models
         if functions:
             kwargs["functions"] = [f.model_dump(exclude_unset=True) for f in functions]

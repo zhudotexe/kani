@@ -32,7 +32,8 @@ class OpenAIEngine(BaseEngine):
         :param model: The key of the model to use.
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
-        :param hyperparams: Any additional parameters to pass to :meth:`OpenAIClient.create_chat_completion`.
+        :param hyperparams: Any additional parameters to pass to
+            :meth:`.OpenAIClient.create_chat_completion`.
         """
         if max_context_size is None:
             max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))

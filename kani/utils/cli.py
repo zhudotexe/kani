@@ -17,6 +17,8 @@ async def _chat_in_terminal(kani: Kani, rounds: int = 0):
             query = input("USER: ")
             async for msg in kani.full_round_str(query, function_call_formatter=_function_formatter):
                 print(f"AI: {msg}")
+    except KeyboardInterrupt:
+        pass
     finally:
         if not rounds:
             await kani.engine.close()
