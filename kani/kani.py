@@ -3,7 +3,6 @@ import inspect
 from typing import AsyncIterable, Callable
 
 import cachetools
-from pydantic import validate_call
 
 from .ai_function import AIFunction
 from .engines import BaseEngine
@@ -87,8 +86,7 @@ class Kani:
         for name, member in inspect.getmembers(self, predicate=inspect.ismethod):
             if not getattr(member, "__ai_function__", None):
                 continue
-            inner = validate_call(member)
-            f: AIFunction = AIFunction(inner, **member.__ai_function__)
+            f: AIFunction = AIFunction(member, **member.__ai_function__)
             if f.name in self.functions:
                 raise ValueError(f"AIFunction {f.name!r} is already registered!")
             self.functions[f.name] = f
