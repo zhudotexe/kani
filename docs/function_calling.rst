@@ -24,7 +24,7 @@ are limitless.
 
     class MyKani(Kani):
         # step 1: write your methods
-        def get_weather(location, unit):
+        def get_weather(self, location, unit):
             # call some weather API...
 
     ai = MyKani(engine)
@@ -64,7 +64,7 @@ Now, let's put this all together: let's tell the language model what we expect i
 should be either fahrenheit or celsius.
 
 .. code-block:: python
-    :emphasize-lines: 10, 11, 12, 17, 19, 22
+    :emphasize-lines: 10, 11, 12, 18, 20, 23
 
     import enum
     from typing import Annotated
@@ -81,6 +81,7 @@ should be either fahrenheit or celsius.
 
     class MyKani(Kani):
         def get_weather(
+            self,
             # we can give the model more information about a parameter by annotating it with AIParam:
             location: Annotated[str, AIParam(desc="The city and state, e.g. San Francisco, CA")],
             # or it can determine which of a limited set of options to use from an enum:
@@ -103,7 +104,7 @@ Here, you can set some options for how kani should expose your function by passi
     :noindex:
 
 .. code-block:: python
-    :emphasize-lines: 7
+    :emphasize-lines: 8
 
     # don't forget to import ai_function!
     from kani import AIParam, Kani, ai_function, chat_in_terminal
@@ -113,6 +114,7 @@ Here, you can set some options for how kani should expose your function by passi
     class MyKani(Kani):
         @ai_function()
         def get_weather(
+            self,
             location: Annotated[str, AIParam(desc="The city and state, e.g. San Francisco, CA")],
             unit: Unit,
         ):
@@ -154,6 +156,7 @@ Here's the full example of how you might implement a function to get weather tha
     class MyKani(Kani):
         @ai_function()
         def get_weather(
+            self,
             location: Annotated[str, AIParam(desc="The city and state, e.g. San Francisco, CA")],
             unit: Unit,
         ):
