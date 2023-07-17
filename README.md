@@ -39,7 +39,7 @@ Then, let's use kani to create a simple chatbot using ChatGPT as a backend.
 ```python
 # import the library
 from kani import Kani, chat_in_terminal
-from kani.engines import OpenAIEngine
+from kani.engines.openai import OpenAIEngine
 
 # Replace this with your OpenAI API key: https://platform.openai.com/account/api-keys
 api_key = "sk-..."

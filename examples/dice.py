@@ -3,7 +3,7 @@ import os
 import d20  # pip install d20
 
 from kani import Kani, ai_function, chat_in_terminal
-from kani.engines import OpenAIEngine
+from kani.engines.openai import OpenAIEngine
 
 engine = OpenAIEngine(os.getenv("OPENAI_API_KEY"), model="gpt-3.5-turbo")
 

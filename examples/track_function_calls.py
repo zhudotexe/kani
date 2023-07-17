@@ -7,7 +7,7 @@ import datetime
 import os
 
 from kani import Kani, chat_in_terminal, ai_function
-from kani.engines import OpenAIEngine
+from kani.engines.openai import OpenAIEngine
 from kani.exceptions import FunctionCallException
 
 api_key = os.getenv("OPENAI_API_KEY")

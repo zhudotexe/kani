@@ -5,7 +5,7 @@ Let's take a look back at the quickstart program:
 .. code-block:: python
 
     from kani import Kani, chat_in_terminal
-    from kani.engines import OpenAIEngine
+    from kani.engines.openai import OpenAIEngine
 
     api_key = "sk-..."
     engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
@@ -30,7 +30,7 @@ To initialize a kani, only the ``engine`` is required, though you can configure 
 .. code-block:: pycon
 
     >>> from kani import Kani, chat_in_terminal
-    >>> from kani.engines import OpenAIEngine
+    >>> from kani.engines.openai import OpenAIEngine
     >>> api_key = "sk-..."
     >>> engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
     >>> ai = Kani(engine, system_prompt="You are a sarcastic assistant.")
@@ -63,7 +63,7 @@ The two standard entrypoints are :meth:`.Kani.chat_round` and :meth:`.Kani.full_
     .. code-block:: python
 
         from kani import Kani, chat_in_terminal
-        from kani.engines import OpenAIEngine
+        from kani.engines.openai import OpenAIEngine
 
         api_key = "sk-..."
         engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
@@ -107,7 +107,7 @@ You may even modify the chat history (i.e. append or delete ChatMessages) to cha
 .. code-block:: pycon
 
     >>> from kani import Kani, chat_in_terminal
-    >>> from kani.engines import OpenAIEngine
+    >>> from kani.engines.openai import OpenAIEngine
     >>> api_key = "sk-..."
     >>> engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
     >>> ai = Kani(engine, system_prompt="You are a helpful assistant.")

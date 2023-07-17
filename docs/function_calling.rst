@@ -17,7 +17,7 @@ are limitless.
     :emphasize-lines: 7, 9
 
     from kani import Kani, chat_in_terminal
-    from kani.engines import OpenAIEngine
+    from kani.engines.openai import OpenAIEngine
 
     api_key = "sk-..."
     engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
@@ -144,7 +144,7 @@ Here's the full example of how you might implement a function to get weather tha
     from typing import Annotated
 
     from kani import AIParam, Kani, ai_function, chat_in_terminal
-    from kani.engines import OpenAIEngine
+    from kani.engines.openai import OpenAIEngine
 
     api_key = "sk-..."
     engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
