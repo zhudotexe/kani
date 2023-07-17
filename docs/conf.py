@@ -3,6 +3,7 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import sys
+import urllib.parse
 
 # ensure kani is available in path
 sys.path.append("..")
@@ -20,6 +21,8 @@ author = "Andrew Zhu and Liam Dugan"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.githubpages",
+    "sphinx.ext.viewcode",
     "sphinxext.opengraph",  # https://sphinxext-opengraph.readthedocs.io/en/latest/
     "sphinx_inline_tabs",  # https://sphinx-inline-tabs.readthedocs.io/en/latest/usage.html
     "sphinx_copybutton",  # https://sphinx-copybutton.readthedocs.io/en/latest/
@@ -51,6 +54,9 @@ autodoc_member_order = "bysource"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
 }
+
+# sphinx.ext.githubpages
+html_baseurl = ""
 
 # sphinxext.opengraph
 ogp_social_cards = {

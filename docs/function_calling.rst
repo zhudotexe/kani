@@ -189,7 +189,7 @@ Retry & Model Feedback
 ----------------------
 If the model makes an error when attempting to call a function (e.g. calling a function that does not exist or
 passing params with invalid, non-coercible types) or the function raises an exception, Kani will send the
-error in a system message to the model by default, allowing it up to *retry_attempts* to correct itself and retry the
+error in a message to the model by default, allowing it up to *retry_attempts* to correct itself and retry the
 call.
 
 In the next section, we'll discuss how to customize this behaviour, along with other parts of the kani interface.

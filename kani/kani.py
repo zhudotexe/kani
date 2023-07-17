@@ -238,10 +238,10 @@ class Kani:
     async def do_function_call(self, call: FunctionCall) -> bool:
         """Resolve a single function call.
 
-        You may implement an override to add instrumentation around function calls (e.g. tracking success counts
-        for varying prompts).
-
         By default, any exception raised from this method will be an instance of a :class:`.FunctionCallException`.
+
+        You may implement an override to add instrumentation around function calls (e.g. tracking success counts
+        for varying prompts). See :ref:`do_function_call`.
 
         :returns: True (default) if the model should immediately react; False if the user speaks next.
         :raises NoSuchFunction: The requested function does not exist.
@@ -270,11 +270,12 @@ class Kani:
         is recoverable and there are remaining retry attempts.
 
         You may implement an override to customize the error prompt, log the error, or use custom retry logic.
+        See :ref:`handle_function_call_exception`.
 
         :param call: The :class:`.FunctionCall` the model was attempting to make.
         :param err: The error the call raised. Usually this is :class:`.NoSuchFunction` or
             :class:`.WrappedCallException`, although it may be any exception raised by :meth:`do_function_call`.
-        :param attempt: The attempt number for the current call (1-indexed).
+        :param attempt: The attempt number for the current call (0-indexed).
         :returns: True if the model should retry the call; False if not.
         """
         # tell the model what went wrong
@@ -285,4 +286,4 @@ class Kani:
         else:
             self.chat_history.append(ChatMessage.function(call.name, str(err)))
 
-        return attempt <= self.retry_attempts and err.retry
+        return attempt < self.retry_attempts and err.retry
