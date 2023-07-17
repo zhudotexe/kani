@@ -15,26 +15,6 @@ Let's take a look back at the quickstart program:
 kani is comprised of two main parts: the *engine*, which is the interface between kani and the language model,
 and the *kani*, which is responsible for tracking chat history, prompting the engine, and handling function calls.
 
-Engine
-------
-This table lists the engines built in to kani:
-
-.. include:: shared/engine_table.rst
-
-.. seealso::
-
-    We won't go too far into implementation details here - if you are interested in implementing your own engine, check
-    out :doc:`engines` or the :class:`.BaseEngine` API documentation.
-
-Each engine must implement two methods: :meth:`.BaseEngine.message_len`, which takes a single :class:`.ChatMessage` and
-returns the length of that message, in tokens, and :meth:`.BaseEngine.predict`, which is responsible for taking
-a list of :class:`.ChatMessage` and :class:`.AIFunction` (discussed in the next section) and returning a new
-:class:`.BaseCompletion`.
-
-When you are finished with an engine, release its resources with :meth:`.BaseEngine.close`.
-
-These methods are lower-level and used by :class:`.Kani` to manage the chat, but you can also call them yourself.
-
 Kani
 ----
 
@@ -58,8 +38,8 @@ To initialize a kani, only the ``engine`` is required, though you can configure 
     USER: Hello kani!
     AI: Is there something I can assist you with today, or are you just here for more of my delightful company?
 
-In Larger Programs
-^^^^^^^^^^^^^^^^^^
+Entrypoints
+^^^^^^^^^^^
 While :func:`.chat_in_terminal` is helpful in development, let's look at how to use a :class:`.Kani` in a larger
 application.
 
@@ -99,6 +79,19 @@ The two standard entrypoints are :meth:`.Kani.chat_round` and :meth:`.Kani.full_
 .. seealso::
 
     The source code of :func:`.chat_in_terminal`.
+
+Engines
+^^^^^^^
+This table lists the engines built in to kani:
+
+.. include:: shared/engine_table.rst
+
+.. seealso::
+
+    We won't go too far into implementation details here - if you are interested in implementing your own engine, check
+    out :doc:`engines` or the :class:`.BaseEngine` API documentation.
+
+When you are finished with an engine, release its resources with :meth:`.BaseEngine.close`.
 
 Chat Messages
 ^^^^^^^^^^^^^
