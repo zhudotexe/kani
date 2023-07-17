@@ -1,9 +1,25 @@
 import warnings
 
 from kani.ai_function import AIFunction
+from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from .base import HuggingEngine
 from ..base import Completion
+
+try:
+    import sentencepiece
+except ImportError:
+    raise MissingModelDependencies(
+        'The VicunaEngine requires extra dependencies. Please install kani with "pip install'
+        ' \'kani[huggingface,llama]\'". You will also need to install PyTorch manually.'
+    ) from None
+
+try:
+    import accelerate
+
+    _low_cpu_mem_usage = True
+except ImportError:
+    _low_cpu_mem_usage = False
 
 
 class VicunaEngine(HuggingEngine):
@@ -18,12 +34,16 @@ class VicunaEngine(HuggingEngine):
     """
 
     def __init__(self, model_id: str = "lmsys/vicuna-7b-v1.3", *args, **kwargs):
-        if "tokenizer_kwargs" in kwargs:
-            kwargs["tokenizer_kwargs"]["use_fast"] = False
-        if "model_load_kwargs" in kwargs:
-            kwargs["model_load_kwargs"]["low_cpu_mem_usage"] = True
+        tokenizer_kwargs = kwargs.pop("tokenizer_kwargs", {})
+        tokenizer_kwargs.setdefault("use_fast", False)
+
+        model_load_kwargs = kwargs.pop("model_load_kwargs", {})
+        model_load_kwargs.setdefault("low_cpu_mem_usage", _low_cpu_mem_usage)
+
         kwargs.setdefault("max_context_size", 2048)  # LLaMA has 2048 token window
-        super().__init__(model_id, *args, **kwargs)
+        super().__init__(
+            model_id, *args, tokenizer_kwargs=tokenizer_kwargs, model_load_kwargs=model_load_kwargs, **kwargs
+        )
 
     @staticmethod
     def build_prompt(messages: list[ChatMessage], functions: list[AIFunction]) -> str:
@@ -54,11 +74,21 @@ class VicunaEngine(HuggingEngine):
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> Completion:
+        """
+        Given the current context of messages and available functions, get the next predicted chat message from the LM.
+
+        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+            guaranteed to be less than max_context_size.
+        :param functions: The functions the LM is allowed to call.
+        :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
+            https://huggingface.co/docs/transformers/v4.30.0/main_classes/text_generation)
+        """
         prompt = self.build_prompt(messages, functions)
         # prompt str to tokens
         tokenized = self.tokenizer(prompt, return_tensors="pt", return_length=True)
         input_toks = tokenized.input_ids
-        input_toks.to(self.device)
+        if input_toks.device.type != self.device:
+            input_toks = input_toks.to(self.device)
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
         hyperparams.setdefault("max_length", self.max_context_size)

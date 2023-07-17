@@ -9,7 +9,7 @@ try:
 except ImportError:
     raise MissingModelDependencies(
         'The HuggingEngine requires extra dependencies. Please install kani with "pip install kani[huggingface]". '
-        "You will also need to install PyTorch manually."
+        'You will also need to install PyTorch manually.'
     ) from None
 
 
@@ -33,6 +33,10 @@ class HuggingEngine(BaseEngine, abc.ABC):
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
         :param hyperparams: Additional arguments to supply the model during generation.
         """
+        if tokenizer_kwargs is None:
+            tokenizer_kwargs = {}
+        if model_load_kwargs is None:
+            model_load_kwargs = {}
         self.model_id = model_id
         self.max_context_size = max_context_size
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
