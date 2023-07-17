@@ -102,7 +102,11 @@ class OpenAIClient(BaseClient):
         # call API
         data = await self.post(
             "/chat/completions",
-            json={"model": model, "messages": [cm.model_dump(exclude_unset=True) for cm in messages], **kwargs},
+            json={
+                "model": model,
+                "messages": [cm.model_dump(exclude_unset=True, mode="json") for cm in messages],
+                **kwargs,
+            },
         )
         try:
             return ChatCompletion.model_validate(data)

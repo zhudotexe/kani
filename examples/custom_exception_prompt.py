@@ -5,7 +5,7 @@ This example shows how to override kani's function call exception handler to use
 import os
 
 from kani import Kani, chat_in_terminal, ai_function, ChatMessage
-from kani.engines import OpenAIEngine
+from kani.engines.openai import OpenAIEngine
 
 api_key = os.getenv("OPENAI_API_KEY")
 engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")

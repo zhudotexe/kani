@@ -42,7 +42,7 @@ class FunctionCall(BaseModel):
 class ChatMessage(BaseModel):
     """Represents a message in the chat context."""
 
-    model_config = ConfigDict(use_enum_values=True, frozen=True)
+    model_config = ConfigDict(frozen=True)
 
     role: ChatRole
     """Who said the message?"""

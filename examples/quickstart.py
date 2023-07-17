@@ -1,7 +1,7 @@
 import os
 
 from kani import Kani, chat_in_terminal
-from kani.engines import OpenAIEngine
+from kani.engines.openai import OpenAIEngine
 
 # Replace this with your OpenAI API key (https://platform.openai.com/account/api-keys)
 # or run `export OPENAI_API_KEY="sk-..."` in your terminal.

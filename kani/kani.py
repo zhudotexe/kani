@@ -5,7 +5,7 @@ from typing import AsyncIterable, Callable
 import cachetools
 
 from .ai_function import AIFunction
-from .engines import BaseEngine
+from .engines.base import BaseEngine
 from .exceptions import NoSuchFunction, WrappedCallException, FunctionCallException
 from .models import ChatMessage, FunctionCall, ChatRole
 
