@@ -92,7 +92,7 @@ class Kani:
             functions = []
         self.functions = {f.name: f for f in functions}
         for name, member in inspect.getmembers(self, predicate=inspect.ismethod):
-            if not getattr(member, "__ai_function__", None):
+            if not hasattr(member, "__ai_function__"):
                 continue
             f: AIFunction = AIFunction(member, **member.__ai_function__)
             if f.name in self.functions:
@@ -161,8 +161,6 @@ class Kani:
             self.chat_history.append(ChatMessage.user(query.strip()))
 
             while is_model_turn:
-                is_model_turn = False
-
                 # do the model prediction
                 messages = await self.get_truncated_chat_history()
                 completion = await self.engine.predict(
@@ -214,8 +212,9 @@ class Kani:
     # ==== overridable methods ====
     async def get_truncated_chat_history(self) -> list[ChatMessage]:
         """
+        Called each time before asking the LM engine for a completion to generate the chat prompt.
         Returns a list of messages such that the total token count in the messages is less than
-        (max_context_size - desired_response_tokens).
+        ``(self.max_context_size - self.desired_response_tokens)``.
 
         Always includes the system prompt plus any always_include_messages at the start of the prompt.
 
@@ -245,6 +244,8 @@ class Kani:
         By default, any exception raised from this method will be an instance of a :class:`.FunctionCallException`.
 
         :returns: True (default) if the model should immediately react; False if the user speaks next.
+        :raises NoSuchFunction: The requested function does not exist.
+        :raises WrappedCallException: The function raised an exception.
         """
         # get func
         f = self.functions.get(call.name)
