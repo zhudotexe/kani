@@ -25,23 +25,43 @@ CONTEXT_SIZES_BY_PREFIX = [
 
 
 class OpenAIEngine(BaseEngine):
-    """Engine for using the OpenAI API."""
-    def __init__(self, api_key: str, model="gpt-3.5-turbo", max_context_size: int = None, **hyperparams):
+    """Engine for using the OpenAI API.
+
+    .. caution::
+
+        Due to having to track "hidden" tokens for the function spec, it is not recommended to reuse an OpenAIEngine
+        instance in multiple kani. To take advantage of reuse, construct a shared :class:`.OpenAIClient` and
+        initialize OpenAIEngine with ``client=the_client_instance`` rather than ``api_key="..."``.
+    """
+
+    def __init__(
+        self,
+        api_key: str = None,
+        model="gpt-3.5-turbo",
+        max_context_size: int = None,
+        *,
+        client: OpenAIClient = None,
+        **hyperparams
+    ):
         """
         :param api_key: Your OpenAI API key.
         :param model: The key of the model to use.
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
+        :param client: An instance of :class:`.OpenAIClient` (for reusing the same client in multiple engines). You must
+            specify exactly one of (api_key, client).
         :param hyperparams: Any additional parameters to pass to
             :meth:`.OpenAIClient.create_chat_completion`.
         """
+        if (api_key is None and client is None) or (api_key and client):
+            raise ValueError("You must supply exactly one of (api_key, client).")
         if max_context_size is None:
             max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))
-        self.client = OpenAIClient(api_key)
+        self.client = client or OpenAIClient(api_key)
         self.model = model
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
-        self.tokenizer = None
+        self.tokenizer = None  # tiktoken caches a tokenizer globally in module, so we can unconditionally load it
         self.token_reserve = 0
         self._load_tokenizer()
 

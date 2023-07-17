@@ -44,16 +44,17 @@ from kani.engines import OpenAIEngine
 # Replace this with your OpenAI API key: https://platform.openai.com/account/api-keys
 api_key = "sk-..."
 
-# kani uses an Engine to interact with the language model. You can specify other model parameters here,
-# like temperature=0.7.
+# kani uses an Engine to interact with the language model. You can specify other model 
+# parameters here, like temperature=0.7.
 engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
 
-# The kani manages the chat state, prompting, and function calling. Here, we only give it the engine to call
-# ChatGPT, but you can specify other parameters like system_prompt="You are..." here.
+# The kani manages the chat state, prompting, and function calling. Here, we only give 
+# it the engine to call ChatGPT, but you can specify other parameters like 
+# system_prompt="You are..." here.
 ai = Kani(engine)
 
-# kani comes with a utility to interact with a kani through your terminal! Check out the docs for how to use kani
-# programmatically.
+# kani comes with a utility to interact with a kani through your terminal! Check out 
+# the docs for how to use kani programmatically.
 chat_in_terminal(ai)
 ```
 

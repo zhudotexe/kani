@@ -82,12 +82,12 @@ should be either fahrenheit or celsius.
     class MyKani(Kani):
         def get_weather(
             self,
-            # we can give the model more information about a parameter by annotating it with AIParam:
+            # give the model more information about a parameter by annotating it with AIParam:
             location: Annotated[str, AIParam(desc="The city and state, e.g. San Francisco, CA")],
             # or it can determine which of a limited set of options to use from an enum:
             unit: Unit,
         ):
-            # finally, add a triple-quoted string immediately after the def to describe the function:
+            # add a triple-quoted string immediately after the def to describe the function:
             """Get the current weather in a given location."""
             # call some weather API...
 
@@ -104,7 +104,7 @@ Here, you can set some options for how kani should expose your function by passi
     :noindex:
 
 .. code-block:: python
-    :emphasize-lines: 8
+    :emphasize-lines: 7
 
     # don't forget to import ai_function!
     from kani import AIParam, Kani, ai_function, chat_in_terminal
