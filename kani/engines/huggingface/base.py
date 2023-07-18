@@ -75,7 +75,6 @@ class HuggingEngine(BaseEngine, abc.ABC):
         prompt = self.build_prompt(messages, functions)
         # prompt str to tokens
         tokenized = self.tokenizer(prompt, return_tensors="pt", return_length=True)
-        # vicuna only: strip the starting special token
         input_len = int(tokenized.length)
         input_toks = tokenized.input_ids
         # move the input tensor to the right device
@@ -83,7 +82,7 @@ class HuggingEngine(BaseEngine, abc.ABC):
             input_toks = input_toks.to(self.device)
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
-        hyperparams.setdefault("max_length", self.max_context_size)
+        hyperparams.setdefault("max_length", self.max_context_size)  # by default HF sets this to 20, which is too small
         # run it through the model
         output = self.model.generate(input_toks, **hyperparams)
         # decode to tokens
