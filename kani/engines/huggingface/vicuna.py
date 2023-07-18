@@ -4,7 +4,6 @@ from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from .base import HuggingEngine
-from ..base import Completion
 
 try:
     import sentencepiece
@@ -48,8 +47,7 @@ class VicunaEngine(HuggingEngine):
             model_id, *args, tokenizer_kwargs=tokenizer_kwargs, model_load_kwargs=model_load_kwargs, **kwargs
         )
 
-    @staticmethod
-    def build_prompt(messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
+    def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
         if functions:
             warnings.warn("The VicunaEngine is conversational only and does not support function calling.")
         prompt_lines = []
@@ -74,36 +72,3 @@ class VicunaEngine(HuggingEngine):
             return self.tokenizer(message.content, return_length=True).length + 7
         # {}\n\n -> 2
         return self.tokenizer(message.content, return_length=True).length + 1
-
-    async def predict(
-        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
-    ) -> Completion:
-        """
-        Given the current context of messages and available functions, get the next predicted chat message from the LM.
-
-        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
-            guaranteed to be less than max_context_size.
-        :param functions: The functions the LM is allowed to call.
-        :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
-            https://huggingface.co/docs/transformers/v4.30.0/main_classes/text_generation)
-        """
-        prompt = self.build_prompt(messages, functions)
-        # prompt str to tokens
-        tokenized = self.tokenizer(prompt, return_tensors="pt", return_length=True)
-        # vicuna only: strip the starting special token
-        input_len = int(tokenized.length)
-        input_toks = tokenized.input_ids
-        # move the input tensor to the right device
-        if input_toks.device.type != self.device:
-            input_toks = input_toks.to(self.device)
-        # set up hyperparams for HF decode
-        hyperparams = {**self.hyperparams, **hyperparams}
-        if hyperparams:
-            hyperparams.setdefault("do_sample", True)
-        hyperparams.setdefault("max_length", self.max_context_size)
-        # run it through the model
-        output = self.model.generate(input_toks, **hyperparams)
-        # decode to tokens
-        # the completion shouldn't include the prompt or </s>
-        content = self.tokenizer.decode(output[0][input_len:-1]).strip()
-        return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]))

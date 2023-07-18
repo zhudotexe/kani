@@ -1,7 +1,9 @@
 import abc
 
+from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
-from ..base import BaseEngine
+from kani.models import ChatMessage
+from ..base import BaseEngine, Completion
 
 try:
     import torch
@@ -14,7 +16,12 @@ except ImportError:
 
 
 class HuggingEngine(BaseEngine, abc.ABC):
-    """Base engine for all huggingface text-generation models."""
+    """Base engine for all HuggingFace text-generation models.
+
+    This class implements the main decoding logic for any HuggingFace model based on a pretrained
+    ``AutoModelForCausalLM``. To implement a new HuggingFace model, just implement :meth:`build_prompt` and
+    :meth:`message_len` for the specified model.
+    """
 
     def __init__(
         self,
@@ -47,3 +54,39 @@ class HuggingEngine(BaseEngine, abc.ABC):
             device = "cuda" if torch.has_cuda else "cpu"
         self.device = device
         self.model.to(device)
+
+    @abc.abstractmethod
+    def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
+        """Given the list of messages from kani, build a single string representing the prompt for the model."""
+        raise NotImplementedError
+
+    async def predict(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> Completion:
+        """
+        Given the current context of messages and available functions, get the next predicted chat message from the LM.
+
+        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+            guaranteed to be less than max_context_size.
+        :param functions: The functions the LM is allowed to call.
+        :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
+            https://huggingface.co/docs/transformers/main_classes/text_generation)
+        """
+        prompt = self.build_prompt(messages, functions)
+        # prompt str to tokens
+        tokenized = self.tokenizer(prompt, return_tensors="pt", return_length=True)
+        # vicuna only: strip the starting special token
+        input_len = int(tokenized.length)
+        input_toks = tokenized.input_ids
+        # move the input tensor to the right device
+        if input_toks.device.type != self.device:
+            input_toks = input_toks.to(self.device)
+        # set up hyperparams for HF decode
+        hyperparams = {**self.hyperparams, **hyperparams}
+        hyperparams.setdefault("max_length", self.max_context_size)
+        # run it through the model
+        output = self.model.generate(input_toks, **hyperparams)
+        # decode to tokens
+        # the completion shouldn't include the prompt or stop token
+        content = self.tokenizer.decode(output[0][input_len:-1]).strip()
+        return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - 1)

@@ -1,3 +1,9 @@
+"""Vicuna (https://huggingface.co/lmsys/vicuna-7b-v1.3) is a language model based on LLaMA that is fine-tuned for chat.
+
+This example shows how you can use kani to run a language model on your own machine! See the source code of
+:class:`.VicunaEngine` for implementation details.
+"""
+
 from kani import Kani, chat_in_terminal
 from kani.engines.huggingface.vicuna import VicunaEngine
 
