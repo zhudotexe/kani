@@ -51,30 +51,30 @@ The two standard entrypoints are :meth:`.Kani.chat_round` and :meth:`.Kani.full_
 .. automethod:: kani.Kani.full_round
     :noindex:
 
-.. hint::
+These are asynchronous methods, which means you'll need to be in an async context.
 
-    These are asynchronous methods, which means you'll need to be in an async context.
+Web frameworks like FastAPI and Flask 2 allow your route methods to be async, meaning you can await a kani method
+from within your route method without having to get too in the weeds with asyncio.
 
-    Web frameworks like FastAPI and Flask 2 allow your route methods to be async, meaning you can await a kani method
-    from within your route method without having to get too in the weeds with asyncio.
+Otherwise, you can create an async context by defining an async function and using :func:`asyncio.run`. For example,
+here's how you might implement a simple chat:
 
-    Otherwise, you can create an async context by defining an async function and using :func:`asyncio.run`:
+.. code-block:: python
 
-    .. code-block:: python
+    from kani import Kani, chat_in_terminal
+    from kani.engines.openai import OpenAIEngine
 
-        from kani import Kani, chat_in_terminal
-        from kani.engines.openai import OpenAIEngine
+    api_key = "sk-..."
+    engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    ai = Kani(engine, system_prompt="You are a helpful assistant.")
 
-        api_key = "sk-..."
-        engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
-        ai = Kani(engine, system_prompt="You are a helpful assistant.")
+    async def chat_with_kani():
+        while True:
+            user_message = input("USER: ")
+            message = await ai.chat_round_str(user_message)
+            print("AI:", message)
 
-        async def chat_with_kani():
-            message = await ai.chat_round_str("Hello kani!")
-            print(message)
-            await ai.close()
-
-        asyncio.run(chat_with_kani())
+    asyncio.run(chat_with_kani())
 
 .. seealso::
 
@@ -82,6 +82,8 @@ The two standard entrypoints are :meth:`.Kani.chat_round` and :meth:`.Kani.full_
 
 Engines
 ^^^^^^^
+Engines are responsible for interfacing with a language model.
+
 This table lists the engines built in to kani:
 
 .. include:: shared/engine_table.rst
@@ -120,7 +122,8 @@ You may even modify the chat history (i.e. append or delete ChatMessages) to cha
         ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
     ]
     >>> await ai.get_truncated_chat_history()
-    # The system prompt is passed to the engine, but not chat_history - this will be useful later in advanced use cases.
+    # The system prompt is passed to the engine, but isn't part of chat_history
+    # - this will be useful later in advanced use cases.
     [
         ChatMessage(role=ChatRole.SYSTEM, content="You are a helpful assistant."),
         ChatMessage(role=ChatRole.USER, content="Hello kani!"),

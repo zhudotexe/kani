@@ -40,7 +40,8 @@ For example, here's how you might override the behaviour to only include the mos
 
 .. seealso::
 
-    This example is available in the `GitHub repo <https://github.com/zhudotexe/kani/blob/main/examples/last_four.py>`_.
+    This example is available in the
+    `GitHub repo <https://github.com/zhudotexe/kani/blob/main/examples/3_customization_last_four.py>`_.
 
 .. code-block:: python
 
@@ -115,7 +116,7 @@ during a conversation, and how often it was successful:
 .. seealso::
 
     This example is available in the
-    `GitHub repo <https://github.com/zhudotexe/kani/blob/main/examples/track_function_calls.py>`_.
+    `GitHub repo <https://github.com/zhudotexe/kani/blob/main/examples/3_customization_track_function_calls.py>`_.
 
 .. code-block:: python
     :emphasize-lines: 8-15
@@ -198,7 +199,7 @@ Here's an example of providing custom prompts on an exception:
 .. seealso::
 
     This example is available in the
-    `GitHub repo <https://github.com/zhudotexe/kani/blob/main/examples/custom_exception_prompt.py>`_.
+    `GitHub repo <https://github.com/zhudotexe/kani/blob/main/examples/3_customization_custom_exception_prompt.py>`_.
 
 .. code-block:: python
     :emphasize-lines: 2-7
