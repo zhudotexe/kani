@@ -33,6 +33,9 @@ class VicunaEngine(HuggingEngine):
         ai = Kani(engine)
     """
 
+    # all prompts start with a hidden <s> token and ASSISTANT:
+    token_reserve = 7
+
     def __init__(self, model_id: str = "lmsys/vicuna-7b-v1.3", *args, **kwargs):
         tokenizer_kwargs = kwargs.pop("tokenizer_kwargs", {})
         tokenizer_kwargs.setdefault("use_fast", False)
@@ -46,7 +49,7 @@ class VicunaEngine(HuggingEngine):
         )
 
     @staticmethod
-    def build_prompt(messages: list[ChatMessage], functions: list[AIFunction]) -> str:
+    def build_prompt(messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
         if functions:
             warnings.warn("The VicunaEngine is conversational only and does not support function calling.")
         prompt_lines = []
@@ -58,18 +61,19 @@ class VicunaEngine(HuggingEngine):
             else:
                 prompt_lines.append(f"{message.content}\n")
         prompt = "\n".join(prompt_lines)
-        return f"{prompt}\nASSISTANT: "
+        return f"{prompt}\nASSISTANT:"
 
     def message_len(self, message: ChatMessage) -> int:
         # https://github.com/lm-sys/FastChat/blob/main/docs/vicuna_weights_version.md#example-prompt-weights-v11-and-v13
+        # remove 1 for the <s> token at the start
         if message.role == ChatRole.USER:
-            # USER: {}\n -> 6
-            return self.tokenizer(message.content, return_length=True).length + 6
+            # USER: {}\n -> 5
+            return self.tokenizer(message.content, return_length=True).length + 4
         elif message.role == ChatRole.ASSISTANT:
-            # ASSISTANT: {}</s>\n -> 6
-            return self.tokenizer(message.content, return_length=True).length + 10
+            # ASSISTANT: {}</s>\n -> 8
+            return self.tokenizer(message.content, return_length=True).length + 7
         # {}\n\n -> 2
-        return self.tokenizer(message.content, return_length=True).length + 2
+        return self.tokenizer(message.content, return_length=True).length + 1
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
@@ -86,17 +90,20 @@ class VicunaEngine(HuggingEngine):
         prompt = self.build_prompt(messages, functions)
         # prompt str to tokens
         tokenized = self.tokenizer(prompt, return_tensors="pt", return_length=True)
+        # vicuna only: strip the starting special token
+        input_len = int(tokenized.length)
         input_toks = tokenized.input_ids
+        # move the input tensor to the right device
         if input_toks.device.type != self.device:
             input_toks = input_toks.to(self.device)
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
-        hyperparams.setdefault("max_length", self.max_context_size)
         if hyperparams:
             hyperparams.setdefault("do_sample", True)
+        hyperparams.setdefault("max_length", self.max_context_size)
+        # run it through the model
+        output = self.model.generate(input_toks, **hyperparams)
         # decode to tokens
-        output = self.model.generate(inputs=input_toks, **hyperparams)
-        content = self.tokenizer.decode(output[0])
-        return Completion(
-            ChatMessage.assistant(content), prompt_tokens=tokenized.length, completion_tokens=len(output[0])
-        )
+        # the completion shouldn't include the prompt or </s>
+        content = self.tokenizer.decode(output[0][input_len:-1]).strip()
+        return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]))
