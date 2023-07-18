@@ -24,7 +24,10 @@ except ImportError:
 class VicunaEngine(HuggingEngine):
     """Implementation of Vicuna using huggingface transformers.
 
-    https://huggingface.co/lmsys/vicuna-7b-v1.3
+    You may also use the 13b, 33b, or other LLaMA models that use the Vicuna prompt by passing the HuggingFace model
+    ID to the initializer.
+
+    .. seealso:: https://huggingface.co/lmsys/vicuna-7b-v1.3
 
     .. code-block:: python
 
@@ -34,6 +37,7 @@ class VicunaEngine(HuggingEngine):
 
     # all prompts start with a hidden <s> token and ASSISTANT:
     token_reserve = 7
+    """The Vicuna prompt starts with a hidden <s> token and "ASSISTANT:", which uses 7 tokens."""
 
     def __init__(self, model_id: str = "lmsys/vicuna-7b-v1.3", *args, **kwargs):
         tokenizer_kwargs = kwargs.pop("tokenizer_kwargs", {})
