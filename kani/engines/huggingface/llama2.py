@@ -11,7 +11,7 @@ try:
 except ImportError:
     raise MissingModelDependencies(
         'The LlamaEngine requires extra dependencies. Please install kani with "pip install'
-        ' \'kani[huggingface,llama]\'\". You will also need to install PyTorch manually.'
+        " 'kani[huggingface,llama]'\". You will also need to install PyTorch manually."
     ) from None
 
 B_INST, E_INST = "[INST]", "[/INST]"

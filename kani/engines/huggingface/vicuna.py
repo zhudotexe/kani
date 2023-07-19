@@ -10,7 +10,7 @@ try:
 except ImportError:
     raise MissingModelDependencies(
         'The VicunaEngine requires extra dependencies. Please install kani with "pip install'
-        ' \'kani[huggingface,llama]\'". You will also need to install PyTorch manually.'
+        " 'kani[huggingface,llama]'\". You will also need to install PyTorch manually."
     ) from None
 
 try:

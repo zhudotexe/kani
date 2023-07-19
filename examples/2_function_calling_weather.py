@@ -28,5 +28,5 @@ class MyKani(Kani):
 
 
 ai = MyKani(engine)
-if __name__ == '__main__':
+if __name__ == "__main__":
     chat_in_terminal(ai)

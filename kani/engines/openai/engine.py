@@ -41,7 +41,7 @@ class OpenAIEngine(BaseEngine):
         max_context_size: int = None,
         *,
         client: OpenAIClient = None,
-        **hyperparams
+        **hyperparams,
     ):
         """
         :param api_key: Your OpenAI API key.

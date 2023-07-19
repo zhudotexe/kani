@@ -11,6 +11,7 @@ from .models import ChatRole
 
 class AIFunction:
     """Wrapper around a function to expose to a language model."""
+
     def __init__(
         self,
         inner,

@@ -15,5 +15,5 @@ ai = Kani(
         " and polite answers to the user's questions."
     ),
 )
-if __name__ == '__main__':
+if __name__ == "__main__":
     chat_in_terminal(ai)
