@@ -57,7 +57,7 @@ implement :meth:`~.HuggingEngine.build_prompt` and :meth:`~.BaseEngine.message_l
 
 .. seealso::
 
-    The source code of the :class:`.VicunaEngine`, which uses the HuggingEngine.
+    The source code of the :class:`.LlamaEngine`, which uses the HuggingEngine.
 
 .. autoclass:: kani.engines.huggingface.base.HuggingEngine
     :noindex:
@@ -76,5 +76,5 @@ To make a PR to kani with a new engine implementation, follow these steps:
 
 1. Add your engine implementation to ``/kani/engines``.
 2. If your engine requires extra dependencies, add them as extras to ``requirements.txt`` and ``pyproject.toml``.
-3. Add your engine to the docs in ``/docs/shared/engine_table.rst`` and ``/docs/api_reference.rst``.
+3. Add your engine to the docs in ``/docs/shared/engine_table.rst`` and ``/docs/engine_reference.rst``.
 4. Open a PR!

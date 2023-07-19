@@ -36,32 +36,7 @@ AI Function
 
 Engines
 -------
-.. autoclass:: kani.engines.base.BaseEngine
-    :members:
-
-.. autoclass:: kani.engines.base.BaseCompletion
-    :members:
-
-.. autoclass:: kani.engines.base.Completion
-    :members:
-
-.. autoclass:: kani.engines.httpclient.BaseClient
-    :members:
-
-OpenAI
-^^^^^^
-.. autoclass:: kani.engines.openai.OpenAIEngine
-
-.. autoclass:: kani.engines.openai.client.OpenAIClient
-    :members:
-
-HuggingFace
-^^^^^^^^^^^
-.. autoclass:: kani.engines.huggingface.base.HuggingEngine
-    :members:
-
-.. autoclass:: kani.engines.huggingface.vicuna.VicunaEngine
-    :members:
+See :doc:`engine_reference`.
 
 Utilities
 ---------

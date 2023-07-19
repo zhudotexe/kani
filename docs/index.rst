@@ -77,4 +77,5 @@ Hands-on examples are available in the `kani repository <https://github.com/zhud
     engines
     advanced
     api_reference
+    engine_reference
     genindex

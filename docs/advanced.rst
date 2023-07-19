@@ -36,7 +36,9 @@ kani types with different sets of functions or engines, each capable of performi
     >>> chat_in_terminal(KaniWithAISummarization(engine))
     USER: Tell me about trains.
     AI: Trains are a mode of long-distance transport...
+
     [Multiple turns of conversation.]
+
     USER: Summarize the conversation.
     AI: Thinking (summarize_conversation)...
     AI: Our conversation began with a general overview about trains, their history, types,
@@ -113,8 +115,8 @@ like Wikipedia.
     AI: Thinking (wikipedia)...
     AI: Trains are a form of transportation that dates back to the early 19th century...
 
-Hosting kanis
--------------
+Hosting kani Online
+-------------------
 What if you want to host a web service that allows its users to chat with kani? In this example, we show how you can
 allow users to connect to a kani hosted on a webserver using a WebSocket connection. Since kani supports asyncio and
 is built with parallelization in mind, you can have as many people as you want connect at once!
