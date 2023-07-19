@@ -1,5 +1,6 @@
 import asyncio
 import inspect
+import logging
 from typing import AsyncIterable, Callable
 
 import cachetools
@@ -8,6 +9,8 @@ from .ai_function import AIFunction
 from .engines.base import BaseEngine
 from .exceptions import NoSuchFunction, WrappedCallException, FunctionCallException
 from .models import ChatMessage, FunctionCall, ChatRole
+
+log = logging.getLogger(__name__)
 
 
 class Kani:
@@ -224,15 +227,22 @@ class Kani:
         reversed_history = []
         always_len = sum(self.message_token_len(m) for m in self.always_include_messages) + self.engine.token_reserve
         remaining = self.max_context_size - (always_len + self.desired_response_tokens)
+        total_tokens = 0
         for idx in range(len(self.chat_history) - 1, self._oldest_idx - 1, -1):
             message = self.chat_history[idx]
             message_len = self.message_token_len(message)
             remaining -= message_len
             if remaining > 0:
+                total_tokens += message_len
                 reversed_history.append(message)
             else:
                 self._oldest_idx = idx + 1
                 break
+        log.debug(
+            f"get_truncated_chat_history() returned {always_len + total_tokens} tokens ({always_len} always) in"
+            f" {len(self.always_include_messages) + len(reversed_history)} messages"
+            f" ({len(self.always_include_messages)} always)"
+        )
         return self.always_include_messages + reversed_history[::-1]
 
     async def do_function_call(self, call: FunctionCall) -> bool:
@@ -247,6 +257,7 @@ class Kani:
         :raises NoSuchFunction: The requested function does not exist.
         :raises WrappedCallException: The function raised an exception.
         """
+        log.debug(f"Model requested call to {call.name} with data: {call.arguments!r}")
         # get func
         f = self.functions.get(call.name)
         if not f:
@@ -254,10 +265,12 @@ class Kani:
         # call it
         try:
             result = await f(**call.kwargs)
+            result_str = str(result)
         except Exception as e:
             raise WrappedCallException(f.auto_retry, e) from e
         # save the result to the chat history
-        self.chat_history.append(ChatMessage.function(f.name, str(result)))
+        log.debug(f"{f.name} responded with data: {result_str!r}")
+        self.chat_history.append(ChatMessage.function(f.name, result_str))
         # yield whose turn it is
         return f.after == ChatRole.ASSISTANT
 
@@ -278,12 +291,16 @@ class Kani:
         :param attempt: The attempt number for the current call (0-indexed).
         :returns: True if the model should retry the call; False if not.
         """
+        # log the exception here
+        log.debug(f"Call to {call.name} raised an exception: {err}")
         # tell the model what went wrong
         if isinstance(err, NoSuchFunction):
             self.chat_history.append(
                 ChatMessage.system(f"The function {err.name!r} is not defined. Only use the provided functions.")
             )
         else:
+            # but if it's a user function error, we want to raise it
+            log.error(f"Call to {call.name} raised an exception: {err}", exc_info=err)
             self.chat_history.append(ChatMessage.function(call.name, str(err)))
 
         return attempt < self.retry_attempts and err.retry

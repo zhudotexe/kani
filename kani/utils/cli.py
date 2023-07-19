@@ -1,5 +1,7 @@
 """The CLI utilities allow you to play with a chat session directly from a terminal."""
 import asyncio
+import logging
+import os
 
 from kani.kani import Kani
 from kani.models import ChatMessage
@@ -29,10 +31,14 @@ def chat_in_terminal(kani: Kani, rounds: int = 0):
 
     Useful for playing with kani, quick prompt engineering, or demoing the library.
 
+    If the environment variable ``KANI_DEBUG`` is set, debug logging will be enabled.
+
     .. warning::
 
         This function is only a development utility and should not be used in production.
 
     :param rounds: The number of chat rounds to play (defaults to 0 for infinite).
     """
+    if os.getenv("KANI_DEBUG") is not None:
+        logging.basicConfig(level=logging.DEBUG)
     asyncio.run(_chat_in_terminal(kani, rounds))
