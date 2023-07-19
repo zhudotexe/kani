@@ -32,15 +32,16 @@ class WikipediaRetrievalKani(Kani):
         title: Annotated[str, AIParam(desc='The article title on Wikipedia, e.g. "Train_station".')],
     ):
         """Get additional information about a topic from Wikipedia."""
-        # https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=Train&explaintext=1
+        # https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=Train&explaintext=1&formatversion=2
         resp = await self.wikipedia_client.get(
             "/",
             params={
                 "action": "query",
                 "format": "json",
-                "props": "extracts",
+                "prop": "extracts",
                 "titles": title,
                 "explaintext": 1,
+                "formatversion": 2,
             },
         )
         page = resp["query"]["pages"][0]

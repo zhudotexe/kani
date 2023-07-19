@@ -88,9 +88,10 @@ like Wikipedia.
                 params={
                     "action": "query",
                     "format": "json",
-                    "props": "extracts",
+                    "prop": "extracts",
                     "titles": title,
                     "explaintext": 1,
+                    "formatversion": 2,
                 },
             )
             page = resp["query"]["pages"][0]
