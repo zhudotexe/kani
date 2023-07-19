@@ -11,7 +11,7 @@ try:
 except ImportError:
     raise MissingModelDependencies(
         'The HuggingEngine requires extra dependencies. Please install kani with "pip install kani[huggingface]". '
-        'You will also need to install PyTorch manually.'
+        "You will also need to install PyTorch manually."
     ) from None
 
 
@@ -27,6 +27,7 @@ class HuggingEngine(BaseEngine, abc.ABC):
         self,
         model_id: str,
         max_context_size: int,
+        use_auth_token=None,
         device: str | None = None,
         tokenizer_kwargs: dict = None,
         model_load_kwargs: dict = None,
@@ -35,6 +36,7 @@ class HuggingEngine(BaseEngine, abc.ABC):
         """
         :param model_id: The ID of the model to load from HuggingFace.
         :param max_context_size: The context size of the model.
+        :param use_auth_token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
         :param device: The hardware device to use. If not specified, uses CUDA if available; otherwise uses CPU.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
@@ -44,6 +46,10 @@ class HuggingEngine(BaseEngine, abc.ABC):
             tokenizer_kwargs = {}
         if model_load_kwargs is None:
             model_load_kwargs = {}
+
+        tokenizer_kwargs.setdefault("use_auth_token", use_auth_token)
+        model_load_kwargs.setdefault("use_auth_token", use_auth_token)
+
         self.model_id = model_id
         self.max_context_size = max_context_size
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
@@ -56,8 +62,11 @@ class HuggingEngine(BaseEngine, abc.ABC):
         self.model.to(device)
 
     @abc.abstractmethod
-    def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
-        """Given the list of messages from kani, build a single string representing the prompt for the model."""
+    def build_prompt(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
+    ) -> str | torch.Tensor:
+        """Given the list of messages from kani, build either a single string representing the prompt for the model,
+        or build the token tensor."""
         raise NotImplementedError
 
     async def predict(
@@ -73,10 +82,16 @@ class HuggingEngine(BaseEngine, abc.ABC):
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
         prompt = self.build_prompt(messages, functions)
-        # prompt str to tokens
-        tokenized = self.tokenizer(prompt, return_tensors="pt", return_length=True)
-        input_len = int(tokenized.length)
-        input_toks = tokenized.input_ids
+        if isinstance(prompt, str):
+            # prompt str to tokens
+            tokenized = self.tokenizer(prompt, return_tensors="pt", return_length=True)
+            input_len = int(tokenized.length)
+            input_toks = tokenized.input_ids
+        elif isinstance(prompt, torch.Tensor):
+            input_toks = prompt
+            input_len = len(input_toks[0])
+        else:
+            raise TypeError("build_prompt should either return a str or a Tensor.")
         # move the input tensor to the right device
         if input_toks.device.type != self.device:
             input_toks = input_toks.to(self.device)

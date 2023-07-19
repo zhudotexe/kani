@@ -43,6 +43,7 @@ add_module_names = False
 nitpicky = True
 nitpick_ignore_regex = [
     (r"py:class", r"aiohttp\..*"),  # aiohttp intersphinx is borked
+    (r"py:class", r"torch\..*"),  # idk if torch has intersphinx
     (r"py:class", r"kani\.engines\.openai\.models\..*"),  # internal models are just pydantic models of the oai api
 ]
 
