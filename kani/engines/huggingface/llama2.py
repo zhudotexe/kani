@@ -11,7 +11,7 @@ try:
 except ImportError:
     raise MissingModelDependencies(
         'The LlamaEngine requires extra dependencies. Please install kani with "pip install'
-        " 'kani[huggingface,llama]'\". You will also need to install PyTorch manually."
+        ' \'kani[huggingface,llama]\'\". You will also need to install PyTorch manually.'
     ) from None
 
 B_INST, E_INST = "[INST]", "[/INST]"
@@ -47,10 +47,6 @@ class LlamaEngine(HuggingEngine):
         engine = LlamaEngine("meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)
         ai = Kani(engine)
     """
-
-    # all prompts start with a hidden <s> token and ASSISTANT:
-    token_reserve = 7
-    """The Vicuna prompt starts with a hidden <s> token and "ASSISTANT:", which uses 7 tokens."""
 
     def __init__(self, model_id: str = "meta-llama/Llama-2-7b-chat-hf", *args, strict=False, **kwargs):
         """
@@ -115,9 +111,9 @@ class LlamaEngine(HuggingEngine):
         # https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L212
         if message.role == ChatRole.USER:
             # <s> [INST] {} [/INST] -> 7
-            return self.tokenizer(message.content, return_length=True).length + 7
+            return self.tokenizer(message.content, return_length=True).length[0] + 7
         elif message.role == ChatRole.ASSISTANT:
             # {} </s> -> 2
-            return self.tokenizer(f" {message.content} ", return_length=True).length + 2
-        # <<SYS>>\n{}\n<</SYS>>\n\n -> 13
-        return self.tokenizer(message.content, return_length=True).length + 13
+            return self.tokenizer(f" {message.content} ", return_length=True).length[0] + 2
+        # <s> [INST] <<SYS>>\n{}\n<</SYS>>\n\n [/INST] -> 20
+        return self.tokenizer(message.content, return_length=True).length[0] + 20
