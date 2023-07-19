@@ -45,6 +45,9 @@ Engines
 .. autoclass:: kani.engines.base.Completion
     :members:
 
+.. autoclass:: kani.engines.httpclient.BaseClient
+    :members:
+
 OpenAI
 ^^^^^^
 .. autoclass:: kani.engines.openai.OpenAIEngine

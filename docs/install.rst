@@ -24,8 +24,6 @@ should use to install its dependencies.
     Want to use a different model with kani? Check out :doc:`engines` for details on how to implement the common
     Engine interface and use kani with any LM.
 
-    kani is OSS and |:heart:| PRs with engine implementations for the latest models.
-
 Installing on Conda
 -------------------
 You may need to install pip in your conda environment first:

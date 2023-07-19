@@ -10,7 +10,7 @@ try:
 except ImportError:
     raise MissingModelDependencies(
         'The VicunaEngine requires extra dependencies. Please install kani with "pip install'
-        ' \'kani[huggingface,llama]\'". You will also need to install PyTorch manually.'
+        ' \'kani[huggingface,llama1]\'". You will also need to install PyTorch manually.'
     ) from None
 
 try:
@@ -22,7 +22,7 @@ except ImportError:
 
 
 class VicunaEngine(HuggingEngine):
-    """Implementation of Vicuna using huggingface transformers.
+    """Implementation of Vicuna (a LLaMA v1 fine-tune) using huggingface transformers.
 
     You may also use the 13b, 33b, or other LLaMA models that use the Vicuna prompt by passing the HuggingFace model
     ID to the initializer.

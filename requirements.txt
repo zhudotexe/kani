@@ -5,8 +5,8 @@ pydantic>=2.0.0,<3.0.0
 # huggingface
 transformers>=4.0.0,<5.0.0;extra == 'huggingface'
 
-# llama
-sentencepiece~=0.1.99;extra == 'llama'
+# llama1
+sentencepiece~=0.1.99;extra == 'llama1'
 
 # openai
 tiktoken~=0.4.0;extra == 'openai'

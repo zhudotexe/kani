@@ -32,7 +32,7 @@ huggingface = [
     "transformers>=4.0.0,<5.0.0",
 ]
 
-llama = [
+llama1 = [
     "sentencepiece~=0.1.99",
 ]
 

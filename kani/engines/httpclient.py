@@ -7,10 +7,17 @@ from ..exceptions import HTTPStatusException, HTTPException, HTTPTimeout
 
 
 class BaseClient(abc.ABC):
-    SERVICE_BASE: str = ...
+    """aiohttp-based HTTP client to help implement HTTP-based engines."""
+
+    SERVICE_BASE: str
+    """The base route of the HTTP API."""
+
     logger: logging.Logger
 
     def __init__(self, http: aiohttp.ClientSession = None):
+        """
+        :param http: The :class:`aiohttp.ClientSession` to use; if not provided, creates a new session.
+        """
         self.http = http
 
     def __init_subclass__(cls, **kwargs):
@@ -19,6 +26,15 @@ class BaseClient(abc.ABC):
         cls.logger = logging.getLogger(cls.__module__)
 
     async def request(self, method: str, route: str, response_as_text=False, **kwargs):
+        """Makes an HTTP request to the given route (relative to the base route).
+
+        :param method: The HTTP method to use (e.g. 'GET', 'POST').
+        :param route: The route to make the request to (relative to the ``SERVICE_BASE``).
+        :param response_as_text: If True, return the response's content as a string; otherwise decodes it as JSON.
+        :raises HTTPStatusException: The request returned a non-2xx response.
+        :raises HTTPTimeout: The request timed out.
+        :raises HTTPException: The response could not be deserialized.
+        """
         if self.http is None:
             self.http = aiohttp.ClientSession()
         try:
@@ -48,10 +64,13 @@ class BaseClient(abc.ABC):
         return data
 
     async def get(self, route: str, **kwargs):
+        """Convenience method; equivalent to ``self.request("GET", route, **kwargs)``."""
         return await self.request("GET", route, **kwargs)
 
     async def post(self, route: str, **kwargs):
+        """Convenience method; equivalent to ``self.request("POST", route, **kwargs)``."""
         return await self.request("POST", route, **kwargs)
 
     async def close(self):
+        """Close the underlying aiohttp session."""
         await self.http.close()
