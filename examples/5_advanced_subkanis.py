@@ -9,7 +9,7 @@ to the parent kani.
 import os
 
 from kani import Kani, chat_in_terminal, ai_function
-from kani.engines.openai import OpenAIEngine
+from kani.engines.openai import OpenAIEngine, OpenAIClient
 
 api_key = os.getenv("OPENAI_API_KEY")
 
@@ -18,14 +18,19 @@ long_context_model = "gpt-3.5-turbo-16k"
 
 
 class KaniWithAISummarization(Kani):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # save a single client here so we can reuse it across multiple calls
+        self.openai_client = OpenAIClient(api_key)
+
     @ai_function()
     async def summarize_conversation(self):
         """Get the summary of the conversation so far."""
         # in this AI Function, we can spawn a sub-kani with a model that can handle
         # longer contexts, since the conversation may be longer than the fast model's
         # context window
-        long_context_engine = OpenAIEngine(api_key, long_context_model)
-        # copy the parent's chat history to the child, except the last user message
+        long_context_engine = OpenAIEngine(client=self.openai_client, model=long_context_model)
+        # first, copy the parent's chat history to the child, except the last user message
         # and the function call ([:-2])
         sub_kani = Kani(long_context_engine, chat_history=self.chat_history[:-2])
         # then we ask it to summarize the whole thing, and return the result to the parent kani
