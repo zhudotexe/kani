@@ -83,7 +83,10 @@ class OpenAIEngine(BaseEngine):
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> ChatCompletion:
-        function_spec = [FunctionSpec(name=f.name, description=f.desc, parameters=f.json_schema) for f in functions]
+        if functions:
+            function_spec = [FunctionSpec(name=f.name, description=f.desc, parameters=f.json_schema) for f in functions]
+        else:
+            function_spec = None
         completion = await self.client.create_chat_completion(
             model=self.model, messages=messages, functions=function_spec, **self.hyperparams, **hyperparams
         )
