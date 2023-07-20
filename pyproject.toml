@@ -8,7 +8,7 @@ version = "0.0.1"
 authors = [
     { name = "Andrew Zhu", email = "andrew@zhu.codes" },
 ]
-description = "kani (カニ) is a lightweight but high-level harness for chat-based language models with tool usage."
+description = "kani (カニ) is a lightweight and highly hackable harness for chat-based language models with tool usage/function calling."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
