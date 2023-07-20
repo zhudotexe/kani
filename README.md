@@ -30,7 +30,8 @@ developers alike.
 
 kani requires Python 3.10 or above.
 
-First, install the library. In this quickstart, we'll use the OpenAI engine, though kani is model-agnostic.
+First, install the library. In this quickstart, we'll use the OpenAI engine, though kani
+is [model-agnostic](https://kani.readthedocs.io/en/latest/engines.html).
 
 ```shell
 $ pip install "kani[openai]"
@@ -63,7 +64,9 @@ chat_in_terminal(ai)
 kani makes the time to set up a working chat model short, while offering the programmer deep customizability over
 every prompt, function call, and even the underlying language model.
 
-To learn more about how to customize kani with your own prompt wrappers, function calling, and
+To learn more about how
+to [customize kani with your own prompt wrappers](https://kani.readthedocs.io/en/latest/customization.html),
+[function calling](https://kani.readthedocs.io/en/latest/function_calling.html), and
 more, [read the docs!](http://kani.readthedocs.io/)
 
 Or take a look at the hands-on examples [in this repo](https://github.com/zhudotexe/kani/tree/main/examples).

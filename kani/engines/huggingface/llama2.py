@@ -44,7 +44,7 @@ class LlamaEngine(HuggingEngine):
 
     .. code-block:: python
 
-        engine = LlamaEngine("meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)
+        engine = LlamaEngine("meta-llama/Llama-2-7b-chat-hf", use_auth_token=True, strict=True)
         ai = Kani(engine)
     """
 
