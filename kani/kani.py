@@ -9,6 +9,7 @@ from .ai_function import AIFunction
 from .engines.base import BaseEngine
 from .exceptions import NoSuchFunction, WrappedCallException, FunctionCallException
 from .models import ChatMessage, FunctionCall, ChatRole
+from .utils.typing import PathLike, SavedKani
 
 log = logging.getLogger(__name__)
 
@@ -78,9 +79,13 @@ class Kani:
         self.system_prompt = system_prompt.strip() if system_prompt else None
         self.desired_response_tokens = desired_response_tokens
         self.max_context_size = engine.max_context_size
-        self.always_include_messages = ([ChatMessage.system(self.system_prompt)] if system_prompt else []) + (
-            always_include_messages or []
-        )
+
+        self.always_include_messages: list[ChatMessage] = (
+            [ChatMessage.system(self.system_prompt)] if system_prompt else []
+        ) + (always_include_messages or [])
+        """Chat messages that are always included as a prefix in the model's prompt. Includes the system message, if
+        supplied."""
+
         self.chat_history: list[ChatMessage] = chat_history or []
         """All messages in the current chat state, not including system or always include messages."""
 
@@ -304,3 +309,26 @@ class Kani:
             self.chat_history.append(ChatMessage.function(call.name, str(err)))
 
         return attempt < self.retry_attempts and err.retry
+
+    # ==== utility methods ====
+    def save(self, fp: PathLike, **kwargs):
+        """Save the chat state of this kani to a JSON file. This will overwrite the file if it exists!
+
+        :param fp: The path to the file to save.
+        :param kwargs: Additional arguments to pass to Pydantic's ``model_dump_json``.
+        """
+        data = SavedKani(always_include_messages=self.always_include_messages, chat_history=self.chat_history)
+        with open(fp, "w") as f:
+            f.write(data.model_dump_json(**kwargs))
+
+    def load(self, fp: PathLike, **kwargs):
+        """Load chat state from a JSON file into this kani. This will overwrite any existing chat state!
+
+        :param fp: The path to the file containing the chat state.
+        :param kwargs: Additional arguments to pass to Pydantic's ``model_validate_json``.
+        """
+        with open(fp) as f:
+            data = f.read()
+        state = SavedKani.model_validate_json(data, **kwargs)
+        self.always_include_messages = state.always_include_messages
+        self.chat_history = state.chat_history

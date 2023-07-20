@@ -130,6 +130,26 @@ You may even modify the chat history (i.e. append or delete ChatMessages) to cha
         ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
     ]
 
+Saving & Loading Chats
+----------------------
+You can save or load a kani's chat state using :meth:`.Kani.save` and :meth:`.Kani.load`. This will dump the state to
+a specified JSON file, which you can load into a later kani instance:
+
+.. automethod:: kani.Kani.save
+    :noindex:
+
+.. automethod:: kani.Kani.load
+    :noindex:
+
+If you'd like more manual control over how you store chat state, there are two attributes you need to save:
+:attr:`.Kani.always_include_messages` and :attr:`.Kani.chat_history` (both lists of :class:`.ChatMessage`\ ).
+
+These are `pydantic <https://docs.pydantic.dev/latest/usage/serialization/>`_ models, which you can save and load using
+``ChatMessage.model_dump()`` and ``ChatMessage.model_validate()``.
+
+You could, for example, save the chat state to a database and load it when necessary. A common pattern is also to save
+only the ``chat_history`` and use ``always_include_messages`` as an application-specific prompt.
+
 Next Steps
 ----------
 In the next section, we'll look at subclassing :class:`.Kani` in order to supply functions to the language model.
