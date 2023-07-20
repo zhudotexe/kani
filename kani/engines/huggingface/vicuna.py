@@ -29,6 +29,8 @@ class VicunaEngine(HuggingEngine):
 
     .. seealso:: https://huggingface.co/lmsys/vicuna-7b-v1.3
 
+    .. tip:: See :ref:`4b_quant` for information about loading a quantized model for lower memory usage.
+
     .. code-block:: python
 
         engine = VicunaEngine("lmsys/vicuna-7b-v1.3")

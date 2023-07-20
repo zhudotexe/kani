@@ -42,6 +42,8 @@ class LlamaEngine(HuggingEngine):
 
     .. seealso:: https://huggingface.co/meta-llama/Llama-2-7b-chat-hf
 
+    .. tip:: See :ref:`4b_quant` for information about loading a quantized model for lower memory usage.
+
     .. code-block:: python
 
         engine = LlamaEngine("meta-llama/Llama-2-7b-chat-hf", use_auth_token=True, strict=True)

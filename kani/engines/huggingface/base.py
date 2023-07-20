@@ -21,6 +21,8 @@ class HuggingEngine(BaseEngine, abc.ABC):
     This class implements the main decoding logic for any HuggingFace model based on a pretrained
     ``AutoModelForCausalLM``. To implement a new HuggingFace model, just implement :meth:`build_prompt` and
     :meth:`~.BaseEngine.message_len` for the specified model.
+
+    .. tip:: See :ref:`4b_quant` for information about loading a quantized model for lower memory usage.
     """
 
     def __init__(
