@@ -2,7 +2,7 @@
 
 [![Test Package](https://github.com/zhudotexe/kani/actions/workflows/pytest.yml/badge.svg)](https://github.com/zhudotexe/kani/actions/workflows/pytest.yml)
 [![Documentation Status](https://readthedocs.org/projects/kani/badge/?version=latest)](https://kani.readthedocs.io/en/latest/?badge=latest)
-![PyPI](https://img.shields.io/pypi/v/kani)
+[![PyPI](https://img.shields.io/pypi/v/kani)](https://pypi.org/project/kani/)
 
 
 kani (カニ) is a lightweight and highly hackable harness for chat-based language models with tool usage/function calling.
