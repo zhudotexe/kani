@@ -10,7 +10,7 @@ In this section, we'll discuss how to implement your own engine to use any langu
 .. tip::
 
     Built an engine for a model kani doesn't support yet?
-    kani is OSS and |:heart:| PRs with engine implementations for the latest models.
+    kani is OSS and |:heart:| PRs with engine implementations for the latest models - see :doc:`contributing`.
 
 Implementing an Engine
 ----------------------
@@ -67,14 +67,3 @@ implement :meth:`~.HuggingEngine.build_prompt` and :meth:`~.BaseEngine.message_l
 
     .. automethod:: kani.engines.huggingface.base.HuggingEngine.message_len
         :noindex:
-
-Contributing to kani
---------------------
-If you've implemented an engine for a new model, we'd love to include it in kani!
-
-To make a PR to kani with a new engine implementation, follow these steps:
-
-1. Add your engine implementation to ``/kani/engines``.
-2. If your engine requires extra dependencies, add them as extras to ``requirements.txt`` and ``pyproject.toml``.
-3. Add your engine to the docs in ``/docs/shared/engine_table.rst`` and ``/docs/engine_reference.rst``.
-4. Open a PR!
