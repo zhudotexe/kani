@@ -27,3 +27,5 @@ python:
         - openai
         - llama
         - huggingface
+    - method: pip
+      path: torch

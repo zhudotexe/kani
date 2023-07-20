@@ -1,12 +1,14 @@
 # kani (カニ)
 
+[![Documentation Status](https://readthedocs.org/projects/kani/badge/?version=latest)](https://kani.readthedocs.io/en/latest/?badge=latest)
+
 kani (カニ) is a lightweight and highly hackable harness for chat-based language models with tool usage/function calling.
 
 Compared to other LM harnesses, kani is less opinionated and offers more fine-grained customizability
 over the parts of the control flow that matter, making it the perfect choice for NLP researchers, hobbyists, and
 developers alike.
 
-[//]: # (TODO: link to docs)
+[Read the docs on ReadTheDocs!](http://kani.readthedocs.io/)
 
 ## Features
 
@@ -61,11 +63,10 @@ chat_in_terminal(ai)
 kani makes the time to set up a working chat model short, while offering the programmer deep customizability over
 every prompt, function call, and even the underlying language model.
 
-To learn more about how to customize kani with your own prompt wrappers, function calling, and more, read the docs!
+To learn more about how to customize kani with your own prompt wrappers, function calling, and
+more, [read the docs!](http://kani.readthedocs.io/)
 
 Or take a look at the hands-on examples [in this repo](https://github.com/zhudotexe/kani/tree/main/examples).
-
-[//]: # (TODO: link to docs)
 
 <!--
 For developers:
