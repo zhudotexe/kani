@@ -117,6 +117,11 @@ class Kani:
             return self._message_tokens[message]
         except KeyError:
             mlen = self.engine.message_len(message)
+            if mlen > self.max_context_size:
+                log.warning(
+                    "The chat message's size is longer than the entire context window. It will never be included in a"
+                    f" prompt, nor any messages before it.\nContent: {message.content!r}"
+                )
             self._message_tokens[message] = mlen
             return mlen
 
