@@ -41,3 +41,5 @@ See :doc:`engine_reference`.
 Utilities
 ---------
 .. autofunction:: kani.chat_in_terminal
+
+.. autofunction:: kani.chat_in_terminal_async
