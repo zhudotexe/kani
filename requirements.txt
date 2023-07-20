@@ -2,14 +2,11 @@ aiohttp>=3.0.0,<4.0.0
 cachetools>=5.0.0,<6.0.0
 pydantic>=2.0.0,<3.0.0
 
-# huggingface
-transformers>=4.0.0,<5.0.0;extra == 'huggingface'
-
-# llama1
-sentencepiece~=0.1.99;extra == 'llama'
-
-# openai
-tiktoken~=0.4.0;extra == 'openai'
+# in development, we want to install all the extra deps so the docs generate correctly
+torch  # ;extra == 'huggingface'
+transformers>=4.0.0,<5.0.0  # ;extra == 'huggingface'
+sentencepiece~=0.1.99  # ;extra == 'llama'
+tiktoken~=0.4.0  # ;extra == 'openai'
 
 # dev
 black

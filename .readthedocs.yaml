@@ -21,11 +21,3 @@ sphinx:
 python:
   install:
     - requirements: requirements.txt
-    - method: pip
-      path: .
-      extra_requirements:
-        - openai
-        - llama
-        - huggingface
-    - method: pip
-      path: torch
