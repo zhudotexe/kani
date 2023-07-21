@@ -38,6 +38,11 @@ class FunctionCall(BaseModel):
         """The arguments to call the function with, with JSON decoded to a Python dict."""
         return json.loads(self.arguments)
 
+    @classmethod
+    def with_args(cls, name: str, **kwargs):
+        """Create a function call with the given arguments (e.g. for few-shot prompting)."""
+        return cls(name=name, arguments=json.dumps(kwargs))
+
 
 class ChatMessage(BaseModel):
     """Represents a message in the chat context."""
@@ -48,13 +53,13 @@ class ChatMessage(BaseModel):
     """Who said the message?"""
 
     content: str | None
-    """The content of the message. Can be None only if the message is a function call."""
+    """The content of the message. Can be None only if the message is a requested function call from the assistant."""
 
     name: str | None = None
     """The name of the user who sent the message, if set (user messages only)."""
 
     function_call: FunctionCall | None = None
-    """The function requested by the model (function messages only)."""
+    """The function requested by the model (assistant messages only)."""
 
     @classmethod
     def system(cls, content: str, **kwargs):
