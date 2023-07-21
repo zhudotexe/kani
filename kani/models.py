@@ -57,21 +57,21 @@ class ChatMessage(BaseModel):
     """The function requested by the model (function messages only)."""
 
     @classmethod
-    def system(cls, content: str):
+    def system(cls, content: str, **kwargs):
         """Create a new system message."""
-        return cls(role=ChatRole.SYSTEM, content=content)
+        return cls(role=ChatRole.SYSTEM, content=content, **kwargs)
 
     @classmethod
-    def user(cls, content: str):
+    def user(cls, content: str, **kwargs):
         """Create a new user message."""
-        return cls(role=ChatRole.USER, content=content)
+        return cls(role=ChatRole.USER, content=content, **kwargs)
 
     @classmethod
-    def assistant(cls, content: str):
+    def assistant(cls, content: str, **kwargs):
         """Create a new assistant message."""
-        return cls(role=ChatRole.ASSISTANT, content=content)
+        return cls(role=ChatRole.ASSISTANT, content=content, **kwargs)
 
     @classmethod
-    def function(cls, name: str, content: str):
+    def function(cls, name: str, content: str, **kwargs):
         """Create a new function message."""
-        return cls(role=ChatRole.FUNCTION, content=content, name=name)
+        return cls(role=ChatRole.FUNCTION, content=content, name=name, **kwargs)
