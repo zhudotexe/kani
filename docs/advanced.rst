@@ -237,4 +237,4 @@ These numbers represent the average of three runs on a consumer RTX 4070ti (12GB
 +--------------+----------------------+----------------------------------------+
 
 .. [#shared] Since the memory usage without fp4 enabled is larger than the VRAM size of my GPU, some weights were stored
-    in shared memory. This likely led to slower inference compared to storing all weights on a GPU.
+    in shared memory. This likely led to much slower inference compared to storing all weights on a GPU.
