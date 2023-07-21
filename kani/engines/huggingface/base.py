@@ -61,7 +61,8 @@ class HuggingEngine(BaseEngine, abc.ABC):
         if device is None:
             device = "cuda" if torch.has_cuda else "cpu"
         self.device = device
-        self.model.to(device)
+        if self.model.device.type != self.device:
+            self.model.to(device)
 
     @abc.abstractmethod
     def build_prompt(
