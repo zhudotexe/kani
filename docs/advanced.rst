@@ -201,6 +201,8 @@ After that, you'll need to install ``bitsandbytes`` and ``accelerate``:
 
     $ pip install bitsandbytes>=0.39.0 accelerate
 
+.. caution:: The ``bitsandbytes`` library is currently only UNIX-compatible.
+
 **Set Load Arguments**
 
 Then, you'll need to set the ``model_load_kwargs`` when initializing your model, and use the engine as normal! This
@@ -226,10 +228,13 @@ This table shows the effect of enabling fp4 quantization on GPU memory usage and
 
 These numbers represent the average of three runs on a consumer RTX 4070ti (12GB memory) with greedy sampling.
 
-+--------------+------------------+----------------+
-| fp4 Enabled? | GPU Memory Usage | Inference Time |
-+==============+==================+================+
-| No           |                  |                |
-+--------------+------------------+----------------+
-| Yes          |                  |                |
-+--------------+------------------+----------------+
++--------------+----------------------+----------------------------------------+
+| fp4 Enabled? | Memory Usage         | Inference Time (per token)             |
++==============+======================+========================================+
+| No           | 26.6GB               | 1215.6 ms                              |
++--------------+----------------------+----------------------------------------+
+| Yes          | 5.0GB (5.32x less)   | 23.6 ms (51.5x speedup\ [#shared]_)    |
++--------------+----------------------+----------------------------------------+
+
+.. [#shared] Since the memory usage without fp4 enabled is larger than the VRAM size of my GPU, some weights were stored
+    in shared memory. This likely led to slower inference compared to storing all weights on a GPU.

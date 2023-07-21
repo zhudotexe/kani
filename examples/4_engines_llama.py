@@ -18,5 +18,6 @@ ai = Kani(
         " don't know the answer to a question, please don't share false information."
     ),
 )
+
 if __name__ == "__main__":
     chat_in_terminal(ai)
