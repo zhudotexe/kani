@@ -134,8 +134,8 @@ Next Actor
 After a function call returns, kani will hand control back to the LM to generate a response by default. If instead
 control should be given to the human (i.e. return from the chat round), set ``after=ChatRole.USER``.
 
-Example
--------
+Complete Example
+----------------
 Here's the full example of how you might implement a function to get weather that we built in the last few steps:
 
 .. code-block:: python
@@ -167,6 +167,58 @@ Here's the full example of how you might implement a function to get weather tha
 
     ai = MyKani(engine)
     chat_in_terminal(ai)
+
+Few-Shot Prompting
+------------------
+Just as in the last section, we can also few-shot prompt the model to give it examples of how it should call the
+functions we define.
+
+For example, here's how you might prompt the model to give the temperature in both Fahrenheit and Celsius without
+the user having to ask:
+
+.. code-block:: python
+
+    from kani import ChatMessage, FunctionCall
+    fewshot = [
+        ChatMessage.user("What's the weather in Philadelphia?"),
+        # first, the model should ask for the weather in fahrenheit
+        ChatMessage.assistant(
+            content=None,
+            function_call=FunctionCall.with_args(
+                "get_weather", location="Philadelphia, PA", unit="fahrenheit"
+            )
+        ),
+        # and we mock the function's response to the model
+        ChatMessage.function(
+            "get_weather",
+            "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit.",
+        ),
+        # repeat in celsius
+        ChatMessage.assistant(
+            content=None,
+            function_call=FunctionCall.with_args(
+                "get_weather", location="Philadelphia, PA", unit="celsius"
+            )
+        ),
+        ChatMessage.function(
+            "get_weather",
+            "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius.",
+        ),
+        # finally, give the result to the user
+        ChatMessage.assistant("It's currently 85F (29C) and partly cloudy in Philadelphia."),
+    ]
+    ai = MyKani(engine, chat_history=fewshot)
+
+.. code-block:: pycon
+
+    >>> chat_in_terminal(ai)
+    USER: What's the weather in San Francisco?
+    AI: Thinking (get_weather)...
+    AI: Thinking (get_weather)...
+    AI: It's currently 72F (22C) and sunny in San Francisco.
+
+Few-shot prompts combined with function calls are a powerful tool! For example, you can also specify how a model should
+retry functions, vary the parameters it gives, react to function feedback, and more.
 
 Dynamic Functions
 -----------------

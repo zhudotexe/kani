@@ -130,6 +130,29 @@ You may even modify the chat history (i.e. append or delete ChatMessages) to cha
         ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
     ]
 
+Few-Shot Prompting
+^^^^^^^^^^^^^^^^^^
+Few-shot prompting (AKA in-context learning) is the idea that language models can "learn" the task the user wants
+to accomplish through examples provided to it in its prompt.
+
+To few-shot prompt a language model with kani, you can initialize it with an existing chat history. In this example,
+we give the model a few-shot prompt in which it translates English to Japanese, and see that it continues to do so
+in the chat session despite never being explicitly prompted to do so.
+
+.. code-block:: pycon
+
+    >>> from kani import ChatMessage
+    >>> fewshot = [
+    ...     ChatMessage.user("thank you"),
+    ...     ChatMessage.assistant("arigato"),
+    ...     ChatMessage.user("good morning"),
+    ...     ChatMessage.assistant("ohayo"),
+    ... ]
+    >>> ai = Kani(engine, chat_history=fewshot)
+    >>> chat_in_terminal(ai, rounds=1)
+    USER: crab
+    ASSISTANT: kani
+
 Saving & Loading Chats
 ----------------------
 You can save or load a kani's chat state using :meth:`.Kani.save` and :meth:`.Kani.load`. This will dump the state to
