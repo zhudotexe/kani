@@ -30,8 +30,7 @@ async def chat_in_terminal_async(kani: Kani, rounds: int = 0, stopword: str = No
     except KeyboardInterrupt:
         pass
     finally:
-        if not rounds:
-            await kani.engine.close()
+        await kani.engine.close()
 
 
 def chat_in_terminal(kani: Kani, rounds: int = 0, stopword: str = None):
@@ -49,8 +48,10 @@ def chat_in_terminal(kani: Kani, rounds: int = 0, stopword: str = None):
     :param stopword: Break out of the chat loop if the user sends this message.
     """
     try:
-        asyncio.run(chat_in_terminal_async(kani, rounds=rounds, stopword=stopword))
+        asyncio.get_running_loop()
     except RuntimeError:
+        asyncio.run(chat_in_terminal_async(kani, rounds=rounds, stopword=stopword))
+    else:
         print(
             f"WARNING: It looks like you're in an environment with a running asyncio loop (e.g. Google Colab).\nYou"
             f" should use `await chat_in_terminal_async(...)` instead."

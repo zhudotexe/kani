@@ -73,4 +73,7 @@ class BaseClient(abc.ABC):
 
     async def close(self):
         """Close the underlying aiohttp session."""
+        if self.http is None:
+            return
         await self.http.close()
+        self.http = None  # this allows us to reuse the client after it has been closed

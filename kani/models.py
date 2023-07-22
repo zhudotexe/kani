@@ -72,7 +72,7 @@ class ChatMessage(BaseModel):
         return cls(role=ChatRole.USER, content=content, **kwargs)
 
     @classmethod
-    def assistant(cls, content: str, **kwargs):
+    def assistant(cls, content: str | None, **kwargs):
         """Create a new assistant message."""
         return cls(role=ChatRole.ASSISTANT, content=content, **kwargs)
 
