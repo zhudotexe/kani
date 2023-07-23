@@ -40,6 +40,10 @@ openai = [
     "tiktoken~=0.4.0",
 ]
 
+ctransformers = [
+    "ctransformers~=0.2.14",
+]
+
 [project.urls]
 "Homepage" = "https://github.com/zhudotexe/kani"
 "Bug Tracker" = "https://github.com/zhudotexe/kani/issues"
