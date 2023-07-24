@@ -8,6 +8,7 @@ from .base import CTransformersEngine
 B_INST, E_INST = "[INST]", "[/INST]"
 B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
 
+
 class LlamaCTransformersEngine(CTransformersEngine):
     """Implementation of LLaMA v2 using huggingface transformers.
 
@@ -25,7 +26,13 @@ class LlamaCTransformersEngine(CTransformersEngine):
         ai = Kani(engine)
     """
 
-    def __init__(self, model_id: str = "TheBloke/Llama-2-7B-Chat-GGML", model_file: str = "llama-2-7b-chat.ggmlv3.q5_K_M.bin", *args, **kwargs):
+    def __init__(
+        self,
+        model_id: str = "TheBloke/Llama-2-7B-Chat-GGML",
+        model_file: str = "llama-2-7b-chat.ggmlv3.q5_K_M.bin",
+        *args,
+        **kwargs,
+    ):
         """
         :param model_id: The ID of the model to load from HuggingFace.
         :param model_file: The file of the model to load from HuggingFace repo or locally.

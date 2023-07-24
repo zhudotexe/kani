@@ -12,6 +12,7 @@ except ImportError as e:
         'The CTransformersEngine requires extra dependencies. Please install kani with "pip install kani[ctransformers]".'
     ) from None
 
+
 class CTransformersEngine(BaseEngine, abc.ABC):
     """CTransformers Engine
 
@@ -45,9 +46,7 @@ class CTransformersEngine(BaseEngine, abc.ABC):
         self.hyperparams = hyperparams
 
     @abc.abstractmethod
-    def build_prompt(
-        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
-    ) -> str:
+    def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
         """Given the list of messages from kani, build either a single string representing the prompt for the model,
         or build the token tensor."""
         raise NotImplementedError
@@ -68,7 +67,7 @@ class CTransformersEngine(BaseEngine, abc.ABC):
         tokens = prompt
         # tokens = self.model.tokenize(prompt)
 
-        content = ''.join(self.model.detokenize(token) for token in self.model.generate(tokens, **hyperparams))
+        content = "".join(self.model.detokenize(token) for token in self.model.generate(tokens, **hyperparams))
 
         input_len = len(tokens)
         output_len = len(content)
