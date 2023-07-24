@@ -10,10 +10,16 @@ B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
 
 
 class LlamaCTransformersEngine(CTransformersEngine):
-    """Implementation of LLaMA v2 using huggingface transformers.
+    """Implementation of LLaMA v2 using ctransformers.
 
-    You may also use the 13b, 70b, or other LLaMA models that use the LLaMA prompt by passing the HuggingFace model
-    ID to the initializer.
+    You may also use the 7b or 13b models that use the LLaMA prompt.
+    These models are converted from the original models in
+    pytorch format to GGML format and can be found on huggingface.
+    You can also download these models locally and pass the local path as an argument to the class.
+
+    The huggingface GGML repos generally have multiple models in them (of different quantization levels),
+    so you can choose the model depending inference speed, memory, and quality tradeoffs depending on the quantization performed on the model.
+    A specific GGML model can be used from huggingface by passing the model id and the model file to `LlamaCTransformersEngine`
 
     Model IDs:
 
