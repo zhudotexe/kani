@@ -9,7 +9,8 @@ try:
     from ctransformers import AutoModelForCausalLM
 except ImportError as e:
     raise MissingModelDependencies(
-        'The CTransformersEngine requires extra dependencies. Please install kani with "pip install kani[ctransformers]".'
+        'The CTransformersEngine requires extra dependencies. Please install kani with "pip install'
+        ' kani[ctransformers]".'
     ) from None
 
 

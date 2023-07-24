@@ -28,7 +28,7 @@ class OpenAIClient(BaseClient):
             except (HTTPStatusException, HTTPTimeout) as e:
                 if (i + 1) == retry:
                     raise
-                retry_sec = 2 ** i
+                retry_sec = 2**i
                 self.logger.warning(f"OpenAI returned {e}, retrying in {retry_sec} sec...")
                 await asyncio.sleep(retry_sec)
         raise RuntimeError("ran out of retries but no error encountered, halp")
