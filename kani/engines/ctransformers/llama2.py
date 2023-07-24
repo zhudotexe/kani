@@ -20,6 +20,7 @@ class LlamaCTransformersEngine(CTransformersEngine):
     The huggingface GGML repos generally have multiple models in them (of different quantization levels),
     so you can choose the model depending inference speed, memory, and quality tradeoffs depending on the quantization performed on the model.
     A specific GGML model can be used from huggingface by passing the model id and the model file to `LlamaCTransformersEngine`
+    and the model will be automatically downloaded and placed locally.
 
     Model IDs:
 
