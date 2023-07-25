@@ -72,9 +72,9 @@ class OpenAIEngine(BaseEngine):
             self.tokenizer = tiktoken.get_encoding("cl100k_base")
 
     def message_len(self, message: ChatMessage) -> int:
-        mlen = 0
+        mlen = 5  # ChatML = 4, role = 1
         if message.content:
-            mlen += len(self.tokenizer.encode(message.content)) + 5  # ChatML = 4, role = 1
+            mlen += len(self.tokenizer.encode(message.content))
         if message.name:
             mlen += len(self.tokenizer.encode(message.name))
         if message.function_call:
