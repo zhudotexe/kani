@@ -21,4 +21,5 @@ jobs:
           pip install -r requirements.txt
 
       - name: Build docs
-        run: sphinx-build -T -E -W --keep-going -b html "./docs" "./docs/_build"
+        working-directory: ./docs
+        run: sphinx-build -T -E -W --keep-going -b html "." "_build"
