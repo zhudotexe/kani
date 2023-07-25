@@ -13,10 +13,12 @@ Common Models
 
 .. autoclass:: kani.models.FunctionCall
     :members:
+    :exclude-members: model_config, model_fields
     :class-doc-from: class
 
 .. autoclass:: kani.models.ChatMessage
     :members:
+    :exclude-members: model_config, model_fields
     :class-doc-from: class
 
 Exceptions
