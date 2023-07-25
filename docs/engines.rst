@@ -69,7 +69,7 @@ implement :meth:`~.HuggingEngine.build_prompt` and :meth:`~.BaseEngine.message_l
         :noindex:
 
 CTransformers
-------------
+-------------
 If your language model backend is available with GGML, kani includes a base engine that implements 
 a prediction pipeline.
 

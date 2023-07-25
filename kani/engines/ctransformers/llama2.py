@@ -1,7 +1,6 @@
 import warnings
 
 from kani.ai_function import AIFunction
-from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from .base import CTransformersEngine
 
@@ -18,9 +17,10 @@ class LlamaCTransformersEngine(CTransformersEngine):
     You can also download these models locally and pass the local path as an argument to the class.
 
     The huggingface GGML repos generally have multiple models in them (of different quantization levels),
-    so you can choose the model depending inference speed, memory, and quality tradeoffs depending on the quantization performed on the model.
-    A specific GGML model can be used from huggingface by passing the model id and the model file to `LlamaCTransformersEngine`
-    and the model will be automatically downloaded and placed locally.
+    so you can choose the model depending inference speed, memory, and quality tradeoffs depending on the quantization
+    performed on the model.
+    A specific GGML model can be used from huggingface by passing the model id and the model file to
+    `LlamaCTransformersEngine` and the model will be automatically downloaded and placed locally.
 
     Model IDs:
 
@@ -31,6 +31,8 @@ class LlamaCTransformersEngine(CTransformersEngine):
 
         engine = LlamaCTransformersEngine("TheBloke/Llama-2-7B-Chat-GGML", model_file="llama-2-7b-chat.ggmlv3.q5_K_M.bin")
         ai = Kani(engine)
+
+    .. tip:: The LlamaCTransformersEngine is a drop-in replacement for the :class:`.LlamaEngine`.
     """
 
     def __init__(

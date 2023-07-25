@@ -36,9 +36,9 @@ Hugging Face
     :members:
 
 CTransformers
-------------
+-------------
 .. autoclass:: kani.engines.ctransformers.base.CTransformersEngine
     :members:
 
-.. autoclass:: kani.engines.ctransformers.base.LlamaCTransformersEngine
+.. autoclass:: kani.engines.ctransformers.llama2.LlamaCTransformersEngine
     :members:
