@@ -1,9 +1,8 @@
 import asyncio
 import inspect
 import logging
+import weakref
 from typing import AsyncIterable, Callable
-
-import cachetools
 
 from .ai_function import AIFunction
 from .engines.base import BaseEngine
@@ -109,7 +108,6 @@ class Kani:
 
         # cache
         self._oldest_idx = 0
-        self._message_tokens = cachetools.FIFOCache(256)
 
     def message_token_len(self, message: ChatMessage):
         """Returns the number of tokens used by a given message."""
@@ -124,6 +122,7 @@ class Kani:
                 )
             self._message_tokens[message] = mlen
             return mlen
+        self._message_tokens = weakref.WeakKeyDictionary()
 
     # === main entrypoints ===
     async def chat_round(self, query: str, **kwargs) -> ChatMessage:
