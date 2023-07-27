@@ -4,18 +4,18 @@ from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from .base import HuggingEngine
+from ..common import llama2_prompt
+from ..common.llama2_prompt import B_INST, E_INST, B_SYS, E_SYS
 
 try:
     import torch
+    from torch import tensor
     import sentencepiece
 except ImportError:
     raise MissingModelDependencies(
         'The LlamaEngine requires extra dependencies. Please install kani with "pip install'
         " 'kani[huggingface,llama]'\". You will also need to install PyTorch manually."
     ) from None
-
-B_INST, E_INST = "[INST]", "[/INST]"
-B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
 
 
 class LlamaEngine(HuggingEngine):
@@ -84,13 +84,13 @@ class LlamaEngine(HuggingEngine):
         dialog = [f"{B_SYS}{messages[0].content}{E_SYS}{messages[1].content}"] + [m.content for m in messages[2:]]
         dialog_tokens = sum(
             [
-                self.tokenizer.encode(f"{B_INST} {prompt} {E_INST} {answer} </s>")
+                self.tokenizer.encode(f"{B_INST} {prompt} {E_INST} {answer}") + [self.tokenizer.eos_token_id]
                 for prompt, answer in zip(dialog[::2], dialog[1::2])
             ],
             [],
         )
         dialog_tokens += self.tokenizer.encode(f"{B_INST} {dialog[-1]} {E_INST}")
-        return torch.tensor([dialog_tokens], dtype=torch.long)
+        return torch.tensor([dialog_tokens])
 
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> torch.Tensor:
         if functions:
@@ -99,15 +99,8 @@ class LlamaEngine(HuggingEngine):
             return self._build_prompt_strict(messages)
         # non-strict has to kind of just do its best
         # ganbatte, kani, ganbatte
-        prompt_parts = []
-        for message in messages:
-            if message.role == ChatRole.USER:
-                prompt_parts.append(f"<s> {B_INST} {message.content} {E_INST}")
-            elif message.role == ChatRole.ASSISTANT:
-                prompt_parts.append(f" {message.content} </s>")
-            else:
-                prompt_parts.append(f"{B_INST} {B_SYS}{message.content}{E_SYS} {E_INST}")
-        return self.tokenizer.encode("".join(prompt_parts), add_special_tokens=False, return_tensors="pt")
+        tokens = llama2_prompt.build(messages, tokenize=self.tokenizer.encode, eos_token_id=self.tokenizer.eos_token_id)
+        return tensor(tokens, device=self.device)
 
     def message_len(self, message: ChatMessage) -> int:
         # https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L212

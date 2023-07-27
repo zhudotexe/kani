@@ -47,7 +47,7 @@ class CTransformersEngine(BaseEngine, abc.ABC):
         self.hyperparams = hyperparams
 
     @abc.abstractmethod
-    def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
+    def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str | list[int]:
         """Given the list of messages from kani, build either a single string representing the prompt for the model,
         or build the token tensor."""
         raise NotImplementedError
@@ -65,12 +65,18 @@ class CTransformersEngine(BaseEngine, abc.ABC):
             https://github.com/marella/ctransformers#method-llmgenerate)
         """
         prompt = self.build_prompt(messages, functions)
-        tokens = prompt
-        # tokens = self.model.tokenize(prompt)
+        if isinstance(prompt, str):
+            # prompt str to tokens
+            input_toks = self.model.tokenize(prompt)
+            input_len = len(input_toks)
+        elif isinstance(prompt, list):
+            input_toks = prompt
+            input_len = len(input_toks)
+        else:
+            raise TypeError("build_prompt should either return a str or a list[int].")
 
-        content = "".join(self.model.detokenize(token) for token in self.model.generate(tokens, **hyperparams))
-
-        input_len = len(tokens)
-        output_len = len(content)
+        output_toks = list(self.model.generate(input_toks, **hyperparams))
+        output_len = len(output_toks)
+        content = self.model.detokenize(output_toks)
 
         return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=output_len)
