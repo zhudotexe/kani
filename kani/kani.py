@@ -265,7 +265,7 @@ class Kani:
             message = self.chat_history[idx]
             message_len = self.message_token_len(message)
             remaining -= message_len
-            if remaining > 0:
+            if remaining >= 0:
                 total_tokens += message_len
                 reversed_history.append(message)
             else:
