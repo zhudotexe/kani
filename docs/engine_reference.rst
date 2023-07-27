@@ -34,3 +34,11 @@ Hugging Face
 
 .. autoclass:: kani.engines.huggingface.vicuna.VicunaEngine
     :members:
+
+CTransformers
+-------------
+.. autoclass:: kani.engines.ctransformers.base.CTransformersEngine
+    :members:
+
+.. autoclass:: kani.engines.ctransformers.llama2.LlamaCTransformersEngine
+    :members:
