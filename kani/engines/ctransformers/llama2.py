@@ -3,7 +3,7 @@ import warnings
 from kani.ai_function import AIFunction
 from kani.models import ChatMessage, ChatRole
 from .base import CTransformersEngine
-from ..common import llama2_prompt
+from .. import llama2_prompt
 
 
 class LlamaCTransformersEngine(CTransformersEngine):

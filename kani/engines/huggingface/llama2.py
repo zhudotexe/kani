@@ -4,8 +4,8 @@ from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from .base import HuggingEngine
-from ..common import llama2_prompt
-from ..common.llama2_prompt import B_INST, E_INST, B_SYS, E_SYS
+from .. import llama2_prompt
+from ..llama2_prompt import B_INST, E_INST, B_SYS, E_SYS
 
 try:
     import torch
