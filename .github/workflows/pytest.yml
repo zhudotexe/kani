@@ -36,10 +36,5 @@ jobs:
           path: ~/.cache/huggingface/transformers
           key: ${{ runner.os }}-llamav2
 
-      - name: Install LLaMA dependencies
-        run: pip install accelerate bitsandbytes scipy
-
       - name: Run LLaMA tests
-        env:
-          HUGGING_FACE_HUB_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
         run: pytest -m llama
