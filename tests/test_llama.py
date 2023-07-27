@@ -1,0 +1,73 @@
+"""Run some tests using a real LLaMAv2 model."""
+import logging
+
+import pytest
+
+from kani import Kani, ChatMessage
+from kani.engines.huggingface.llama2 import LlamaEngine
+
+pytestmark = pytest.mark.llama
+
+
+@pytest.fixture(scope="module")
+def llama():
+    return LlamaEngine(
+        use_auth_token=True,
+        strict=True,
+        model_load_kwargs={
+            "device_map": "auto",
+            "load_in_4bit": True,
+        },
+    )
+
+
+@pytest.fixture()
+def create_kani(llama):
+    default_system_prompt = (
+        "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while"
+        " being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic,"
+        " dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive"
+        " in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why"
+        " instead of answering something not correct. If you don't know the answer to a question, please don't"
+        " share false information."
+    )
+
+    def _inner(system_prompt=default_system_prompt, **kwargs):
+        return Kani(llama, system_prompt=system_prompt, **kwargs)
+
+    return _inner
+
+
+@pytest.fixture(autouse=True, scope="module")
+def debug_logging():
+    log = logging.getLogger()
+    old_level = log.level
+    log.setLevel(logging.DEBUG)
+    yield
+    log.setLevel(old_level)
+
+
+async def test_llama(create_kani, gh_log):
+    """Do one round of conversation with LLaMA."""
+    ai = create_kani()
+    resp = await ai.chat_round_str("What are some cool things to do in Tokyo?")
+    gh_log.write("# LLaMA Basic\n\n```\n>>> What are some cool things to do in Tokyo?\n")
+    gh_log.write(resp)
+    gh_log.write("\n```\n\n")
+
+
+async def test_chatting_llamas(create_kani, gh_log):
+    """Two kanis chatting with each other for 5 rounds."""
+    tourist = create_kani(
+        "You are a tourist with plans to visit Tokyo.",
+        chat_history=[ChatMessage.assistant("What are some cool things to do in Tokyo?")],
+    )
+    guide = create_kani()
+
+    tourist_response = tourist.chat_history[-1].content
+    gh_log.write(f"# LLaMAs Visit Tokyo\n\n```\nTOURIST: {tourist_response}\n")
+    for _ in range(5):
+        guide_response = await guide.chat_round_str(tourist_response)
+        tourist_response = await tourist.chat_round_str(guide_response)
+        gh_log.write(f"GUIDE: {guide_response}\n\nTOURIST: {tourist_response}\n")
+    gh_log.write("```\n\n")
