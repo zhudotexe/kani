@@ -4,21 +4,14 @@ import logging
 import pytest
 
 from kani import Kani, ChatMessage
-from kani.engines.huggingface.llama2 import LlamaEngine
+from kani.engines.ctransformers.llama2 import LlamaCTransformersEngine
 
 pytestmark = pytest.mark.llama
 
 
 @pytest.fixture(scope="module")
 def llama():
-    return LlamaEngine(
-        use_auth_token=True,
-        strict=True,
-        model_load_kwargs={
-            "device_map": "auto",
-            "load_in_4bit": True,
-        },
-    )
+    return LlamaCTransformersEngine("TheBloke/Llama-2-7B-Chat-GGML", model_file="llama-2-7b-chat.ggmlv3.q4_K_S.bin")
 
 
 @pytest.fixture()
