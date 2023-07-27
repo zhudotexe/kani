@@ -11,6 +11,7 @@ tiktoken~=0.4.0  # ;extra == 'openai'
 black
 build
 pytest
+pytest-asyncio
 twine
 
 # docs

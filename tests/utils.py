@@ -1,3 +1,6 @@
+from kani import ChatMessage
+
+
 def dict_at_least(outer: dict, inner: dict) -> bool:
     """Does the outer dict contain at least all kvs from the inner dict (checking dicts recursively)?"""
     for k, v in inner.items():
@@ -12,3 +15,8 @@ def dict_at_least(outer: dict, inner: dict) -> bool:
         elif outer[k] != v:
             return False
     return True
+
+
+def flatten_chatmessages(msgs: list[ChatMessage], between: str = "") -> str:
+    """Return a string that is the concatenation of all contents of the chat messages."""
+    return between.join((m.content or "") for m in msgs)
