@@ -90,7 +90,7 @@ class LlamaEngine(HuggingEngine):
             [],
         )
         dialog_tokens += self.tokenizer.encode(f"{B_INST} {dialog[-1]} {E_INST}")
-        return torch.tensor([dialog_tokens])
+        return torch.tensor([dialog_tokens], device=self.device)
 
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> torch.Tensor:
         if functions:
@@ -100,7 +100,7 @@ class LlamaEngine(HuggingEngine):
         # non-strict has to kind of just do its best
         # ganbatte, kani, ganbatte
         tokens = llama2_prompt.build(messages, tokenize=self.tokenizer.encode, eos_token_id=self.tokenizer.eos_token_id)
-        return tensor(tokens, device=self.device)
+        return torch.tensor([tokens], device=self.device)
 
     def message_len(self, message: ChatMessage) -> int:
         # https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L212
