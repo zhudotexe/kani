@@ -77,6 +77,6 @@ class CTransformersEngine(BaseEngine, abc.ABC):
 
         output_toks = list(self.model.generate(input_toks, **hyperparams))
         output_len = len(output_toks)
-        content = self.model.detokenize(output_toks)
+        content = self.model.detokenize(output_toks).strip()
 
         return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=output_len)
