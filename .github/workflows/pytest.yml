@@ -2,9 +2,12 @@ name: Test Package
 
 on: [ push, pull_request ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,4 +28,16 @@ jobs:
           pip install -r requirements.txt
 
       - name: Test with pytest
-        run: pytest
+        run: pytest -m 'not llama'
+
+      - name: Cache LLaMA model
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/huggingface/transformers
+          key: ${{ runner.os }}-llamav2
+
+      - name: Setup HuggingFace token
+        run: echo "${{ secrets.HUGGINGFACE_TOKEN }}" > ~/.cache/huggingface/token
+
+      - name: Run LLaMA tests
+        run: pytest -m llama
