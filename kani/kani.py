@@ -5,12 +5,13 @@ import weakref
 from typing import AsyncIterable, Callable
 
 from .ai_function import AIFunction
-from .engines.base import BaseEngine
+from .engines.base import BaseEngine, BaseCompletion
 from .exceptions import NoSuchFunction, WrappedCallException, FunctionCallException
 from .models import ChatMessage, FunctionCall, ChatRole
 from .utils.typing import PathLike, SavedKani
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("kani")
+message_log = logging.getLogger("kani.messages")
 
 
 class Kani:
@@ -108,20 +109,6 @@ class Kani:
 
         # cache
         self._oldest_idx = 0
-
-    def message_token_len(self, message: ChatMessage):
-        """Returns the number of tokens used by a given message."""
-        try:
-            return self._message_tokens[message]
-        except KeyError:
-            mlen = self.engine.message_len(message)
-            if mlen > self.max_context_size:
-                log.warning(
-                    "The chat message's size is longer than the entire context window. It will never be included in a"
-                    f" prompt, nor any messages before it.\nContent: {message.content!r}"
-                )
-            self._message_tokens[message] = mlen
-            return mlen
         self._message_tokens = weakref.WeakKeyDictionary()
 
     # === main entrypoints ===
@@ -135,17 +122,12 @@ class Kani:
         :returns: The model's reply.
         """
         async with self.lock:
-            # get the user's chat input
+            # add the user's chat input to the state
             self.chat_history.append(ChatMessage.user(query.strip()))
 
-            # get the context
-            messages = await self.get_truncated_chat_history()
-
-            # get the model's output, save it to chat history
-            completion = await self.engine.predict(messages=messages, **kwargs)
-
+            # and get a completion
+            completion = await self.get_model_completion(include_functions=False, **kwargs)
             message = completion.message
-            self._message_tokens[message] = completion.completion_tokens or self.message_token_len(message)
             self.chat_history.append(message)
             return message
 
@@ -174,13 +156,8 @@ class Kani:
 
             while is_model_turn:
                 # do the model prediction
-                messages = await self.get_truncated_chat_history()
-                completion = await self.engine.predict(
-                    messages=messages, functions=list(self.functions.values()), **kwargs
-                )
-                # bookkeeping
+                completion = await self.get_model_completion(**kwargs)
                 message = completion.message
-                self._message_tokens[message] = completion.completion_tokens or self.message_token_len(message)
                 self.chat_history.append(message)
                 yield message
 
@@ -196,7 +173,7 @@ class Kani:
                     retry += 1
                     if not should_retry:
                         # disable function calling on the next go
-                        kwargs = {**kwargs, "function_call": "none"}
+                        kwargs = {**kwargs, "include_functions": False}
                     continue
                 else:
                     retry = 0
@@ -220,6 +197,53 @@ class Kani:
 
             if message.function_call and (fn_msg := function_call_formatter(message)):
                 yield fn_msg
+
+    # ==== helpers ====
+    def message_token_len(self, message: ChatMessage):
+        """Returns the number of tokens used by a given message."""
+        try:
+            return self._message_tokens[message]
+        except KeyError:
+            mlen = self.engine.message_len(message)
+            if mlen > self.max_context_size:
+                log.warning(
+                    "The chat message's size is longer than the entire context window. It will never be included in a"
+                    f" prompt, nor any messages before it.\nContent: {message.content!r}"
+                )
+            self._message_tokens[message] = mlen
+            return mlen
+
+    async def get_model_completion(self, include_functions: bool = True, **kwargs) -> BaseCompletion:
+        """Get the model's completion with the current chat state.
+
+        Compared to :meth:`chat_round` and :meth:`full_round`, this lower-level method does not save the model's reply
+        to the chat history or mutate the chat state; it is intended to help with logging or to repeat a call multiple
+        times.
+
+        :param include_functions: Whether to pass this kani's function definitions to the engine.
+        :param kwargs: Arguments to pass to the model engine.
+        """
+        # get the current chat state
+        messages = await self.get_truncated_chat_history()
+        # log it (message_log includes the number of messages sent and the last message)
+        n_messages = len(messages)
+        if n_messages == 0:
+            message_log.debug("[0]>>> [requested completion with no prompt]")
+        else:
+            message_log.debug(f"[{n_messages}]>>> {messages[-1]}")
+
+        # get the model's completion at the given state
+        if include_functions:
+            completion = await self.engine.predict(messages=messages, functions=list(self.functions.values()), **kwargs)
+        else:
+            completion = await self.engine.predict(messages=messages, **kwargs)
+
+        # cache its length (if the completion isn't saved to state, this weakrefs and gc's later)
+        message = completion.message
+        self._message_tokens[message] = completion.completion_tokens or self.message_token_len(message)
+        # and log it too
+        message_log.debug(f"<<< {message}")
+        return completion
 
     # ==== overridable methods ====
     async def get_truncated_chat_history(self) -> list[ChatMessage]:
