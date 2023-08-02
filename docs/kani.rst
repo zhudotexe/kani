@@ -126,7 +126,49 @@ You may even modify the chat history (i.e. append or delete ChatMessages) to cha
         ChatMessage(role=ChatRole.USER, content="Hello kani!"),
         ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
     ]
-    >>> await ai.get_truncated_chat_history()
+    >>> await ai.get_prompt()
+    # The system prompt is passed to the engine, but isn't part of chat_history
+    # - this will be useful later in advanced use cases.
+    [
+        ChatMessage(role=ChatRole.SYSTEM, content="You are a helpful assistant."),
+        ChatMessage(role=ChatRole.USER, content="Hello kani!"),
+        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
+    ]
+    >>> from kani import Kani, chat_in_terminal
+    >>> from kani.engines.openai import OpenAIEngine
+    >>> api_key = "sk-..."
+    >>> engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    >>> ai = Kani(engine, system_prompt="You are a helpful assistant.")
+    >>> chat_in_terminal(ai, rounds=1)
+    USER: Hello kani!
+    AI: Hello! How can I assist you today?
+    >>> ai.chat_history
+    [
+        ChatMessage(role=ChatRole.USER, content="Hello kani!"),
+        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
+    ]
+    >>> await ai.get_prompt()
+    # The system prompt is passed to the engine, but isn't part of chat_history
+    # - this will be useful later in advanced use cases.
+    [
+        ChatMessage(role=ChatRole.SYSTEM, content="You are a helpful assistant."),
+        ChatMessage(role=ChatRole.USER, content="Hello kani!"),
+        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
+    ]
+    >>> from kani import Kani, chat_in_terminal
+    >>> from kani.engines.openai import OpenAIEngine
+    >>> api_key = "sk-..."
+    >>> engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    >>> ai = Kani(engine, system_prompt="You are a helpful assistant.")
+    >>> chat_in_terminal(ai, rounds=1)
+    USER: Hello kani!
+    AI: Hello! How can I assist you today?
+    >>> ai.chat_history
+    [
+        ChatMessage(role=ChatRole.USER, content="Hello kani!"),
+        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
+    ]
+    >>> await ai.get_prompt()
     # The system prompt is passed to the engine, but isn't part of chat_history
     # - this will be useful later in advanced use cases.
     [

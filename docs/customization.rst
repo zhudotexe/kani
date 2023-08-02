@@ -30,9 +30,9 @@ then as many messages as possible fit in the remaining token limit, prioritizing
 
 .. todo: figure demonstrating this
 
-To override this behaviour, override :meth:`.Kani.get_truncated_chat_history` in your subclass:
+To override this behaviour, override :meth:`.Kani.get_prompt` in your subclass:
 
-.. automethod:: kani.Kani.get_truncated_chat_history
+.. automethod:: kani.Kani.get_prompt
     :noindex:
 
 For example, here's how you might override the behaviour to only include the most recent 4 messages
@@ -46,7 +46,7 @@ For example, here's how you might override the behaviour to only include the mos
 .. code-block:: python
 
     class LastFourKani(Kani):
-        async def get_truncated_chat_history(self):
+        async def get_prompt(self):
             # self.always_include_messages includes the system prompt
             always_len = sum(self.message_token_len(m) for m in self.always_include_messages)
             # the engine may need to reserve some tokens for internal mechanisms

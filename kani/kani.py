@@ -224,7 +224,7 @@ class Kani:
         :param kwargs: Arguments to pass to the model engine.
         """
         # get the current chat state
-        messages = await self.get_truncated_chat_history()
+        messages = await self.get_prompt()
         # log it (message_log includes the number of messages sent and the last message)
         n_messages = len(messages)
         if n_messages == 0:
@@ -246,7 +246,7 @@ class Kani:
         return completion
 
     # ==== overridable methods ====
-    async def get_truncated_chat_history(self) -> list[ChatMessage]:
+    async def get_prompt(self) -> list[ChatMessage]:
         """
         Called each time before asking the LM engine for a completion to generate the chat prompt.
         Returns a list of messages such that the total token count in the messages is less than
@@ -272,7 +272,7 @@ class Kani:
                 self._oldest_idx = idx + 1
                 break
         log.debug(
-            f"get_truncated_chat_history() returned {always_len + total_tokens} tokens ({always_len} always) in"
+            f"get_prompt() returned {always_len + total_tokens} tokens ({always_len} always) in"
             f" {len(self.always_include_messages) + len(reversed_history)} messages"
             f" ({len(self.always_include_messages)} always)"
         )

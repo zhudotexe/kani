@@ -12,7 +12,7 @@ engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
 
 
 class LastFourKani(Kani):
-    async def get_truncated_chat_history(self):
+    async def get_prompt(self):
         """
         Only include the most recent 4 messages (omitting earlier ones to fit in the token length if necessary)
         and any always included messages.

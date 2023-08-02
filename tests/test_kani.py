@@ -15,7 +15,7 @@ async def test_chat_round():
     assert resp.content == "a"
     assert resp.role == ChatRole.ASSISTANT
     assert len(ai.chat_history) == 2
-    prompt = await ai.get_truncated_chat_history()
+    prompt = await ai.get_prompt()
     assert len(prompt) == 2  # 12345a
     assert flatten_chatmessages(prompt) == "12345a"
 
@@ -24,7 +24,7 @@ async def test_chat_round():
     assert resp == "a"
     assert len(ai.chat_history) == 4
     assert flatten_chatmessages(ai.chat_history) == "12345a67890a"
-    prompt = await ai.get_truncated_chat_history()
+    prompt = await ai.get_prompt()
     assert len(prompt) == 3  # 12345a
     assert flatten_chatmessages(prompt) == "a67890a"
 
@@ -40,7 +40,7 @@ async def test_always_include():
     assert resp == "a"
     assert len(ai.chat_history) == 2  # always include are not included in chat history
     assert flatten_chatmessages(ai.chat_history) == "12345a"
-    prompt = await ai.get_truncated_chat_history()
+    prompt = await ai.get_prompt()
     assert len(prompt) == 3  # 12a (12345 gets dropped)
     assert flatten_chatmessages(prompt) == "12a"
 
@@ -55,5 +55,5 @@ async def test_spam():
         resp = await ai.chat_round_str(query, test_echo=True)
         assert resp == query
 
-        prompt = await ai.get_truncated_chat_history()
+        prompt = await ai.get_prompt()
         assert sum(ai.message_token_len(m) for m in prompt) <= ai.max_context_size
