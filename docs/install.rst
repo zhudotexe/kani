@@ -87,7 +87,7 @@ Requirements File
 If you're running experiments using kani, we recommend pinning the version of kani to ensure your runs are reproducible.
 To do this, we recommend storing all your Python requirements in a ``requirements.txt`` file.
 
-.. code-block:: requirements
+.. code-block:: text
 
     kani[...]==x.y.z
     # ... other dependencies

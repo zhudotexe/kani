@@ -31,8 +31,8 @@ are limitless.
     chat_in_terminal(ai)
 
 .. note::
-
-    AI functions can be synchronous or asynchronous - kani will automatically await a coroutine as needed.
+    AI functions can be synchronous (i.e. ``def``) or asynchronous (``async def``) - kani will automatically await a
+    coroutine as needed.
 
 Step 2: Documentation
 ---------------------
@@ -92,6 +92,9 @@ should be either fahrenheit or celsius.
             # call some weather API...
 
     # ...
+
+.. note::
+    Comments (i.e. ``# ...``) aren't given to the language model at all - these are only for your own reference.
 
 Step 3: Register
 ----------------
@@ -173,6 +176,9 @@ Few-Shot Prompting
 Just as in the last section, we can also few-shot prompt the model to give it examples of how it should call the
 functions we define.
 
+When a function returns a result, that result is converted to a string and saved to the chat history. To few-shot
+prompt a model, we can mock these returns in the chat history using :meth:`.ChatMessage.function`!
+
 For example, here's how you might prompt the model to give the temperature in both Fahrenheit and Celsius without
 the user having to ask:
 
@@ -229,7 +235,11 @@ The API for the :class:`.AIFunction` class is similar to :func:`.ai_function`.
 
 .. code-block:: python
 
-    def my_cool_function(foo: str, bar: int):
+    def my_cool_function(
+        foo: str,
+        bar: Annotated[int, AIParam(desc="Some cool parameter.")],
+    ):
+        """Do some cool things."""
         ...
 
     functions = [AIFunction(my_cool_function)]

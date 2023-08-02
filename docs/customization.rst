@@ -90,7 +90,7 @@ Chatting with this kani, we can see that it loses any memory of what happened mo
 Handle a Function Call
 ----------------------
 
-.. note:: This functionality is only available when using :meth:`.Kani.full_round` and :doc:`function_calling`.
+.. note:: This functionality is only available when using :meth:`.Kani.full_round`.
 
 When a model predicts that it should use a function, it will request a :class:`.FunctionCall`. It is then kani's
 responsibility to turn the requested function call into a real call to a Python method.
@@ -167,16 +167,19 @@ Chatting with this kani, we can see how it retries the failed call, and how we l
 
 Handle a Function Call Exception
 --------------------------------
-.. note:: This functionality is only available when using :meth:`.Kani.full_round` and :doc:`function_calling`.
+.. note:: This functionality is only available when using :meth:`.Kani.full_round`.
 
 Above, we show how you can instrument a function call. But when a function call goes wrong, what happens?
 
 A requested function call can error out for a variety of reasons:
 
-- The requested function doesn't exist and the model hallucinated it
-- The function exists, but the model hallucinated parameters that don't exist
+- The requested function doesn't exist and the model hallucinated it (:exc:`.NoSuchFunction`)
+- The function exists, but the model hallucinated parameters that don't exist (:exc:`.WrappedCallException` around
+  :exc:`TypeError`)
 - The parameter names all exist, but the model got the data types wrong or didn't provide some
-- The Python function raised an exception
+  (:exc:`.WrappedCallException` around :exc:`TypeError` or
+  `ValidationError <https://docs.pydantic.dev/latest/errors/validation_errors/>`_)
+- The Python function raised an exception (:exc:`.WrappedCallException`)
 
 By default, kani will add a :class:`.ChatMessage` to the chat history, giving the model feedback
 on what occurred. The model can then retry the call up to *retry_attempts* times.
