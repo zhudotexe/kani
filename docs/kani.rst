@@ -51,7 +51,8 @@ The two standard entrypoints are :meth:`.Kani.chat_round` and :meth:`.Kani.full_
 .. automethod:: kani.Kani.full_round
     :noindex:
 
-These are asynchronous methods, which means you'll need to be in an async context.
+.. important::
+    These are asynchronous methods, which means you'll need to be in an async context.
 
 Web frameworks like FastAPI and Flask 2 allow your route methods to be async, meaning you can await a kani method
 from within your route method without having to get too in the weeds with asyncio.
@@ -61,19 +62,23 @@ here's how you might implement a simple chat:
 
 .. code-block:: python
 
-    from kani import Kani, chat_in_terminal
+    import asyncio
+    from kani import Kani
     from kani.engines.openai import OpenAIEngine
 
     api_key = "sk-..."
     engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
     ai = Kani(engine, system_prompt="You are a helpful assistant.")
 
+    # define your function normally, using `async def` instead of `def`
     async def chat_with_kani():
         while True:
             user_message = input("USER: ")
+            # now, you can use `await` to call kani's async methods
             message = await ai.chat_round_str(user_message)
             print("AI:", message)
 
+    # use `asyncio.run` to call your async function to start the program
     asyncio.run(chat_with_kani())
 
 .. seealso::

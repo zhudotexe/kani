@@ -70,12 +70,23 @@ chat_in_terminal(ai)
 kani makes the time to set up a working chat model short, while offering the programmer deep customizability over
 every prompt, function call, and even the underlying language model.
 
+## Docs
+
 To learn more about how
 to [customize kani with your own prompt wrappers](https://kani.readthedocs.io/en/latest/customization.html),
 [function calling](https://kani.readthedocs.io/en/latest/function_calling.html), and
 more, [read the docs!](http://kani.readthedocs.io/)
 
 Or take a look at the hands-on examples [in this repo](https://github.com/zhudotexe/kani/tree/main/examples).
+
+## Demo
+
+Want to see kani in action? Using 4-bit quantization to shrink the model, we run LLaMA v2 as part of our test suite
+right on GitHub Actions:
+
+https://github.com/zhudotexe/kani/actions/workflows/pytest.yml?query=branch%3Amain
+
+Simply click on the latest build to see LLaMA's output!
 
 <!--
 For developers:

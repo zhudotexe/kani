@@ -62,4 +62,39 @@ help you prevent polluting your global Python installation with all sorts of pac
         $ venv\Scripts\activate.bat
         $ pip install "kani[...]"
 
+Development Version
+-------------------
+If you'd like to install the development version of kani, you can install it from GitHub directly:
+
+.. code-block:: console
+
+    $ pip install 'kani @ git+https://github.com/zhudotexe/kani.git@main'
+
+This will install the latest version of kani.
+
+.. note::
+    You may need to use ``pip install --upgrade --no-deps --force-reinstall ...`` to force pip to re-fetch the
+    latest kani from GitHub.
+
+    To install an engine's extras, use ``pip install 'kani[...] @ git+https://github.com/zhudotexe/kani.git@main'``.
+
+.. caution::
+    Development versions of kani may be unstable! Do not use development kani in production or in final research
+    experiments; pin a released version of kani instead.
+
+Requirements File
+-----------------
+If you're running experiments using kani, we recommend pinning the version of kani to ensure your runs are reproducible.
+To do this, we recommend storing all your Python requirements in a ``requirements.txt`` file.
+
+.. code-block:: requirements
+
+    kani[...]==x.y.z
+    # ... other dependencies
+
+You can automatically generate this file too, by running ``pip freeze > requirements.txt``.
+
+Later, anyone else running your code can install the same dependency versions by simply running
+``pip install -r requirements.txt``.
+
 Next, we'll take a look at basic usage of kani.
