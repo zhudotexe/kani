@@ -68,3 +68,7 @@ ogp_social_cards = {
 copybutton_exclude = ".linenos, .gp, .go"
 copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
 copybutton_prompt_is_regexp = True
+copybutton_copy_empty_lines = False
+
+# sphinxemoji.sphinxemoji
+sphinxemoji_style = "twemoji"
