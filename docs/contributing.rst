@@ -19,12 +19,14 @@ of being lightweight and unopinionated in the core library - which means we may 
 are better suited as an example or a 3rd-party package rather than an addition to the core library.
 
 **Helpful PRs**
+
 - New generic engines and a concrete implementation
 - Engines for pretrained base models (e.g. not a fine-tune)
 - Examples of functionality that isn't demonstrated in existing examples
 - Illustrative figures and images
 
-**Better 3rd Party**
+**Better as 3rd Party**
+
 - Specific prompt frameworks
 - Cool new use cases whose core idea is already covered by examples
 
