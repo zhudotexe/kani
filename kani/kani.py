@@ -71,6 +71,10 @@ class Kani:
             (e.g. ``OpenAIEngine(..., max_tokens=250)``).
         :param chat_history: The chat history to start with (not including system prompt or always include messages),
             for advanced use cases. By default, each kani starts with a new conversation session.
+
+            .. caution::
+                If you pass another kani's chat history here without copying it, the same list will be mutated!
+                Use ``chat_history=mykani.chat_history.copy()`` to pass a copy.
         :param functions: A list of :class:`.AIFunction` to expose to the model (for dynamic function calling).
             Use :func:`.ai_function` to define static functions (see :doc:`function_calling`).
         :param retry_attempts: How many attempts the LM may take if a function call raises an exception.
@@ -84,19 +88,10 @@ class Kani:
             [ChatMessage.system(self.system_prompt)] if system_prompt else []
         ) + (always_include_messages or [])
         """Chat messages that are always included as a prefix in the model's prompt.
-        Includes the system message, if supplied.
-        
-        .. caution::
-            Parts of kani assume that this list will never change. Construct a new kani if you must mutate this list.
-        """
+        Includes the system message, if supplied."""
 
         self.chat_history: list[ChatMessage] = chat_history or []
-        """All messages in the current chat state, not including system or always include messages.
-        
-        .. caution::
-            Parts of kani assume that this list will only ever be appended to. Construct a new kani if you must mutate
-            this list.
-        """
+        """All messages in the current chat state, not including system or always include messages."""
 
         # async to prevent generating multiple responses missing context
         self.lock = asyncio.Lock()
@@ -117,7 +112,6 @@ class Kani:
             self.functions[f.name] = f
 
         # cache
-        self._oldest_idx = 0
         self._message_tokens = weakref.WeakKeyDictionary()
 
     # === main entrypoints ===
@@ -277,7 +271,7 @@ class Kani:
         always_len = self.always_len
         remaining = max_size = self.max_context_size - always_len
         total_tokens = 0
-        for idx in range(len(self.chat_history) - 1, self._oldest_idx - 1, -1):
+        for idx in range(len(self.chat_history) - 1, 0, -1):
             # get and check the message's length
             message = self.chat_history[idx]
             message_len = self.message_token_len(message)
@@ -298,7 +292,6 @@ class Kani:
                 total_tokens += message_len
                 reversed_history.append(message)
             else:
-                self._oldest_idx = idx + 1
                 break
         log.debug(
             f"get_prompt() returned {always_len + total_tokens} tokens ({always_len} always) in"
