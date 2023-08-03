@@ -6,7 +6,7 @@ from typing import AsyncIterable, Callable
 
 from .ai_function import AIFunction
 from .engines.base import BaseEngine, BaseCompletion
-from .exceptions import NoSuchFunction, WrappedCallException, FunctionCallException
+from .exceptions import NoSuchFunction, WrappedCallException, FunctionCallException, MessageTooLong
 from .models import ChatMessage, FunctionCall, ChatRole
 from .utils.typing import PathLike, SavedKani
 
@@ -83,11 +83,20 @@ class Kani:
         self.always_include_messages: list[ChatMessage] = (
             [ChatMessage.system(self.system_prompt)] if system_prompt else []
         ) + (always_include_messages or [])
-        """Chat messages that are always included as a prefix in the model's prompt. Includes the system message, if
-        supplied."""
+        """Chat messages that are always included as a prefix in the model's prompt.
+        Includes the system message, if supplied.
+        
+        .. caution::
+            Parts of kani assume that this list will never change. Construct a new kani if you must mutate this list.
+        """
 
         self.chat_history: list[ChatMessage] = chat_history or []
-        """All messages in the current chat state, not including system or always include messages."""
+        """All messages in the current chat state, not including system or always include messages.
+        
+        .. caution::
+            Parts of kani assume that this list will only ever be appended to. Construct a new kani if you must mutate
+            this list.
+        """
 
         # async to prevent generating multiple responses missing context
         self.lock = asyncio.Lock()
@@ -98,7 +107,7 @@ class Kani:
         # find all registered ai_functions and save them
         if functions is None:
             functions = []
-        self.functions = {f.name: f for f in functions}
+        self.functions: dict[str, AIFunction] = {f.name: f for f in functions}
         for name, member in inspect.getmembers(self, predicate=inspect.ismethod):
             if not hasattr(member, "__ai_function__"):
                 continue
@@ -199,17 +208,24 @@ class Kani:
                 yield fn_msg
 
     # ==== helpers ====
+    @property
+    def always_len(self) -> int:
+        """Returns the number of tokens that will always be reserved.
+
+        (e.g. for system prompts, always include messages, the engine, and the response).
+        """
+        return (
+            sum(self.message_token_len(m) for m in self.always_include_messages)
+            + self.engine.token_reserve
+            + self.desired_response_tokens
+        )
+
     def message_token_len(self, message: ChatMessage):
         """Returns the number of tokens used by a given message."""
         try:
             return self._message_tokens[message]
         except KeyError:
             mlen = self.engine.message_len(message)
-            if mlen > self.max_context_size:
-                log.warning(
-                    "The chat message's size is longer than the entire context window. It will never be included in a"
-                    f" prompt, nor any messages before it.\nContent: {message.content!r}"
-                )
             self._message_tokens[message] = mlen
             return mlen
 
@@ -258,12 +274,25 @@ class Kani:
         call.
         """
         reversed_history = []
-        always_len = sum(self.message_token_len(m) for m in self.always_include_messages) + self.engine.token_reserve
-        remaining = self.max_context_size - (always_len + self.desired_response_tokens)
+        always_len = self.always_len
+        remaining = max_size = self.max_context_size - always_len
         total_tokens = 0
         for idx in range(len(self.chat_history) - 1, self._oldest_idx - 1, -1):
+            # get and check the message's length
             message = self.chat_history[idx]
             message_len = self.message_token_len(message)
+            if message_len > max_size:
+                func_help = (
+                    ""
+                    if message.role != ChatRole.FUNCTION
+                    else "You may set `auto_truncate` in the @ai_function to automatically truncate long responses.\n"
+                )
+                raise MessageTooLong(
+                    "The chat message's size is longer than the allowed context window (after including system"
+                    " messages, always include messages, and desired response tokens).\n"
+                    f"{func_help}Content: {message.content[:100]}..."
+                )
+            # see if we can include it
             remaining -= message_len
             if remaining >= 0:
                 total_tokens += message_len
@@ -299,11 +328,22 @@ class Kani:
         try:
             result = await f(**call.kwargs)
             result_str = str(result)
+            log.debug(f"{f.name} responded with data: {result_str!r}")
         except Exception as e:
             raise WrappedCallException(f.auto_retry, e) from e
+        msg = ChatMessage.function(f.name, result_str)
+        # if we are auto truncating, check and see if we need to
+        if f.auto_truncate is not None:
+            message_len = self.message_token_len(msg)
+            if message_len > f.auto_truncate:
+                log.warning(
+                    f"The content returned by {f.name} is too long ({message_len} > {f.auto_truncate} tokens), auto"
+                    " truncating..."
+                )
+                msg = self._auto_truncate_message(msg, max_len=f.auto_truncate)
+                log.debug(f"Auto truncate returned {self.message_token_len(msg)} tokens.")
         # save the result to the chat history
-        log.debug(f"{f.name} responded with data: {result_str!r}")
-        self.chat_history.append(ChatMessage.function(f.name, result_str))
+        self.chat_history.append(msg)
         # yield whose turn it is
         return f.after == ChatRole.ASSISTANT
 
@@ -360,3 +400,36 @@ class Kani:
         state = SavedKani.model_validate_json(data, **kwargs)
         self.always_include_messages = state.always_include_messages
         self.chat_history = state.chat_history
+
+    # ==== internals ====
+    def _auto_truncate_message(self, msg: ChatMessage, max_len: int) -> ChatMessage:
+        """Mutate the provided message until it is less than *max_len* tokens long."""
+        full_content = msg.content
+        if not full_content:
+            return msg  # idk how this could happen
+        for chunk_divider in ("\n\n", "\n", ". ", ", ", " "):
+            # chunk the text
+            content = ""
+            last_msg = None
+            chunks = full_content.split(chunk_divider)
+            for idx, chunk in enumerate(chunks):
+                # fit in as many chunks as possible
+                if idx:
+                    content += chunk_divider
+                content += chunk
+                # when it's too long...
+                msg = ChatMessage(role=msg.role, name=msg.name, content=content + "...")
+                if self.message_token_len(msg) > max_len:
+                    # if we have some text, return it
+                    if last_msg:
+                        return last_msg
+                    # otherwise, we need to split into smaller chunks
+                    break
+                # otherwise, continue
+                last_msg = msg
+        # if we get here and have no content, chop it to the first max_len characters
+        log.warning(
+            "Auto truncate could not find an appropriate place to chunk the text. The returned value will be the first"
+            f" {max_len} characters."
+        )
+        return ChatMessage(role=msg.role, name=msg.name, content=full_content[: max_len - 3] + "...")

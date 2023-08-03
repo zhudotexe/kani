@@ -50,9 +50,11 @@ def chat_in_terminal(kani: Kani, rounds: int = 0, stopword: str = None):
     try:
         asyncio.get_running_loop()
     except RuntimeError:
-        asyncio.run(chat_in_terminal_async(kani, rounds=rounds, stopword=stopword))
+        pass
     else:
         print(
             f"WARNING: It looks like you're in an environment with a running asyncio loop (e.g. Google Colab).\nYou"
             f" should use `await chat_in_terminal_async(...)` instead."
         )
+        return
+    asyncio.run(chat_in_terminal_async(kani, rounds=rounds, stopword=stopword))

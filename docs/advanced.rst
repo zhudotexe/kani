@@ -121,6 +121,8 @@ like Wikipedia.
     Wikipedia articles might be longer than can fit in the model's context window. Try combining this with the sub-kani
     summarization example above to build a powerful retrieval agent!
 
+    You may also use ``@ai_function(auto_truncate=...)`` if truncating the response is acceptable.
+
 Hosting kani Online
 -------------------
 What if you want to host a web service that allows its users to chat with kani? In this example, we show how you can

@@ -20,6 +20,7 @@ class AIFunction:
         desc: str | None = None,
         auto_retry: bool = True,
         json_schema: dict | None = None,
+        auto_truncate: int | None = None,
     ):
         """
         :param inner: The function implementation.
@@ -31,6 +32,9 @@ class AIFunction:
             (see :ref:`auto_retry`).
         :param json_schema: A JSON Schema document describing the function's parameters. By default, kani will
             automatically generate one, but this can be helpful for overriding it in any tricky cases.
+        :param auto_truncate: If a function response is longer than this many tokens, truncate it until it is at most
+            this many tokens and add "..." to the end. By default, no responses will be truncated. This uses a smart
+            paragraph-aware truncation algorithm.
         """
         self.inner = validate_call(inner)
         self.after = after
@@ -38,6 +42,7 @@ class AIFunction:
         self.desc = desc or inspect.getdoc(inner)
         self.auto_retry = auto_retry
         self.json_schema = self.create_json_schema() if json_schema is None else json_schema
+        self.auto_truncate = auto_truncate
 
         # wraps() things
         self.__name__ = inner.__name__
@@ -92,6 +97,7 @@ def ai_function(
     desc: str | None = None,
     auto_retry: bool = True,
     json_schema: dict | None = None,
+    auto_truncate: int | None = None,
 ):
     """Decorator to mark a method of a Kani to expose to the AI.
 
@@ -102,6 +108,9 @@ def ai_function(
     :param auto_retry: Whether the model should retry calling the function if it gets it wrong (see :ref:`auto_retry`).
     :param json_schema: A JSON Schema document describing the function's parameters. By default, kani will automatically
         generate one, but this can be helpful for overriding it in any tricky cases.
+    :param auto_truncate: If a function response is longer than this many tokens, truncate it until it is at most
+        this many tokens and add "..." to the end. By default, no responses will be truncated. This uses a smart
+        paragraph-aware truncation algorithm.
     """
 
     def deco(f):
@@ -111,6 +120,7 @@ def ai_function(
             "desc": desc or inspect.getdoc(f),
             "auto_retry": auto_retry,
             "json_schema": json_schema,
+            "auto_truncate": auto_truncate,
         }
         return f
 

@@ -2,6 +2,10 @@ class KaniException(Exception):
     """Base class for all Kani exceptions/errors."""
 
 
+class MessageTooLong(KaniException):
+    """This chat message will never fit in the context window."""
+
+
 # ==== HTTP ====
 class HTTPException(KaniException):
     """Base class for all HTTP errors (for HTTP engines)."""
