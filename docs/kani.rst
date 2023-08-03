@@ -115,6 +115,8 @@ You may even modify the chat history (e.g. append or delete ChatMessages) to cha
     To edit the content of a message in the chat history, you must replace the object. ChatMessages are
     immutable by default.
 
+    For example, to edit the last message, you could set ``ai.chat_history[-1] = ChatMessage.assistant("...")``.
+
 .. code-block:: pycon
 
     >>> from kani import Kani, chat_in_terminal
