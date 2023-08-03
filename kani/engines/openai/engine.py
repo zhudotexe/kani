@@ -39,6 +39,8 @@ class OpenAIEngine(BaseEngine):
         api_key: str = None,
         model="gpt-3.5-turbo",
         max_context_size: int = None,
+        organization: str = None,
+        retry: int = 5,
         *,
         client: OpenAIClient = None,
         **hyperparams,
@@ -48,8 +50,11 @@ class OpenAIEngine(BaseEngine):
         :param model: The key of the model to use.
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
+        :param organization: The OpenAI organization to use in requests (defaults to the API key's default org).
+        :param retry: How many times the engine should retry failed HTTP calls with exponential backoff (default 5).
         :param client: An instance of :class:`.OpenAIClient` (for reusing the same client in multiple engines). You must
-            specify exactly one of (api_key, client).
+            specify exactly one of (api_key, client). If this is passed the ``organization`` and ``retry`` params will
+            be ignored.
         :param hyperparams: Any additional parameters to pass to
             :meth:`.OpenAIClient.create_chat_completion`.
         """

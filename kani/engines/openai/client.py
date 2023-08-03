@@ -14,14 +14,22 @@ class OpenAIClient(BaseClient):
 
     SERVICE_BASE = "https://api.openai.com/v1"
 
-    def __init__(self, api_key: str, http: aiohttp.ClientSession = None):
+    def __init__(self, api_key: str, http: aiohttp.ClientSession = None, organization: str = None, retry: int = 5):
         super().__init__(http)
         self.api_key = api_key
+        self.organization = organization
+        self.retry = retry
 
-    async def request(self, method: str, route: str, headers=None, retry=5, **kwargs):
+    async def request(self, method: str, route: str, headers=None, retry=None, **kwargs):
         if headers is None:
             headers = {}
+        # set up auth headers
         headers["Authorization"] = f"Bearer {self.api_key}"
+        if self.organization:
+            headers["OpenAI-Organization"] = self.organization
+
+        # make the request
+        retry = retry if retry is not None else self.retry
         for i in range(retry):
             try:
                 return await super().request(method, route, headers=headers, **kwargs)
