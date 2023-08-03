@@ -12,6 +12,14 @@ For example, you might have the parent kani use a cheaper, faster model - but wi
 smaller context length. If you need it to perform a task that requires more context, you can spawn a sub-kani using
 a more expensive, slower model with a larger context.
 
+.. caution::
+    Be careful when creating a new kani instance with an existing kani's chat history!
+    If you pass an old kani's chat history to a new kani without copying it, the same list will be mutated.
+
+    Use ``newkani = Kani(..., chat_history=oldkani.chat_history.copy())`` to pass a copy.
+
+    Index slicing (as shown in the example below) also creates a copy.
+
 .. code-block:: python
 
     class KaniWithAISummarization(Kani):
