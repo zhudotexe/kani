@@ -109,52 +109,14 @@ conversations), and an assistant message can contain a ``function_call`` (discus
 At a high level, a :class:`.Kani` is responsible for managing a list of :class:`.ChatMessage`: the chat session associated
 with it. You can access the chat messages through the :attr:`.Kani.chat_history` attribute.
 
-You may even modify the chat history (i.e. append or delete ChatMessages) to change the prompt at any time.
+You may even modify the chat history (e.g. append or delete ChatMessages) to change the prompt at any time.
+
+.. tip::
+    To edit the content of a message in the chat history, you must replace the object. ChatMessages are
+    immutable by default.
 
 .. code-block:: pycon
 
-    >>> from kani import Kani, chat_in_terminal
-    >>> from kani.engines.openai import OpenAIEngine
-    >>> api_key = "sk-..."
-    >>> engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
-    >>> ai = Kani(engine, system_prompt="You are a helpful assistant.")
-    >>> chat_in_terminal(ai, rounds=1)
-    USER: Hello kani!
-    AI: Hello! How can I assist you today?
-    >>> ai.chat_history
-    [
-        ChatMessage(role=ChatRole.USER, content="Hello kani!"),
-        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
-    ]
-    >>> await ai.get_prompt()
-    # The system prompt is passed to the engine, but isn't part of chat_history
-    # - this will be useful later in advanced use cases.
-    [
-        ChatMessage(role=ChatRole.SYSTEM, content="You are a helpful assistant."),
-        ChatMessage(role=ChatRole.USER, content="Hello kani!"),
-        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
-    ]
-    >>> from kani import Kani, chat_in_terminal
-    >>> from kani.engines.openai import OpenAIEngine
-    >>> api_key = "sk-..."
-    >>> engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
-    >>> ai = Kani(engine, system_prompt="You are a helpful assistant.")
-    >>> chat_in_terminal(ai, rounds=1)
-    USER: Hello kani!
-    AI: Hello! How can I assist you today?
-    >>> ai.chat_history
-    [
-        ChatMessage(role=ChatRole.USER, content="Hello kani!"),
-        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
-    ]
-    >>> await ai.get_prompt()
-    # The system prompt is passed to the engine, but isn't part of chat_history
-    # - this will be useful later in advanced use cases.
-    [
-        ChatMessage(role=ChatRole.SYSTEM, content="You are a helpful assistant."),
-        ChatMessage(role=ChatRole.USER, content="Hello kani!"),
-        ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
-    ]
     >>> from kani import Kani, chat_in_terminal
     >>> from kani.engines.openai import OpenAIEngine
     >>> api_key = "sk-..."
@@ -198,7 +160,7 @@ in the chat session despite never being explicitly prompted to do so.
     >>> ai = Kani(engine, chat_history=fewshot)
     >>> chat_in_terminal(ai, rounds=1)
     USER: crab
-    ASSISTANT: kani
+    AI: kani
 
 Saving & Loading Chats
 ----------------------
@@ -217,7 +179,7 @@ If you'd like more manual control over how you store chat state, there are two a
 These are `pydantic <https://docs.pydantic.dev/latest/usage/serialization/>`_ models, which you can save and load using
 ``ChatMessage.model_dump()`` and ``ChatMessage.model_validate()``.
 
-You could, for example, save the chat state to a database and load it when necessary. A common pattern is also to save
+You could, for example, save the chat state to a database and load it when necessary. A common pattern is to save
 only the ``chat_history`` and use ``always_include_messages`` as an application-specific prompt.
 
 Next Steps
