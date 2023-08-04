@@ -267,13 +267,12 @@ class Kani:
         You may override this to get more fine-grained control over what is exposed in the model's memory at any given
         call.
         """
-        reversed_history = []
         always_len = self.always_len
         remaining = max_size = self.max_context_size - always_len
         total_tokens = 0
-        for idx in range(len(self.chat_history) - 1, -1, -1):
+        to_keep = 0  # messages to keep from the end of chat history
+        for message in reversed(self.chat_history):
             # get and check the message's length
-            message = self.chat_history[idx]
             message_len = self.message_token_len(message)
             if message_len > max_size:
                 func_help = (
@@ -290,15 +289,17 @@ class Kani:
             remaining -= message_len
             if remaining >= 0:
                 total_tokens += message_len
-                reversed_history.append(message)
+                to_keep += 1
             else:
                 break
         log.debug(
             f"get_prompt() returned {always_len + total_tokens} tokens ({always_len} always) in"
-            f" {len(self.always_include_messages) + len(reversed_history)} messages"
+            f" {len(self.always_include_messages) + to_keep} messages"
             f" ({len(self.always_include_messages)} always)"
         )
-        return self.always_include_messages + reversed_history[::-1]
+        if not to_keep:
+            return self.always_include_messages
+        return self.always_include_messages + self.chat_history[-to_keep:]
 
     async def do_function_call(self, call: FunctionCall) -> bool:
         """Resolve a single function call.
