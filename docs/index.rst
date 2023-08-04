@@ -23,8 +23,8 @@ Features
   tokens in the history - kani takes care of it.
 - **Function calling with model feedback and retry** - Give models access to functions in just one line of code.
   kani elegantly provides feedback about hallucinated parameters and errors and allows the model to retry calls.
-- **You are in control** - You can override and provide a custom implementation for all
-  of these features, allowing you to run experiments just the way you want to. There are no hidden prompt hacks.
+- **You control the prompts** - There are no hidden prompt hacks. We will never decide for you how to format your own
+  data, unlike other popular language model libraries.
 - **Fast to iterate and intuitive to learn** - With kani, you only write Python - we handle the rest.
 - **Asynchronous design from the start** - kani can scale to run multiple chat sessions in parallel easily, without
   having to manage multiple processes or programs.
