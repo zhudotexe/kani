@@ -12,19 +12,30 @@ from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTim
 class OpenAIClient(BaseClient):
     """Simple HTTP client to interface with the OpenAI API."""
 
-    SERVICE_BASE = "https://api.openai.com/v1"
-
-    def __init__(self, api_key: str, http: aiohttp.ClientSession = None, organization: str = None, retry: int = 5):
+    def __init__(
+        self,
+        api_key: str,
+        http: aiohttp.ClientSession = None,
+        organization: str = None,
+        retry: int = 5,
+        api_base: str = "https://api.openai.com/v1",
+        headers: dict = None,
+    ):
+        if headers is None:
+            headers = {}
         super().__init__(http)
         self.api_key = api_key
         self.organization = organization
         self.retry = retry
+        self.SERVICE_BASE = api_base
+        self.headers = headers
 
     async def request(self, method: str, route: str, headers=None, retry=None, **kwargs):
         if headers is None:
-            headers = {}
+            headers = self.headers.copy()
         # set up auth headers
-        headers["Authorization"] = f"Bearer {self.api_key}"
+        if "Authorization" not in headers:
+            headers["Authorization"] = f"Bearer {self.api_key}"
         if self.organization:
             headers["OpenAI-Organization"] = self.organization
 

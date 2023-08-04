@@ -2,7 +2,7 @@ from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from .client import OpenAIClient
-from .models import FunctionSpec, ChatCompletion
+from .models import ChatCompletion, FunctionSpec
 from ..base import BaseEngine
 
 try:
@@ -39,9 +39,11 @@ class OpenAIEngine(BaseEngine):
         api_key: str = None,
         model="gpt-3.5-turbo",
         max_context_size: int = None,
+        *,
         organization: str = None,
         retry: int = 5,
-        *,
+        api_base: str = "https://api.openai.com/v1",
+        headers: dict = None,
         client: OpenAIClient = None,
         **hyperparams,
     ):
@@ -52,9 +54,11 @@ class OpenAIEngine(BaseEngine):
             model's full context size.
         :param organization: The OpenAI organization to use in requests (defaults to the API key's default org).
         :param retry: How many times the engine should retry failed HTTP calls with exponential backoff (default 5).
+        :param api_base: The base URL of the OpenAI API to use.
+        :param headers: A dict of HTTP headers to include with each request.
         :param client: An instance of :class:`.OpenAIClient` (for reusing the same client in multiple engines). You must
-            specify exactly one of (api_key, client). If this is passed the ``organization`` and ``retry`` params will
-            be ignored.
+            specify exactly one of (api_key, client). If this is passed the ``organization``, ``retry``, ``api_base``,
+            and ``headers`` params will be ignored.
         :param hyperparams: Any additional parameters to pass to
             :meth:`.OpenAIClient.create_chat_completion`.
         """
@@ -62,7 +66,9 @@ class OpenAIEngine(BaseEngine):
             raise ValueError("You must supply exactly one of (api_key, client).")
         if max_context_size is None:
             max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))
-        self.client = client or OpenAIClient(api_key)
+        self.client = client or OpenAIClient(
+            api_key, organization=organization, retry=retry, api_base=api_base, headers=headers
+        )
         self.model = model
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
