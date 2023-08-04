@@ -271,7 +271,7 @@ class Kani:
         always_len = self.always_len
         remaining = max_size = self.max_context_size - always_len
         total_tokens = 0
-        for idx in range(len(self.chat_history) - 1, 0, -1):
+        for idx in range(len(self.chat_history) - 1, -1, -1):
             # get and check the message's length
             message = self.chat_history[idx]
             message_len = self.message_token_len(message)
