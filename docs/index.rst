@@ -1,9 +1,10 @@
 kani (カニ)
 ===========
 
-kani (カニ) is a lightweight and highly hackable harness for chat-based language models with tool usage/function calling.
+kani (カニ) is a lightweight and highly hackable framework for chat-based language models with tool usage/function
+calling.
 
-Compared to other LM harnesses, kani is less opinionated and offers more fine-grained customizability
+Compared to other LM frameworks, kani is less opinionated and offers more fine-grained customizability
 over the parts of the control flow that matter, making it the perfect choice for NLP researchers, hobbyists, and
 developers alike.
 

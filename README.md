@@ -5,9 +5,10 @@
 [![PyPI](https://img.shields.io/pypi/v/kani)](https://pypi.org/project/kani/)
 [![Quickstart in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zhudotexe/kani/blob/main/examples/colab_quickstart.ipynb)
 
-kani (カニ) is a lightweight and highly hackable harness for chat-based language models with tool usage/function calling.
+kani (カニ) is a lightweight and highly hackable framework for chat-based language models with tool usage/function
+calling.
 
-Compared to other LM harnesses, kani is less opinionated and offers more fine-grained customizability
+Compared to other LM frameworks, kani is less opinionated and offers more fine-grained customizability
 over the parts of the control flow that matter, making it the perfect choice for NLP researchers, hobbyists, and
 developers alike.
 
