@@ -37,8 +37,10 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "furo"
 html_static_path = ["_static"]
+html_logo = "_static/kani-logo@512.png"
+html_favicon = "_static/favicon/favicon.ico"
 
-maximum_signature_line_length = 88
+# maximum_signature_line_length = 88
 add_module_names = False
 nitpicky = True
 nitpick_ignore_regex = [

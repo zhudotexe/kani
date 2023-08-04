@@ -1,9 +1,23 @@
-# kani (カニ)
+<p align="center">
+  <img width="256" height="256" alt="kani" src="docs/_static/kani-logo@256.png">
+</p>
 
-[![Test Package](https://github.com/zhudotexe/kani/actions/workflows/pytest.yml/badge.svg)](https://github.com/zhudotexe/kani/actions/workflows/pytest.yml)
-[![Documentation Status](https://readthedocs.org/projects/kani/badge/?version=latest)](https://kani.readthedocs.io/en/latest/?badge=latest)
-[![PyPI](https://img.shields.io/pypi/v/kani)](https://pypi.org/project/kani/)
-[![Quickstart in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zhudotexe/kani/blob/main/examples/colab_quickstart.ipynb)
+<p align="center">
+  <a href="https://github.com/zhudotexe/kani/actions/workflows/pytest.yml">
+    <img alt="Test Package" src="https://github.com/zhudotexe/kani/actions/workflows/pytest.yml/badge.svg">
+  </a>
+  <a href="https://kani.readthedocs.io/en/latest/?badge=latest">
+    <img alt="Documentation Status" src="https://readthedocs.org/projects/kani/badge/?version=latest">
+  </a>
+  <a href="https://pypi.org/project/kani/">
+    <img alt="PyPI" src="https://img.shields.io/pypi/v/kani">
+  </a>
+  <a href="https://colab.research.google.com/github/zhudotexe/kani/blob/main/examples/colab_quickstart.ipynb">
+    <img alt="Quickstart in Colab" src="https://colab.research.google.com/assets/colab-badge.svg">
+  </a>
+</p>
+
+# kani (カニ)
 
 kani (カニ) is a lightweight and highly hackable framework for chat-based language models with tool usage/function
 calling.
