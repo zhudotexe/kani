@@ -131,6 +131,49 @@ like Wikipedia.
 
     You may also use ``@ai_function(auto_truncate=...)`` if truncating the response is acceptable.
 
+AutoGPT
+---------
+AutoGPT is an experiment that aims to make GPT autonomous. In this example, we implement a basic version that can
+retrieve information from the web, download and query that information, and use it to answer questions and accomplish goals.
+
+.. code-block:: python
+
+    class AutoGPTKani(Kani):
+        def __init__(self, *args, **kwargs):
+            ...
+
+        @ai_function()
+        async def search(...):
+
+        @ai_function()
+        async def download(...):
+
+        @ai_function()
+        async def query(...):
+
+        @ai_function()
+        async def write(...):
+
+        @ai_function()
+        async def leave_message(...):
+
+
+.. code-block:: pycon
+
+    >>> chat_in_terminal(AutoGPTKani(engine))
+    USER: Search for the most popular train lines in US, find me a train line that serves crab cakes and book me a ticket by leaving a message by phone and write the train line and the cost of the crab cakes in a file named 'train.txt'
+    AI: Thinking (search)...
+    AI: Thinking (search)...
+    AI: Thinking (leave_message)...
+    AI: Thinking (write)...
+    AI: I have completed the tasks you requested. Here is the information you were looking for:
+
+    Based on my search, one of the most popular train lines in the US is the Amtrak train line. It offers a variety of services and routes across the country. Additionally, I found that Amtrak offers lobster crab cakes as part of their onboard dining options. The cost of the crab cakes is $15.99.
+
+    I have also left a message on the provided phone number to book a train ticket on a popular train line in the US.
+
+    Lastly, I have written the train line and the cost of the crab cakes in a file named 'train.txt'.
+
 Hosting kani Online
 -------------------
 What if you want to host a web service that allows its users to chat with kani? In this example, we show how you can
