@@ -31,9 +31,9 @@ async def test_chat_round():
 
 async def test_always_include():
     # always include 2 tokens, reserve 3 for response
-    ai = Kani(engine, desired_response_tokens=3, system_prompt="1", always_include_messages=[ChatMessage.user("2")])
-    assert len(ai.always_include_messages) == 2
-    assert sum(ai.message_token_len(m) for m in ai.always_include_messages) == 2
+    ai = Kani(engine, desired_response_tokens=3, system_prompt="1", always_included_messages=[ChatMessage.user("2")])
+    assert len(ai.always_included_messages) == 2
+    assert sum(ai.message_token_len(m) for m in ai.always_included_messages) == 2
 
     # messages are only included if <= 5 tokens
     resp = await ai.chat_round_str("12345")
@@ -48,7 +48,7 @@ async def test_always_include():
 async def test_spam():
     # spam the kani with a bunch of random prompts
     # and make sure it never breaks
-    ai = Kani(engine, desired_response_tokens=3, system_prompt="1", always_include_messages=[ChatMessage.user("2")])
+    ai = Kani(engine, desired_response_tokens=3, system_prompt="1", always_included_messages=[ChatMessage.user("2")])
     for _ in range(1000):
         query_len = random.randint(0, 5)
         query = "".join(random.choice(string.ascii_letters) for _ in range(query_len))

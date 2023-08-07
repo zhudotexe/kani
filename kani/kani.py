@@ -53,7 +53,7 @@ class Kani:
         self,
         engine: BaseEngine,
         system_prompt: str = None,
-        always_include_messages: list[ChatMessage] = None,
+        always_included_messages: list[ChatMessage] = None,
         desired_response_tokens: int = 450,
         chat_history: list[ChatMessage] = None,
         functions: list[AIFunction] = None,
@@ -63,13 +63,13 @@ class Kani:
         :param engine: The LM engine implementation to use.
         :param system_prompt: The system prompt to provide to the LM. The prompt will not be included in
             :attr:`chat_history`.
-        :param always_include_messages: A list of messages to always include as a prefix in all chat rounds (i.e.,
+        :param always_included_messages: A list of messages to always include as a prefix in all chat rounds (i.e.,
             evict newer messages rather than these to manage context length). These will not be included in
             :attr:`chat_history`.
         :param desired_response_tokens: The minimum amount of space to leave in ``max context size - tokens in prompt``.
             To control the maximum number of tokens generated more precisely, you may be able to configure the engine
             (e.g. ``OpenAIEngine(..., max_tokens=250)``).
-        :param chat_history: The chat history to start with (not including system prompt or always include messages),
+        :param chat_history: The chat history to start with (not including system prompt or always included messages),
             for advanced use cases. By default, each kani starts with a new conversation session.
 
             .. caution::
@@ -84,14 +84,14 @@ class Kani:
         self.desired_response_tokens = desired_response_tokens
         self.max_context_size = engine.max_context_size
 
-        self.always_include_messages: list[ChatMessage] = (
+        self.always_included_messages: list[ChatMessage] = (
             [ChatMessage.system(self.system_prompt)] if system_prompt else []
-        ) + (always_include_messages or [])
+        ) + (always_included_messages or [])
         """Chat messages that are always included as a prefix in the model's prompt.
         Includes the system message, if supplied."""
 
         self.chat_history: list[ChatMessage] = chat_history or []
-        """All messages in the current chat state, not including system or always include messages."""
+        """All messages in the current chat state, not including system or always included messages."""
 
         # async to prevent generating multiple responses missing context
         self.lock = asyncio.Lock()
@@ -206,10 +206,10 @@ class Kani:
     def always_len(self) -> int:
         """Returns the number of tokens that will always be reserved.
 
-        (e.g. for system prompts, always include messages, the engine, and the response).
+        (e.g. for system prompts, always included messages, the engine, and the response).
         """
         return (
-            sum(self.message_token_len(m) for m in self.always_include_messages)
+            sum(self.message_token_len(m) for m in self.always_included_messages)
             + self.engine.token_reserve
             + self.desired_response_tokens
         )
@@ -262,7 +262,7 @@ class Kani:
         Returns a list of messages such that the total token count in the messages is less than
         ``(self.max_context_size - self.desired_response_tokens)``.
 
-        Always includes the system prompt plus any always_include_messages at the start of the prompt.
+        Always includes the system prompt plus any always_included_messages at the start of the prompt.
 
         You may override this to get more fine-grained control over what is exposed in the model's memory at any given
         call.
@@ -282,7 +282,7 @@ class Kani:
                 )
                 raise MessageTooLong(
                     "The chat message's size is longer than the allowed context window (after including system"
-                    " messages, always include messages, and desired response tokens).\n"
+                    " messages, always included messages, and desired response tokens).\n"
                     f"{func_help}Content: {message.content[:100]}..."
                 )
             # see if we can include it
@@ -294,12 +294,12 @@ class Kani:
                 break
         log.debug(
             f"get_prompt() returned {always_len + total_tokens} tokens ({always_len} always) in"
-            f" {len(self.always_include_messages) + to_keep} messages"
-            f" ({len(self.always_include_messages)} always)"
+            f" {len(self.always_included_messages) + to_keep} messages"
+            f" ({len(self.always_included_messages)} always)"
         )
         if not to_keep:
-            return self.always_include_messages
-        return self.always_include_messages + self.chat_history[-to_keep:]
+            return self.always_included_messages
+        return self.always_included_messages + self.chat_history[-to_keep:]
 
     async def do_function_call(self, call: FunctionCall) -> bool:
         """Resolve a single function call.
@@ -379,7 +379,7 @@ class Kani:
         :param fp: The path to the file to save.
         :param kwargs: Additional arguments to pass to Pydantic's ``model_dump_json``.
         """
-        data = SavedKani(always_include_messages=self.always_include_messages, chat_history=self.chat_history)
+        data = SavedKani(always_included_messages=self.always_included_messages, chat_history=self.chat_history)
         with open(fp, "w") as f:
             f.write(data.model_dump_json(**kwargs))
 
@@ -392,7 +392,7 @@ class Kani:
         with open(fp) as f:
             data = f.read()
         state = SavedKani.model_validate_json(data, **kwargs)
-        self.always_include_messages = state.always_include_messages
+        self.always_included_messages = state.always_included_messages
         self.chat_history = state.chat_history
 
     # ==== internals ====

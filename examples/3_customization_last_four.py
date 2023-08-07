@@ -17,7 +17,7 @@ class LastFourKani(Kani):
         Only include the most recent 4 messages (omitting earlier ones to fit in the token length if necessary)
         and any always included messages.
         """
-        # calculate how many tokens we have for the prompt, accounting for the system prompt, always_include_messages,
+        # calculate how many tokens we have for the prompt, accounting for the system prompt, always_included_messages,
         # any tokens reserved by the engine, and the response
         remaining = self.max_context_size - self.always_len
         # working backwards through history...
@@ -31,7 +31,7 @@ class LastFourKani(Kani):
                 messages.insert(0, message)
             else:
                 break
-        return self.always_include_messages + messages
+        return self.always_included_messages + messages
 
 
 ai = LastFourKani(engine)

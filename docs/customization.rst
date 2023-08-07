@@ -48,7 +48,7 @@ For example, here's how you might override the behaviour to only include the mos
     class LastFourKani(Kani):
         async def get_prompt(self):
             # calculate how many tokens we have for the prompt, accounting for the system prompt,
-            # always_include_messages, any tokens reserved by the engine, and the response
+            # always_included_messages, any tokens reserved by the engine, and the response
             remaining = self.max_context_size - self.always_len
             # working backwards through history...
             messages = []
@@ -61,7 +61,7 @@ For example, here's how you might override the behaviour to only include the mos
                     messages.insert(0, message)
                 else:
                     break
-            return self.always_include_messages + messages
+            return self.always_included_messages + messages
 
 Chatting with this kani, we can see that it loses any memory of what happened more than 4 messages (2 rounds) ago:
 
