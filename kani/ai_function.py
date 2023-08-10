@@ -1,3 +1,5 @@
+import asyncio
+import functools
 import inspect
 import typing
 from typing import Annotated
@@ -36,6 +38,8 @@ class AIFunction:
             this many tokens and add "..." to the end. By default, no responses will be truncated. This uses a smart
             paragraph-aware truncation algorithm.
         """
+        # pydantic's wrapper mangles the async signature so we have to store this here
+        self._inner_is_coro = inspect.iscoroutinefunction(inner)
         self.inner = validate_call(inner)
         self.after = after
         self.name = name or inner.__name__
@@ -52,10 +56,11 @@ class AIFunction:
         self.__doc__ = inner.__doc__
 
     async def __call__(self, *args, **kwargs):
-        result = self.inner(*args, **kwargs)
-        if inspect.iscoroutine(result):
-            return await result
-        return result
+        if self._inner_is_coro:
+            return await self.inner(*args, **kwargs)
+        # run synch functions in a threadpool in order to maintain async safety
+        inner_partial = functools.partial(self.inner, *args, **kwargs)
+        return await asyncio.get_event_loop().run_in_executor(None, inner_partial)
 
     def create_json_schema(self) -> dict:
         """Create a JSON schema representing this function's parameters as a JSON object."""
