@@ -5,9 +5,9 @@ import weakref
 from typing import AsyncIterable, Callable
 
 from .ai_function import AIFunction
-from .engines.base import BaseEngine, BaseCompletion
-from .exceptions import NoSuchFunction, WrappedCallException, FunctionCallException, MessageTooLong
-from .models import ChatMessage, FunctionCall, ChatRole
+from .engines.base import BaseCompletion, BaseEngine
+from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, WrappedCallException
+from .models import ChatMessage, ChatRole, FunctionCall
 from .utils.typing import PathLike, SavedKani
 
 log = logging.getLogger("kani")
@@ -211,6 +211,7 @@ class Kani:
         return (
             sum(self.message_token_len(m) for m in self.always_included_messages)
             + self.engine.token_reserve
+            + self.engine.function_token_reserve(list(self.functions.values()))
             + self.desired_response_tokens
         )
 

@@ -1,4 +1,5 @@
 import abc
+import warnings
 
 from kani.ai_function import AIFunction
 from kani.models import ChatMessage
@@ -51,11 +52,9 @@ class BaseEngine(abc.ABC):
     To add support for a new LM, make a subclass of this and implement the abstract methods below.
     """
 
+    # ==== required interface ====
     max_context_size: int
     """The maximum context size supported by this engine's LM."""
-
-    token_reserve: int = 0
-    """The number of tokens to reserve for internal engine mechanisms (e.g. OpenAI's function calling prompt)."""
 
     @abc.abstractmethod
     def message_len(self, message: ChatMessage) -> int:
@@ -76,6 +75,27 @@ class BaseEngine(abc.ABC):
         """
         raise NotImplementedError
 
+    # ==== optional interface ====
+    token_reserve: int = 0
+    """Optional: The number of tokens to reserve for internal engine mechanisms (e.g. if an engine has to set up the
+    model's reply with a delimiting token).
+    
+    Default: 0
+    """
+
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        """Optional: How many tokens are required to build a prompt to expose the given functions to the model.
+
+        Default: If this is not implemented and the user passes in functions, log a warning that the engine does not
+        support function calling.
+        """
+        if functions:
+            warnings.warn(
+                f"The {type(self).__name__} engine is conversational only and does not support function calling.\n"
+                "Developers: If this warning is incorrect, please implement `function_token_reserve()`."
+            )
+        return 0
+
     async def close(self):
-        """Clean up any resources the engine might need."""
+        """Optional: Clean up any resources the engine might need."""
         pass

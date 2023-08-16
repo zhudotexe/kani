@@ -28,16 +28,28 @@ A new engine must implement at least the two abstract methods and set the abstra
   new :class:`.BaseCompletion`.
 - :attr:`.BaseEngine.max_context_size` specifies the model's token context size.
 
-Optionally, you can also implement :meth:`.BaseEngine.close` if your engine needs to clean up resources, and
-:attr:`.BaseEngine.token_reserve` if your engine needs to reserve tokens (e.g. for a one-time prompt template).
+With just these three implementations, an engine will be fully functional!
 
-kani comes with a couple additional bases and utilities to help you build engines for models on Hugging Face or with
+kani comes with a couple additional bases and utilities to help you build engines for models on HuggingFace or with
 an available HTTP API.
+
+Optional Methods
+^^^^^^^^^^^^^^^^
+Engines also come with a set of optional methods/attributes to override that you can use to customize its behaviour
+further. For example, engines often have to add a custom model-specific prompt in order to expose functions to
+the underlying model, and kani needs to know about the extra tokens added by this prompt!
+
+- :attr:`.BaseEngine.token_reserve`: if your engine needs to reserve tokens (e.g. for a one-time prompt template).
+- :meth:`.BaseEngine.function_token_reserve`: specify how many tokens are needed to expose a set of functions to the
+  model.
+- :meth:`.BaseEngine.close`: if your engine needs to clean up resources during shutdown.
 
 HTTP Client
 -----------
 If your language model backend exposes an HTTP API, you can create a subclass of :class:`.BaseClient` to interface with
 it. Your engine should then create an instance of the new HTTP client and call it to make predictions.
+
+Minimally, to use the HTTP client, your subclass should set the ``SERVICE_BASE`` class variable.
 
 .. seealso::
 

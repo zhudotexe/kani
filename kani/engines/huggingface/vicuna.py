@@ -1,5 +1,3 @@
-import warnings
-
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
@@ -54,8 +52,6 @@ class VicunaEngine(HuggingEngine):
         )
 
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
-        if functions:
-            warnings.warn("The VicunaEngine is conversational only and does not support function calling.")
         prompt_lines = []
         for message in messages:
             if message.role == ChatRole.USER:

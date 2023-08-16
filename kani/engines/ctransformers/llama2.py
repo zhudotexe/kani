@@ -1,5 +1,3 @@
-import warnings
-
 from kani.ai_function import AIFunction
 from kani.models import ChatMessage, ChatRole
 from .base import CTransformersEngine
@@ -56,8 +54,6 @@ class LlamaCTransformersEngine(CTransformersEngine):
         super().__init__(model_id, model_file, *args, **kwargs)
 
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> list[int]:
-        if functions:
-            warnings.warn("The LlamaEngine is conversational only and does not support function calling.")
         return llama2_prompt.build(messages, tokenize=self.model.tokenize, eos_token_id=self.model.eos_token_id)
 
     def message_len(self, message: ChatMessage) -> int:

@@ -1,16 +1,14 @@
-import warnings
-
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from .base import HuggingEngine
 from .. import llama2_prompt
-from ..llama2_prompt import B_INST, E_INST, B_SYS, E_SYS
+from ..llama2_prompt import B_INST, B_SYS, E_INST, E_SYS
 
 try:
+    import sentencepiece
     import torch
     from torch import tensor
-    import sentencepiece
 except ImportError:
     raise MissingModelDependencies(
         'The LlamaEngine requires extra dependencies. Please install kani with "pip install'
@@ -93,8 +91,6 @@ class LlamaEngine(HuggingEngine):
         return torch.tensor([dialog_tokens], device=self.device)
 
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> torch.Tensor:
-        if functions:
-            warnings.warn("The LlamaEngine is conversational only and does not support function calling.")
         if self.strict:
             return self._build_prompt_strict(messages)
         # non-strict has to kind of just do its best
