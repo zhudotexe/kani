@@ -1,6 +1,9 @@
+import functools
+
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
+from . import function_calling
 from .client import OpenAIClient
 from .models import ChatCompletion, FunctionSpec
 from ..base import BaseEngine
@@ -25,14 +28,7 @@ CONTEXT_SIZES_BY_PREFIX = [
 
 
 class OpenAIEngine(BaseEngine):
-    """Engine for using the OpenAI API.
-
-    .. caution::
-
-        Due to having to track "hidden" tokens for the function spec, it is not recommended to reuse an OpenAIEngine
-        instance in multiple kani. To take advantage of reuse, construct a shared :class:`.OpenAIClient` and
-        initialize OpenAIEngine with ``client=the_client_instance`` rather than ``api_key="..."``.
-    """
+    """Engine for using the OpenAI API."""
 
     def __init__(
         self,
@@ -73,7 +69,6 @@ class OpenAIEngine(BaseEngine):
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
         self.tokenizer = None  # tiktoken caches a tokenizer globally in module, so we can unconditionally load it
-        self.token_reserve = 0
         self._load_tokenizer()
 
     def _load_tokenizer(self):
@@ -103,10 +98,21 @@ class OpenAIEngine(BaseEngine):
         completion = await self.client.create_chat_completion(
             model=self.model, messages=messages, functions=function_spec, **self.hyperparams, **hyperparams
         )
-        # calculate function calling reserve tokens on first run
-        if functions and self.token_reserve == 0:
-            self.token_reserve = max(completion.prompt_tokens - sum(self.message_len(m) for m in messages), 0)
         return completion
+
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
+        # wrap an inner impl to use lru_cache with frozensets
+        return self._function_token_reserve_impl(frozenset(functions))
+
+    @functools.lru_cache(maxsize=256)
+    def _function_token_reserve_impl(self, functions):
+        # openai doesn't tell us exactly how their function prompt works, so
+        # we rely on community reverse-engineering to build the right prompt
+        # hopefully OpenAI releases a utility to calculate this in the future, this seems kind of fragile
+        prompt = function_calling.prompt(functions)
+        return len(self.tokenizer.encode(prompt)) + 16  # internal MD headers, namespace {} delimiters
 
     async def close(self):
         await self.client.close()

@@ -34,8 +34,11 @@ class BadEnum(enum.Enum):
 async def example_primitives(
     a: str,
     b: float,
-    c: Annotated[str, AIParam(desc="I am C")],
-    d: Annotated[int, "I am not an AIParam"] = 2,
+    c: bool,
+    d: int,
+    e: None,
+    aa: Annotated[str, AIParam(desc="I am AA")],
+    dd: Annotated[int, "I am not an AIParam"] = 2,
 ):
     """description!"""
     pass
@@ -80,10 +83,13 @@ def test_schema_primitives():
             "properties": {
                 "a": {"type": "string"},
                 "b": {"type": "number"},
-                "c": {"description": "I am C", "type": "string"},
+                "c": {"type": "boolean"},
                 "d": {"type": "integer"},
+                "e": {"type": "null"},
+                "aa": {"description": "I am AA", "type": "string"},
+                "dd": {"default": 2, "type": "integer"},
             },
-            "required": ["a", "b", "c"],
+            "required": ["a", "b", "c", "d", "e", "aa"],
             "type": "object",
         },
     )

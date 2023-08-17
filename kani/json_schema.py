@@ -1,11 +1,15 @@
 import inspect
 import typing
-from typing import TYPE_CHECKING, Optional
+from typing import Optional, TYPE_CHECKING
 
 import pydantic
 
 if TYPE_CHECKING:
     from .ai_function import AIParam
+
+# this is the same as Pydantic's as of v2.1, but we specify it here because some downstream things rely on it
+# (e.g. engines.openai.function_calling_tokens)
+REF_TEMPLATE = "#/$defs/{model}"
 
 
 class AIParamSchema:
@@ -152,4 +156,4 @@ def create_json_schema(params: list[AIParamSchema]) -> dict:
         fields[param.name] = (param.type, pydantic.Field(**field_kwargs))
     # create a temp model for generating json schemas
     pydantic_model = pydantic.create_model("_FunctionSpec", **fields)
-    return pydantic_model.model_json_schema(schema_generator=JSONSchemaBuilder)
+    return pydantic_model.model_json_schema(schema_generator=JSONSchemaBuilder, ref_template=REF_TEMPLATE)
