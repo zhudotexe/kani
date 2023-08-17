@@ -11,6 +11,7 @@ ctransformers~=0.2.14  # ;extra == 'ctransformers'
 # dev
 black
 build
+isort
 pytest
 pytest-asyncio
 twine

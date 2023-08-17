@@ -3,7 +3,7 @@ import logging
 
 import pytest
 
-from kani import Kani, ChatMessage
+from kani import ChatMessage, Kani
 from kani.engines.ctransformers.llama2 import LlamaCTransformersEngine
 
 pytestmark = pytest.mark.llama

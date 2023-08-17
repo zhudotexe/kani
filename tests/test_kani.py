@@ -1,7 +1,7 @@
 import random
 import string
 
-from kani import Kani, ChatMessage, ChatRole
+from kani import ChatMessage, ChatRole, Kani
 from tests.engine import TestEngine
 from tests.utils import flatten_chatmessages
 

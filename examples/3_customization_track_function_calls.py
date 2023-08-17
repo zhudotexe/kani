@@ -6,7 +6,7 @@ import collections
 import datetime
 import os
 
-from kani import Kani, chat_in_terminal, ai_function
+from kani import Kani, ai_function, chat_in_terminal
 from kani.engines.openai import OpenAIEngine
 from kani.exceptions import FunctionCallException
 

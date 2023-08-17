@@ -5,7 +5,7 @@ If you haven't already, go take a look at `1_quickstart.py` for an explanation o
 """
 import os
 
-from kani import Kani, chat_in_terminal, ChatMessage
+from kani import ChatMessage, Kani, chat_in_terminal
 from kani.engines.openai import OpenAIEngine
 
 api_key = os.getenv("OPENAI_API_KEY")

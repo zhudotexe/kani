@@ -8,8 +8,8 @@ to the parent kani.
 """
 import os
 
-from kani import Kani, chat_in_terminal, ai_function
-from kani.engines.openai import OpenAIEngine, OpenAIClient
+from kani import Kani, ai_function, chat_in_terminal
+from kani.engines.openai import OpenAIClient, OpenAIEngine
 
 api_key = os.getenv("OPENAI_API_KEY")
 

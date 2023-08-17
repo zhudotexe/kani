@@ -1,7 +1,7 @@
 from kani.ai_function import AIFunction
 from kani.models import ChatMessage, ChatRole
-from .base import CTransformersEngine
 from .. import llama2_prompt
+from .base import CTransformersEngine
 
 
 class LlamaCTransformersEngine(CTransformersEngine):

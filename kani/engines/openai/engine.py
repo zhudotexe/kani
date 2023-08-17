@@ -3,10 +3,10 @@ import functools
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
+from ..base import BaseEngine
 from . import function_calling
 from .client import OpenAIClient
 from .models import ChatCompletion, FunctionSpec
-from ..base import BaseEngine
 
 try:
     import tiktoken

@@ -15,8 +15,11 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install black
-        run: pip install black
+      - name: Install deps
+        run: pip install black isort
 
       - name: Ensure code is blackified
         run: black . --check --diff
+
+      - name: Ensure imports are sorted
+        run: isort . --check --diff

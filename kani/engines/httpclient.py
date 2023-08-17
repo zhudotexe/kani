@@ -3,7 +3,7 @@ import logging
 
 import aiohttp
 
-from ..exceptions import HTTPStatusException, HTTPException, HTTPTimeout
+from ..exceptions import HTTPException, HTTPStatusException, HTTPTimeout
 
 
 class BaseClient(abc.ABC):

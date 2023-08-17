@@ -2,7 +2,7 @@ import enum
 import os
 from typing import Annotated
 
-from kani import AIParam, Kani, ai_function, chat_in_terminal, FunctionCall, ChatMessage
+from kani import AIParam, ChatMessage, FunctionCall, Kani, ai_function, chat_in_terminal
 from kani.engines.openai import OpenAIEngine
 
 api_key = os.getenv("OPENAI_API_KEY")

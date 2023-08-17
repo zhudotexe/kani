@@ -7,7 +7,7 @@ from ..base import BaseEngine, Completion
 
 try:
     import torch
-    from transformers import AutoTokenizer, AutoModelForCausalLM
+    from transformers import AutoModelForCausalLM, AutoTokenizer
 except ImportError:
     raise MissingModelDependencies(
         'The HuggingEngine requires extra dependencies. Please install kani with "pip install kani[huggingface]". '

@@ -54,3 +54,10 @@ preview = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 markers = ["llama: these tests use a real LLaMA v2 model."]
+
+[tool.isort]
+profile = "black"
+skip_gitignore = true
+line_length = 120
+known_first_party = ["kani"]
+no_lines_before = "LOCALFOLDER"

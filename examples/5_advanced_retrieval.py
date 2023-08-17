@@ -7,7 +7,7 @@ import json
 import os
 from typing import Annotated
 
-from kani import Kani, chat_in_terminal, ai_function, AIParam
+from kani import AIParam, Kani, ai_function, chat_in_terminal
 from kani.engines.httpclient import BaseClient
 from kani.engines.openai import OpenAIEngine
 
