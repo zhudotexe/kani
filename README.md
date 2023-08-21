@@ -85,6 +85,60 @@ chat_in_terminal(ai)
 kani makes the time to set up a working chat model short, while offering the programmer deep customizability over
 every prompt, function call, and even the underlying language model.
 
+## Function Calling
+
+Function calling gives language models the ability to choose when to call a function you provide based off its
+documentation.
+
+With kani, you can write functions in Python and expose them to the model with just one line of code: the `@ai_function`
+decorator.
+
+```python
+# import the library
+from typing import Annotated
+from kani import AIParam, Kani, ai_function, chat_in_terminal
+from kani.engines.openai import OpenAIEngine
+
+# set up the engine as above
+api_key = "sk-..."
+engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+
+
+# subclass Kani to add AI functions
+class MyKani(Kani):
+    # Adding the annotation to a method exposes it to the AI
+    @ai_function()
+    def get_weather(
+        self,
+        # and you can provide extra documentation about specific parameters
+        location: Annotated[str, AIParam(desc="The city and state, e.g. San Francisco, CA")],
+    ):
+        """Get the current weather in a given location."""
+        # In this example, we mock the return, but you could call a real weather API
+        return f"Weather in {location}: Sunny, 72 degrees fahrenheit."
+
+
+ai = MyKani(engine)
+chat_in_terminal(ai)
+```
+
+kani guarantees that function calls are valid by the time they reach your methods while allowing you to focus on
+writing code. For more information, check
+out [the function calling docs](https://kani.readthedocs.io/en/latest/function_calling.html).
+
+## Why kani?
+
+Existing frameworks for language models like langchain and simpleaichat are opinionated and/or heavyweight - they edit
+developers' prompts under the hood, are challenging to learn, and are difficult to customize without adding a lot of
+high-maintenance bloat to your codebase.
+
+<p align="center">
+  <img style="max-width: 800px;" alt="kani" src="docs/_static/lib-comparison.svg">
+</p>
+
+We built kani to be more flexible, simple, and robust. kani is appropriate for everyone from academic researchers
+to industry professionals to hobbyists to use without worrying about under-the-hood hacks.
+
 ## Docs
 
 To learn more about how
