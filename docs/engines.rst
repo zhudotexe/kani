@@ -59,9 +59,9 @@ Minimally, to use the HTTP client, your subclass should set the ``SERVICE_BASE``
     :noindex:
     :members:
 
-Hugging Face
-------------
-If your language model backend is available on Hugging Face or is compatible with ``transformers``'
+HuggingFace
+-----------
+If your language model backend is available on HuggingFace or is compatible with ``transformers``'
 ``AutoModelForCausalLM`` interface, kani includes a base engine that implements a prediction pipeline.
 
 Instead of having to implement the prediction logic, all you have to do is subclass :class:`.HuggingEngine` and

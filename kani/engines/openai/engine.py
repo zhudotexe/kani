@@ -21,14 +21,24 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("gpt-3.5-turbo", 4096),
     ("gpt-4-32k", 32768),
     ("gpt-4", 8192),
+    # fine-tunes
+    ("ft:gpt-3.5-turbo-16k", 16384),
+    ("ft:gpt-3.5-turbo", 4096),
+    ("ft:gpt-4-32k", 32768),
+    ("ft:gpt-4", 8192),
+    # completion models
     ("text-davinci-", 4096),
     ("code-", 8000),
+    # catch-all
     ("", 2048),  # e.g. aba/babbage/curie/davinci
 ]
 
 
 class OpenAIEngine(BaseEngine):
-    """Engine for using the OpenAI API."""
+    """Engine for using the OpenAI API.
+
+    This engine supports all chat-based models and fine-tunes.
+    """
 
     def __init__(
         self,
@@ -45,7 +55,7 @@ class OpenAIEngine(BaseEngine):
     ):
         """
         :param api_key: Your OpenAI API key.
-        :param model: The key of the model to use.
+        :param model: The id of the model to use (e.g. "gpt-3.5-turbo", "ft:gpt-3.5-turbo:my-org:custom_suffix:id").
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
         :param organization: The OpenAI organization to use in requests (defaults to the API key's default org).
