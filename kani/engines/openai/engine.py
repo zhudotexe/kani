@@ -1,4 +1,5 @@
 import functools
+import os
 
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
@@ -54,7 +55,8 @@ class OpenAIEngine(BaseEngine):
         **hyperparams,
     ):
         """
-        :param api_key: Your OpenAI API key.
+        :param api_key: Your OpenAI API key. By default, the API key will be read from the `OPENAI_API_KEY` environment
+            variable.
         :param model: The id of the model to use (e.g. "gpt-3.5-turbo", "ft:gpt-3.5-turbo:my-org:custom_suffix:id").
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
@@ -68,8 +70,15 @@ class OpenAIEngine(BaseEngine):
         :param hyperparams: Any additional parameters to pass to
             :meth:`.OpenAIClient.create_chat_completion`.
         """
-        if (api_key is None and client is None) or (api_key and client):
-            raise ValueError("You must supply exactly one of (api_key, client).")
+        if api_key and client:
+            raise ValueError("You must supply no more than one of (api_key, client).")
+        if api_key is None and client is None:
+            api_key = os.getenv("OPENAI_API_KEY")
+            if api_key is None:
+                raise ValueError(
+                    "You must supply an `api_key`, `client`, or set the `OPENAI_API_KEY` environment variable to use"
+                    " the OpenAIEngine."
+                )
         if max_context_size is None:
             max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))
         self.client = client or OpenAIClient(
