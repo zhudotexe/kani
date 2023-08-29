@@ -1,9 +1,9 @@
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
+from .base import HuggingEngine
 from .. import llama2_prompt
 from ..llama2_prompt import B_INST, B_SYS, E_INST, E_SYS
-from .base import HuggingEngine
 
 try:
     import sentencepiece

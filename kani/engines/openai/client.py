@@ -5,8 +5,8 @@ import aiohttp
 import pydantic
 
 from kani.models import ChatMessage
-from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTimeout
 from .models import ChatCompletion, Completion, FunctionSpec, SpecificFunctionCall
+from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTimeout
 
 
 class OpenAIClient(BaseClient):
