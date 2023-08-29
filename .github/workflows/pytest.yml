@@ -2,9 +2,10 @@ name: Test Package
 
 on: [ push, pull_request ]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# Cancelled runs are marked as failures :(
+#concurrency:
+#  group: ${{ github.workflow }}-${{ github.ref }}
+#  cancel-in-progress: true
 
 jobs:
   build:
