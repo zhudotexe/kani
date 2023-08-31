@@ -30,6 +30,11 @@ class LlamaEngine(HuggingEngine):
 
     In theory you could also use the non-chat-tuned variants as well.
 
+    **GPU Support**
+
+    By default, the HuggingEngine loads the model on GPU if CUDA is detected on your system. To override the device
+    the model is loaded on, pass ``device="cpu|cuda"`` to the constructor.
+
     .. attention::
 
         You will need to accept Meta's license in order to download the LLaMA v2 weights. Visit
@@ -44,7 +49,7 @@ class LlamaEngine(HuggingEngine):
 
     .. code-block:: python
 
-        engine = LlamaEngine("meta-llama/Llama-2-7b-chat-hf", use_auth_token=True, strict=True)
+        engine = LlamaEngine("meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)
         ai = Kani(engine)
     """
 

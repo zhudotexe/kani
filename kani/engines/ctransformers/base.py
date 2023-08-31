@@ -15,9 +15,20 @@ except ImportError as e:
 
 
 class CTransformersEngine(BaseEngine, abc.ABC):
-    """CTransformers Engine
-
+    """
     This class implements the main decoding logic for any GGML model based on a pretrained ``AutoModelForCausalLM``.
+
+    **GPU Support**
+
+    In order to load a model on GPU, the underlying GGML model must support CUDA. To see a list of supported models,
+    see `this table <https://github.com/marella/ctransformers/tree/main#supported-models>`_.
+
+    .. caution::
+        If your model supports CUDA, you must also install additional CUDA dependencies. Run
+        ``pip install 'ctransformers[cuda]'`` if you have not installed CUDA dependencies elsewhere (e.g. through
+        torch).
+
+    To load some or all of the model layers on GPU, pass ``gpu_layers=...`` in the ``model_load_kwargs``.
     """
 
     def __init__(
@@ -33,6 +44,7 @@ class CTransformersEngine(BaseEngine, abc.ABC):
         :param model_file: The file of the model to load from HuggingFace repo or locally.
         :param max_context_size: The context size of the model.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
+            See `this link <https://github.com/marella/ctransformers/tree/main#documentation>`_ for more info.
         :param hyperparams: Additional arguments to supply the model during generation.
         """
 

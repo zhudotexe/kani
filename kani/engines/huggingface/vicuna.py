@@ -25,6 +25,11 @@ class VicunaEngine(HuggingEngine):
     You may also use the 13b, 33b, or other LLaMA models that use the Vicuna prompt by passing the HuggingFace model
     ID to the initializer.
 
+    **GPU Support**
+
+    By default, the HuggingEngine loads the model on GPU if CUDA is detected on your system. To override the device
+    the model is loaded on, pass ``device="cpu|cuda"`` to the constructor.
+
     .. seealso:: https://huggingface.co/lmsys/vicuna-7b-v1.3
 
     .. tip:: See :ref:`4b_quant` for information about loading a quantized model for lower memory usage.

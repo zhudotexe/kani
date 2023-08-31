@@ -22,6 +22,11 @@ class HuggingEngine(BaseEngine, abc.ABC):
     ``AutoModelForCausalLM``. To implement a new HuggingFace model, just implement :meth:`build_prompt` and
     :meth:`~.BaseEngine.message_len` for the specified model.
 
+    **GPU Support**
+
+    By default, the HuggingEngine loads the model on GPU if CUDA is detected on your system. To override the device
+    the model is loaded on, pass ``device="cpu|cuda"`` to the constructor.
+
     .. tip:: See :ref:`4b_quant` for information about loading a quantized model for lower memory usage.
     """
 
