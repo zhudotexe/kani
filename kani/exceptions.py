@@ -1,3 +1,6 @@
+import aiohttp
+
+
 class KaniException(Exception):
     """Base class for all Kani exceptions/errors."""
 
@@ -18,9 +21,10 @@ class HTTPTimeout(HTTPException):
 class HTTPStatusException(HTTPException):
     """The HTTP server returned a non-200 status code."""
 
-    def __init__(self, status_code: int, msg: str):
+    def __init__(self, response: aiohttp.ClientResponse, msg: str):
         super().__init__(msg)
-        self.status_code = status_code
+        self.response = response
+        self.status_code = response.status
 
 
 # ==== function calling ====
