@@ -126,12 +126,12 @@ class Kani:
         """
         async with self.lock:
             # add the user's chat input to the state
-            self.chat_history.append(ChatMessage.user(query.strip()))
+            await self.add_to_history(ChatMessage.user(query.strip()))
 
             # and get a completion
             completion = await self.get_model_completion(include_functions=False, **kwargs)
             message = completion.message
-            self.chat_history.append(message)
+            await self.add_to_history(message)
             return message
 
     async def chat_round_str(self, query: str, **kwargs) -> str:
@@ -155,13 +155,13 @@ class Kani:
         retry = 0
         is_model_turn = True
         async with self.lock:
-            self.chat_history.append(ChatMessage.user(query.strip()))
+            await self.add_to_history(ChatMessage.user(query.strip()))
 
             while is_model_turn:
                 # do the model prediction
                 completion = await self.get_model_completion(**kwargs)
                 message = completion.message
-                self.chat_history.append(message)
+                await self.add_to_history(message)
                 yield message
 
                 # if function call, do it and attempt retry if it's wrong
@@ -338,7 +338,7 @@ class Kani:
                 msg = self._auto_truncate_message(msg, max_len=f.auto_truncate)
                 log.debug(f"Auto truncate returned {self.message_token_len(msg)} tokens.")
         # save the result to the chat history
-        self.chat_history.append(msg)
+        await self.add_to_history(msg)
         # yield whose turn it is
         return f.after == ChatRole.ASSISTANT
 
@@ -363,15 +363,24 @@ class Kani:
         log.debug(f"Call to {call.name} raised an exception: {err}")
         # tell the model what went wrong
         if isinstance(err, NoSuchFunction):
-            self.chat_history.append(
+            await self.add_to_history(
                 ChatMessage.system(f"The function {err.name!r} is not defined. Only use the provided functions.")
             )
         else:
             # but if it's a user function error, we want to raise it
             log.error(f"Call to {call.name} raised an exception: {err}", exc_info=err)
-            self.chat_history.append(ChatMessage.function(call.name, str(err)))
+            await self.add_to_history(ChatMessage.function(call.name, str(err)))
 
         return attempt < self.retry_attempts and err.retry
+
+    async def add_to_history(self, message: ChatMessage):
+        """Add the given message to the chat history.
+
+        You might want to override this to log messages to an external or control how messages are saved to the chat
+        session's memory. By default, this appends to :attr:`.chat_history`.
+        """
+        # this is async even though the default impl is sync because users might conceivably want to perform I/O
+        self.chat_history.append(message)
 
     # ==== utility methods ====
     def save(self, fp: PathLike, **kwargs):
