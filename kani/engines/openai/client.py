@@ -10,7 +10,10 @@ from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTim
 
 
 class OpenAIClient(BaseClient):
-    """Simple HTTP client to interface with the OpenAI API."""
+    """Simple HTTP client to interface with the OpenAI API.
+
+    This client includes exponential backoff on retryable errors.
+    """
 
     def __init__(
         self,
@@ -21,6 +24,14 @@ class OpenAIClient(BaseClient):
         api_base: str = "https://api.openai.com/v1",
         headers: dict = None,
     ):
+        """
+        :param api_key: The OpenAI API key to use.
+        :param http: An aiohttp session to use (creates one by default).
+        :param organization: The OpenAI org ID to bill requests to (default based on api key).
+        :param retry: How many times to retry a failed request (default 5).
+        :param api_base: The base URL of the API to use (default OpenAI).
+        :param headers: Any additional headers to send with each request.
+        """
         if headers is None:
             headers = {}
         super().__init__(http)
@@ -45,12 +56,22 @@ class OpenAIClient(BaseClient):
             try:
                 return await super().request(method, route, headers=headers, **kwargs)
             except (HTTPStatusException, HTTPTimeout) as e:
-                if (i + 1) == retry:
+                # raise if out of retries
+                if (i + 1) >= retry:
                     raise
+
+                # handle http status exceptions
+                # non-retryable error (see https://platform.openai.com/docs/guides/error-codes/api-errors)
+                if isinstance(e, HTTPStatusException) and e.status_code in (400, 401, 403, 404):
+                    raise
+
+                # otherwise, wait and try again
                 retry_sec = 2**i
                 self.logger.warning(f"OpenAI returned {e}, retrying in {retry_sec} sec...")
                 await asyncio.sleep(retry_sec)
-        raise RuntimeError("ran out of retries but no error encountered, halp")
+        raise RuntimeError(
+            "Ran out of retries but no error encountered. This should never happen; please report an issue on GitHub!"
+        )
 
     # ==== completions ====
     @overload
