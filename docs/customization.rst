@@ -102,6 +102,10 @@ For example, here's how you might extend :meth:`.Kani.add_to_history` to log eve
     This example is available in the
     `GitHub repo <https://github.com/zhudotexe/kani/blob/main/examples/3_customization_log_messages.py>`__.
 
+.. hint::
+    kani's :class:`.ChatMessage`\ s are `Pydantic models <https://docs.pydantic.dev/latest/usage/models/>`_
+    under the hood - which means they come with utilities for serialization and deserialization!
+
 .. code-block:: python
 
     class LogMessagesKani(Kani):
@@ -131,6 +135,8 @@ If we chat with this kani and then read ``kani-log.jsonl``, we can see that it l
     {"role":"assistant","content":"Hello! How can I assist you today?","name":null,"function_call":null}
     {"role":"user","content":"Just saying hi!","name":null,"function_call":null}
     {"role":"assistant","content":"Hi! It's great to have you here.","name":null,"function_call":null}
+
+This kind of logging isn't just limited to chatting - this example will also log any function calls and retries.
 
 .. _do_function_call:
 
