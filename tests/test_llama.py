@@ -46,9 +46,9 @@ async def test_llama(create_kani, gh_log):
     resp = await ai.chat_round_str("What are some cool things to do in Tokyo?")
     gh_log.write(
         "# LLaMA Basic\n"
-        "*This is a real output from kani running LLaMA v2 on GitHub Actions.*\n"
-        "---\n"
-        ">>> What are some cool things to do in Tokyo?\n"
+        "*This is a real output from kani running LLaMA v2 on GitHub Actions.*\n\n"
+        "---\n\n"
+        "> What are some cool things to do in Tokyo?\n\n"
     )
     gh_log.write(resp)
     gh_log.write("\n\n---\n\n")
@@ -65,8 +65,8 @@ async def test_chatting_llamas(create_kani, gh_log):
     tourist_response = tourist.chat_history[-1].content
     gh_log.write(
         "# LLaMAs Visit Tokyo\n"
-        "*These are real outputs from two kani running LLaMA v2 on GitHub Actions.*\n"
-        "---\n"
+        "*These are real outputs from two kani running LLaMA v2 on GitHub Actions.*\n\n"
+        "---\n\n"
         f"### Tourist\n{tourist_response}\n"
     )
     for _ in range(5):
