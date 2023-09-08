@@ -26,7 +26,7 @@ OpenAI
 
 Hugging Face
 ------------
-.. autoclass:: kani.engines.huggingface.base.HuggingEngine
+.. autoclass:: kani.engines.huggingface.HuggingEngine
     :members:
 
 .. autoclass:: kani.engines.huggingface.llama2.LlamaEngine
@@ -37,7 +37,7 @@ Hugging Face
 
 CTransformers
 -------------
-.. autoclass:: kani.engines.ctransformers.base.CTransformersEngine
+.. autoclass:: kani.engines.ctransformers.CTransformersEngine
     :members:
 
 .. autoclass:: kani.engines.ctransformers.llama2.LlamaCTransformersEngine

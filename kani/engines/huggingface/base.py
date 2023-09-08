@@ -19,8 +19,8 @@ class HuggingEngine(BaseEngine, abc.ABC):
     """Base engine for all HuggingFace text-generation models.
 
     This class implements the main decoding logic for any HuggingFace model based on a pretrained
-    ``AutoModelForCausalLM``. To implement a new HuggingFace model, just implement :meth:`build_prompt` and
-    :meth:`~.BaseEngine.message_len` for the specified model.
+    ``AutoModelForCausalLM``. To implement a new HuggingFace model, just implement :meth:`~.HuggingEngine.build_prompt`
+    and :meth:`~.BaseEngine.message_len` for the specified model.
 
     **GPU Support**
 
