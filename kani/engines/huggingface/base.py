@@ -111,4 +111,6 @@ class HuggingEngine(BaseEngine, abc.ABC):
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
         content = self.tokenizer.decode(output[0][input_len:-1]).strip()
-        return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - 1)
+        return Completion(
+            ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - (input_len + 1)
+        )
