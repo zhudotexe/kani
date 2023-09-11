@@ -52,9 +52,16 @@ def chat_in_terminal(kani: Kani, rounds: int = 0, stopword: str = None):
     except RuntimeError:
         pass
     else:
-        print(
-            f"WARNING: It looks like you're in an environment with a running asyncio loop (e.g. Google Colab).\nYou"
-            f" should use `await chat_in_terminal_async(...)` instead."
-        )
-        return
+        try:
+            # google colab comes with this pre-installed
+            # let's try importing and patching the loop so that we can just use the normal asyncio.run call
+            import nest_asyncio
+
+            nest_asyncio.apply()
+        except ImportError:
+            print(
+                f"WARNING: It looks like you're in an environment with a running asyncio loop (e.g. Google Colab).\nYou"
+                f" should use `await chat_in_terminal_async(...)` instead or install `nest-asyncio`."
+            )
+            return
     asyncio.run(chat_in_terminal_async(kani, rounds=rounds, stopword=stopword))
