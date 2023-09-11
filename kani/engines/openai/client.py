@@ -92,8 +92,7 @@ class OpenAIClient(BaseClient):
         best_of: int = 1,
         logit_bias: dict = None,
         user: str = None,
-    ) -> Completion:
-        ...
+    ) -> Completion: ...
 
     async def create_completion(self, model: str, **kwargs) -> Completion:
         data = await self.post("/completions", json={"model": model, **kwargs})
@@ -120,8 +119,7 @@ class OpenAIClient(BaseClient):
         frequency_penalty: float = 0.0,
         logit_bias: dict | None = None,
         user: str | None = None,
-    ) -> ChatCompletion:
-        ...
+    ) -> ChatCompletion: ...
 
     async def create_chat_completion(
         self,
