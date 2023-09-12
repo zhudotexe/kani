@@ -16,7 +16,7 @@ authors:
 title: "kani"
 version: 1.0.0
 date-released: 2023-09-11
-url: "https://arxiv.org/abs/2309.05542"
+url: "https://github.com/zhudotexe/kani/tree/main"
 preferred-citation:
   type: generic
   authors:
@@ -39,3 +39,4 @@ preferred-citation:
   eprint: 2309.05542
   archive-prefix: "arXiv"
   primary-class: "cs.SE"
+  url: "https://arxiv.org/abs/2309.05542"
