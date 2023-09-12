@@ -12,7 +12,7 @@
   <a href="https://pypi.org/project/kani/">
     <img alt="PyPI" src="https://img.shields.io/pypi/v/kani">
   </a>
-  <a href="https://colab.research.google.com/github/zhudotexe/kani/blob/main/examples/colab_quickstart.ipynb">
+  <a href="https://colab.research.google.com/github/zhudotexe/kani/blob/main/examples/colab_examples.ipynb">
     <img alt="Quickstart in Colab" src="https://colab.research.google.com/assets/colab-badge.svg">
   </a>
   <a href="https://discord.gg/eTepTNDxYT">
@@ -53,6 +53,10 @@ for many more.
   having to manage multiple processes or programs.
 
 ## Quickstart
+
+<a href="https://colab.research.google.com/github/zhudotexe/kani/blob/main/examples/colab_examples.ipynb">
+  <img alt="Quickstart in Colab" src="https://colab.research.google.com/assets/colab-badge.svg">
+</a>
 
 kani requires Python 3.10 or above.
 
