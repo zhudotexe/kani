@@ -136,7 +136,7 @@ developers' prompts under the hood, are challenging to learn, and are difficult 
 high-maintenance bloat to your codebase.
 
 <p align="center">
-  <img style="max-width: 800px;" alt="kani" src="docs/_static/lib-comparison.svg">
+  <img style="max-width: 800px;" alt="kani" src="docs/_static/lib-comparison_white.png">
 </p>
 
 We built kani to be more flexible, simple, and robust. kani is appropriate for everyone from academic researchers
