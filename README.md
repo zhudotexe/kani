@@ -34,6 +34,8 @@ for many more.
 
 [Read the docs on ReadTheDocs!](http://kani.readthedocs.io/)
 
+[Read our preprint on arXiv!](https://arxiv.org/abs/2309.05542)
+
 ## Features
 
 - **Lightweight and high-level** - kani implements common boilerplate to interface with language models without forcing
@@ -159,6 +161,20 @@ right on GitHub Actions:
 https://github.com/zhudotexe/kani/actions/workflows/pytest.yml?query=branch%3Amain+is%3Asuccess
 
 Simply click on the latest build to see LLaMA's output!
+
+## Citation
+If you use Kani, please cite us as:
+
+```
+@misc{zhu2023kani,
+      title={Kani: A Lightweight and Highly Hackable Framework for Building Language Model Applications}, 
+      author={Andrew Zhu and Liam Dugan and Alyssa Hwang and Chris Callison-Burch},
+      year={2023},
+      eprint={2309.05542},
+      archivePrefix={arXiv},
+      primaryClass={cs.SE}
+}
+```
 
 <!--
 For developers:
