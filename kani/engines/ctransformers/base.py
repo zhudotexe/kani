@@ -87,8 +87,16 @@ class CTransformersEngine(BaseEngine, abc.ABC):
         else:
             raise TypeError("build_prompt should either return a str or a list[int].")
 
-        output_toks = list(self.model.generate(input_toks, **hyperparams))
-        output_len = len(output_toks)
+        output_toks = []
+        output_len = 0
+        for tok in self.model.generate(input_toks, **hyperparams):
+            output_toks.append(tok)
+            output_len += 1
+            # ctransformers does not automatically stop at end of context length
+            # (e.g. https://github.com/zhudotexe/kani/actions/runs/6152842183/job/16695721588)
+            # so we force it to stop if we would bust the context length
+            if input_len + output_len >= self.max_context_size:
+                break
         content = self.model.detokenize(output_toks).strip()
 
         return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=output_len)
