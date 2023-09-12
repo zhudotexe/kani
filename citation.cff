@@ -1,0 +1,41 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Zhu"
+  given-names: "Andrew"
+  orcid: "https://orcid.org/0000-0002-6664-3215"
+- family-names: "Dugan"
+  given-names: "Liam"
+  orcid: "https://orcid.org/0009-0006-5382-5235"
+- family-names: "Hwang"
+  given-names: "Alyssa"
+  orcid: "https://orcid.org/0009-0006-4827-8505"
+- family-names: "Callison-Burch"
+  given-names: "Chris"
+  orcid: "https://orcid.org/0000-0001-8196-1943"
+title: "kani"
+date-released: 2023-09-11
+url: "https://github.com/zhudotexe/kani/tree/main"
+preferred-citation:
+  type: generic
+  authors:
+  - family-names: "Zhu"
+    given-names: "Andrew"
+    orcid: "https://orcid.org/0000-0002-6664-3215"
+  - family-names: "Dugan"
+    given-names: "Liam"
+    orcid: "https://orcid.org/0009-0006-5382-5235"
+  - family-names: "Hwang"
+    given-names: "Alyssa"
+    orcid: "https://orcid.org/0009-0006-4827-8505"
+  - family-names: "Callison-Burch"
+    given-names: "Chris"
+    orcid: "https://orcid.org/0000-0001-8196-1943"
+  year: 2023
+  month: 9
+  day: 11
+  title: "Kani: A Lightweight and Highly Hackable Framework for Building Language Model Applications"
+  eprint: 2309.05542
+  archive-prefix: "arXiv"
+  primary-class: "cs.SE"
+  url: "https://arxiv.org/abs/2309.05542"
