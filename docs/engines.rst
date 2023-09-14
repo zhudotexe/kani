@@ -30,7 +30,7 @@ A new engine must implement at least the two abstract methods and set the abstra
 
 With just these three implementations, an engine will be fully functional!
 
-kani comes with a couple additional bases and utilities to help you build engines for models on HuggingFace or with
+kani comes with a couple additional bases and utilities to help you build engines for models on Hugging Face or with
 an available HTTP API.
 
 Optional Methods
@@ -59,9 +59,9 @@ Minimally, to use the HTTP client, your subclass should set the ``SERVICE_BASE``
     :noindex:
     :members:
 
-HuggingFace
+Hugging Face
 -----------
-If your language model backend is available on HuggingFace or is compatible with ``transformers``'
+If your language model backend is available on Hugging Face or is compatible with ``transformers``'
 ``AutoModelForCausalLM`` interface, kani includes a base engine that implements a prediction pipeline.
 
 Instead of having to implement the prediction logic, all you have to do is subclass :class:`.HuggingEngine` and
@@ -91,11 +91,11 @@ might not be able to fit models with billions of params on your GPU. That's wher
     Using FP4 quantization you can expect to reduce up to 8x the model size compared to its native full precision
     version.
 
-In this section, we'll show how to load HuggingFace models in FP4.
+In this section, we'll show how to load Hugging Face models in FP4.
 
 .. seealso::
 
-    We're mostly going to follow the HuggingFace documentation found here:
+    We're mostly going to follow the Hugging Face documentation found here:
     https://huggingface.co/docs/transformers/perf_infer_gpu_one
 
 **Install Dependencies**
