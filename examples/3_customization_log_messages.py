@@ -12,7 +12,7 @@ engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
 
 
 class LogMessagesKani(Kani):
-    # You can overload __init__ and track kani-specific state:
+    # You can override __init__ and track kani-specific state:
     # in this example we keep track of the file we're logging to.
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

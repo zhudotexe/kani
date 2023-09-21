@@ -15,7 +15,7 @@ engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
 
 
 class TrackCallsKani(Kani):
-    # You can overload __init__ and track kani-specific state:
+    # You can override __init__ and track kani-specific state:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.successful_calls = collections.Counter()

@@ -109,7 +109,7 @@ For example, here's how you might extend :meth:`.Kani.add_to_history` to log eve
 .. code-block:: python
 
     class LogMessagesKani(Kani):
-        # You can overload __init__ and track kani-specific state:
+        # You can override __init__ and track kani-specific state:
         # in this example we keep track of the file we're logging to.
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -157,13 +157,13 @@ things:
 4. Append a new :class:`.ChatMessage` with the result of the function.
 5. Return control to the model or the user.
 
-If any of these steps fail, the handler will throw a :exc:`.FunctionCallException`. You might want to overload it to
+If any of these steps fail, the handler will throw a :exc:`.FunctionCallException`. You might want to override it to
 add instrumentation, though:
 
 .. automethod:: kani.Kani.do_function_call
     :noindex:
 
-For example, here's how you might overload the method to keep track of how many times a model called a function
+For example, here's how you might override the method to keep track of how many times a model called a function
 during a conversation, and how often it was successful:
 
 .. seealso::
@@ -175,7 +175,7 @@ during a conversation, and how often it was successful:
     :emphasize-lines: 8-15
 
     class TrackCallsKani(Kani):
-        # You can overload __init__ and track kani-specific state:
+        # You can override __init__ and track kani-specific state:
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.successful_calls = collections.Counter()
