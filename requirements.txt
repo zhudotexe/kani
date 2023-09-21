@@ -5,7 +5,7 @@ pydantic>=2.0.0,<3.0.0
 torch  # ;extra == 'huggingface'
 transformers>=4.0.0,<5.0.0  # ;extra == 'huggingface'
 sentencepiece~=0.1.99  # ;extra == 'llama'
-tiktoken~=0.4.0  # ;extra == 'openai'
+tiktoken>=0.4.0,<1.0.0  # ;extra == 'openai'
 ctransformers~=0.2.14  # ;extra == 'ctransformers'
 
 # dev
@@ -17,8 +17,8 @@ pytest-asyncio
 twine
 
 # docs
-furo~=2023.5.20
-sphinx~=7.0.0
+furo~=2023.9.10
+sphinx~=7.2.6
 sphinxemoji~=0.2.0
 sphinx-copybutton~=0.5.2
 sphinx-inline-tabs~=2023.4.21
