@@ -207,6 +207,8 @@ One method is to make one of the kani a base, then subclass it to extend its fun
 
 In this example, the ``ChildKani`` has access to both ``search`` *and* ``calculate``.
 
+.. _mixins:
+
 Mixins
 ^^^^^^
 But in some cases, you won't necessarily have a single base to extend, and you might want to share multiple different

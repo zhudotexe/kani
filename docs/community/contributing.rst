@@ -16,7 +16,8 @@ Contributing Code
 -----------------
 When contributing code and opening PRs, there are a couple things to keep in mind. kani is built on the principles
 of being lightweight and unopinionated in the core library - which means we may suggest that certain contributions
-are better suited as an example or a 3rd-party extension package rather than an addition to the core library.
+are better suited as an example or a 3rd-party extension package (see :doc:`extensions`) rather than an
+addition to the core library.
 
 **Helpful PRs**
 
@@ -33,14 +34,11 @@ are better suited as an example or a 3rd-party extension package rather than an 
 .. note::
     For 3rd party packages, we recommend using the ``kani.ext.*`` namespace (e.g. ``kani.ext.my_cool_extension``).
 
-    To get started with building a kani extension package, you can use the
-    `kani extension template repository <https://github.com/zhudotexe/kani-ext-template>`_!
-    This repo contains the right directory layout to use the ``kani.ext.*`` namespace and the PyPI packaging basics to
-    make your package available on pip.
+    To get started with building a kani extension package, see :doc:`extensions`!
 
 If you're unsure whether a contribution is better suited as a core library contribution or an extension package,
 open up a discussion on the GitHub repository.
-We're also happy to showcase cool projects using kani in our README!
+We're also happy to showcase cool projects using kani (see :doc:`showcase`)!
 
 That said, if you think you have an idea that fits well into the kani core library, read on!
 

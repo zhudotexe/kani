@@ -10,7 +10,7 @@ In this section, we'll discuss how to implement your own engine to use any langu
 .. tip::
 
     Built an engine for a model kani doesn't support yet?
-    kani is OSS and |:heart:| PRs with engine implementations for the latest models - see :doc:`contributing`.
+    kani is OSS and |:heart:| PRs with engine implementations for the latest models - see :doc:`community/contributing`.
 
 Implementing an Engine
 ----------------------

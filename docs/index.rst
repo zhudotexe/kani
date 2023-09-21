@@ -11,8 +11,6 @@ developers alike.
 kani comes with support for OpenAI models and LLaMA v2 out of the box, with a model-agnostic framework to add support
 for many more.
 
-.. todo information about the paper and citations
-
 Features
 --------
 
@@ -72,7 +70,7 @@ Hands-on examples are available in the `kani repository <https://github.com/zhud
 
 .. toctree::
     :maxdepth: 2
-    :caption: Pages
+    :caption: Docs
 
     install
     kani
@@ -82,5 +80,13 @@ Hands-on examples are available in the `kani repository <https://github.com/zhud
     advanced
     api_reference
     engine_reference
-    contributing
     genindex
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Community
+
+    community/contributing
+    community/extensions
+    community/showcase
+    Discord <https://discord.gg/eTepTNDxYT>
