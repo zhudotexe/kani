@@ -10,16 +10,25 @@ class ChatRole(enum.Enum):
     """Represents who said a chat message."""
 
     SYSTEM = "system"
-    """The message is from the system (usually a steering prompt)."""
+    """
+    The message is from the system (usually a steering prompt), and generally not meant to be displayed to the user.
+    """
 
     USER = "user"
     """The message is from the user."""
 
     ASSISTANT = "assistant"
-    """The message is from the language model."""
+    """The message is from the language model, and meant to be displayed to the user."""
 
     FUNCTION = "function"
     """The message is the result of a function call."""
+
+    THOUGHT = "thought"
+    """
+    The message is from the language model, and not meant to be displayed to the user (e.g. chain-of-thought prompting
+    internals). This is mostly only used in prompt frameworks and should be considered an assistant message outside of
+    prompt framework contexts.
+    """
 
 
 class FunctionCall(BaseModel):
@@ -53,10 +62,15 @@ class ChatMessage(BaseModel):
     """Who said the message?"""
 
     content: str | None
-    """The content of the message. Can be None only if the message is a requested function call from the assistant."""
+    """The content of the message.
+    Can be None only if the message is a requested function call from the assistant.
+    """
 
     name: str | None = None
-    """The name of the user who sent the message, if set (user messages only)."""
+    """
+    User messages: The name of the user who sent the message, if set.
+    Function messages: The name of the function.
+    """
 
     function_call: FunctionCall | None = None
     """The function requested by the model (assistant messages only)."""
@@ -80,3 +94,7 @@ class ChatMessage(BaseModel):
     def function(cls, name: str, content: str, **kwargs):
         """Create a new function message."""
         return cls(role=ChatRole.FUNCTION, content=content, name=name, **kwargs)
+
+    @classmethod
+    def thought(cls, content: str, **kwargs):
+        return cls(role=ChatRole.THOUGHT, content=content, **kwargs)

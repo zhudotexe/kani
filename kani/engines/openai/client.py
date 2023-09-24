@@ -8,6 +8,8 @@ from kani.models import ChatMessage
 from .models import ChatCompletion, Completion, FunctionSpec, SpecificFunctionCall
 from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTimeout
 
+OPENAI_KNOWN_MESSAGE_ROLES = {"system", "user", "assistant", "function"}
+
 
 class OpenAIClient(BaseClient):
     """Simple HTTP client to interface with the OpenAI API.
@@ -137,14 +139,18 @@ class OpenAIClient(BaseClient):
             kwargs["functions"] = [f.model_dump(exclude_unset=True) for f in functions]
         if "function_call" in kwargs and isinstance(kwargs["function_call"], SpecificFunctionCall):
             kwargs["function_call"] = kwargs["function_call"].model_dump(exclude_unset=True)
+        # transform chatmessages to json
+        messages_json = []
+        for message in messages:
+            # assume all unknown message types (i.e. THOUGHT) are ASSISTANT messages
+            message_json = message.model_dump(exclude_unset=True, mode="json")
+            if message_json["role"] not in OPENAI_KNOWN_MESSAGE_ROLES:
+                message_json["role"] = "assistant"
+            messages_json.append(message_json)
         # call API
         data = await self.post(
             "/chat/completions",
-            json={
-                "model": model,
-                "messages": [cm.model_dump(exclude_unset=True, mode="json") for cm in messages],
-                **kwargs,
-            },
+            json={"model": model, "messages": messages_json, **kwargs},
         )
         try:
             return ChatCompletion.model_validate(data)
