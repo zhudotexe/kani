@@ -8,15 +8,15 @@ Kani
 
 Common Models
 -------------
-.. autoclass:: kani.models.ChatRole
+.. autoclass:: kani.ChatRole
     :members:
 
-.. autoclass:: kani.models.FunctionCall
+.. autoclass:: kani.FunctionCall
     :members:
     :exclude-members: model_config, model_fields
     :class-doc-from: class
 
-.. autoclass:: kani.models.ChatMessage
+.. autoclass:: kani.ChatMessage
     :members:
     :exclude-members: model_config, model_fields
     :class-doc-from: class
@@ -30,10 +30,10 @@ AI Function
 -----------
 .. autofunction:: kani.ai_function
 
-.. autoclass:: kani.ai_function.AIFunction
+.. autoclass:: kani.AIFunction
     :members:
 
-.. autoclass:: kani.ai_function.AIParam
+.. autoclass:: kani.AIParam
     :members:
 
 Engines

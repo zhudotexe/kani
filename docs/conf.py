@@ -44,8 +44,6 @@ html_logo = "_static/kani-logo@512.png"
 html_favicon = "_extra/favicon.ico"
 html_baseurl = "https://kani.readthedocs.io/en/latest"
 
-# maximum_signature_line_length = 88
-add_module_names = False
 nitpicky = True
 nitpick_ignore_regex = [
     (r"py:class", r"aiohttp\..*"),  # aiohttp intersphinx is borked
