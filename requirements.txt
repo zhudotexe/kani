@@ -6,7 +6,7 @@ torch  # ;extra == 'huggingface'
 transformers>=4.0.0,<5.0.0  # ;extra == 'huggingface'
 sentencepiece~=0.1.99  # ;extra == 'llama'
 tiktoken>=0.4.0,<1.0.0  # ;extra == 'openai'
-ctransformers~=0.2.14  # ;extra == 'ctransformers'
+ctransformers>=0.2.25,<1.0.0  # ;extra == 'ctransformers'
 
 # dev
 black
