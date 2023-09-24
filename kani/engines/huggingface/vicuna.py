@@ -59,23 +59,24 @@ class VicunaEngine(HuggingEngine):
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
         prompt_lines = []
         for message in messages:
-            if message.role == ChatRole.USER:
-                prompt_lines.append(f"USER: {message.content}")
-            elif message.role == ChatRole.ASSISTANT:
-                prompt_lines.append(f"ASSISTANT: {message.content}</s>")
-            else:
+            if message.role == ChatRole.SYSTEM:
                 prompt_lines.append(f"{message.content}\n")
+            elif message.role == ChatRole.USER:
+                prompt_lines.append(f"USER: {message.content}")
+            else:
+                prompt_lines.append(f"ASSISTANT: {message.content}</s>")
         prompt = "\n".join(prompt_lines)
         return f"{prompt}\nASSISTANT:"
 
     def message_len(self, message: ChatMessage) -> int:
         # https://github.com/lm-sys/FastChat/blob/main/docs/vicuna_weights_version.md#example-prompt-weights-v11-and-v13
         # remove 1 for the <s> token at the start
-        if message.role == ChatRole.USER:
+        if message.role == ChatRole.SYSTEM:
+            # {}\n\n -> 2
+            return self.tokenizer(message.content, return_length=True).length + 1
+        elif message.role == ChatRole.USER:
             # USER: {}\n -> 5
             return self.tokenizer(message.content, return_length=True).length + 4
-        elif message.role == ChatRole.ASSISTANT:
+        else:
             # ASSISTANT: {}</s>\n -> 8
             return self.tokenizer(message.content, return_length=True).length + 7
-        # {}\n\n -> 2
-        return self.tokenizer(message.content, return_length=True).length + 1

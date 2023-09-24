@@ -1,3 +1,5 @@
+import functools
+
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
@@ -98,9 +100,13 @@ class LlamaEngine(HuggingEngine):
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> torch.Tensor:
         if self.strict:
             return self._build_prompt_strict(messages)
-        # non-strict has to kind of just do its best
-        # ganbatte, kani, ganbatte
-        tokens = llama2_prompt.build(messages, tokenize=self.tokenizer.encode, eos_token_id=self.tokenizer.eos_token_id)
+        tokenize = functools.partial(self.tokenizer.encode, add_special_tokens=False)
+        tokens = llama2_prompt.build(
+            messages,
+            tokenize=tokenize,
+            bos_token_id=self.tokenizer.bos_token_id,
+            eos_token_id=self.tokenizer.eos_token_id,
+        )
         return torch.tensor([tokens], device=self.device)
 
     def message_len(self, message: ChatMessage) -> int:
