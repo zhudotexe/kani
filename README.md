@@ -32,6 +32,8 @@ developers alike.
 kani comes with support for OpenAI models and LLaMA v2 out of the box, with a model-agnostic framework to add support
 for many more.
 
+**Interested in contributing? Check out our [guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**
+
 [Read the docs on ReadTheDocs!](http://kani.readthedocs.io/)
 
 [Read our preprint on arXiv!](https://arxiv.org/abs/2309.05542)
