@@ -1,4 +1,5 @@
 import asyncio
+import warnings
 from typing import Literal, overload
 
 import aiohttp
@@ -146,6 +147,21 @@ class OpenAIClient(BaseClient):
                 **kwargs,
             },
         )
+
+        # sometimes openai's function calls are borked; we fix them here
+        # i.e. the model returns a function call with name "functions.foo" rather than just "foo"
+        # the openai api rejects function calls with . in their name, causing 400s on future requests
+        # so we intercept and remove any hallucinated prefix before returning
+        message_data = data["choices"][0]["message"]
+        if (call := message_data.get("function_call")) and call["name"].startswith("functions."):
+            call["name"] = call["name"].removeprefix("functions.")
+            # log a warning saying we did this
+            warnings.warn(
+                "The OpenAI API returned an invalid function call (name starting with 'functions.'), which would break"
+                " future API calls. kani removed this erroneous prefix."
+            )
+
+        # return validated model
         try:
             return ChatCompletion.model_validate(data)
         except pydantic.ValidationError:
