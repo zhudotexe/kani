@@ -1,6 +1,6 @@
 import os
 
-from ..models import ChatMessage, BaseModel
+from ..models import BaseModel, ChatMessage
 
 PathLike = str | bytes | os.PathLike
 

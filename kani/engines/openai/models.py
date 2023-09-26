@@ -1,6 +1,6 @@
 from typing import Literal
 
-from kani.models import ChatMessage, BaseModel
+from kani.models import BaseModel, ChatMessage
 from ..base import BaseCompletion
 
 
