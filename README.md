@@ -168,6 +168,18 @@ https://github.com/zhudotexe/kani/actions/workflows/pytest.yml?query=branch%3Ama
 
 Simply click on the latest build to see LLaMA's output!
 
+## Kani in the News
+
+We are really excited and grateful to see people talking about Kani online. We are also trending on Papers With Code, GitHub, and OSS Insight. Check out some recent articles and videos below!
+
+- [Researchers from the University of Pennsylvania Introduce Kani: A Lightweight, Flexible, and Model-Agnostic Open-Source AI Framework for Building Language Model Applications](https://www.marktechpost.com/2023/09/18/researchers-from-the-university-of-pennsylvania-introduce-kani-a-lightweight-flexible-and-model-agnostic-open-source-ai-framework-for-building-language-model-applications/)
+- [Unlocking AI Potential: Unveiling Kani, the Groundbreaking Open-Source Framework Revolutionizing Large Language Model Applications](https://www.cjco.com.au/article/news/unlocking-ai-potential-unveiling-kani-the-groundbreaking-open-source-framework-revolutionizing-large-language-model-applications/)
+- [Kani: A Lightweight and Customizable Framework for Language Model Applications](https://ts2.space/en/kani-a-lightweight-and-customizable-framework-for-language-model-applications/)
+- [Introducing Kani (Sanskrit Word): A Game-Changing Open-Source AI Framework for Language Models](https://www.linkedin.com/pulse/introducing-kani-sanskrit-word-game-changing/)
+  - *Kani was originally named after the Japanese word for crab and coincidentally means "knowledge" in Sanskrit.*
+- [kani: lightweight LLM framework (Japanese)](https://note.com/hamachi_jp/n/n342becc4f345)
+- [Top Trending LLM Projects of the Week: Dive into the Future of Tech! 🚀](https://www.youtube.com/watch?v=qoGKzmnhAnA)
+
 ## Citation
 If you use Kani, please cite us as:
 
