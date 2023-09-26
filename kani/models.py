@@ -1,8 +1,21 @@
 """Model-agnostic classes used to represent the chat state and function calls."""
+import abc
 import enum
 import json
 
 from pydantic import BaseModel, ConfigDict
+
+
+class KaniModel(BaseModel, abc.ABC):
+    """The base class for all Kani models."""
+
+    def copy_with(self, **new_values):
+        """Make a shallow copy of this object, updating the passed attributes (if any) to new values."""
+        # we have to round-trip through dict, which isn't too bad
+        data = dict(self)
+        if new_values:
+            data.update(new_values)
+        return self.model_validate(data)
 
 
 # ==== chat ====
@@ -22,7 +35,7 @@ class ChatRole(enum.Enum):
     """The message is the result of a function call."""
 
 
-class FunctionCall(BaseModel):
+class FunctionCall(KaniModel):
     """Represents a model's request to call a function."""
 
     model_config = ConfigDict(frozen=True)
@@ -44,7 +57,7 @@ class FunctionCall(BaseModel):
         return cls(name=name, arguments=json.dumps(kwargs))
 
 
-class ChatMessage(BaseModel):
+class ChatMessage(KaniModel):
     """Represents a message in the chat context."""
 
     model_config = ConfigDict(frozen=True)
