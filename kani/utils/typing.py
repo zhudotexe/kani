@@ -1,8 +1,6 @@
 import os
 
-from pydantic import BaseModel
-
-from ..models import ChatMessage
+from ..models import ChatMessage, BaseModel
 
 PathLike = str | bytes | os.PathLike
 

@@ -3,10 +3,10 @@ import abc
 import enum
 import json
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel as PydanticBase, ConfigDict
 
 
-class KaniModel(BaseModel, abc.ABC):
+class BaseModel(PydanticBase, abc.ABC):
     """The base class for all Kani models."""
 
     def copy_with(self, **new_values):
@@ -35,7 +35,7 @@ class ChatRole(enum.Enum):
     """The message is the result of a function call."""
 
 
-class FunctionCall(KaniModel):
+class FunctionCall(BaseModel):
     """Represents a model's request to call a function."""
 
     model_config = ConfigDict(frozen=True)
@@ -57,7 +57,7 @@ class FunctionCall(KaniModel):
         return cls(name=name, arguments=json.dumps(kwargs))
 
 
-class ChatMessage(KaniModel):
+class ChatMessage(BaseModel):
     """Represents a message in the chat context."""
 
     model_config = ConfigDict(frozen=True)

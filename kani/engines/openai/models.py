@@ -1,8 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel
-
-from kani.models import ChatMessage
+from kani.models import ChatMessage, BaseModel
 from ..base import BaseCompletion
 
 
