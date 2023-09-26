@@ -10,12 +10,11 @@ class BaseModel(PydanticBase, abc.ABC):
     """The base class for all Kani models."""
 
     def copy_with(self, **new_values):
-        """Make a shallow copy of this object, updating the passed attributes (if any) to new values."""
-        # we have to round-trip through dict, which isn't too bad
-        data = dict(self)
-        if new_values:
-            data.update(new_values)
-        return self.model_validate(data)
+        """Make a shallow copy of this object, updating the passed attributes (if any) to new values.
+        This does not validate the updated attributes!
+        This is mostly just a convenience wrapper around ``.model_copy``.
+        """
+        return self.model_copy(update=new_values)
 
 
 # ==== chat ====
