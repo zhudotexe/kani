@@ -27,6 +27,7 @@ extensions = [
     "sphinx_inline_tabs",  # https://sphinx-inline-tabs.readthedocs.io/en/latest/usage.html
     "sphinx_copybutton",  # https://sphinx-copybutton.readthedocs.io/en/latest/
     "sphinxemoji.sphinxemoji",  # https://sphinxemojicodes.readthedocs.io/en/stable/
+    "sphinx_sitemap",  # https://sphinx-sitemap.readthedocs.io/en/latest/getting-started.html
 ]
 
 templates_path = ["_templates"]
@@ -42,7 +43,7 @@ html_static_path = ["_static"]
 html_extra_path = ["_extra"]
 html_logo = "_static/kani-logo@512.png"
 html_favicon = "_extra/favicon.ico"
-html_baseurl = "https://kani.readthedocs.io/en/latest"
+html_baseurl = "https://kani.readthedocs.io/en/latest/"
 
 nitpicky = True
 nitpick_ignore_regex = [
@@ -73,3 +74,6 @@ copybutton_copy_empty_lines = False
 
 # sphinxemoji.sphinxemoji
 sphinxemoji_style = "twemoji"
+
+# sphinx_sitemap
+sitemap_url_scheme = "{link}"
