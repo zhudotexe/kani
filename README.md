@@ -32,7 +32,8 @@ developers alike.
 kani comes with support for OpenAI models and LLaMA v2 out of the box, with a model-agnostic framework to add support
 for many more.
 
-**Interested in contributing? Check out our [guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**
+**Interested in contributing? Check out our
+[guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**
 
 [Read the docs on ReadTheDocs!](http://kani.readthedocs.io/)
 
@@ -170,17 +171,41 @@ Simply click on the latest build to see LLaMA's output!
 
 ## Kani in the News
 
-We are really excited and grateful to see people talking about Kani online. We are also trending on Papers With Code, GitHub, and OSS Insight. Check out some recent articles and videos below!
+We are really excited and grateful to see people talking about Kani online. We are also trending on Papers With Code,
+GitHub, and OSS Insight. Check out some recent articles and videos below!
 
 - [Researchers from the University of Pennsylvania Introduce Kani: A Lightweight, Flexible, and Model-Agnostic Open-Source AI Framework for Building Language Model Applications](https://www.marktechpost.com/2023/09/18/researchers-from-the-university-of-pennsylvania-introduce-kani-a-lightweight-flexible-and-model-agnostic-open-source-ai-framework-for-building-language-model-applications/)
 - [Unlocking AI Potential: Unveiling Kani, the Groundbreaking Open-Source Framework Revolutionizing Large Language Model Applications](https://www.cjco.com.au/article/news/unlocking-ai-potential-unveiling-kani-the-groundbreaking-open-source-framework-revolutionizing-large-language-model-applications/)
 - [Kani: A Lightweight and Customizable Framework for Language Model Applications](https://ts2.space/en/kani-a-lightweight-and-customizable-framework-for-language-model-applications/)
 - [Introducing Kani (Sanskrit Word): A Game-Changing Open-Source AI Framework for Language Models](https://www.linkedin.com/pulse/introducing-kani-sanskrit-word-game-changing/)
-  - *Kani was originally named after the Japanese word for crab and coincidentally means "knowledge" in Sanskrit.*
+    - *Kani was originally named after the Japanese word for crab and coincidentally means "knowledge" in Sanskrit.*
 - [kani: lightweight LLM framework (Japanese)](https://note.com/hamachi_jp/n/n342becc4f345)
 - [Top Trending LLM Projects of the Week: Dive into the Future of Tech! 🚀](https://www.youtube.com/watch?v=qoGKzmnhAnA)
 
+## Who we are
+
+<img style="max-width: 300px;" alt="University of Pennsylvania Logo" src="docs/_static/penn-logo.jpg">
+
+The core development team is made of three PhD students in the Department of Computer and Information Science at the
+University of Pennsylvania. We're all members of
+[Prof. Chris Callison-Burch's](https://www.cis.upenn.edu/~ccb/) lab, working towards advancing the future of NLP.
+
+- [**Andrew Zhu**](https://zhu.codes/) started in Fall 2022. His research interests include natural language processing,
+  programming languages, distributed systems, and more. He's also a full-stack software engineer, proficient in all
+  manner of backend, devops, database, and frontend engineering. Andrew strives to make idiomatic, clean, performant,
+  and low-maintenance code — philosophies that are often rare in academia.
+- [**Liam Dugan**](https://liamdugan.com/) started in Fall 2021. His research focuses primarily on large language models
+  and how humans interact with them. In particular, he is interested in human detection of generated text and whether we
+  can apply those insights to automatic detection systems. He is also interested in the practical application of large
+  language models to education.
+- [**Alyssa Hwang**](https://alyssahwang.com/) started in Fall 2020 and is advised by Chris Callison-Burch and Andrew
+  Head. Her research focuses on AI assistants that effectively communicate complex information, like voice assistants
+  guiding users through instructions or audiobooks allowing users to seamlessly navigate through spoken text. Beyond
+  research, Alyssa chairs the Penn CIS Doctoral Association, founded the CIS PhD Mentorship Program, and was supported
+  by the NSF Graduate Research Fellowship Program.
+
 ## Citation
+
 If you use Kani, please cite us as:
 
 ```
@@ -193,6 +218,17 @@ If you use Kani, please cite us as:
       primaryClass={cs.SE}
 }
 ```
+
+### Acknowledgements
+
+We would like to thank the members of the lab of Chris Callison-Burch for their testing and detailed feedback on the
+contents of both our paper and the Kani repository. In addition, we’d like to thank Henry Zhu (no relation to the first
+author) for his early and enthusiastic support of the project.
+
+This research is based upon work supported in part by the IARPA HIATUS Program (contract 2022-22072200005), and the
+NSF (Award 1928631). Approved for Public Release, Distribution Unlimited. The views and conclusions contained herein are
+those of the authors and should not be interpreted as necessarily representing the official policies, either expressed
+or implied, of IARPA, NSF, or the U.S. Government.
 
 <!--
 For developers:
