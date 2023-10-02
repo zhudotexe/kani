@@ -184,7 +184,7 @@ GitHub, and OSS Insight. Check out some recent articles and videos below!
 
 ## Who we are
 
-<img style="max-width: 300px;" alt="University of Pennsylvania Logo" src="docs/_static/penn-logo.jpg">
+<img alt="University of Pennsylvania Logo" src="docs/_static/penn-logo.jpg" width="300">
 
 The core development team is made of three PhD students in the Department of Computer and Information Science at the
 University of Pennsylvania. We're all members of
