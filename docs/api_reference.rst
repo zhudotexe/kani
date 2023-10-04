@@ -36,6 +36,14 @@ AI Function
 .. autoclass:: kani.AIParam
     :members:
 
+Internals
+---------
+.. autoclass:: kani.FunctionCallResult
+    :members:
+
+.. autoclass:: kani.ExceptionHandleResult
+    :members:
+
 Engines
 -------
 See :doc:`engine_reference`.
@@ -45,3 +53,8 @@ Utilities
 .. autofunction:: kani.chat_in_terminal
 
 .. autofunction:: kani.chat_in_terminal_async
+
+Message Formatters
+^^^^^^^^^^^^^^^^^^
+.. automodule:: kani.utils.message_formatters
+    :members:

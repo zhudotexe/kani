@@ -13,12 +13,13 @@ engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
 
 class CustomExceptionPromptKani(Kani):
     async def handle_function_call_exception(self, call, err, attempt):
-        self.chat_history.append(
-            ChatMessage.system(
-                f"The call encountered an error. Relay this error message to the user in a sarcastic manner: {err}"
-            )
+        # get the standard retry logic...
+        result = await super().handle_function_call_exception(call, err, attempt)
+        # but override the returned message with our own
+        result.message = ChatMessage.system(
+            f"The call encountered an error. Relay this error message to the user in a sarcastic manner: {err}"
         )
-        return attempt < self.retry_attempts and err.retry
+        return result
 
     @ai_function()
     def get_time(self):

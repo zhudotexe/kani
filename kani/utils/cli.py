@@ -4,11 +4,7 @@ import logging
 import os
 
 from kani.kani import Kani
-from kani.models import ChatMessage
-
-
-def _function_formatter(message: ChatMessage):
-    return f"Thinking ({message.function_call.name})..."
+from kani.utils.message_formatters import assistant_message_contents_thinking
 
 
 async def chat_in_terminal_async(kani: Kani, rounds: int = 0, stopword: str = None):
@@ -25,7 +21,7 @@ async def chat_in_terminal_async(kani: Kani, rounds: int = 0, stopword: str = No
             query = input("USER: ")
             if stopword and query == stopword:
                 break
-            async for msg in kani.full_round_str(query, function_call_formatter=_function_formatter):
+            async for msg in kani.full_round_str(query, message_formatter=assistant_message_contents_thinking):
                 print(f"AI: {msg}")
     except KeyboardInterrupt:
         pass

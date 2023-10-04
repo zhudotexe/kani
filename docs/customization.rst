@@ -237,7 +237,7 @@ A requested function call can error out for a variety of reasons:
 By default, kani will add a :class:`.ChatMessage` to the chat history, giving the model feedback
 on what occurred. The model can then retry the call up to *retry_attempts* times.
 
-:meth:`.Kani.handle_function_call_exception` controls this behaviour, adding the message and returning whether or not
+:meth:`.Kani.handle_function_call_exception` controls this behaviour, returning the message to add and whether or not
 the model should be allowed to retry. By overriding this method, you can control the error prompt, log the error, or
 implement custom retry logic.
 
@@ -258,15 +258,18 @@ Here's an example of providing custom prompts on an exception:
     `GitHub repo <https://github.com/zhudotexe/kani/blob/main/examples/3_customization_custom_exception_prompt.py>`__.
 
 .. code-block:: python
-    :emphasize-lines: 2-7
+    :emphasize-lines: 2-10
 
     class CustomExceptionPromptKani(Kani):
         async def handle_function_call_exception(self, call, err, attempt):
-            self.chat_history.append(ChatMessage.system(
+            # get the standard retry logic...
+            result = await super().handle_function_call_exception(call, err, attempt)
+            # but override the returned message with our own
+            result.message = ChatMessage.system(
                 "The call encountered an error. "
                 f"Relay this error message to the user in a sarcastic manner: {err}"
-            ))
-            return attempt < self.retry_attempts and err.retry
+            )
+            return result
 
         @ai_function()
         def get_time(self):

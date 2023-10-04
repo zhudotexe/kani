@@ -8,7 +8,9 @@ from typing import AsyncIterable, Callable
 from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
 from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, WrappedCallException
+from .internal import ExceptionHandleResult, FunctionCallResult
 from .models import ChatMessage, ChatRole, FunctionCall
+from .utils.message_formatters import assistant_message_contents
 from .utils.typing import PathLike, SavedKani
 
 log = logging.getLogger("kani")
@@ -22,11 +24,11 @@ class Kani:
 
     ``chat_round(query: str, **kwargs) -> ChatMessage``
 
-    ``full_round(query: str, function_call_formatter: Callable[[ChatMessage], str], **kwargs) -> AsyncIterable[ChatMessage]``
+    ``full_round(query: str, **kwargs) -> AsyncIterable[ChatMessage]``
 
     ``chat_round_str(query: str, **kwargs) -> str``
 
-    ``full_round_str(query: str, function_call_formatter: Callable[[ChatMessage], str], **kwargs) -> AsyncIterable[str]``
+    ``full_round_str(query: str, message_formatter: Callable[[ChatMessage], str], **kwargs) -> AsyncIterable[str]``
 
     **Function Calling**
 
@@ -152,7 +154,8 @@ class Kani:
     async def full_round(self, query: str, **kwargs) -> AsyncIterable[ChatMessage]:
         """Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
 
-        Yields each of the model's ChatMessages. A ChatMessage must have at least one of (content, function_call).
+        Yields each non-user ChatMessage created during the round.
+        A ChatMessage will have at least one of (content, function_call).
 
         Use this in an async for loop, like so::
 
@@ -179,12 +182,23 @@ class Kani:
                     return
 
                 try:
-                    is_model_turn = await self.do_function_call(message.function_call)
+                    function_call_result = await self.do_function_call(message.function_call)
+                    is_model_turn = function_call_result.is_model_turn
+                    call_message = function_call_result.message
+                    # save the result to the chat history
+                    await self.add_to_history(call_message)
+                    yield call_message
                 except FunctionCallException as e:
-                    should_retry = await self.handle_function_call_exception(message.function_call, e, retry)
+                    exception_handling_result = await self.handle_function_call_exception(
+                        message.function_call, e, retry
+                    )
+                    # save the result to the chat history
+                    exc_message = exception_handling_result.message
+                    await self.add_to_history(exc_message)
+                    yield exc_message
                     # retry if we have retry attempts left
                     retry += 1
-                    if not should_retry:
+                    if not exception_handling_result.should_retry:
                         # disable function calling on the next go
                         kwargs = {**kwargs, "include_functions": False}
                     continue
@@ -194,22 +208,19 @@ class Kani:
     async def full_round_str(
         self,
         query: str,
-        function_call_formatter: Callable[[ChatMessage], str | None] = lambda _: None,
+        message_formatter: Callable[[ChatMessage], str | None] = assistant_message_contents,
         **kwargs,
     ) -> AsyncIterable[str]:
         """Like :meth:`full_round`, but each yielded element is a str rather than a ChatMessage.
 
         :param query: The content of the user's chat message.
-        :param function_call_formatter: A function that returns a string to yield when the model decides to call a
-            function (or None to yield nothing). By default, ``full_round_str`` does not yield on a function call.
+        :param message_formatter: A function that returns a string to yield for each message. By default, `
+            `full_round_str`` yields the content of each assistant message.
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
         """
         async for message in self.full_round(query, **kwargs):
-            if text := message.content:
+            if text := message_formatter(message):
                 yield text
-
-            if message.function_call and (fn_msg := function_call_formatter(message)):
-                yield fn_msg
 
     # ==== helpers ====
     @property
@@ -312,7 +323,7 @@ class Kani:
             return self.always_included_messages
         return self.always_included_messages + self.chat_history[-to_keep:]
 
-    async def do_function_call(self, call: FunctionCall) -> bool:
+    async def do_function_call(self, call: FunctionCall) -> FunctionCallResult:
         """Resolve a single function call.
 
         By default, any exception raised from this method will be an instance of a :class:`.FunctionCallException`.
@@ -320,7 +331,8 @@ class Kani:
         You may implement an override to add instrumentation around function calls (e.g. tracking success counts
         for varying prompts). See :ref:`do_function_call`.
 
-        :returns: True (default) if the model should immediately react; False if the user speaks next.
+        :returns: A :class:`.FunctionCallResult` including whose turn it is next and the message with the result of the
+            function call.
         :raises NoSuchFunction: The requested function does not exist.
         :raises WrappedCallException: The function raised an exception.
         """
@@ -347,17 +359,14 @@ class Kani:
                 )
                 msg = self._auto_truncate_message(msg, max_len=f.auto_truncate)
                 log.debug(f"Auto truncate returned {self.message_token_len(msg)} tokens.")
-        # save the result to the chat history
-        await self.add_to_history(msg)
-        # yield whose turn it is
-        return f.after == ChatRole.ASSISTANT
+        return FunctionCallResult(is_model_turn=f.after == ChatRole.ASSISTANT, message=msg)
 
     async def handle_function_call_exception(
         self, call: FunctionCall, err: FunctionCallException, attempt: int
-    ) -> bool:
+    ) -> ExceptionHandleResult:
         """Called when a function call raises an exception.
 
-        By default, this adds a message to the chat telling the LM about the error and allows a retry if the error
+        By default, returns a message telling the LM about the error and allows a retry if the error
         is recoverable and there are remaining retry attempts.
 
         You may implement an override to customize the error prompt, log the error, or use custom retry logic.
@@ -367,21 +376,20 @@ class Kani:
         :param err: The error the call raised. Usually this is :class:`.NoSuchFunction` or
             :class:`.WrappedCallException`, although it may be any exception raised by :meth:`do_function_call`.
         :param attempt: The attempt number for the current call (0-indexed).
-        :returns: True if the model should retry the call; False if not.
+        :returns: A :class:`.ExceptionHandleResult` detailing whether the model should retry and the message to add to
+            the chat history.
         """
         # log the exception here
         log.debug(f"Call to {call.name} raised an exception: {err}")
         # tell the model what went wrong
         if isinstance(err, NoSuchFunction):
-            await self.add_to_history(
-                ChatMessage.system(f"The function {err.name!r} is not defined. Only use the provided functions.")
-            )
+            msg = ChatMessage.system(f"The function {err.name!r} is not defined. Only use the provided functions.")
         else:
             # but if it's a user function error, we want to raise it
             log.error(f"Call to {call.name} raised an exception: {err}", exc_info=err)
-            await self.add_to_history(ChatMessage.function(call.name, str(err)))
+            msg = ChatMessage.function(call.name, str(err))
 
-        return attempt < self.retry_attempts and err.retry
+        return ExceptionHandleResult(should_retry=attempt < self.retry_attempts and err.retry, message=msg)
 
     async def add_to_history(self, message: ChatMessage):
         """Add the given message to the chat history.
