@@ -4,9 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kani"
-version = "0.3.5"
+version = "0.4.0"
 authors = [
     { name = "Andrew Zhu", email = "andrew@zhu.codes" },
+    { name = "Liam Dugan", email = "ldugan@seas.upenn.edu" },
+    { name = "Alyssa Hwang", email = "ahwang16@seas.upenn.edu" },
 ]
 description = "kani (カニ) is a lightweight and highly hackable framework for chat-based language models with tool usage/function calling."
 readme = "README.md"
