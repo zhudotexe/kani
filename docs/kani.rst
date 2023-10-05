@@ -101,13 +101,19 @@ This table lists the engines built in to kani:
 When you are finished with an engine, release its resources with :meth:`.BaseEngine.close`.
 
 Chat Messages
-^^^^^^^^^^^^^
+-------------
 Each message contains the ``role`` (a :class:`.ChatRole`: system, assistant, user, or function) that sent the message
 and the ``content`` of the message. Optionally, a user message can also contain a ``name`` (for multi-user
 conversations), and an assistant message can contain a ``function_call`` (discussed in :doc:`function_calling`).
 
-At a high level, a :class:`.Kani` is responsible for managing a list of :class:`.ChatMessage`: the chat session associated
-with it. You can access the chat messages through the :attr:`.Kani.chat_history` attribute.
+.. autoclass:: kani.ChatMessage
+    :members:
+    :exclude-members: model_config, model_fields
+    :class-doc-from: class
+    :noindex:
+
+At a high level, a :class:`.Kani` is responsible for managing a list of :class:`.ChatMessage`: the chat session
+associated with it. You can access the chat messages through the :attr:`.Kani.chat_history` attribute.
 
 You may even modify the chat history (e.g. append or delete ChatMessages) to change the prompt at any time.
 
@@ -116,6 +122,18 @@ You may even modify the chat history (e.g. append or delete ChatMessages) to cha
     immutable by default.
 
     For example, to edit the last message, you could set ``ai.chat_history[-1] = ChatMessage.assistant("...")``.
+
+    You can use the :meth:`.ChatMessage.copy_with` convenience method to make a copy with only certain attributes
+    updated.
+
+.. warning::
+    In some advanced use cases, :attr:`.ChatMessage.content` may be a list of :class:`.MessagePart` or ``str`` rather
+    than a string. ChatMessage exposes :attr:`.ChatMessage.text` (always a string or None) and
+    :attr:`.ChatMessage.parts` (always a list of message parts), which we recommend using instead of
+    :attr:`.ChatMessage.content`.
+
+    These properties are dynamically generated based on the underlying content, and it is safe to mix messages
+    with different content types in a single Kani.
 
 .. code-block:: pycon
 
@@ -142,7 +160,7 @@ You may even modify the chat history (e.g. append or delete ChatMessages) to cha
     ]
 
 Few-Shot Prompting
-^^^^^^^^^^^^^^^^^^
+------------------
 Few-shot prompting (AKA in-context learning) is the idea that language models can "learn" the task the user wants
 to accomplish through examples provided to it in its prompt.
 
