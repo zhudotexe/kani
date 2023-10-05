@@ -62,7 +62,7 @@ async def test_chatting_llamas(create_kani, gh_log):
     )
     guide = create_kani()
 
-    tourist_response = tourist.chat_history[-1].content
+    tourist_response = tourist.chat_history[-1].text
     gh_log.write(
         "# LLaMAs Visit Tokyo\n"
         "*These are real outputs from two kani running LLaMA v2 on GitHub Actions.*\n\n"

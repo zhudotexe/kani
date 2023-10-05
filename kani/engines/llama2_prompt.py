@@ -16,9 +16,9 @@ def build(messages: list[ChatMessage], tokenize: Callable[[str], list[int]], eos
     prompt_buf = []  # parts of the user-assistant pair
     for message in messages:
         if message.role == ChatRole.USER:
-            prompt_buf.append(f"{B_INST} {message.content} {E_INST}")
+            prompt_buf.append(f"{B_INST} {message.text} {E_INST}")
         elif message.role == ChatRole.ASSISTANT:
-            prompt_buf.append(f" {message.content} ")
+            prompt_buf.append(f" {message.text} ")
             # turn the current round into tokens
             prompt_round = "".join(prompt_buf)
             # hack: if we see a " {E_INST}{B_INST} " we should replace it with empty string
@@ -28,7 +28,7 @@ def build(messages: list[ChatMessage], tokenize: Callable[[str], list[int]], eos
             tokens.append(eos_token_id)
             prompt_buf.clear()
         else:
-            prompt_buf.append(f"{B_INST} {B_SYS}{message.content}{E_SYS} {E_INST}")
+            prompt_buf.append(f"{B_INST} {B_SYS}{message.text}{E_SYS} {E_INST}")
     # flush rest of prompt buffer (probably a user message) into tokens
     if prompt_buf:
         tokens.extend(tokenize("".join(prompt_buf)))

@@ -19,4 +19,4 @@ def dict_at_least(outer: dict, inner: dict) -> bool:
 
 def flatten_chatmessages(msgs: list[ChatMessage], between: str = "") -> str:
     """Return a string that is the concatenation of all contents of the chat messages."""
-    return between.join((m.content or "") for m in msgs)
+    return between.join((m.text or "") for m in msgs)

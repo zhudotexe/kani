@@ -8,21 +8,21 @@ from kani.models import ChatMessage, ChatRole
 
 def all_message_contents(msg: ChatMessage):
     """Return the content of any message."""
-    return msg.content
+    return msg.text
 
 
 def assistant_message_contents(msg: ChatMessage):
     """Return the content of any assistant message; otherwise don't return anything."""
     if msg.role == ChatRole.ASSISTANT:
-        return msg.content
+        return msg.text
 
 
 def assistant_message_contents_thinking(msg: ChatMessage):
     """Return the content of any assistant message, and "Thinking..." on function calls."""
     if msg.role == ChatRole.ASSISTANT:
-        content = msg.content
-        if msg.function_call and content:
-            return f"{content}\n    Thinking ({msg.function_call.name})..."
+        text = msg.text
+        if msg.function_call and text:
+            return f"{text}\n    Thinking ({msg.function_call.name})..."
         elif msg.function_call:
             return f"Thinking ({msg.function_call.name})..."
-        return content
+        return text

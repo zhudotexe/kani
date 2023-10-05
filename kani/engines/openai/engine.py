@@ -98,8 +98,8 @@ class OpenAIEngine(BaseEngine):
 
     def message_len(self, message: ChatMessage) -> int:
         mlen = 5  # ChatML = 4, role = 1
-        if message.content:
-            mlen += len(self.tokenizer.encode(message.content))
+        if message.text:
+            mlen += len(self.tokenizer.encode(message.text))
         if message.name:
             mlen += len(self.tokenizer.encode(message.name))
         if message.function_call:

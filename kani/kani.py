@@ -149,7 +149,7 @@ class Kani:
     async def chat_round_str(self, query: str, **kwargs) -> str:
         """Like :meth:`chat_round`, but only returns the content of the message."""
         msg = await self.chat_round(query, **kwargs)
-        return msg.content
+        return msg.text
 
     async def full_round(self, query: str, **kwargs) -> AsyncIterable[ChatMessage]:
         """Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
@@ -305,7 +305,7 @@ class Kani:
                 raise MessageTooLong(
                     "The chat message's size is longer than the allowed context window (after including system"
                     " messages, always included messages, and desired response tokens).\n"
-                    f"{func_help}Content: {message.content[:100]}..."
+                    f"{func_help}Content: {message.text[:100]}..."
                 )
             # see if we can include it
             remaining -= message_len
@@ -426,21 +426,21 @@ class Kani:
     # ==== internals ====
     def _auto_truncate_message(self, msg: ChatMessage, max_len: int) -> ChatMessage:
         """Mutate the provided message until it is less than *max_len* tokens long."""
-        full_content = msg.content
-        if not full_content:
+        full_text = msg.text
+        if not full_text:
             return msg  # idk how this could happen
         for chunk_divider in ("\n\n", "\n", ". ", ", ", " "):
             # chunk the text
-            content = ""
+            text = ""
             last_msg = None
-            chunks = full_content.split(chunk_divider)
+            chunks = full_text.split(chunk_divider)
             for idx, chunk in enumerate(chunks):
                 # fit in as many chunks as possible
                 if idx:
-                    content += chunk_divider
-                content += chunk
+                    text += chunk_divider
+                text += chunk
                 # when it's too long...
-                msg = ChatMessage(role=msg.role, name=msg.name, content=content + "...")
+                msg = msg.copy_with(text=text + "...")
                 if self.message_token_len(msg) > max_len:
                     # if we have some text, return it
                     if last_msg:
@@ -454,4 +454,4 @@ class Kani:
             "Auto truncate could not find an appropriate place to chunk the text. The returned value will be the first"
             f" {max_len} characters."
         )
-        return ChatMessage(role=msg.role, name=msg.name, content=full_content[: max_len - 3] + "...")
+        return msg.copy_with(text=full_text[: max_len - 3] + "...")

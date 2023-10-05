@@ -84,7 +84,7 @@ class LlamaEngine(HuggingEngine):
         if messages[-1].role != ChatRole.USER:
             raise ValueError("The last message must be from the user (LLaMA strict mode).")
         # implementation based on llama code
-        dialog = [f"{B_SYS}{messages[0].content}{E_SYS}{messages[1].content}"] + [m.content for m in messages[2:]]
+        dialog = [f"{B_SYS}{messages[0].text}{E_SYS}{messages[1].text}"] + [m.text for m in messages[2:]]
         dialog_tokens = sum(
             [
                 self.tokenizer.encode(f"{B_INST} {prompt} {E_INST} {answer}") + [self.tokenizer.eos_token_id]
@@ -107,9 +107,9 @@ class LlamaEngine(HuggingEngine):
         # https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L212
         if message.role == ChatRole.USER:
             # <s> [INST] {} [/INST] -> 7
-            return self.tokenizer(message.content, return_length=True).length[0] + 7
+            return self.tokenizer(message.text, return_length=True).length[0] + 7
         elif message.role == ChatRole.ASSISTANT:
             # {} </s> -> 2
-            return self.tokenizer(f" {message.content} ", return_length=True).length[0] + 2
+            return self.tokenizer(f" {message.text} ", return_length=True).length[0] + 2
         # <s> [INST] <<SYS>>\n{}\n<</SYS>>\n\n [/INST] -> 20
-        return self.tokenizer(message.content, return_length=True).length[0] + 20
+        return self.tokenizer(message.text, return_length=True).length[0] + 20

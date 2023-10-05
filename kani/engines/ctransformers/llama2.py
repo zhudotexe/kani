@@ -85,9 +85,9 @@ class LlamaCTransformersEngine(CTransformersEngine):
         # https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L212
         if message.role == ChatRole.USER:
             # <s> [INST] {} [/INST] -> 7
-            return len(self.model.tokenize(message.content)) + 7
+            return len(self.model.tokenize(message.text)) + 7
         elif message.role == ChatRole.ASSISTANT:
             # {} </s> -> 2
-            return len(self.model.tokenize(f" {message.content} ")) + 2
+            return len(self.model.tokenize(f" {message.text} ")) + 2
         # <s> [INST] <<SYS>>\n{}\n<</SYS>>\n\n [/INST] -> 20
-        return len(self.model.tokenize(message.content)) + 20
+        return len(self.model.tokenize(message.text)) + 20

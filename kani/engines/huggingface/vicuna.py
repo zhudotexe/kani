@@ -60,11 +60,11 @@ class VicunaEngine(HuggingEngine):
         prompt_lines = []
         for message in messages:
             if message.role == ChatRole.USER:
-                prompt_lines.append(f"USER: {message.content}")
+                prompt_lines.append(f"USER: {message.text}")
             elif message.role == ChatRole.ASSISTANT:
-                prompt_lines.append(f"ASSISTANT: {message.content}</s>")
+                prompt_lines.append(f"ASSISTANT: {message.text}</s>")
             else:
-                prompt_lines.append(f"{message.content}\n")
+                prompt_lines.append(f"{message.text}\n")
         prompt = "\n".join(prompt_lines)
         return f"{prompt}\nASSISTANT:"
 
@@ -73,9 +73,9 @@ class VicunaEngine(HuggingEngine):
         # remove 1 for the <s> token at the start
         if message.role == ChatRole.USER:
             # USER: {}\n -> 5
-            return self.tokenizer(message.content, return_length=True).length + 4
+            return self.tokenizer(message.text, return_length=True).length + 4
         elif message.role == ChatRole.ASSISTANT:
             # ASSISTANT: {}</s>\n -> 8
-            return self.tokenizer(message.content, return_length=True).length + 7
+            return self.tokenizer(message.text, return_length=True).length + 7
         # {}\n\n -> 2
-        return self.tokenizer(message.content, return_length=True).length + 1
+        return self.tokenizer(message.text, return_length=True).length + 1
