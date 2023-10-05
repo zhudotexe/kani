@@ -57,12 +57,13 @@ class FunctionCall(BaseModel):
         return cls(name=name, arguments=json.dumps(kwargs))
 
 
-# --- messages ---
 class MessagePart(BaseModel):
     """Part of a message.
     Inherit from this class to tag substrings with metadata or provide multimodality to an engine.
     By default, if coerced to a string, will raise a warning noting that rich message part data was lost.
     """
+
+    model_config = ConfigDict(frozen=True)
 
     def __str__(self):
         """
