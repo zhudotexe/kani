@@ -9,7 +9,7 @@ from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
 from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, WrappedCallException
 from .internal import ExceptionHandleResult, FunctionCallResult
-from .models import ChatMessage, ChatRole, FunctionCall
+from .models import ChatMessage, ChatRole, FunctionCall, QueryType
 from .utils.message_formatters import assistant_message_contents
 from .utils.typing import PathLike, SavedKani
 
@@ -118,7 +118,7 @@ class Kani:
         self._message_tokens = weakref.WeakKeyDictionary()
 
     # === main entrypoints ===
-    async def chat_round(self, query: str, **kwargs) -> ChatMessage:
+    async def chat_round(self, query: QueryType, **kwargs) -> ChatMessage:
         """Perform a single chat round (user -> model -> user, no functions allowed).
 
         This is slightly faster when you are chatting with a kani with no AI functions defined.
@@ -138,7 +138,7 @@ class Kani:
         # do the chat round
         async with self.lock:
             # add the user's chat input to the state
-            await self.add_to_history(ChatMessage.user(query.strip()))
+            await self.add_to_history(ChatMessage.user(query))
 
             # and get a completion
             completion = await self.get_model_completion(**kwargs)
@@ -146,12 +146,12 @@ class Kani:
             await self.add_to_history(message)
             return message
 
-    async def chat_round_str(self, query: str, **kwargs) -> str:
-        """Like :meth:`chat_round`, but only returns the content of the message."""
+    async def chat_round_str(self, query: QueryType, **kwargs) -> str:
+        """Like :meth:`chat_round`, but only returns the text content of the message."""
         msg = await self.chat_round(query, **kwargs)
         return msg.text
 
-    async def full_round(self, query: str, **kwargs) -> AsyncIterable[ChatMessage]:
+    async def full_round(self, query: QueryType, **kwargs) -> AsyncIterable[ChatMessage]:
         """Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
 
         Yields each non-user ChatMessage created during the round.
@@ -160,7 +160,7 @@ class Kani:
         Use this in an async for loop, like so::
 
             async for msg in kani.full_round("How's the weather?"):
-                print(msg.content)
+                print(msg.text)
 
         :param query: The content of the user's chat message.
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
@@ -168,7 +168,7 @@ class Kani:
         retry = 0
         is_model_turn = True
         async with self.lock:
-            await self.add_to_history(ChatMessage.user(query.strip()))
+            await self.add_to_history(ChatMessage.user(query))
 
             while is_model_turn:
                 # do the model prediction
@@ -207,15 +207,15 @@ class Kani:
 
     async def full_round_str(
         self,
-        query: str,
+        query: QueryType,
         message_formatter: Callable[[ChatMessage], str | None] = assistant_message_contents,
         **kwargs,
     ) -> AsyncIterable[str]:
         """Like :meth:`full_round`, but each yielded element is a str rather than a ChatMessage.
 
         :param query: The content of the user's chat message.
-        :param message_formatter: A function that returns a string to yield for each message. By default, `
-            `full_round_str`` yields the content of each assistant message.
+        :param message_formatter: A function that returns a string to yield for each message. By default,
+            ``full_round_str`` yields the content of each assistant message.
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
         """
         async for message in self.full_round(query, **kwargs):

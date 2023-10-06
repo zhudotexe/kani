@@ -3,8 +3,13 @@ import abc
 import enum
 import json
 import warnings
+from typing import Union, TypeAlias
 
 from pydantic import BaseModel as PydanticBase, ConfigDict
+
+# ==== typing ====
+MessagePartType: TypeAlias = Union["MessagePart", str]  # ChatMessage.parts[*]
+QueryType: TypeAlias = str | list[MessagePartType]  # Kani.*_round(...)
 
 
 class BaseModel(PydanticBase, abc.ABC):
@@ -57,9 +62,9 @@ class FunctionCall(BaseModel):
         return cls(name=name, arguments=json.dumps(kwargs))
 
 
-class MessagePart(BaseModel):
-    """Part of a message.
-    Inherit from this class to tag substrings with metadata or provide multimodality to an engine.
+class MessagePart(BaseModel, abc.ABC):
+    """Base class for a part of a message.
+    Engines should inherit from this class to tag substrings with metadata or provide multimodality to an engine.
     By default, if coerced to a string, will raise a warning noting that rich message part data was lost.
     """
 
