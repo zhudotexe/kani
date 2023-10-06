@@ -142,8 +142,6 @@ that supports WebSockets, like `Insomnia <https://insomnia.rest/>`_.
 
 .. code-block:: python
 
-    # normally, reusing an OpenAIEngine isn't recommended
-    # but since we don't define any @ai_functions, it's okay
     engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
     app = FastAPI()
 
