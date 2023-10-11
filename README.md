@@ -37,7 +37,7 @@ for many more.
 
 [Read the docs on ReadTheDocs!](http://kani.readthedocs.io/)
 
-[Read our preprint on arXiv!](https://arxiv.org/abs/2309.05542)
+[Read our paper on arXiv!](https://arxiv.org/abs/2309.05542)
 
 ## Features
 
@@ -171,6 +171,8 @@ Simply click on the latest build to see LLaMA's output!
 
 ## Kani in the News
 
+Kani will appear at the NLP Open Source Software workshop at EMNLP 2023!
+
 We are really excited and grateful to see people talking about Kani online. We are also trending on Papers With Code,
 GitHub, and OSS Insight. Check out some recent articles and videos below!
 
@@ -229,19 +231,3 @@ This research is based upon work supported in part by the IARPA HIATUS Program (
 NSF (Award 1928631). Approved for Public Release, Distribution Unlimited. The views and conclusions contained herein are
 those of the authors and should not be interpreted as necessarily representing the official policies, either expressed
 or implied, of IARPA, NSF, or the U.S. Government.
-
-<!--
-For developers:
-
-## Build and Publish
-
-`fastlmi` uses Hatchling to build.
-
-Make sure to bump the version in pyproject.toml before publishing.
-
-```shell
-rm -r dist/
-python -m build
-python -m twine upload dist/*
-```
--->
