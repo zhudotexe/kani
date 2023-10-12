@@ -2,7 +2,7 @@
 import random
 import string
 
-from kani import Kani, ChatMessage, MessagePart
+from kani import ChatMessage, Kani, MessagePart
 from tests.engine import TestEngine
 
 engine = TestEngine()

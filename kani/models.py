@@ -3,7 +3,7 @@ import abc
 import enum
 import json
 import warnings
-from typing import Union, TypeAlias, Type, ClassVar
+from typing import ClassVar, Type, TypeAlias, Union
 
 from pydantic import BaseModel as PydanticBase, ConfigDict, model_serializer, model_validator
 
