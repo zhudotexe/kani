@@ -3,9 +3,14 @@ import abc
 import enum
 import json
 import warnings
-from typing import Union, TypeAlias
+from typing import Union, TypeAlias, Type, ClassVar
 
-from pydantic import BaseModel as PydanticBase, ConfigDict
+from pydantic import BaseModel as PydanticBase, ConfigDict, model_serializer, model_validator
+
+from .exceptions import MissingMessagePartType
+
+# ==== constants ====
+MESSAGEPART_TYPE_KEY = "__kani_messagepart_type__"  # used for serdes of MessageParts
 
 # ==== typing ====
 MessagePartType: TypeAlias = Union["MessagePart", str]  # ChatMessage.parts[*]
@@ -70,6 +75,52 @@ class MessagePart(BaseModel, abc.ABC):
 
     model_config = ConfigDict(frozen=True)
 
+    # ==== serdes ====
+    # used for saving/loading - map qualname to messagepart type
+    _messagepart_registry: ClassVar[dict[str, Type["MessagePart"]]] = {}
+
+    def __init_subclass__(cls, **kwargs):
+        """
+        When a new MessagePart is defined, we need to save its type so that we can load saved JSON into the right type
+        later.
+        """
+        super().__init_subclass__(**kwargs)
+        fqn = cls.__module__ + "." + cls.__qualname__
+        if fqn in cls._messagepart_registry:
+            warnings.warn(
+                f"The MessagePart type {fqn!r} was defined multiple times (perhaps a class is being defined in a"
+                " function scope). This may cause issues when saving/loading messages with parts of this type."
+            )
+        cls._messagepart_registry[fqn] = cls
+
+    @model_serializer(mode="wrap")
+    def _serialize(self, nxt):
+        """Extend the default serialization dict with a key recording what type it is."""
+        retval = nxt(self)
+        cls = type(self)
+        fqn = cls.__module__ + "." + cls.__qualname__
+        retval[MESSAGEPART_TYPE_KEY] = fqn
+        return retval
+
+    # noinspection PyNestedDecorators
+    @model_validator(mode="wrap")
+    @classmethod
+    def _validate(cls, v, nxt):
+        """If we are deserializing a dict with the special key, switch to the right class' validator."""
+        if isinstance(v, dict) and MESSAGEPART_TYPE_KEY in v:
+            fqn = v.pop(MESSAGEPART_TYPE_KEY)
+            try:
+                klass = cls._messagepart_registry[fqn]
+            except KeyError:
+                raise MissingMessagePartType(
+                    fqn,
+                    f"Found a MessagePart with type {fqn!r}, but the type is not defined. Maybe the type is from an"
+                    " extension that has not yet been imported?",
+                )
+            return klass.model_validate(v)
+        return nxt(v)
+
+    # ==== entrypoints ====
     def __str__(self):
         """
         Used to define the fallback behaviour when a part is serialized to a string (e.g. via
