@@ -227,7 +227,7 @@ We would like to thank the members of the lab of Chris Callison-Burch for their 
 contents of both our paper and the Kani repository. In addition, we’d like to thank Henry Zhu (no relation to the first
 author) for his early and enthusiastic support of the project.
 
-This research is based upon work supported in part by the IARPA HIATUS Program (contract 2022-22072200005), and the
-NSF (Award 1928631). Approved for Public Release, Distribution Unlimited. The views and conclusions contained herein are
-those of the authors and should not be interpreted as necessarily representing the official policies, either expressed
-or implied, of IARPA, NSF, or the U.S. Government.
+This research is based upon work supported in part by the Air Force Research Laboratory (contract FA8750-23-C-0507), the
+IARPA HIATUS Program (contract 2022-22072200005), and the NSF (Award 1928631). Approved for Public Release, Distribution
+Unlimited. The views and conclusions contained herein are those of the authors and should not be interpreted as
+necessarily representing the official policies, either expressed or implied, of IARPA, NSF, or the U.S. Government.
