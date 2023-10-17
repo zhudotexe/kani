@@ -3,7 +3,7 @@ import abc
 import enum
 import json
 import warnings
-from typing import ClassVar, Type, TypeAlias, Union
+from typing import ClassVar, Type, TypeAlias, Union, Sequence
 
 from pydantic import BaseModel as PydanticBase, ConfigDict, model_serializer, model_validator
 
@@ -14,7 +14,7 @@ MESSAGEPART_TYPE_KEY = "__kani_messagepart_type__"  # used for serdes of Message
 
 # ==== typing ====
 MessagePartType: TypeAlias = Union["MessagePart", str]  # ChatMessage.parts[*]
-QueryType: TypeAlias = str | list[MessagePartType]  # Kani.*_round(...)
+QueryType: TypeAlias = str | Sequence[MessagePartType]  # Kani.*_round(...)
 
 
 class BaseModel(PydanticBase, abc.ABC):
@@ -71,6 +71,7 @@ class MessagePart(BaseModel, abc.ABC):
     """Base class for a part of a message.
     Engines should inherit from this class to tag substrings with metadata or provide multimodality to an engine.
     By default, if coerced to a string, will raise a warning noting that rich message part data was lost.
+    For more information see :ref:`message-parts`.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -147,7 +148,7 @@ class ChatMessage(BaseModel):
     role: ChatRole
     """Who said the message?"""
 
-    content: str | list[MessagePart | str] | None
+    content: str | tuple[MessagePart | str, ...] | None
     """The data used to create this message. Generally, you should use :attr:`text` or :attr:`parts` instead."""
 
     @property
@@ -166,14 +167,17 @@ class ChatMessage(BaseModel):
     @property
     def parts(self) -> list[MessagePart | str]:
         """The parts of the message that make up its content.
-        Can be an empty list only if the message is a requested function call from the assistant.
+        Can be an empty tuple only if the message is a requested function call from the assistant.
+
+        This is a read-only list; changes here will not affect the message's content. To mutate the message content,
+        use :meth:`copy_with` and set ``text``, ``parts``, or ``content``.
         """
         content = self.content
         if content is None:
             return []
         elif isinstance(content, str):
             return [content]
-        return content
+        return list(content)
 
     name: str | None = None
     """The name of the user who sent the message, if set (user/function messages only)."""
@@ -182,27 +186,30 @@ class ChatMessage(BaseModel):
     """The function requested by the model (assistant messages only)."""
 
     @classmethod
-    def system(cls, content: str | list[MessagePart | str], **kwargs):
+    def system(cls, content: str | Sequence[MessagePart | str], **kwargs):
         """Create a new system message."""
         return cls(role=ChatRole.SYSTEM, content=content, **kwargs)
 
     @classmethod
-    def user(cls, content: str | list[MessagePart | str], **kwargs):
+    def user(cls, content: str | Sequence[MessagePart | str], **kwargs):
         """Create a new user message."""
         return cls(role=ChatRole.USER, content=content, **kwargs)
 
     @classmethod
-    def assistant(cls, content: str | list[MessagePart | str] | None, **kwargs):
+    def assistant(cls, content: str | Sequence[MessagePart | str] | None, **kwargs):
         """Create a new assistant message."""
         return cls(role=ChatRole.ASSISTANT, content=content, **kwargs)
 
     @classmethod
-    def function(cls, name: str, content: str | list[MessagePart | str], **kwargs):
+    def function(cls, name: str, content: str | Sequence[MessagePart | str], **kwargs):
         """Create a new function message."""
         return cls(role=ChatRole.FUNCTION, content=content, name=name, **kwargs)
 
     def copy_with(self, **new_values):
-        # override the copy helper to ensure that setting either text or parts works
+        # ensure the content is immutable
+        if "content" in new_values and not isinstance(new_values["content"], str):
+            new_values["content"] = tuple(new_values["content"])
+        # ensure that setting either text or parts works
         if "text" in new_values:
             if "content" in new_values:
                 raise ValueError("At most one of ('content', 'text', 'parts') can be set.")
@@ -210,5 +217,5 @@ class ChatMessage(BaseModel):
         if "parts" in new_values:
             if "content" in new_values:
                 raise ValueError("At most one of ('content', 'text', 'parts') can be set.")
-            new_values["content"] = new_values.pop("parts")
+            new_values["content"] = tuple(new_values.pop("parts"))
         return super().copy_with(**new_values)

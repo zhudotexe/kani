@@ -36,7 +36,7 @@ def test_none_content():
 def test_parts():
     part = TestMessagePart()
     msg = ChatMessage(role=ChatRole.USER, content=["Hello world", part])
-    assert msg.content == ["Hello world", part]
+    assert msg.content == ("Hello world", part)
     assert msg.text == "Hello world<TestMessagePart>"
     assert msg.parts == ["Hello world", part]
 
@@ -49,12 +49,12 @@ def test_copy():
     assert text_copy.content == "asdf"
 
     part_copy = msg.copy_with(parts=["foo"])
-    assert part_copy.content == ["foo"]
+    assert part_copy.content == ("foo",)
 
     content_copy = msg.copy_with(content="zxcv")
     assert content_copy.content == "zxcv"
 
-    assert msg.content == ["Hello world", part]
+    assert msg.content == ("Hello world", part)
 
     with pytest.raises(ValueError):
         msg.copy_with(text="foo", parts=[])
