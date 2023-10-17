@@ -127,10 +127,10 @@ You may even modify the chat history (e.g. append or delete ChatMessages) to cha
     updated.
 
 .. warning::
-    In some advanced use cases, :attr:`.ChatMessage.content` may be a list of :class:`.MessagePart` or ``str`` rather
+    In some advanced use cases, :attr:`.ChatMessage.content` may be a tuple of :class:`.MessagePart` or ``str`` rather
     than a string. ChatMessage exposes :attr:`.ChatMessage.text` (always a string or None) and
     :attr:`.ChatMessage.parts` (always a list of message parts), which we recommend using instead of
-    :attr:`.ChatMessage.content`.
+    :attr:`.ChatMessage.content`. See :ref:`message-parts` for more information.
 
     These properties are dynamically generated based on the underlying content, and it is safe to mix messages
     with different content types in a single Kani.
