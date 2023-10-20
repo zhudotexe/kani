@@ -42,7 +42,7 @@ openai = [
 ]
 
 ctransformers = [
-    "ctransformers~=0.2.14",
+    "ctransformers>=0.2.25,<1.0.0",
 ]
 
 [project.urls]
