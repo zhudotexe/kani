@@ -37,7 +37,7 @@ for many more.
 
 [Read the docs on ReadTheDocs!](http://kani.readthedocs.io/)
 
-[Read our preprint on arXiv!](https://arxiv.org/abs/2309.05542)
+[Read our paper on arXiv!](https://arxiv.org/abs/2309.05542)
 
 ## Features
 
@@ -171,6 +171,8 @@ Simply click on the latest build to see LLaMA's output!
 
 ## Kani in the News
 
+Kani will appear at the NLP Open Source Software workshop at EMNLP 2023!
+
 We are really excited and grateful to see people talking about Kani online. We are also trending on Papers With Code,
 GitHub, and OSS Insight. Check out some recent articles and videos below!
 
@@ -225,23 +227,7 @@ We would like to thank the members of the lab of Chris Callison-Burch for their 
 contents of both our paper and the Kani repository. In addition, we’d like to thank Henry Zhu (no relation to the first
 author) for his early and enthusiastic support of the project.
 
-This research is based upon work supported in part by the IARPA HIATUS Program (contract 2022-22072200005), and the
-NSF (Award 1928631). Approved for Public Release, Distribution Unlimited. The views and conclusions contained herein are
-those of the authors and should not be interpreted as necessarily representing the official policies, either expressed
-or implied, of IARPA, NSF, or the U.S. Government.
-
-<!--
-For developers:
-
-## Build and Publish
-
-`fastlmi` uses Hatchling to build.
-
-Make sure to bump the version in pyproject.toml before publishing.
-
-```shell
-rm -r dist/
-python -m build
-python -m twine upload dist/*
-```
--->
+This research is based upon work supported in part by the Air Force Research Laboratory (contract FA8750-23-C-0507), the
+IARPA HIATUS Program (contract 2022-22072200005), and the NSF (Award 1928631). Approved for Public Release, Distribution
+Unlimited. The views and conclusions contained herein are those of the authors and should not be interpreted as
+necessarily representing the official policies, either expressed or implied, of IARPA, NSF, or the U.S. Government.

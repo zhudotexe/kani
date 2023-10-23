@@ -1,3 +1,5 @@
+import functools
+
 from kani.ai_function import AIFunction
 from kani.models import ChatMessage, ChatRole
 from .base import CTransformersEngine
@@ -79,7 +81,10 @@ class LlamaCTransformersEngine(CTransformersEngine):
         super().__init__(model_id, model_file, *args, **kwargs)
 
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> list[int]:
-        return llama2_prompt.build(messages, tokenize=self.model.tokenize, eos_token_id=self.model.eos_token_id)
+        tokenize = functools.partial(self.model.tokenize, add_bos_token=False)
+        return llama2_prompt.build(
+            messages, tokenize=tokenize, bos_token_id=self.model.bos_token_id, eos_token_id=self.model.eos_token_id
+        )
 
     def message_len(self, message: ChatMessage) -> int:
         # https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L212
