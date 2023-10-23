@@ -17,8 +17,6 @@ from kani.engines.openai import OpenAIEngine
 
 # initialize kani
 api_key = os.getenv("OPENAI_API_KEY")
-# normally, reusing an OpenAIEngine isn't recommended
-# but since we don't define any @ai_functions, it's okay
 engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
 
 # initialize FastAPI

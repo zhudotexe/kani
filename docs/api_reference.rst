@@ -16,6 +16,13 @@ Common Models
     :exclude-members: model_config, model_fields
     :class-doc-from: class
 
+.. autoclass:: kani.MessagePart
+    :members:
+    :exclude-members: model_config, model_fields
+    :class-doc-from: class
+
+    .. automethod:: __str__
+
 .. autoclass:: kani.ChatMessage
     :members:
     :exclude-members: model_config, model_fields

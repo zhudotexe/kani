@@ -1,3 +1,5 @@
+import functools
+
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
@@ -84,7 +86,7 @@ class LlamaEngine(HuggingEngine):
         if messages[-1].role != ChatRole.USER:
             raise ValueError("The last message must be from the user (LLaMA strict mode).")
         # implementation based on llama code
-        dialog = [f"{B_SYS}{messages[0].content}{E_SYS}{messages[1].content}"] + [m.content for m in messages[2:]]
+        dialog = [f"{B_SYS}{messages[0].text}{E_SYS}{messages[1].text}"] + [m.text for m in messages[2:]]
         dialog_tokens = sum(
             [
                 self.tokenizer.encode(f"{B_INST} {prompt} {E_INST} {answer}") + [self.tokenizer.eos_token_id]
@@ -98,18 +100,22 @@ class LlamaEngine(HuggingEngine):
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> torch.Tensor:
         if self.strict:
             return self._build_prompt_strict(messages)
-        # non-strict has to kind of just do its best
-        # ganbatte, kani, ganbatte
-        tokens = llama2_prompt.build(messages, tokenize=self.tokenizer.encode, eos_token_id=self.tokenizer.eos_token_id)
+        tokenize = functools.partial(self.tokenizer.encode, add_special_tokens=False)
+        tokens = llama2_prompt.build(
+            messages,
+            tokenize=tokenize,
+            bos_token_id=self.tokenizer.bos_token_id,
+            eos_token_id=self.tokenizer.eos_token_id,
+        )
         return torch.tensor([tokens], device=self.device)
 
     def message_len(self, message: ChatMessage) -> int:
         # https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L212
         if message.role == ChatRole.USER:
             # <s> [INST] {} [/INST] -> 7
-            return self.tokenizer(message.content, return_length=True).length[0] + 7
+            return self.tokenizer(message.text, return_length=True).length[0] + 7
         elif message.role == ChatRole.ASSISTANT:
             # {} </s> -> 2
-            return self.tokenizer(f" {message.content} ", return_length=True).length[0] + 2
+            return self.tokenizer(f" {message.text} ", return_length=True).length[0] + 2
         # <s> [INST] <<SYS>>\n{}\n<</SYS>>\n\n [/INST] -> 20
-        return self.tokenizer(message.content, return_length=True).length[0] + 20
+        return self.tokenizer(message.text, return_length=True).length[0] + 20

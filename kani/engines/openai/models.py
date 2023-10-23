@@ -78,8 +78,3 @@ class ChatCompletion(BaseCompletion, BaseModel):
         # for some reason, the OpenAI API doesn't return the tokens used by ChatML
         # so we add on the length of "<|im_start|>assistant" and "<|im_end|>" here
         return self.usage.completion_tokens + 5
-
-    @property
-    def text(self):
-        """The text of the most recent chat completion."""
-        return self.message.content

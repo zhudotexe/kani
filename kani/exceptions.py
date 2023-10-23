@@ -61,3 +61,15 @@ class FunctionSpecError(KaniException):
 
 class MissingModelDependencies(KaniException):
     """You are trying to use an engine but do not have engine-specific packages installed."""
+
+
+# ==== serdes ====
+class MissingMessagePartType(KaniException):
+    """During loading a saved kani, a message part has a type which is not currently defined in the runtime."""
+
+    def __init__(self, fqn: str, msg: str):
+        """
+        :param fqn: The fully qualified name of the type that is missing.
+        """
+        super().__init__(msg)
+        self.fqn = fqn

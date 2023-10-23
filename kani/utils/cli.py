@@ -18,7 +18,7 @@ async def chat_in_terminal_async(kani: Kani, rounds: int = 0, stopword: str = No
         round_num = 0
         while round_num < rounds or not rounds:
             round_num += 1
-            query = input("USER: ")
+            query = input("USER: ").strip()
             if stopword and query == stopword:
                 break
             async for msg in kani.full_round_str(query, message_formatter=assistant_message_contents_thinking):
