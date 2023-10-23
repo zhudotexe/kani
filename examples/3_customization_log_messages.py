@@ -2,6 +2,7 @@
 
 This example shows how to override kani's chat history handler to log every message to a JSONL file.
 """
+
 import os
 
 from kani import Kani, chat_in_terminal

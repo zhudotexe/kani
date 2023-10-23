@@ -2,6 +2,7 @@
 
 This example shows how to override kani's function call handler to add instrumentation.
 """
+
 import collections
 import datetime
 import os

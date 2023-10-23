@@ -3,6 +3,7 @@ A couple convenience formatters to customize :meth:`.Kani.full_round_str`.
 
 You can pass any of these functions in with, e.g., ``Kani.full_round_str(..., message_formatter=all_message_contents)``.
 """
+
 from kani.models import ChatMessage, ChatRole
 
 

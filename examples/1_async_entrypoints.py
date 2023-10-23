@@ -7,6 +7,7 @@ mechanisms, rather than ``input()``. This example shows how the synchronous ``ch
 
 If you haven't already, go take a look at `1_quickstart.py` for an explanation of how to set up kani first.
 """
+
 import asyncio
 
 from kani import Kani

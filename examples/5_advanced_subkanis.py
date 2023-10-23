@@ -6,6 +6,7 @@ give a sub-kani a different set of functions, use a more powerful engine, or per
 In this example, we show how a sub-kani can use a different engine to perform summarization, then give the results
 to the parent kani.
 """
+
 import os
 
 from kani import Kani, ai_function, chat_in_terminal

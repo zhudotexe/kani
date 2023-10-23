@@ -1,4 +1,5 @@
 """Model-agnostic classes used to represent the chat state and function calls."""
+
 import abc
 import enum
 import json

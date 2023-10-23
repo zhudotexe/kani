@@ -1,4 +1,5 @@
 """The CLI utilities allow you to play with a chat session directly from a terminal."""
+
 import asyncio
 import logging
 import os

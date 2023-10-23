@@ -4,6 +4,7 @@ engineering to build a reliable method to reserve tokens for AI Functions.
 
 See https://community.openai.com/t/how-to-calculate-the-tokens-when-using-function-call/266573 for more details.
 """
+
 import json
 import warnings
 

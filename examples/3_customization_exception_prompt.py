@@ -2,6 +2,7 @@
 
 This example shows how to override kani's function call exception handler to use a custom prompt.
 """
+
 import os
 
 from kani import ChatMessage, Kani, ai_function, chat_in_terminal

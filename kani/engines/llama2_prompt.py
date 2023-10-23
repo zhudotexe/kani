@@ -3,6 +3,7 @@
 This file is responsible for implementing the common non-strict ChatMessage to tokens translation, while handling
 the nuance of the INST and SYS tokens as best as possible.
 """
+
 import itertools
 from typing import Callable, Iterable
 

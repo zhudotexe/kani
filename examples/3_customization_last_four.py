@@ -2,6 +2,7 @@
 
 This example shows how to override kani's chat prompt building functionality.
 """
+
 import os
 
 from kani import Kani, chat_in_terminal

@@ -1,4 +1,5 @@
 """Tests to ensure the LLaMA v2 prompt is correct."""
+
 from kani import ChatMessage
 from kani.engines.llama2_prompt import build_str
 

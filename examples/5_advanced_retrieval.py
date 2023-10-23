@@ -3,6 +3,7 @@
 This example shows how kani's function calling functionality can be used to retrieve information from an external
 database, e.g. Wikipedia.
 """
+
 import json
 import os
 from typing import Annotated

@@ -7,6 +7,7 @@ to run this example::
 
 In this example, we implement a simple websocket endpoint that allows a user to chat using WebSockets.
 """
+
 import os
 
 import uvicorn
