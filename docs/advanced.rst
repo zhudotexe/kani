@@ -276,8 +276,9 @@ is cast to a string. This happens in a couple places:
 2. The user is using the :func:`.chat_in_terminal` development utility
 3. The message was provided to an engine that does not support the class (e.g. an image part in a text-only model).
 
-The default behaviour is to transform the part to a Python-esque representation of its data and log a warning. You can
-override this method to specify the canonical string representation of your message part.
+The default behaviour is to transform the part to a Python-esque representation of its data (e.g.
+``<ThoughtPart data="...">``) and log a warning. You can override this method to specify the canonical string
+representation of your message part.
 
 .. code-block:: python
 
@@ -292,8 +293,8 @@ override this method to specify the canonical string representation of your mess
             return ""
 
 
-This will automatically register serialization and deserialization schemes for your class, so that all MessageParts
-are compatible with :meth:`.Kani.save` and :meth:`.Kani.load`.
+When you define a MessagePart, kani will automatically register serialization and deserialization schemes for your
+class, so that all MessageParts are compatible with :meth:`.Kani.save` and :meth:`.Kani.load`.
 
 .. warning::
     If you change the attributes or location of the class definition, old data may fail to be loaded into a new class.

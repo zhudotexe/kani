@@ -206,6 +206,13 @@ class ChatMessage(BaseModel):
         return cls(role=ChatRole.FUNCTION, content=content, name=name, **kwargs)
 
     def copy_with(self, **new_values):
+        """Make a shallow copy of this object, updating the passed attributes (if any) to new values.
+
+        This does not validate the updated attributes!
+        This is mostly just a convenience wrapper around ``.model_copy``.
+
+        Only one of (content, text, parts) may be passed and will update the other two attributes accordingly.
+        """
         # ensure the content is immutable
         if "content" in new_values and not isinstance(new_values["content"], str):
             new_values["content"] = tuple(new_values["content"])
