@@ -26,7 +26,7 @@ def build(
     return tokens
 
 
-def build_str(messages: list[ChatMessage]) -> Iterable[tuple[str, bool]]:
+def build_str(messages: list[ChatMessage]) -> Iterable[tuple[str, bool, bool]]:
     """Given a list of messages, yield a list of pairs of (content string, bos, eos)."""
     # combine consecutive instruction messages and non-instruction messages
     for is_inst, role_messages in itertools.groupby(
