@@ -1,6 +1,6 @@
 from typing import Literal
 
-from kani.models import BaseModel, ChatMessage
+from kani.models import BaseModel, ChatMessage, ChatRole, FunctionCall
 from ..base import BaseCompletion
 
 
@@ -50,8 +50,20 @@ class SpecificFunctionCall(BaseModel):
     name: str
 
 
+class OpenAIChatMessage(BaseModel):
+    role: ChatRole
+    content: str | list[BaseModel | str] | None
+    name: str | None = None
+    function_call: FunctionCall | None = None
+
+    @classmethod
+    def from_chatmessage(cls, m: ChatMessage):
+        return cls(role=m.role, content=m.text, name=m.name, function_call=m.function_call)
+
+
 # ---- response ----
 class ChatCompletionChoice(BaseModel):
+    # this is a ChatMessage rather than an OpenAIChatMessage because all engines need to return the kani model
     message: ChatMessage
     index: int
     finish_reason: str | None = None

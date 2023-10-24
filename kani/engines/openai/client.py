@@ -4,8 +4,7 @@ from typing import Literal, overload
 import aiohttp
 import pydantic
 
-from kani.models import ChatMessage
-from .models import ChatCompletion, Completion, FunctionSpec, SpecificFunctionCall
+from .models import ChatCompletion, Completion, FunctionSpec, OpenAIChatMessage, SpecificFunctionCall
 from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTimeout
 
 
@@ -107,7 +106,7 @@ class OpenAIClient(BaseClient):
     async def create_chat_completion(
         self,
         model: str,
-        messages: list[ChatMessage],
+        messages: list[OpenAIChatMessage],
         functions: list[FunctionSpec] | None = None,
         function_call: SpecificFunctionCall | Literal["auto"] | Literal["none"] | None = None,
         temperature: float = 1.0,
@@ -124,7 +123,7 @@ class OpenAIClient(BaseClient):
     async def create_chat_completion(
         self,
         model: str,
-        messages: list[ChatMessage],
+        messages: list[OpenAIChatMessage],
         functions: list[FunctionSpec] | None = None,
         **kwargs,
     ) -> ChatCompletion:
@@ -142,7 +141,7 @@ class OpenAIClient(BaseClient):
             "/chat/completions",
             json={
                 "model": model,
-                "messages": [cm.model_dump(exclude_unset=True, mode="json") for cm in messages],
+                "messages": [cm.model_dump(exclude_defaults=True, mode="json") for cm in messages],
                 **kwargs,
             },
         )

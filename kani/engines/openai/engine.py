@@ -6,7 +6,7 @@ from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from . import function_calling
 from .client import OpenAIClient
-from .models import ChatCompletion, FunctionSpec
+from .models import ChatCompletion, FunctionSpec, OpenAIChatMessage
 from ..base import BaseEngine
 
 try:
@@ -114,8 +114,9 @@ class OpenAIEngine(BaseEngine):
             function_spec = [FunctionSpec(name=f.name, description=f.desc, parameters=f.json_schema) for f in functions]
         else:
             function_spec = None
+        translated_messages = [OpenAIChatMessage.from_chatmessage(m) for m in messages]
         completion = await self.client.create_chat_completion(
-            model=self.model, messages=messages, functions=function_spec, **self.hyperparams, **hyperparams
+            model=self.model, messages=translated_messages, functions=function_spec, **self.hyperparams, **hyperparams
         )
         return completion
 
