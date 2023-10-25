@@ -12,8 +12,8 @@ sys.path.append("..")
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "kani"
-copyright = "2023, Andrew Zhu and Liam Dugan"
-author = "Andrew Zhu and Liam Dugan"
+copyright = "2023, Andrew Zhu, Liam Dugan, and Alyssa Hwang"
+author = "Andrew Zhu, Liam Dugan, and Alyssa Hwang"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
