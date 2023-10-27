@@ -20,7 +20,10 @@ should use to install its dependencies.
 .. include:: shared/engine_table.rst
 
 .. seealso::
+    Extensions provide additional engines you can use to extend kani with additional functionality like support for
+    vision-language models and ReAct prompting. See :doc:`community/extensions` for a list of available extensions!
 
+.. seealso::
     Want to use a different model with kani? Check out :doc:`engines` for details on how to implement the common
     Engine interface and use kani with any LM.
 
