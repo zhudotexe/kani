@@ -140,7 +140,7 @@ out [the function calling docs](https://kani.readthedocs.io/en/latest/function_c
 
 ## Why kani?
 
-Existing frameworks for language models like langchain and simpleaichat are opinionated and/or heavyweight - they edit
+Existing frameworks for language models like LangChain and simpleaichat are opinionated and/or heavyweight - they edit
 developers' prompts under the hood, are challenging to learn, and are difficult to customize without adding a lot of
 high-maintenance bloat to your codebase.
 
@@ -148,8 +148,12 @@ high-maintenance bloat to your codebase.
   <img style="max-width: 800px;" alt="kani" src="docs/_static/lib-comparison_white.png">
 </p>
 
-We built kani to be more flexible, simple, and robust. kani is appropriate for everyone from academic researchers
-to industry professionals to hobbyists to use without worrying about under-the-hood hacks.
+We built kani as a more flexible, simple, and robust alternative. A good analogy between frameworks would be to say that
+kani is to LangChain as Flask (or FastAPI) is to Django.
+
+kani is appropriate for everyone from academic researchers to industry professionals to hobbyists to use without
+worrying about under-the-hood hacks.
+
 
 ## Docs
 
