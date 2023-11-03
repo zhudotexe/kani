@@ -329,7 +329,7 @@ class Kani:
         By default, any exception raised from this method will be an instance of a :class:`.FunctionCallException`.
 
         You may implement an override to add instrumentation around function calls (e.g. tracking success counts
-        for varying prompts). See :ref:`do_function_call`.
+        for varying prompts). See :doc:`/customization/function_call`.
 
         :returns: A :class:`.FunctionCallResult` including whose turn it is next and the message with the result of the
             function call.
@@ -370,7 +370,7 @@ class Kani:
         is recoverable and there are remaining retry attempts.
 
         You may implement an override to customize the error prompt, log the error, or use custom retry logic.
-        See :ref:`handle_function_call_exception`.
+        See :doc:`/customization/function_exception`.
 
         :param call: The :class:`.FunctionCall` the model was attempting to make.
         :param err: The error the call raised. Usually this is :class:`.NoSuchFunction` or

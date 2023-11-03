@@ -72,7 +72,7 @@ class MessagePart(BaseModel, abc.ABC):
     """Base class for a part of a message.
     Engines should inherit from this class to tag substrings with metadata or provide multimodality to an engine.
     By default, if coerced to a string, will raise a warning noting that rich message part data was lost.
-    For more information see :ref:`message-parts`.
+    For more information see :doc:`advanced/messageparts`.
     """
 
     model_config = ConfigDict(frozen=True)
