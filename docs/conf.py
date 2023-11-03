@@ -2,8 +2,10 @@
 #
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
+import pathlib
 import sys
-import urllib.parse
+
+import matplotlib.font_manager
 
 # ensure kani is available in path
 sys.path.append("..")
@@ -62,8 +64,19 @@ intersphinx_mapping = {
 }
 
 # sphinxext.opengraph
+# load correct fonts for card generation
+ogp_fonts = {
+    "Noto Sans Japanese": "NotoSansJP-Regular.ttf",
+    "Roboto": "Roboto-Regular.ttf",
+    "Noto Sans Emoji": "NotoColorEmoji-Regular.ttf",
+}
+for fontname, fontpath in ogp_fonts.items():
+    path_font = pathlib.Path(__file__).parent / "_static/fonts" / fontpath
+    font = matplotlib.font_manager.FontEntry(fname=str(path_font), name=fontname)
+    matplotlib.font_manager.fontManager.ttflist.append(font)
+
 ogp_social_cards = {
-    "enable": False,  # the bundled Roboto font does not support kanji
+    "font": [*ogp_fonts.keys(), "sans-serif"],
 }
 
 # sphinx_copybutton

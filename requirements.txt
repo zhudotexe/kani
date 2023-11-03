@@ -23,4 +23,4 @@ sphinxemoji~=0.2.0
 sphinx-copybutton~=0.5.2
 sphinx-inline-tabs~=2023.4.21
 sphinx-sitemap~=2.5.1
-sphinxext-opengraph~=0.8.2
+sphinxext-opengraph~=0.9.0
