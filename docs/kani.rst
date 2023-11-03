@@ -15,6 +15,12 @@ Let's take a look back at the quickstart program:
 kani is comprised of two main parts: the *engine*, which is the interface between kani and the language model,
 and the *kani*, which is responsible for tracking chat history, prompting the engine, and handling function calls.
 
+.. image:: _static/concepts-figure.png
+    :width: 60%
+    :align: center
+
+In this section, we'll look at how to initialize a Kani class and core concepts in the library.
+
 Kani
 ----
 
@@ -100,8 +106,8 @@ This table lists the engines built in to kani:
 
 When you are finished with an engine, release its resources with :meth:`.BaseEngine.close`.
 
-Chat Messages
--------------
+Concept: Chat Messages
+----------------------
 Each message contains the ``role`` (a :class:`.ChatRole`: system, assistant, user, or function) that sent the message
 and the ``content`` of the message. Optionally, a user message can also contain a ``name`` (for multi-user
 conversations), and an assistant message can contain a ``function_call`` (discussed in :doc:`function_calling`).

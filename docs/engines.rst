@@ -44,6 +44,34 @@ the underlying model, and kani needs to know about the extra tokens added by thi
   model.
 - :meth:`.BaseEngine.close`: if your engine needs to clean up resources during shutdown.
 
+Adding Function Calling
+^^^^^^^^^^^^^^^^^^^^^^^
+If you're writing an engine for a model with function calling, there are a couple additional steps you need to take.
+
+Generally, to use function calling, you need to do the following:
+
+1. Tell the model what functions it has available to it
+    a. Optional - tell the model what format to output to request calling a function (if the model is not already
+       fine-tuned to do so)
+2. Parse the model's requests to call functions from its text generations
+
+To tell the model what functions it has available, you'll need to somehow prompt the model.
+You'll need to implement two methods: :meth:`.BaseEngine.predict` and :meth:`.BaseEngine.function_token_reserve`.
+
+:meth:`.BaseEngine.predict` takes in a list of available :class:`.AIFunction`\ s as an argument, which you should use to
+build such a prompt. :meth:`.BaseEngine.function_token_reserve` tells kani how many tokens that prompt takes, so the
+context window management can ensure it never sends too many tokens.
+
+To parse the model's requests to call a function, you also do this in :meth:`.BaseEngine.predict`. After generating the
+model's completion (usually a string, or a list of token IDs that decodes into a string), separate the model's
+conversational content from the structured function call:
+
+.. image:: _static/function-calling-parsing.png
+    :align: center
+
+Finally, return a :class:`.Completion` with the ``.message`` attribute set to a :class:`.ChatMessage` with the
+appropriate :attr:`.ChatMessage.content` and :attr:`.ChatMessage.function_call`.
+
 HTTP Client
 -----------
 If your language model backend exposes an HTTP API, you can create a subclass of :class:`.BaseClient` to interface with
