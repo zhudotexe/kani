@@ -18,8 +18,11 @@ except ImportError as e:
 
 # https://platform.openai.com/docs/models
 CONTEXT_SIZES_BY_PREFIX = [
+    ("gpt-3.5-turbo-1106", 16384),
     ("gpt-3.5-turbo-16k", 16384),
     ("gpt-3.5-turbo", 4096),
+    ("gpt-4-1106", 128000),
+    ("gpt-4-vision", 128000),
     ("gpt-4-32k", 32768),
     ("gpt-4", 8192),
     # fine-tunes
