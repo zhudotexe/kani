@@ -137,6 +137,10 @@ Next Actor
 After a function call returns, kani will hand control back to the LM to generate a response by default. If instead
 control should be given to the human (i.e. return from the chat round), set ``after=ChatRole.USER``.
 
+.. note::
+    If the model calls multiple tools in parallel, the model will be allowed to generate a response if *any* function
+    allows it.
+
 Complete Example
 ----------------
 Here's the full example of how you might implement a function to get weather that we built in the last few steps:
@@ -292,6 +296,10 @@ If the model makes an error when attempting to call a function (e.g. calling a f
 passing params with invalid, non-coercible types) or the function raises an exception, Kani will send the
 error in a message to the model by default, allowing it up to *retry_attempts* to correct itself and retry the
 call.
+
+.. note::
+    If the model calls multiple tools in parallel, the model will be allowed a retry if *any* exception handler
+    allows it.
 
 In the next section, we'll discuss how to customize this behaviour, along with other parts of the kani interface.
 

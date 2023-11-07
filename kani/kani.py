@@ -9,7 +9,7 @@ from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
 from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, WrappedCallException
 from .internal import ExceptionHandleResult, FunctionCallResult
-from .models import ChatMessage, ChatRole, FunctionCall, QueryType
+from .models import ChatMessage, ChatRole, FunctionCall, QueryType, ToolCall
 from .utils.message_formatters import assistant_message_contents
 from .utils.typing import PathLike, SavedKani
 
@@ -181,27 +181,37 @@ class Kani:
                 if not message.tool_calls:
                     return
 
-                try:
-                    function_call_result = await self.do_function_call(message.function_call)
-                    is_model_turn = function_call_result.is_model_turn
-                    call_message = function_call_result.message
+                # run each tool call in parallel
+                async def _do_tool_call(tc: ToolCall):
+                    try:
+                        return await self.do_function_call(tc.function, tool_call_id=tc.id)
+                    except FunctionCallException as e:
+                        return await self.handle_function_call_exception(tc.function, e, retry, tool_call_id=tc.id)
+
+                # and update results after they are completed
+                is_model_turn = False
+                should_retry_call = False
+                n_errs = 0
+                results = await asyncio.gather(*(_do_tool_call(tc) for tc in message.tool_calls))
+                for result in results:
                     # save the result to the chat history
-                    await self.add_to_history(call_message)
-                    yield call_message
-                except FunctionCallException as e:
-                    exception_handling_result = await self.handle_function_call_exception(
-                        message.function_call, e, retry
-                    )
-                    # save the result to the chat history
-                    exc_message = exception_handling_result.message
-                    await self.add_to_history(exc_message)
-                    yield exc_message
-                    # retry if we have retry attempts left
+                    await self.add_to_history(result.message)
+                    yield result.message
+                    if isinstance(result, ExceptionHandleResult):
+                        is_model_turn = True
+                        n_errs += 1
+                        # retry if any function says so
+                        should_retry_call = should_retry_call or result.should_retry
+                    else:
+                        # allow model to generate response if any function says so
+                        is_model_turn = is_model_turn or result.is_model_turn
+
+                # if we encountered an error, increment the retry counter and allow the model to generate a response
+                if n_errs:
                     retry += 1
-                    if not exception_handling_result.should_retry:
+                    if not should_retry_call:
                         # disable function calling on the next go
                         kwargs = {**kwargs, "include_functions": False}
-                    continue
                 else:
                     retry = 0
 
