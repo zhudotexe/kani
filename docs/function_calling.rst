@@ -182,38 +182,77 @@ prompt a model, we can mock these returns in the chat history using :meth:`.Chat
 For example, here's how you might prompt the model to give the temperature in both Fahrenheit and Celsius without
 the user having to ask:
 
-.. code-block:: python
+.. tab:: ToolCall API
 
-    from kani import ChatMessage, FunctionCall
-    fewshot = [
-        ChatMessage.user("What's the weather in Philadelphia?"),
-        # first, the model should ask for the weather in fahrenheit
-        ChatMessage.assistant(
-            content=None,
-            function_call=FunctionCall.with_args(
-                "get_weather", location="Philadelphia, PA", unit="fahrenheit"
-            )
-        ),
-        # and we mock the function's response to the model
-        ChatMessage.function(
-            "get_weather",
-            "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit.",
-        ),
-        # repeat in celsius
-        ChatMessage.assistant(
-            content=None,
-            function_call=FunctionCall.with_args(
-                "get_weather", location="Philadelphia, PA", unit="celsius"
-            )
-        ),
-        ChatMessage.function(
-            "get_weather",
-            "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius.",
-        ),
-        # finally, give the result to the user
-        ChatMessage.assistant("It's currently 85F (29C) and partly cloudy in Philadelphia."),
-    ]
-    ai = MyKani(engine, chat_history=fewshot)
+    .. code-block:: python
+
+        # build the chat history with examples
+        fewshot = [
+            ChatMessage.user("What's the weather in Philadelphia?"),
+            ChatMessage.assistant(
+                content=None,
+                # use a walrus operator to save a reference to the tool call here...
+                tool_calls=[
+                    tc := ToolCall.from_function("get_weather", location="Philadelphia, PA", unit="fahrenheit")
+                ],
+            ),
+            ChatMessage.function(
+                "get_weather",
+                "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit.",
+                # ...so this function result knows which call it's responding to
+                tc.id
+            ),
+            # and repeat for the other unit
+            ChatMessage.assistant(
+                content=None,
+                tool_calls=[
+                    tc2 := ToolCall.from_function("get_weather", location="Philadelphia, PA", unit="celsius")
+                ],
+            ),
+            ChatMessage.function(
+                "get_weather",
+                "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius.",
+                tc2.id
+            ),
+            ChatMessage.assistant("It's currently 85F (29C) and partly cloudy in Philadelphia."),
+        ]
+        # and give it to the kani when you initialize it
+        ai = MyKani(engine, chat_history=fewshot)
+
+.. tab:: FunctionCall API (deprecated)
+
+    .. code-block:: python
+
+        from kani import ChatMessage, FunctionCall
+        fewshot = [
+            ChatMessage.user("What's the weather in Philadelphia?"),
+            # first, the model should ask for the weather in fahrenheit
+            ChatMessage.assistant(
+                content=None,
+                function_call=FunctionCall.with_args(
+                    "get_weather", location="Philadelphia, PA", unit="fahrenheit"
+                )
+            ),
+            # and we mock the function's response to the model
+            ChatMessage.function(
+                "get_weather",
+                "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit.",
+            ),
+            # repeat in celsius
+            ChatMessage.assistant(
+                content=None,
+                function_call=FunctionCall.with_args(
+                    "get_weather", location="Philadelphia, PA", unit="celsius"
+                )
+            ),
+            ChatMessage.function(
+                "get_weather",
+                "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius.",
+            ),
+            # finally, give the result to the user
+            ChatMessage.assistant("It's currently 85F (29C) and partly cloudy in Philadelphia."),
+        ]
+        ai = MyKani(engine, chat_history=fewshot)
 
 .. code-block:: pycon
 

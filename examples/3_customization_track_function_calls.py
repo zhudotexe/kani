@@ -22,9 +22,9 @@ class TrackCallsKani(Kani):
         self.successful_calls = collections.Counter()
         self.failed_calls = collections.Counter()
 
-    async def do_function_call(self, call):
+    async def do_function_call(self, call, *args, **kwargs):
         try:
-            result = await super().do_function_call(call)
+            result = await super().do_function_call(call, *args, **kwargs)
             self.successful_calls[call.name] += 1
             return result
         except FunctionCallException:

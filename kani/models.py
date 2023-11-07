@@ -269,7 +269,7 @@ class ChatMessage(BaseModel):
         return cls(role=ChatRole.ASSISTANT, content=content, **kwargs)
 
     @classmethod
-    def function(cls, name: str, content: str | Sequence[MessagePart | str], tool_call_id: str = None, **kwargs):
+    def function(cls, name: str | None, content: str | Sequence[MessagePart | str], tool_call_id: str = None, **kwargs):
         """Create a new function message."""
         return cls(role=ChatRole.FUNCTION, content=content, name=name, tool_call_id=tool_call_id, **kwargs)
 
