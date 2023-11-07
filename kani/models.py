@@ -79,8 +79,8 @@ class ToolCall(BaseModel):
 
     id: str
     """The request ID created by the engine.
-    This should be passed back to the engine in :attr:`.ChatMessage.tool_call_id` in order to associate a TOOL message
-    with this request.
+    This should be passed back to the engine in :attr:`.ChatMessage.tool_call_id` in order to associate a FUNCTION
+    message with this request.
     """
 
     type: str
