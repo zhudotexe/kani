@@ -16,6 +16,11 @@ Common Models
     :exclude-members: model_config, model_fields
     :class-doc-from: class
 
+.. autoclass:: kani.ToolCall
+    :members:
+    :exclude-members: model_config, model_fields
+    :class-doc-from: class
+
 .. autoclass:: kani.MessagePart
     :members:
     :exclude-members: model_config, model_fields

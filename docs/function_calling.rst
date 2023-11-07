@@ -255,3 +255,18 @@ error in a message to the model by default, allowing it up to *retry_attempts* t
 call.
 
 In the next section, we'll discuss how to customize this behaviour, along with other parts of the kani interface.
+
+.. _functioncall_v_toolcall:
+
+Internal Representation
+-----------------------
+
+.. versionchanged:: v0.6.0
+
+As of Nov 6, 2023, OpenAI added the ability for a single assistant message to request calling multiple functions in
+parallel, and wrapped all function calls in a :class:`.ToolCall` wrapper. In order to add support for this in kani while
+maintaining backwards compatibility with OSS function calling models, a :class:`.ChatMessage` actually maintains the
+following internal representation:
+
+:attr:`.ChatMessage.function_call` is actually an alias for ``ChatMessage.tool_calls[0].function``. If there is more
+than one tool call in the message, kani will raise an exception.

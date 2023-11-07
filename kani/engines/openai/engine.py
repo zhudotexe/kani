@@ -2,11 +2,11 @@ import functools
 import os
 
 from kani.ai_function import AIFunction
-from kani.exceptions import MissingModelDependencies
-from kani.models import ChatMessage
+from kani.exceptions import MissingModelDependencies, ToolCallError
+from kani.models import ChatMessage, ChatRole
 from . import function_calling
 from .client import OpenAIClient
-from .models import ChatCompletion, FunctionSpec, OpenAIChatMessage
+from .models import ChatCompletion, FunctionSpec, OpenAIChatMessage, ToolSpec
 from ..base import BaseEngine
 
 try:
@@ -114,12 +114,48 @@ class OpenAIEngine(BaseEngine):
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> ChatCompletion:
         if functions:
-            function_spec = [FunctionSpec(name=f.name, description=f.desc, parameters=f.json_schema) for f in functions]
+            tool_specs = [
+                ToolSpec.from_function(FunctionSpec(name=f.name, description=f.desc, parameters=f.json_schema))
+                for f in functions
+            ]
         else:
-            function_spec = None
-        translated_messages = [OpenAIChatMessage.from_chatmessage(m) for m in messages]
+            tool_specs = None
+        # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
+        translated_messages = []
+        free_toolcall_ids = set()
+        for m in messages:
+            # if this is not a function result and there are free tool call IDs, raise
+            if m.role != ChatRole.FUNCTION and free_toolcall_ids:
+                raise ToolCallError(
+                    f"Encountered a {m.role.value!r} message but expected a FUNCTION message to satisfy the pending"
+                    f" tool call(s): {free_toolcall_ids}"
+                )
+            # asst: add tool call IDs to freevars
+            if m.role == ChatRole.ASSISTANT and m.tool_calls:
+                for tc in m.tool_calls:
+                    free_toolcall_ids.add(tc.id)
+            # func: bind freevars
+            elif m.role == ChatRole.FUNCTION:
+                # has ID: bind it
+                if m.tool_call_id is not None and m.tool_call_id in free_toolcall_ids:
+                    free_toolcall_ids.remove(m.tool_call_id)
+                # no ID: bind if unambiguous, otherwise cry
+                elif m.tool_call_id is None:
+                    if len(free_toolcall_ids) == 1:
+                        m = m.copy_with(tool_call_id=free_toolcall_ids.pop())
+                    elif len(free_toolcall_ids) > 1:
+                        raise ToolCallError(
+                            "Got a FUNCTION message with no tool_call_id but multiple tool calls are pending"
+                            f" ({free_toolcall_ids})! Set the tool_call_id to resolve the pending tool requests."
+                        )
+            translated_messages.append(OpenAIChatMessage.from_chatmessage(m))
+        # if the translated messages start with a hanging TOOL call, strip it (openai limitation)
+        # though hanging FUNCTION messages are OK
+        while translated_messages and translated_messages[0].role == "tool":
+            translated_messages.pop(0)
+        # make API call
         completion = await self.client.create_chat_completion(
-            model=self.model, messages=translated_messages, functions=function_spec, **self.hyperparams, **hyperparams
+            model=self.model, messages=translated_messages, tools=tool_specs, **self.hyperparams, **hyperparams
         )
         return completion
 

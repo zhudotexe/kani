@@ -2,6 +2,7 @@ import pydantic
 import pytest
 
 from kani import ChatMessage, ChatRole, MessagePart
+from kani.models import ToolCall
 
 
 class TestMessagePart(MessagePart):
@@ -41,7 +42,7 @@ def test_parts():
     assert msg.parts == ["Hello world", part]
 
 
-def test_copy():
+def test_copy_parts():
     part = TestMessagePart()
     msg = ChatMessage(role=ChatRole.USER, content=["Hello world", part])
 
@@ -58,3 +59,19 @@ def test_copy():
 
     with pytest.raises(ValueError):
         msg.copy_with(text="foo", parts=[])
+
+
+def test_copy_tools():
+    msg = ChatMessage(role=ChatRole.ASSISTANT, content=None)
+
+    bar_call = ToolCall.from_function("bar")
+    calls_copy = msg.copy_with(tool_calls=[bar_call])
+    assert calls_copy.tool_calls == [bar_call]
+    assert calls_copy.function_call == bar_call.function
+
+    func_copy = msg.copy_with(function_call=bar_call.function)
+    assert len(func_copy.tool_calls) == 1
+    assert func_copy.function_call == bar_call.function
+
+    with pytest.raises(ValueError):
+        msg.copy_with(tool_calls=[bar_call], function_call=bar_call.function)
