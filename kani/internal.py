@@ -1,7 +1,13 @@
+import abc
+
 from .models import ChatMessage
 
 
-class FunctionCallResult:
+class HasMessage(abc.ABC):
+    message: ChatMessage
+
+
+class FunctionCallResult(HasMessage):
     """A model requested a function call, and the kani runtime resolved it."""
 
     def __init__(self, is_model_turn: bool, message: ChatMessage):
@@ -13,7 +19,7 @@ class FunctionCallResult:
         self.message = message
 
 
-class ExceptionHandleResult:
+class ExceptionHandleResult(HasMessage):
     """A function call raised an exception, and the kani runtime has prompted the model with exception information."""
 
     def __init__(self, should_retry: bool, message: ChatMessage):

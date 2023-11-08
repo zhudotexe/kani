@@ -1,10 +1,20 @@
 import asyncio
+import warnings
 from typing import Literal, overload
 
 import aiohttp
 import pydantic
 
-from .models import ChatCompletion, Completion, FunctionSpec, OpenAIChatMessage, SpecificFunctionCall
+from .models import (
+    ChatCompletion,
+    Completion,
+    FunctionSpec,
+    OpenAIChatMessage,
+    ResponseFormat,
+    SpecificFunctionCall,
+    ToolChoice,
+    ToolSpec,
+)
 from ..httpclient import BaseClient, HTTPException, HTTPStatusException, HTTPTimeout
 
 
@@ -77,6 +87,7 @@ class OpenAIClient(BaseClient):
     async def create_completion(
         self,
         model: str,
+        *,
         prompt: str = "<|endoftext|>",
         suffix: str = None,
         max_tokens: int = 16,
@@ -85,6 +96,7 @@ class OpenAIClient(BaseClient):
         n: int = 1,
         logprobs: int = None,
         echo: bool = False,
+        seed: int | None = None,
         stop: str | list[str] = None,
         presence_penalty: float = 0.0,
         frequency_penalty: float = 0.0,
@@ -107,24 +119,31 @@ class OpenAIClient(BaseClient):
         self,
         model: str,
         messages: list[OpenAIChatMessage],
-        functions: list[FunctionSpec] | None = None,
-        function_call: SpecificFunctionCall | Literal["auto"] | Literal["none"] | None = None,
+        *,
+        tools: list[ToolSpec] | None = None,
+        tool_choice: ToolChoice | Literal["auto"] | Literal["none"] | None = None,
         temperature: float = 1.0,
         top_p: float = 1.0,
         n: int = 1,
+        response_format: ResponseFormat | None = None,
+        seed: int | None = None,
         stop: str | list[str] | None = None,
         max_tokens: int | None = None,
         presence_penalty: float = 0.0,
         frequency_penalty: float = 0.0,
         logit_bias: dict | None = None,
         user: str | None = None,
+        # deprecated
+        functions: list[FunctionSpec] | None = None,
+        function_call: SpecificFunctionCall | Literal["auto"] | Literal["none"] | None = None,
     ) -> ChatCompletion: ...
 
     async def create_chat_completion(
         self,
         model: str,
         messages: list[OpenAIChatMessage],
-        functions: list[FunctionSpec] | None = None,
+        *,
+        tools: list[ToolSpec] | None = None,
         **kwargs,
     ) -> ChatCompletion:
         """Create a chat completion.
@@ -132,9 +151,16 @@ class OpenAIClient(BaseClient):
         See https://platform.openai.com/docs/api-reference/chat/create.
         """
         # transform pydantic models
-        if functions:
-            kwargs["functions"] = [f.model_dump(exclude_unset=True) for f in functions]
+        if tools:
+            kwargs["tools"] = [t.model_dump(exclude_unset=True) for t in tools]
+        if "tool_choice" in kwargs and isinstance(kwargs["tool_choice"], SpecificFunctionCall):
+            kwargs["tool_choice"] = kwargs["tool_choice"].model_dump(exclude_unset=True)
+        # deprecated function calling
+        if "functions" in kwargs:
+            warnings.warn("The functions parameter is deprecated. Use tools instead.", DeprecationWarning)
+            kwargs["functions"] = [f.model_dump(exclude_unset=True) for f in kwargs["functions"]]
         if "function_call" in kwargs and isinstance(kwargs["function_call"], SpecificFunctionCall):
+            warnings.warn("The function_call parameter is deprecated. Use tool_choice instead.", DeprecationWarning)
             kwargs["function_call"] = kwargs["function_call"].model_dump(exclude_unset=True)
         # call API
         data = await self.post(

@@ -3,6 +3,7 @@
 import abc
 import enum
 import json
+import uuid
 import warnings
 from typing import ClassVar, Sequence, Type, TypeAlias, Union
 
@@ -47,7 +48,7 @@ class ChatRole(enum.Enum):
 
 
 class FunctionCall(BaseModel):
-    """Represents a model's request to call a function."""
+    """Represents a model's request to call a single function."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -66,6 +67,45 @@ class FunctionCall(BaseModel):
     def with_args(cls, name: str, **kwargs):
         """Create a function call with the given arguments (e.g. for few-shot prompting)."""
         return cls(name=name, arguments=json.dumps(kwargs))
+
+
+class ToolCall(BaseModel):
+    """Represents a model's request to call a tool with a unique request ID.
+
+    See :ref:`functioncall_v_toolcall` for more information about tool calls vs function calls.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    id: str
+    """The request ID created by the engine.
+    This should be passed back to the engine in :attr:`.ChatMessage.tool_call_id` in order to associate a FUNCTION
+    message with this request.
+    """
+
+    type: str
+    """The type of tool requested (currently only "function")."""
+
+    function: FunctionCall
+    """The requested function call."""
+
+    @classmethod
+    def from_function(cls, name: str, *, call_id_: str = None, **kwargs):
+        """Create a tool call request for a function with the given name and arguments.
+
+        :param call_id_: The ID to assign to the request. If not passed, generates a random ID.
+        """
+        call_id = call_id_ or str(uuid.uuid4())
+        return cls(id=call_id, type="function", function=FunctionCall.with_args(name, **kwargs))
+
+    @classmethod
+    def from_function_call(cls, call: FunctionCall, call_id_: str = None):
+        """Create a tool call request from an existing FunctionCall.
+
+        :param call_id_: The ID to assign to the request. If not passed, generates a random ID.
+        """
+        call_id = call_id_ or str(uuid.uuid4())
+        return cls(id=call_id, type="function", function=call)
 
 
 class MessagePart(BaseModel, abc.ABC):
@@ -146,6 +186,14 @@ class ChatMessage(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    def __init__(self, **kwargs):
+        # translate a function_call into tool_calls
+        if "function_call" in kwargs:
+            if "tool_calls" in kwargs:
+                raise ValueError("Only one of function_call or tool_calls may be provided.")
+            kwargs["tool_calls"] = (ToolCall.from_function_call(kwargs.pop("function_call")),)
+        super().__init__(**kwargs)
+
     role: ChatRole
     """Who said the message?"""
 
@@ -183,8 +231,27 @@ class ChatMessage(BaseModel):
     name: str | None = None
     """The name of the user who sent the message, if set (user/function messages only)."""
 
-    function_call: FunctionCall | None = None
-    """The function requested by the model (assistant messages only)."""
+    tool_call_id: str | None = None
+    """The ID for a requested :class:`.ToolCall` which this message is a response to (function messages only)."""
+
+    tool_calls: tuple[ToolCall] | None = None
+    """The tool calls requested by the model (assistant messages only)."""
+
+    @property
+    def function_call(self) -> FunctionCall | None:
+        """If there is exactly one tool call to a function, return that tool call's requested function.
+
+        This is mostly provided for backwards-compatibility purposes; iterating over :attr:`tool_calls` should be
+        preferred.
+        """
+        if not self.tool_calls:
+            return None
+        if len(self.tool_calls) > 1:
+            warnings.warn(
+                "This message contains multiple tool calls; iterate over `.tool_calls` instead of using"
+                " `.function_call`."
+            )
+        return self.tool_calls[0].function
 
     @classmethod
     def system(cls, content: str | Sequence[MessagePart | str], **kwargs):
@@ -202,9 +269,9 @@ class ChatMessage(BaseModel):
         return cls(role=ChatRole.ASSISTANT, content=content, **kwargs)
 
     @classmethod
-    def function(cls, name: str, content: str | Sequence[MessagePart | str], **kwargs):
+    def function(cls, name: str | None, content: str | Sequence[MessagePart | str], tool_call_id: str = None, **kwargs):
         """Create a new function message."""
-        return cls(role=ChatRole.FUNCTION, content=content, name=name, **kwargs)
+        return cls(role=ChatRole.FUNCTION, content=content, name=name, tool_call_id=tool_call_id, **kwargs)
 
     def copy_with(self, **new_values):
         """Make a shallow copy of this object, updating the passed attributes (if any) to new values.
@@ -213,7 +280,10 @@ class ChatMessage(BaseModel):
         This is mostly just a convenience wrapper around ``.model_copy``.
 
         Only one of (content, text, parts) may be passed and will update the other two attributes accordingly.
+
+        Only one of (tool_calls, function_call) may be passed and will update the other accordingly.
         """
+        # === content ===
         # ensure the content is immutable
         if "content" in new_values and not isinstance(new_values["content"], str):
             new_values["content"] = tuple(new_values["content"])
@@ -226,4 +296,9 @@ class ChatMessage(BaseModel):
             if "content" in new_values:
                 raise ValueError("At most one of ('content', 'text', 'parts') can be set.")
             new_values["content"] = tuple(new_values.pop("parts"))
+        # === tool calls ===
+        if "function_call" in new_values:
+            if "tool_calls" in new_values:
+                raise ValueError("Only one of function_call or tool_calls may be provided.")
+            new_values["tool_calls"] = (ToolCall.from_function_call(new_values.pop("function_call")),)
         return super().copy_with(**new_values)

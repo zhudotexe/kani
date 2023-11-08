@@ -137,6 +137,10 @@ Next Actor
 After a function call returns, kani will hand control back to the LM to generate a response by default. If instead
 control should be given to the human (i.e. return from the chat round), set ``after=ChatRole.USER``.
 
+.. note::
+    If the model calls multiple tools in parallel, the model will be allowed to generate a response if *any* function
+    has ``after=ChatRole.ASSISTANT`` (the default) once all function calls are complete.
+
 Complete Example
 ----------------
 Here's the full example of how you might implement a function to get weather that we built in the last few steps:
@@ -182,38 +186,77 @@ prompt a model, we can mock these returns in the chat history using :meth:`.Chat
 For example, here's how you might prompt the model to give the temperature in both Fahrenheit and Celsius without
 the user having to ask:
 
-.. code-block:: python
+.. tab:: ToolCall API
 
-    from kani import ChatMessage, FunctionCall
-    fewshot = [
-        ChatMessage.user("What's the weather in Philadelphia?"),
-        # first, the model should ask for the weather in fahrenheit
-        ChatMessage.assistant(
-            content=None,
-            function_call=FunctionCall.with_args(
-                "get_weather", location="Philadelphia, PA", unit="fahrenheit"
-            )
-        ),
-        # and we mock the function's response to the model
-        ChatMessage.function(
-            "get_weather",
-            "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit.",
-        ),
-        # repeat in celsius
-        ChatMessage.assistant(
-            content=None,
-            function_call=FunctionCall.with_args(
-                "get_weather", location="Philadelphia, PA", unit="celsius"
-            )
-        ),
-        ChatMessage.function(
-            "get_weather",
-            "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius.",
-        ),
-        # finally, give the result to the user
-        ChatMessage.assistant("It's currently 85F (29C) and partly cloudy in Philadelphia."),
-    ]
-    ai = MyKani(engine, chat_history=fewshot)
+    .. code-block:: python
+
+        # build the chat history with examples
+        fewshot = [
+            ChatMessage.user("What's the weather in Philadelphia?"),
+            ChatMessage.assistant(
+                content=None,
+                # use a walrus operator to save a reference to the tool call here...
+                tool_calls=[
+                    tc := ToolCall.from_function("get_weather", location="Philadelphia, PA", unit="fahrenheit")
+                ],
+            ),
+            ChatMessage.function(
+                "get_weather",
+                "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit.",
+                # ...so this function result knows which call it's responding to
+                tc.id
+            ),
+            # and repeat for the other unit
+            ChatMessage.assistant(
+                content=None,
+                tool_calls=[
+                    tc2 := ToolCall.from_function("get_weather", location="Philadelphia, PA", unit="celsius")
+                ],
+            ),
+            ChatMessage.function(
+                "get_weather",
+                "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius.",
+                tc2.id
+            ),
+            ChatMessage.assistant("It's currently 85F (29C) and partly cloudy in Philadelphia."),
+        ]
+        # and give it to the kani when you initialize it
+        ai = MyKani(engine, chat_history=fewshot)
+
+.. tab:: FunctionCall API (deprecated)
+
+    .. code-block:: python
+
+        from kani import ChatMessage, FunctionCall
+        fewshot = [
+            ChatMessage.user("What's the weather in Philadelphia?"),
+            # first, the model should ask for the weather in fahrenheit
+            ChatMessage.assistant(
+                content=None,
+                function_call=FunctionCall.with_args(
+                    "get_weather", location="Philadelphia, PA", unit="fahrenheit"
+                )
+            ),
+            # and we mock the function's response to the model
+            ChatMessage.function(
+                "get_weather",
+                "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit.",
+            ),
+            # repeat in celsius
+            ChatMessage.assistant(
+                content=None,
+                function_call=FunctionCall.with_args(
+                    "get_weather", location="Philadelphia, PA", unit="celsius"
+                )
+            ),
+            ChatMessage.function(
+                "get_weather",
+                "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius.",
+            ),
+            # finally, give the result to the user
+            ChatMessage.assistant("It's currently 85F (29C) and partly cloudy in Philadelphia."),
+        ]
+        ai = MyKani(engine, chat_history=fewshot)
 
 .. code-block:: pycon
 
@@ -254,4 +297,26 @@ passing params with invalid, non-coercible types) or the function raises an exce
 error in a message to the model by default, allowing it up to *retry_attempts* to correct itself and retry the
 call.
 
+.. note::
+    If the model calls multiple tools in parallel, the model will be allowed a retry if *any* exception handler
+    allows it. This will only count as 1 retry attempt regardless of the number of functions that raised an exception.
+
 In the next section, we'll discuss how to customize this behaviour, along with other parts of the kani interface.
+
+.. _functioncall_v_toolcall:
+
+Internal Representation
+-----------------------
+
+.. versionchanged:: v0.6.0
+
+As of Nov 6, 2023, OpenAI added the ability for a single assistant message to request calling multiple functions in
+parallel, and wrapped all function calls in a :class:`.ToolCall` wrapper. In order to add support for this in kani while
+maintaining backwards compatibility with OSS function calling models, a :class:`.ChatMessage` actually maintains the
+following internal representation:
+
+:attr:`.ChatMessage.function_call` is actually an alias for ``ChatMessage.tool_calls[0].function``. If there is more
+than one tool call in the message, kani will raise an exception.
+
+A ToolCall is effectively a named wrapper around a :class:`.FunctionCall`, associating the request with a generated
+ID so that its response can be linked to the request in future rounds of prompting.

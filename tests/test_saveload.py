@@ -3,7 +3,7 @@
 import random
 import string
 
-from kani import ChatMessage, Kani, MessagePart
+from kani import ChatMessage, FunctionCall, Kani, MessagePart
 from tests.engine import TestEngine
 
 engine = TestEngine()
@@ -17,6 +17,34 @@ async def test_saveload_str(tmp_path):
         query_len = random.randint(0, 5)
         query = "".join(random.choice(string.ascii_letters) for _ in range(query_len))
         await ai.chat_round_str(query, test_echo=True)
+
+    # save and load
+    ai.save(tmp_path / "pytest.json")
+    loaded = Kani(engine)
+    loaded.load(tmp_path / "pytest.json")
+
+    # assert equality
+    assert ai.always_included_messages == loaded.always_included_messages
+    assert ai.chat_history == loaded.chat_history
+
+
+async def test_saveload_tool_calls(tmp_path):
+    """Test that tool calls are saved."""
+    fewshot = [
+        ChatMessage.user("What's the weather in Philadelphia?"),
+        ChatMessage.assistant(
+            content=None,
+            function_call=FunctionCall.with_args("get_weather", location="Philadelphia, PA", unit="fahrenheit"),
+        ),
+        ChatMessage.function("get_weather", "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit."),
+        ChatMessage.assistant(
+            content=None,
+            function_call=FunctionCall.with_args("get_weather", location="Philadelphia, PA", unit="celsius"),
+        ),
+        ChatMessage.function("get_weather", "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius."),
+        ChatMessage.assistant("It's currently 85F (29C) and partly cloudy in Philadelphia."),
+    ]
+    ai = Kani(engine, chat_history=fewshot)
 
     # save and load
     ai.save(tmp_path / "pytest.json")

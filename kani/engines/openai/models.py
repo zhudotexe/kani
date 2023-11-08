@@ -1,6 +1,6 @@
 from typing import Literal
 
-from kani.models import BaseModel, ChatMessage, ChatRole, FunctionCall
+from kani.models import BaseModel, ChatMessage, ChatRole, FunctionCall, ToolCall
 from ..base import BaseCompletion
 
 
@@ -30,6 +30,7 @@ class Completion(BaseModel):
     object: Literal["text_completion"]
     created: int
     model: str
+    system_fingerprint: str | None = None
     choices: list[CompletionChoice]
     usage: CompletionUsage
 
@@ -46,25 +47,79 @@ class FunctionSpec(BaseModel):
     parameters: dict
 
 
+class ToolSpec(BaseModel):
+    type: str
+    function: FunctionSpec
+
+    @classmethod
+    def from_function(cls, spec: FunctionSpec):
+        return cls(type="function", function=spec)
+
+
 class SpecificFunctionCall(BaseModel):
     name: str
 
 
+class ToolChoice(BaseModel):
+    type: str
+    function: SpecificFunctionCall
+
+    @classmethod
+    def from_function(cls, name: str):
+        return cls(type="function", function=SpecificFunctionCall(name=name))
+
+
+class ResponseFormat(BaseModel):
+    type: str
+
+    @classmethod
+    def text(cls):
+        return cls(type="text")
+
+    @classmethod
+    def json_object(cls):
+        return cls(type="json_object")
+
+
 class OpenAIChatMessage(BaseModel):
-    role: ChatRole
+    role: str
     content: str | list[BaseModel | str] | None
     name: str | None = None
+    tool_call_id: str | None = None
+    tool_calls: list[ToolCall] | None = None
+    # deprecated
     function_call: FunctionCall | None = None
 
     @classmethod
     def from_chatmessage(cls, m: ChatMessage):
-        return cls(role=m.role, content=m.text, name=m.name, function_call=m.function_call)
+        # translate tool responses to a function to the right openai format
+        if m.role == ChatRole.FUNCTION:
+            if m.tool_call_id is not None:
+                return cls(role="tool", content=m.text, name=m.name, tool_call_id=m.tool_call_id)
+            return cls(role=m.role.value, content=m.text, name=m.name)
+        return cls(role=m.role.value, content=m.text, name=m.name, tool_call_id=m.tool_call_id, tool_calls=m.tool_calls)
+
+    def to_chatmessage(self) -> ChatMessage:
+        # translate tool role to function role
+        if self.role == "tool":
+            role = ChatRole.FUNCTION
+        else:
+            role = ChatRole(self.role)
+        # translate FunctionCall to singular ToolCall
+        if self.tool_calls:
+            tool_calls = self.tool_calls
+        elif self.function_call:
+            tool_calls = [ToolCall.from_function_call(self.function_call)]
+        else:
+            tool_calls = None
+        return ChatMessage(
+            role=role, content=self.content, name=self.name, tool_call_id=self.tool_call_id, tool_calls=tool_calls
+        )
 
 
 # ---- response ----
 class ChatCompletionChoice(BaseModel):
-    # this is a ChatMessage rather than an OpenAIChatMessage because all engines need to return the kani model
-    message: ChatMessage
+    message: OpenAIChatMessage
     index: int
     finish_reason: str | None = None
 
@@ -74,12 +129,13 @@ class ChatCompletion(BaseCompletion, BaseModel):
     object: Literal["chat.completion"]
     created: int
     model: str
+    system_fingerprint: str | None = None
     usage: CompletionUsage
     choices: list[ChatCompletionChoice]
 
     @property
-    def message(self):
-        return self.choices[0].message
+    def message(self) -> ChatMessage:
+        return self.choices[0].message.to_chatmessage()
 
     @property
     def prompt_tokens(self):

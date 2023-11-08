@@ -2,7 +2,7 @@ import enum
 import os
 from typing import Annotated
 
-from kani import AIParam, ChatMessage, FunctionCall, Kani, ai_function, chat_in_terminal
+from kani import AIParam, ChatMessage, Kani, ToolCall, ai_function, chat_in_terminal
 from kani.engines.openai import OpenAIEngine
 
 api_key = os.getenv("OPENAI_API_KEY")
@@ -35,14 +35,16 @@ fewshot = [
     ChatMessage.user("What's the weather in Philadelphia?"),
     ChatMessage.assistant(
         content=None,
-        function_call=FunctionCall.with_args("get_weather", location="Philadelphia, PA", unit="fahrenheit"),
+        # use a walrus operator to save a reference to the tool call here...
+        tool_calls=[tc := ToolCall.from_function("get_weather", location="Philadelphia, PA", unit="fahrenheit")],
     ),
-    ChatMessage.function("get_weather", "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit."),
+    # so this function result knows which call it's responding to
+    ChatMessage.function("get_weather", "Weather in Philadelphia, PA: Partly cloudy, 85 degrees fahrenheit.", tc.id),
     ChatMessage.assistant(
         content=None,
-        function_call=FunctionCall.with_args("get_weather", location="Philadelphia, PA", unit="celsius"),
+        tool_calls=[tc2 := ToolCall.from_function("get_weather", location="Philadelphia, PA", unit="celsius")],
     ),
-    ChatMessage.function("get_weather", "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius."),
+    ChatMessage.function("get_weather", "Weather in Philadelphia, PA: Partly cloudy, 29 degrees celsius.", tc2.id),
     ChatMessage.assistant("It's currently 85F (29C) and partly cloudy in Philadelphia."),
 ]
 # and give it to the kani when you initialize it

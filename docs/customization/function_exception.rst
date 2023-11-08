@@ -41,9 +41,9 @@ Here's an example of providing custom prompts on an exception:
     :emphasize-lines: 2-10
 
     class CustomExceptionPromptKani(Kani):
-        async def handle_function_call_exception(self, call, err, attempt):
+        async def handle_function_call_exception(self, call, err, attempt, *args, **kwargs):
             # get the standard retry logic...
-            result = await super().handle_function_call_exception(call, err, attempt)
+            result = await super().handle_function_call_exception(call, err, attempt, *args, **kwargs)
             # but override the returned message with our own
             result.message = ChatMessage.system(
                 "The call encountered an error. "

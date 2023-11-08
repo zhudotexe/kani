@@ -9,7 +9,7 @@ from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
 from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, WrappedCallException
 from .internal import ExceptionHandleResult, FunctionCallResult
-from .models import ChatMessage, ChatRole, FunctionCall, QueryType
+from .models import ChatMessage, ChatRole, FunctionCall, QueryType, ToolCall
 from .utils.message_formatters import assistant_message_contents
 from .utils.typing import PathLike, SavedKani
 
@@ -80,7 +80,7 @@ class Kani:
                 Use ``chat_history=mykani.chat_history.copy()`` to pass a copy.
         :param functions: A list of :class:`.AIFunction` to expose to the model (for dynamic function calling).
             Use :func:`.ai_function` to define static functions (see :doc:`function_calling`).
-        :param retry_attempts: How many attempts the LM may take if a function call raises an exception.
+        :param retry_attempts: How many attempts the LM may take per full round if any tool call raises an exception.
         """
         self.engine = engine
         self.system_prompt = system_prompt.strip() if system_prompt else None
@@ -178,30 +178,40 @@ class Kani:
                 yield message
 
                 # if function call, do it and attempt retry if it's wrong
-                if not message.function_call:
+                if not message.tool_calls:
                     return
 
-                try:
-                    function_call_result = await self.do_function_call(message.function_call)
-                    is_model_turn = function_call_result.is_model_turn
-                    call_message = function_call_result.message
+                # run each tool call in parallel
+                async def _do_tool_call(tc: ToolCall):
+                    try:
+                        return await self.do_function_call(tc.function, tool_call_id=tc.id)
+                    except FunctionCallException as e:
+                        return await self.handle_function_call_exception(tc.function, e, retry, tool_call_id=tc.id)
+
+                # and update results after they are completed
+                is_model_turn = False
+                should_retry_call = False
+                n_errs = 0
+                results = await asyncio.gather(*(_do_tool_call(tc) for tc in message.tool_calls))
+                for result in results:
                     # save the result to the chat history
-                    await self.add_to_history(call_message)
-                    yield call_message
-                except FunctionCallException as e:
-                    exception_handling_result = await self.handle_function_call_exception(
-                        message.function_call, e, retry
-                    )
-                    # save the result to the chat history
-                    exc_message = exception_handling_result.message
-                    await self.add_to_history(exc_message)
-                    yield exc_message
-                    # retry if we have retry attempts left
+                    await self.add_to_history(result.message)
+                    yield result.message
+                    if isinstance(result, ExceptionHandleResult):
+                        is_model_turn = True
+                        n_errs += 1
+                        # retry if any function says so
+                        should_retry_call = should_retry_call or result.should_retry
+                    else:
+                        # allow model to generate response if any function says so
+                        is_model_turn = is_model_turn or result.is_model_turn
+
+                # if we encountered an error, increment the retry counter and allow the model to generate a response
+                if n_errs:
                     retry += 1
-                    if not exception_handling_result.should_retry:
+                    if not should_retry_call:
                         # disable function calling on the next go
-                        kwargs = {**kwargs, "include_functions": False}
-                    continue
+                        kwargs["include_functions"] = False
                 else:
                     retry = 0
 
@@ -323,7 +333,7 @@ class Kani:
             return self.always_included_messages
         return self.always_included_messages + self.chat_history[-to_keep:]
 
-    async def do_function_call(self, call: FunctionCall) -> FunctionCallResult:
+    async def do_function_call(self, call: FunctionCall, tool_call_id: str = None) -> FunctionCallResult:
         """Resolve a single function call.
 
         By default, any exception raised from this method will be an instance of a :class:`.FunctionCallException`.
@@ -331,6 +341,8 @@ class Kani:
         You may implement an override to add instrumentation around function calls (e.g. tracking success counts
         for varying prompts). See :doc:`/customization/function_call`.
 
+        :param call: The name of the function to call and arguments to call it with.
+        :param tool_call_id: The ``tool_call_id`` to set in the returned FUNCTION message.
         :returns: A :class:`.FunctionCallResult` including whose turn it is next and the message with the result of the
             function call.
         :raises NoSuchFunction: The requested function does not exist.
@@ -348,7 +360,7 @@ class Kani:
             log.debug(f"{f.name} responded with data: {result_str!r}")
         except Exception as e:
             raise WrappedCallException(f.auto_retry, e) from e
-        msg = ChatMessage.function(f.name, result_str)
+        msg = ChatMessage.function(f.name, result_str, tool_call_id=tool_call_id)
         # if we are auto truncating, check and see if we need to
         if f.auto_truncate is not None:
             message_len = self.message_token_len(msg)
@@ -362,7 +374,7 @@ class Kani:
         return FunctionCallResult(is_model_turn=f.after == ChatRole.ASSISTANT, message=msg)
 
     async def handle_function_call_exception(
-        self, call: FunctionCall, err: FunctionCallException, attempt: int
+        self, call: FunctionCall, err: FunctionCallException, attempt: int, tool_call_id: str = None
     ) -> ExceptionHandleResult:
         """Called when a function call raises an exception.
 
@@ -376,6 +388,7 @@ class Kani:
         :param err: The error the call raised. Usually this is :class:`.NoSuchFunction` or
             :class:`.WrappedCallException`, although it may be any exception raised by :meth:`do_function_call`.
         :param attempt: The attempt number for the current call (0-indexed).
+        :param tool_call_id: The ``tool_call_id`` to set in the returned FUNCTION message.
         :returns: A :class:`.ExceptionHandleResult` detailing whether the model should retry and the message to add to
             the chat history.
         """
@@ -383,11 +396,15 @@ class Kani:
         log.debug(f"Call to {call.name} raised an exception: {err}")
         # tell the model what went wrong
         if isinstance(err, NoSuchFunction):
-            msg = ChatMessage.system(f"The function {err.name!r} is not defined. Only use the provided functions.")
+            msg = ChatMessage.function(
+                name=None,
+                content=f"The function {err.name!r} is not defined. Only use the provided functions.",
+                tool_call_id=tool_call_id,
+            )
         else:
             # but if it's a user function error, we want to raise it
             log.error(f"Call to {call.name} raised an exception: {err}", exc_info=err)
-            msg = ChatMessage.function(call.name, str(err))
+            msg = ChatMessage.function(call.name, str(err), tool_call_id=tool_call_id)
 
         return ExceptionHandleResult(should_retry=attempt < self.retry_attempts and err.retry, message=msg)
 

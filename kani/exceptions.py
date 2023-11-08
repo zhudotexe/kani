@@ -63,6 +63,10 @@ class MissingModelDependencies(KaniException):
     """You are trying to use an engine but do not have engine-specific packages installed."""
 
 
+class ToolCallError(KaniException):
+    """Something went wrong with tool calls."""
+
+
 # ==== serdes ====
 class MissingMessagePartType(KaniException):
     """During loading a saved kani, a message part has a type which is not currently defined in the runtime."""
