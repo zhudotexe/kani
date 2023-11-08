@@ -167,7 +167,7 @@ class OpenAIClient(BaseClient):
             "/chat/completions",
             json={
                 "model": model,
-                "messages": [cm.model_dump(exclude_defaults=True, mode="json") for cm in messages],
+                "messages": [cm.model_dump(exclude_none=True, mode="json") for cm in messages],
                 **kwargs,
             },
         )
