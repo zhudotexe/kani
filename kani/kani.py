@@ -80,7 +80,7 @@ class Kani:
                 Use ``chat_history=mykani.chat_history.copy()`` to pass a copy.
         :param functions: A list of :class:`.AIFunction` to expose to the model (for dynamic function calling).
             Use :func:`.ai_function` to define static functions (see :doc:`function_calling`).
-        :param retry_attempts: How many attempts the LM may take if a function call raises an exception.
+        :param retry_attempts: How many attempts the LM may take per full round if any tool call raises an exception.
         """
         self.engine = engine
         self.system_prompt = system_prompt.strip() if system_prompt else None
@@ -211,7 +211,7 @@ class Kani:
                     retry += 1
                     if not should_retry_call:
                         # disable function calling on the next go
-                        kwargs = {**kwargs, "include_functions": False}
+                        kwargs["include_functions"] = False
                 else:
                     retry = 0
 

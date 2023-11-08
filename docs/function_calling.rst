@@ -139,7 +139,7 @@ control should be given to the human (i.e. return from the chat round), set ``af
 
 .. note::
     If the model calls multiple tools in parallel, the model will be allowed to generate a response if *any* function
-    allows it.
+    has ``after=ChatRole.ASSISTANT`` (the default) once all function calls are complete.
 
 Complete Example
 ----------------
@@ -299,7 +299,7 @@ call.
 
 .. note::
     If the model calls multiple tools in parallel, the model will be allowed a retry if *any* exception handler
-    allows it.
+    allows it. This will only count as 1 retry attempt regardless of the number of functions that raised an exception.
 
 In the next section, we'll discuss how to customize this behaviour, along with other parts of the kani interface.
 

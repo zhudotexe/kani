@@ -2,9 +2,8 @@ import enum
 import os
 from typing import Annotated
 
-from kani import AIParam, ChatMessage, Kani, ai_function, chat_in_terminal
+from kani import AIParam, ChatMessage, Kani, ToolCall, ai_function, chat_in_terminal
 from kani.engines.openai import OpenAIEngine
-from kani.models import ToolCall
 
 api_key = os.getenv("OPENAI_API_KEY")
 engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")

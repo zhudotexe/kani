@@ -1,8 +1,7 @@
 import pydantic
 import pytest
 
-from kani import ChatMessage, ChatRole, MessagePart
-from kani.models import ToolCall
+from kani import ChatMessage, ChatRole, MessagePart, ToolCall
 
 
 class TestMessagePart(MessagePart):

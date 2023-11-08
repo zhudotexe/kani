@@ -9,7 +9,7 @@ from typing import ClassVar, Sequence, Type, TypeAlias, Union
 
 from pydantic import BaseModel as PydanticBase, ConfigDict, model_serializer, model_validator
 
-from .exceptions import MissingMessagePartType, ToolCallError
+from .exceptions import MissingMessagePartType
 
 # ==== constants ====
 MESSAGEPART_TYPE_KEY = "__kani_messagepart_type__"  # used for serdes of MessageParts
@@ -247,7 +247,7 @@ class ChatMessage(BaseModel):
         if not self.tool_calls:
             return None
         if len(self.tool_calls) > 1:
-            raise ToolCallError(
+            warnings.warn(
                 "This message contains multiple tool calls; iterate over `.tool_calls` instead of using"
                 " `.function_call`."
             )
