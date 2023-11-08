@@ -317,3 +317,6 @@ following internal representation:
 
 :attr:`.ChatMessage.function_call` is actually an alias for ``ChatMessage.tool_calls[0].function``. If there is more
 than one tool call in the message, kani will raise an exception.
+
+A ToolCall is effectively a named wrapper around a :class:`.FunctionCall`, associating the request with a generated
+ID so that its response can be linked to the request in future rounds of prompting.

@@ -48,6 +48,10 @@ You'll need to implement two methods: :meth:`.BaseEngine.predict` and :meth:`.Ba
 build such a prompt. :meth:`.BaseEngine.function_token_reserve` tells kani how many tokens that prompt takes, so the
 context window management can ensure it never sends too many tokens.
 
+You'll also need to add previous function calls into the prompt (e.g. in the few-shot function calling example).
+When you're building the prompt, you'll need to iterate over :attr:`.ChatMessage.tool_calls` if it exists, and add
+your model's appropriate function calling prompt.
+
 To parse the model's requests to call a function, you also do this in :meth:`.BaseEngine.predict`. After generating the
 model's completion (usually a string, or a list of token IDs that decodes into a string), separate the model's
 conversational content from the structured function call:
@@ -56,4 +60,7 @@ conversational content from the structured function call:
     :align: center
 
 Finally, return a :class:`.Completion` with the ``.message`` attribute set to a :class:`.ChatMessage` with the
-appropriate :attr:`.ChatMessage.content` and :attr:`.ChatMessage.function_call`.
+appropriate :attr:`.ChatMessage.content` and :attr:`.ChatMessage.tool_calls`.
+
+.. note::
+    See :ref:`functioncall_v_toolcall` for more information about ToolCalls vs FunctionCalls.
