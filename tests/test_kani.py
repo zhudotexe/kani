@@ -1,5 +1,4 @@
-import random
-import string
+from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, ChatRole, Kani
 from tests.engine import TestEngine
@@ -45,13 +44,19 @@ async def test_always_include():
     assert flatten_chatmessages(prompt) == "12a"
 
 
-async def test_spam():
+@settings(suppress_health_check=(HealthCheck.too_slow,), deadline=None)
+@given(st.data())
+async def test_spam(data):
     # spam the kani with a bunch of random prompts
     # and make sure it never breaks
-    ai = Kani(engine, desired_response_tokens=3, system_prompt="1", always_included_messages=[ChatMessage.user("2")])
-    for _ in range(1000):
-        query_len = random.randint(0, 5)
-        query = "".join(random.choice(string.ascii_letters) for _ in range(query_len))
+    ai = Kani(
+        engine,
+        desired_response_tokens=3,
+        system_prompt=data.draw(st.text(min_size=0, max_size=1)),
+        always_included_messages=[ChatMessage.user(data.draw(st.text(min_size=0, max_size=1)))],
+    )
+    queries = data.draw(st.lists(st.text(min_size=0, max_size=5)))
+    for query in queries:
         resp = await ai.chat_round_str(query, test_echo=True)
         assert resp == query
 
