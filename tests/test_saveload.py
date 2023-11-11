@@ -1,7 +1,6 @@
 """Save -> load should be an identity transformation."""
 
-import random
-import string
+from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, FunctionCall, Kani, MessagePart
 from tests.engine import TestEngine
@@ -9,13 +8,19 @@ from tests.engine import TestEngine
 engine = TestEngine()
 
 
-async def test_saveload_str(tmp_path):
+@settings(suppress_health_check=(HealthCheck.function_scoped_fixture,))
+@given(st.data())
+async def test_saveload_str(tmp_path, data):
     """Test that basic string content messages are saved."""
     # randomly initialize a kani state
-    ai = Kani(engine, desired_response_tokens=3, system_prompt="1", always_included_messages=[ChatMessage.user("2")])
+    ai = Kani(
+        engine,
+        desired_response_tokens=3,
+        system_prompt=data.draw(st.text(min_size=0, max_size=1)),
+        always_included_messages=[ChatMessage.user(data.draw(st.text(min_size=0, max_size=1)))],
+    )
     for _ in range(5):
-        query_len = random.randint(0, 5)
-        query = "".join(random.choice(string.ascii_letters) for _ in range(query_len))
+        query = data.draw(st.text(min_size=0, max_size=5))
         await ai.chat_round_str(query, test_echo=True)
 
     # save and load
