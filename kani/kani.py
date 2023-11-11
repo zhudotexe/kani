@@ -425,7 +425,7 @@ class Kani:
         :param kwargs: Additional arguments to pass to Pydantic's ``model_dump_json``.
         """
         data = SavedKani(always_included_messages=self.always_included_messages, chat_history=self.chat_history)
-        with open(fp, "w") as f:
+        with open(fp, "w", encoding="utf-8") as f:
             f.write(data.model_dump_json(**kwargs))
 
     def load(self, fp: PathLike, **kwargs):
@@ -434,7 +434,7 @@ class Kani:
         :param fp: The path to the file containing the chat state.
         :param kwargs: Additional arguments to pass to Pydantic's ``model_validate_json``.
         """
-        with open(fp) as f:
+        with open(fp, encoding="utf-8") as f:
             data = f.read()
         state = SavedKani.model_validate_json(data, **kwargs)
         self.always_included_messages = state.always_included_messages
