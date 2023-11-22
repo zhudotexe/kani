@@ -24,6 +24,11 @@ OpenAI
 .. autoclass:: kani.engines.openai.client.OpenAIClient
     :members:
 
+Anthropic
+---------
+.. autoclass:: kani.engines.anthropic.AnthropicEngine
+
+
 Hugging Face
 ------------
 .. autoclass:: kani.engines.huggingface.HuggingEngine

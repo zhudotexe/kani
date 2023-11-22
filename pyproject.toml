@@ -45,6 +45,10 @@ ctransformers = [
     "ctransformers>=0.2.25,<1.0.0",
 ]
 
+anthropic = [
+    "anthropic~=0.7.3",
+]
+
 [project.urls]
 "Homepage" = "https://github.com/zhudotexe/kani"
 "Bug Tracker" = "https://github.com/zhudotexe/kani/issues"
