@@ -2,7 +2,7 @@ import functools
 import os
 
 from kani.ai_function import AIFunction
-from kani.exceptions import MissingModelDependencies, ToolCallError
+from kani.exceptions import MissingModelDependencies, PromptError
 from kani.models import ChatMessage, ChatRole
 from . import function_calling
 from .client import OpenAIClient
@@ -127,7 +127,7 @@ class OpenAIEngine(BaseEngine):
         for m in messages:
             # if this is not a function result and there are free tool call IDs, raise
             if m.role != ChatRole.FUNCTION and free_toolcall_ids:
-                raise ToolCallError(
+                raise PromptError(
                     f"Encountered a {m.role.value!r} message but expected a FUNCTION message to satisfy the pending"
                     f" tool call(s): {free_toolcall_ids}"
                 )
@@ -145,7 +145,7 @@ class OpenAIEngine(BaseEngine):
                     if len(free_toolcall_ids) == 1:
                         m = m.copy_with(tool_call_id=free_toolcall_ids.pop())
                     elif len(free_toolcall_ids) > 1:
-                        raise ToolCallError(
+                        raise PromptError(
                             "Got a FUNCTION message with no tool_call_id but multiple tool calls are pending"
                             f" ({free_toolcall_ids})! Set the tool_call_id to resolve the pending tool requests."
                         )
