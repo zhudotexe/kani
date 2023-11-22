@@ -7,7 +7,7 @@ from kani.models import ChatMessage, ChatRole
 from ..base import BaseEngine, Completion
 
 try:
-    from anthropic import AsyncAnthropic, HUMAN_PROMPT, AI_PROMPT
+    from anthropic import AI_PROMPT, HUMAN_PROMPT, AsyncAnthropic
 
     # anthropic async client loads a small json file using anyio for some reason; hook into the underlying loader
     # noinspection PyProtectedMember
