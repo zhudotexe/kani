@@ -63,8 +63,8 @@ class MissingModelDependencies(KaniException):
     """You are trying to use an engine but do not have engine-specific packages installed."""
 
 
-class ToolCallError(KaniException):
-    """Something went wrong with tool calls."""
+class PromptError(KaniException):
+    """For some reason, the input to this model is invalid."""
 
 
 # ==== serdes ====
