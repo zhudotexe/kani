@@ -1,3 +1,5 @@
+# fmt: off
+# isort: skip_file
 """
 This example showcases all the different engines available and how you can switch between them.
 """
@@ -6,7 +8,6 @@ import os
 
 from kani import Kani, chat_in_terminal
 
-# fmt: off
 # ==== OpenAI (GPT) ====
 from kani.engines.openai import OpenAIEngine
 engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-3.5-turbo")
