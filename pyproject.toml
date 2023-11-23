@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kani"
-version = "0.6.2"
+version = "0.7.0"
 authors = [
     { name = "Andrew Zhu", email = "andrew@zhu.codes" },
     { name = "Liam Dugan", email = "ldugan@seas.upenn.edu" },

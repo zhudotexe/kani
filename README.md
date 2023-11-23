@@ -29,8 +29,13 @@ Compared to other LM frameworks, kani is less opinionated and offers more fine-g
 over the parts of the control flow that matter, making it the perfect choice for NLP researchers, hobbyists, and
 developers alike.
 
-kani comes with support for OpenAI models and LLaMA v2 out of the box, with a model-agnostic framework to add support
-for many more.
+kani comes with support for the following models out of the box, with a model-agnostic framework to add support for many
+more:
+
+- OpenAI Models (GPT-3.5-turbo, GPT-4, GPT-4-turbo)
+- Anthropic Models (Claude, Claude Instant)
+- LLaMA v2 (via Hugging Face or ctransformers) & fine-tunes
+- Vicuna v1.3 (via Hugging Face) & fine-tunes
 
 **Interested in contributing? Check out our
 [guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**
