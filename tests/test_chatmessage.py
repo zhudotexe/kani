@@ -74,3 +74,11 @@ def test_copy_tools():
 
     with pytest.raises(ValueError):
         msg.copy_with(tool_calls=[bar_call], function_call=bar_call.function)
+
+def test_support_multiple_tool_calls():
+    tool_call1 = ToolCall.from_function("foo")
+    tool_call2 = ToolCall.from_function("bar")
+
+    msg = ChatMessage(role="function", content=None, tool_calls=[tool_call1, tool_call2])
+
+    assert msg.tool_calls == (tool_call1, tool_call2)

@@ -234,7 +234,7 @@ class ChatMessage(BaseModel):
     tool_call_id: str | None = None
     """The ID for a requested :class:`.ToolCall` which this message is a response to (function messages only)."""
 
-    tool_calls: tuple[ToolCall] | None = None
+    tool_calls: tuple[ToolCall, ...] | None = None
     """The tool calls requested by the model (assistant messages only)."""
 
     @property
