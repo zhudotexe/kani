@@ -137,9 +137,15 @@ class OpenAIEngine(BaseEngine):
                     free_toolcall_ids.add(tc.id)
             # func: bind freevars
             elif m.role == ChatRole.FUNCTION:
-                # has ID: bind it
-                if m.tool_call_id is not None and m.tool_call_id in free_toolcall_ids:
-                    free_toolcall_ids.remove(m.tool_call_id)
+                # has ID: bind it if requested; translate to FUNCTION if not
+                if m.tool_call_id is not None:
+                    if m.tool_call_id in free_toolcall_ids:
+                        free_toolcall_ids.remove(m.tool_call_id)
+                    else:
+                        # this happens if the tool call is pushed out of context but the result is still here,
+                        # and we have always included messages beforehand
+                        # TODO: this will eventually be deprecated - maube we just skip this message?
+                        m = m.copy_with(tool_call_id=None)
                 # no ID: bind if unambiguous, otherwise cry
                 elif m.tool_call_id is None:
                     if len(free_toolcall_ids) == 1:
