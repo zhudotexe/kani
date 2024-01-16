@@ -1,4 +1,5 @@
 import abc
+import asyncio
 import logging
 
 import aiohttp
@@ -48,7 +49,7 @@ class BaseClient(abc.ABC):
                 # hydrate the response body into cache; this allows reading the response after exiting the context
                 # https://stackoverflow.com/questions/68693855/aiohttp-getting-response-object-out-of-context-manager
                 await resp.read()
-        except aiohttp.ServerTimeoutError as e:
+        except (asyncio.TimeoutError, aiohttp.ServerTimeoutError) as e:
             self.logger.warning(f"Request timeout: {method} {self.SERVICE_BASE}{route}")
             raise HTTPTimeout() from e
         return resp
