@@ -1,5 +1,3 @@
-import abc
-
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
@@ -7,6 +5,7 @@ from ..base import BaseEngine, Completion
 
 try:
     import torch
+    import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer
 except ImportError:
     raise MissingModelDependencies(
@@ -15,12 +14,19 @@ except ImportError:
     ) from None
 
 
-class HuggingEngine(BaseEngine, abc.ABC):
-    """Base engine for all HuggingFace text-generation models.
+class HuggingEngine(BaseEngine):
+    """Base engine for all Hugging Face text-generation models.
 
     This class implements the main decoding logic for any HuggingFace model based on a pretrained
     ``AutoModelForCausalLM``. To implement a new HuggingFace model, just implement :meth:`~.HuggingEngine.build_prompt`
     and :meth:`~.BaseEngine.message_len` for the specified model.
+
+    .. versionadded:: 0.8.0
+        The ``HuggingEngine`` is no longer abstract - it will now use models' bundled chat template to build the prompt
+        for chat-based models available on Hugging Face. See
+        https://huggingface.co/docs/transformers/main/en/chat_templating for more information.
+
+        Requires ``transformers>=4.34.0``.
 
     **GPU Support**
 
@@ -69,13 +75,22 @@ class HuggingEngine(BaseEngine, abc.ABC):
         if self.model.device.type != self.device:
             self.model.to(device)
 
-    @abc.abstractmethod
     def build_prompt(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
     ) -> str | torch.Tensor:
         """Given the list of messages from kani, build either a single string representing the prompt for the model,
-        or build the token tensor."""
-        raise NotImplementedError
+        or build the token tensor.
+
+        The default implementation uses the model tokenizer's `apply_chat_template` method.
+        """
+        if not hasattr(self.tokenizer, "apply_chat_template"):
+            raise MissingModelDependencies(
+                "To use the HuggingEngine with built-in chat templates requires `transformers>=4.34.0`. You currently"
+                f" have `transformers=={transformers.__version__}`. Please update your transformers with `pip install"
+                " -U transformers` or use a concrete implementation of the HuggingEngine."
+            )
+        conversation = [{"role": msg.role.value, "content": msg.text} for msg in messages]
+        return self.tokenizer.apply_chat_template(conversation, add_generation_prompt=True, return_tensors="pt")
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
