@@ -18,12 +18,12 @@ except ImportError as e:
 
 # https://platform.openai.com/docs/models
 CONTEXT_SIZES_BY_PREFIX = [
-    # TODO is gpt-3.5-turbo-0125 16k?
+    ("gpt-3.5-turbo-0125", 16384),
     ("gpt-3.5-turbo-1106", 16384),
     ("gpt-3.5-turbo-16k", 16384),
     ("gpt-3.5-turbo", 4096),
     # gpt-4-turbo models aren't prefixed differently...
-    # TODO maybe make the default gpt-4 128k and keep the pre-turbo ones at 8k?
+    # TODO make the default gpt-4 128k and keep the pre-turbo ones at 8k after gpt-4 defaults to 128k
     ("gpt-4-1106", 128000),
     ("gpt-4-0125", 128000),
     ("gpt-4-vision", 128000),
