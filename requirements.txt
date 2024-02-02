@@ -12,7 +12,7 @@ tiktoken>=0.4.0,<1.0.0
 # --- ctransformers ---
 ctransformers>=0.2.25,<1.0.0
 # --- anthropic ---
-anthropic~=0.7.3
+anthropic>=0.7.3,<1.0.0
 
 # dev
 black
