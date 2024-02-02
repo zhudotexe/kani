@@ -75,6 +75,19 @@ class HuggingEngine(BaseEngine):
         if self.model.device.type != self.device:
             self.model.to(device)
 
+        # set the token reserve to a conversation that's just the generation prompt
+        if hasattr(self.tokenizer, "apply_chat_template"):
+            self.token_reserve = len(self.tokenizer.apply_chat_template([], add_generation_prompt=True))
+
+    def message_len(self, message: ChatMessage) -> int:
+        """Return the length, in tokens, of the given chat message.
+
+        The HuggingEngine's default implementation renders the message with `apply_chat_template`.
+        """
+        _ensure_chat_template(self.tokenizer)
+        conversation = [{"role": message.role.value, "content": message.text}]
+        return len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+
     def build_prompt(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
     ) -> str | torch.Tensor:
@@ -83,12 +96,7 @@ class HuggingEngine(BaseEngine):
 
         The default implementation uses the model tokenizer's `apply_chat_template` method.
         """
-        if not hasattr(self.tokenizer, "apply_chat_template"):
-            raise MissingModelDependencies(
-                "To use the HuggingEngine with built-in chat templates requires `transformers>=4.34.0`. You currently"
-                f" have `transformers=={transformers.__version__}`. Please update your transformers with `pip install"
-                " -U transformers` or use a concrete implementation of the HuggingEngine."
-            )
+        _ensure_chat_template(self.tokenizer)
         conversation = [{"role": msg.role.value, "content": msg.text} for msg in messages]
         return self.tokenizer.apply_chat_template(conversation, add_generation_prompt=True, return_tensors="pt")
 
@@ -128,4 +136,13 @@ class HuggingEngine(BaseEngine):
         content = self.tokenizer.decode(output[0][input_len:-1]).strip()
         return Completion(
             ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - (input_len + 1)
+        )
+
+
+def _ensure_chat_template(tokenizer):
+    if not hasattr(tokenizer, "apply_chat_template"):
+        raise MissingModelDependencies(
+            "To use the HuggingEngine with built-in chat templates requires `transformers>=4.34.0`. You currently"
+            f" have `transformers=={transformers.__version__}`. Please update your transformers with `pip install"
+            " -U transformers` or use a concrete implementation of the HuggingEngine."
         )
