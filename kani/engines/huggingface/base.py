@@ -109,7 +109,16 @@ class HuggingEngine(BaseEngine):
         """
         _ensure_chat_template(self.tokenizer)
         conversation = [{"role": msg.role.value, "content": msg.text} for msg in messages]
-        return self.tokenizer.apply_chat_template(conversation, add_generation_prompt=True, return_tensors="pt")
+        try:
+            return self.tokenizer.apply_chat_template(conversation, add_generation_prompt=True, return_tensors="pt")
+        except TemplateError:
+            # the template probably enforces user/assistant,
+            # HACK: let's try a dummy user message then the assistant one, and strip the len of the dummy off (pain)
+            dummy_conversation = [{"role": "user", "content": "a"}]
+            dummy_len = len(self.tokenizer.apply_chat_template(dummy_conversation, add_generation_prompt=False))
+            dummy_conversation.extend(conversation)
+            toks = self.tokenizer.apply_chat_template(conversation, add_generation_prompt=True, return_tensors="pt")
+            return toks[dummy_len:]
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
