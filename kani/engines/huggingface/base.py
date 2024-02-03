@@ -114,10 +114,10 @@ class HuggingEngine(BaseEngine):
         except TemplateError:
             # the template probably enforces user/assistant,
             # HACK: let's try a dummy user message then the assistant one, and strip the len of the dummy off (pain)
-            dummy_conversation = [{"role": "user", "content": "a"}]
-            dummy_len = len(self.tokenizer.apply_chat_template(dummy_conversation, add_generation_prompt=False))
-            dummy_conversation.extend(conversation)
-            toks = self.tokenizer.apply_chat_template(conversation, add_generation_prompt=True, return_tensors="pt")
+            conv2 = [{"role": "user", "content": "a"}]
+            dummy_len = len(self.tokenizer.apply_chat_template(conv2, add_generation_prompt=False))
+            conv2.extend(conversation)
+            toks = self.tokenizer.apply_chat_template(conv2, add_generation_prompt=True, return_tensors="pt")
             return toks[dummy_len:]
 
     async def predict(
