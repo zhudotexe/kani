@@ -4,6 +4,7 @@ from kani.models import ChatMessage
 from ..base import BaseEngine, Completion
 
 try:
+    from jinja2 import TemplateError
     import torch
     import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -44,6 +45,8 @@ class HuggingEngine(BaseEngine):
         device: str | None = None,
         tokenizer_kwargs: dict = None,
         model_load_kwargs: dict = None,
+        *,
+        token_reserve: int = 0,
         **hyperparams,
     ):
         """
@@ -54,6 +57,8 @@ class HuggingEngine(BaseEngine):
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
         :param hyperparams: Additional arguments to supply the model during generation.
+        :param token_reserve: The number of tokens to reserve for internal engine mechanisms (e.g. if there is a
+            generation template after the last user message).
         """
         if tokenizer_kwargs is None:
             tokenizer_kwargs = {}
@@ -68,16 +73,13 @@ class HuggingEngine(BaseEngine):
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
         self.model = AutoModelForCausalLM.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
+        self.token_reserve = token_reserve
 
         if device is None:
             device = "cuda" if torch.has_cuda else "cpu"
         self.device = device
         if self.model.device.type != self.device:
             self.model.to(device)
-
-        # set the token reserve to a conversation that's just the generation prompt
-        if hasattr(self.tokenizer, "apply_chat_template"):
-            self.token_reserve = len(self.tokenizer.apply_chat_template([], add_generation_prompt=True))
 
     def message_len(self, message: ChatMessage) -> int:
         """Return the length, in tokens, of the given chat message.
@@ -86,7 +88,16 @@ class HuggingEngine(BaseEngine):
         """
         _ensure_chat_template(self.tokenizer)
         conversation = [{"role": message.role.value, "content": message.text}]
-        return len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+        try:
+            return len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+        except TemplateError:
+            # the template probably enforces user/assistant,
+            # HACK: let's try a dummy user message then an assistant one, and count the diff
+            conversation = [{"role": "user", "content": "a"}]
+            dummy_len = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+            conversation.append({"role": message.role.value, "content": message.text})
+            two_len = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+            return two_len - dummy_len
 
     def build_prompt(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
