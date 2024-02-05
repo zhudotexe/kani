@@ -110,9 +110,10 @@ class OpenAIEngine(BaseEngine):
             mlen += len(self.tokenizer.encode(message.text))
         if message.name:
             mlen += len(self.tokenizer.encode(message.name))
-        if message.function_call:
-            mlen += len(self.tokenizer.encode(message.function_call.name))
-            mlen += len(self.tokenizer.encode(message.function_call.arguments))
+        if message.tool_calls:
+            for tc in message.tool_calls:
+                mlen += len(self.tokenizer.encode(tc.function.name))
+                mlen += len(self.tokenizer.encode(tc.function.arguments))
         return mlen
 
     # translation helpers
