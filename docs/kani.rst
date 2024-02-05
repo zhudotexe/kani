@@ -114,7 +114,7 @@ conversations), and an assistant message can contain a ``function_call`` (discus
 
 .. autoclass:: kani.ChatMessage
     :members:
-    :exclude-members: model_config, model_fields
+    :exclude-members: model_config, model_fields, model_computed_fields
     :class-doc-from: class
     :noindex:
 
