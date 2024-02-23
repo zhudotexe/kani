@@ -1,6 +1,10 @@
 # in development, we want to install all the extra deps so the docs generate correctly
 -e .[all]
 
+# manual install
+aiohttp
+torch
+
 # dev
 black
 build
