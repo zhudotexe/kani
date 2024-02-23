@@ -7,6 +7,7 @@ from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 
 try:
     from openai.types.chat import (
+        ChatCompletion as OpenAIChatCompletion,
         ChatCompletionAssistantMessageParam,
         ChatCompletionFunctionMessageParam,
         ChatCompletionMessage,
@@ -16,13 +17,12 @@ try:
         ChatCompletionSystemMessageParam,
         ChatCompletionToolMessageParam,
         ChatCompletionToolParam,
-        ChatCompletion as OpenAIChatCompletion,
         ChatCompletionUserMessageParam,
     )
+    from openai.types.chat.chat_completion_message_tool_call import Function as ChatCompletionMessageFunctionCall
     from openai.types.chat.chat_completion_message_tool_call_param import (
         Function as ChatCompletionMessageToolCallFunctionParam,
     )
-    from openai.types.chat.chat_completion_message_tool_call import Function as ChatCompletionMessageFunctionCall
     from openai.types.shared_params import FunctionDefinition
 except ImportError as e:
     raise MissingModelDependencies(

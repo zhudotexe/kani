@@ -8,8 +8,8 @@ from .translation import ChatCompletion, translate_functions, translate_messages
 from ..base import BaseEngine
 
 try:
-    from openai import AsyncOpenAI as OpenAIClient
     import tiktoken
+    from openai import AsyncOpenAI as OpenAIClient
 except ImportError as e:
     raise MissingModelDependencies(
         'The OpenAIEngine requires extra dependencies. Please install kani with "pip install kani[openai]".'
