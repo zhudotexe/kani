@@ -21,9 +21,6 @@ OpenAI
 ------
 .. autoclass:: kani.engines.openai.OpenAIEngine
 
-.. autoclass:: kani.engines.openai.client.OpenAIClient
-    :members:
-
 Anthropic
 ---------
 .. autoclass:: kani.engines.anthropic.AnthropicEngine

@@ -51,7 +51,7 @@ nitpicky = True
 nitpick_ignore_regex = [
     (r"py:class", r"aiohttp\..*"),  # aiohttp intersphinx is borked
     (r"py:class", r"torch\..*"),  # idk if torch has intersphinx
-    (r"py:class", r"kani\.engines\.openai\.models\..*"),  # internal models are just pydantic models of the oai api
+    (r"py:class", r"openai\..*"),  # openai does not use sphinx for docs
     (r"py:class", r"anthropic\..*"),  # anthropic does not use sphinx for docs
 ]
 
