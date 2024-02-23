@@ -28,6 +28,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+all = [
+    "kani[huggingface,llama,openai,ctransformers,anthropic]",
+]
+
 huggingface = [
     "transformers>=4.0.0,<5.0.0",
 ]

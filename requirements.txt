@@ -1,18 +1,5 @@
-aiohttp>=3.0.0,<4.0.0
-pydantic>=2.0.0,<3.0.0
-
 # in development, we want to install all the extra deps so the docs generate correctly
-# --- huggingface ---
-torch
-transformers>=4.0.0,<5.0.0
-# --- llama ---
-sentencepiece~=0.1.99
-# --- openai ---
-tiktoken>=0.4.0,<1.0.0
-# --- ctransformers ---
-ctransformers>=0.2.25,<1.0.0
-# --- anthropic ---
-anthropic>=0.7.3,<1.0.0
+-e .[all]
 
 # dev
 black
