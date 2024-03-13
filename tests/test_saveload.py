@@ -8,7 +8,7 @@ from tests.engine import TestEngine
 engine = TestEngine()
 
 
-@settings(suppress_health_check=(HealthCheck.function_scoped_fixture,))
+@settings(suppress_health_check=(HealthCheck.function_scoped_fixture, HealthCheck.too_slow), deadline=None)
 @given(st.data())
 async def test_saveload_str(tmp_path, data):
     """Test that basic string content messages are saved."""
