@@ -8,7 +8,7 @@ from kani.kani import Kani
 from kani.utils.message_formatters import assistant_message_contents_thinking
 
 
-async def chat_in_terminal_async(kani: Kani, rounds: int = 0, stopword: str = None):
+async def chat_in_terminal_async(kani: Kani, *, rounds: int = 0, stopword: str = None):
     """Async version of :func:`.chat_in_terminal`.
     Use in environments when there is already an asyncio loop running (e.g. Google Colab).
     """
@@ -30,7 +30,7 @@ async def chat_in_terminal_async(kani: Kani, rounds: int = 0, stopword: str = No
         await kani.engine.close()
 
 
-def chat_in_terminal(kani: Kani, rounds: int = 0, stopword: str = None):
+def chat_in_terminal(kani: Kani, **kwargs):
     """Chat with a kani right in your terminal.
 
     Useful for playing with kani, quick prompt engineering, or demoing the library.
@@ -61,4 +61,4 @@ def chat_in_terminal(kani: Kani, rounds: int = 0, stopword: str = None):
                 f" should use `await chat_in_terminal_async(...)` instead or install `nest-asyncio`."
             )
             return
-    asyncio.run(chat_in_terminal_async(kani, rounds=rounds, stopword=stopword))
+    asyncio.run(chat_in_terminal_async(kani, **kwargs))
