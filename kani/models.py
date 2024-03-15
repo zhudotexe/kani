@@ -16,7 +16,7 @@ MESSAGEPART_TYPE_KEY = "__kani_messagepart_type__"  # used for serdes of Message
 
 # ==== typing ====
 MessagePartType: TypeAlias = Union["MessagePart", str]  # ChatMessage.parts[*]
-QueryType: TypeAlias = str | Sequence[MessagePartType]  # Kani.*_round(...)
+QueryType: TypeAlias = str | Sequence[MessagePartType] | None  # Kani.*_round(...)
 
 
 class BaseModel(PydanticBase, abc.ABC):

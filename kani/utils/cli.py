@@ -3,12 +3,15 @@
 import asyncio
 import logging
 import os
+import textwrap
 
 from kani.kani import Kani
 from kani.utils.message_formatters import assistant_message_contents_thinking
 
 
-async def chat_in_terminal_async(kani: Kani, *, rounds: int = 0, stopword: str = None):
+async def chat_in_terminal_async(
+    kani: Kani, *, rounds: int = 0, stopword: str = None, echo: bool = False, ai_first: bool = False, width: int = None
+):
     """Async version of :func:`.chat_in_terminal`.
     Use in environments when there is already an asyncio loop running (e.g. Google Colab).
     """
@@ -19,11 +22,20 @@ async def chat_in_terminal_async(kani: Kani, *, rounds: int = 0, stopword: str =
         round_num = 0
         while round_num < rounds or not rounds:
             round_num += 1
-            query = input("USER: ").strip()
-            if stopword and query == stopword:
-                break
+
+            # get user query
+            if not ai_first or round_num > 0:
+                query = input("USER: ").strip()
+                if echo:
+                    print_width(query, width=width, prefix="USER: ")
+                if stopword and query == stopword:
+                    break
+            else:
+                query = None
+
+            # print completion(s)
             async for msg in kani.full_round_str(query, message_formatter=assistant_message_contents_thinking):
-                print(f"AI: {msg}")
+                print_width(msg, width=width, prefix="AI: ")
     except KeyboardInterrupt:
         pass
     finally:
@@ -41,8 +53,13 @@ def chat_in_terminal(kani: Kani, **kwargs):
 
         This function is only a development utility and should not be used in production.
 
-    :param rounds: The number of chat rounds to play (defaults to 0 for infinite).
-    :param stopword: Break out of the chat loop if the user sends this message.
+    :param int rounds: The number of chat rounds to play (defaults to 0 for infinite).
+    :param str stopword: Break out of the chat loop if the user sends this message.
+    :param bool echo: Whether to echo the user's input to stdout after they send a message (e.g. to save in interactive
+        notebook outputs; default false)
+    :param bool ai_first: Whether the user should send the first message (default) or the model should generate a
+        completion before prompting the user for a message.
+    :param int width: The maximum width of the printed outputs (default unlimited).
     """
     try:
         asyncio.get_running_loop()
@@ -62,3 +79,27 @@ def chat_in_terminal(kani: Kani, **kwargs):
             )
             return
     asyncio.run(chat_in_terminal_async(kani, **kwargs))
+
+
+def print_width(msg: str, width: int = None, prefix: str = ""):
+    """
+    Print the given message such that the width of each line is less than *width*.
+    If *prefix* is provided, indents each line after the first by the length of the prefix.
+
+    .. code-block: pycon
+        >>> print_width("Hello world I am a potato", width=15, prefix="USER: ")
+        USER: Hello
+              world I
+              am a
+              potato
+    """
+    if not width:
+        print(prefix + msg)
+        return
+    out = []
+    wrapper = textwrap.TextWrapper(width=width, initial_indent=prefix, subsequent_indent=" " * len(prefix))
+    lines = msg.splitlines()
+    for line in lines:
+        out.append(wrapper.fill(line))
+        wrapper.initial_indent = wrapper.subsequent_indent
+    print("\n".join(out))
