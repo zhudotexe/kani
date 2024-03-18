@@ -32,9 +32,13 @@ preferred-citation:
     given-names: "Chris"
     orcid: "https://orcid.org/0000-0001-8196-1943"
   year: 2023
-  month: 11
+  month: 12
   title: "Kani: A Lightweight and Highly Hackable Framework for Building Language Model Applications"
   collection-title: "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)"
+  collection-type: proceedings
+  location: "Singapore"
   doi: "10.18653/v1/2023.nlposs-1.8"
   url: "https://aclanthology.org/2023.nlposs-1.8"
   publisher: "Association for Computational Linguistics"
+  start: 65
+  end: 77
