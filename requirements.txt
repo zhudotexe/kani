@@ -9,6 +9,7 @@ torch
 black
 build
 isort
+hatch
 hypothesis
 pytest
 pytest-asyncio

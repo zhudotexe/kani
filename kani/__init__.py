@@ -1,4 +1,5 @@
 from . import engines, exceptions, utils
+from ._version import __version__
 from .ai_function import AIFunction, AIParam, ai_function
 from .internal import ExceptionHandleResult, FunctionCallResult
 from .kani import Kani
