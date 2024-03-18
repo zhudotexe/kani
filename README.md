@@ -34,8 +34,9 @@ more:
 
 - OpenAI Models (GPT-3.5-turbo, GPT-4, GPT-4-turbo)
 - Anthropic Models (Claude, Claude Instant)
-- LLaMA v2 (via Hugging Face or ctransformers) & fine-tunes
-- Vicuna v1.3 (via Hugging Face) & fine-tunes
+- LLaMA v2 (via Hugging Face or ctransformers), fine-tunes, and models using similar prompting methods
+- Vicuna v1.3 (via Hugging Face), fine-tunes, and models using similar prompting methods
+- Any other model available through `transformers`!
 
 **Interested in contributing? Check out our
 [guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**
@@ -178,21 +179,6 @@ https://github.com/zhudotexe/kani/actions/workflows/pytest.yml?query=branch%3Ama
 
 Simply click on the latest build to see LLaMA's output!
 
-## Kani in the News
-
-Kani will appear at the NLP Open Source Software workshop at EMNLP 2023!
-
-We are really excited and grateful to see people talking about Kani online. We are also trending on Papers With Code,
-GitHub, and OSS Insight. Check out some recent articles and videos below!
-
-- [Researchers from the University of Pennsylvania Introduce Kani: A Lightweight, Flexible, and Model-Agnostic Open-Source AI Framework for Building Language Model Applications](https://www.marktechpost.com/2023/09/18/researchers-from-the-university-of-pennsylvania-introduce-kani-a-lightweight-flexible-and-model-agnostic-open-source-ai-framework-for-building-language-model-applications/)
-- [Unlocking AI Potential: Unveiling Kani, the Groundbreaking Open-Source Framework Revolutionizing Large Language Model Applications](https://www.cjco.com.au/article/news/unlocking-ai-potential-unveiling-kani-the-groundbreaking-open-source-framework-revolutionizing-large-language-model-applications/)
-- [Kani: A Lightweight and Customizable Framework for Language Model Applications](https://ts2.space/en/kani-a-lightweight-and-customizable-framework-for-language-model-applications/)
-- [Introducing Kani (Sanskrit Word): A Game-Changing Open-Source AI Framework for Language Models](https://www.linkedin.com/pulse/introducing-kani-sanskrit-word-game-changing/)
-    - *Kani was originally named after the Japanese word for crab and coincidentally means "knowledge" in Sanskrit.*
-- [kani: lightweight LLM framework (Japanese)](https://note.com/hamachi_jp/n/n342becc4f345)
-- [Top Trending LLM Projects of the Week: Dive into the Future of Tech! 🚀](https://www.youtube.com/watch?v=qoGKzmnhAnA)
-
 ## Who we are
 
 <img alt="University of Pennsylvania Logo" src="docs/_static/penn-logo.jpg" width="300">
@@ -220,13 +206,25 @@ University of Pennsylvania. We're all members of
 If you use Kani, please cite us as:
 
 ```
-@misc{zhu2023kani,
-      title={Kani: A Lightweight and Highly Hackable Framework for Building Language Model Applications}, 
-      author={Andrew Zhu and Liam Dugan and Alyssa Hwang and Chris Callison-Burch},
-      year={2023},
-      eprint={2309.05542},
-      archivePrefix={arXiv},
-      primaryClass={cs.SE}
+@inproceedings{zhu-etal-2023-kani,
+    title = "Kani: A Lightweight and Highly Hackable Framework for Building Language Model Applications",
+    author = "Zhu, Andrew  and
+      Dugan, Liam  and
+      Hwang, Alyssa  and
+      Callison-Burch, Chris",
+    editor = "Tan, Liling  and
+      Milajevs, Dmitrijs  and
+      Chauhan, Geeticka  and
+      Gwinnup, Jeremy  and
+      Rippeth, Elijah",
+    booktitle = "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.nlposs-1.8",
+    doi = "10.18653/v1/2023.nlposs-1.8",
+    pages = "65--77",
 }
 ```
 
