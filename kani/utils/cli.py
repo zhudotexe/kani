@@ -6,17 +6,29 @@ import os
 import textwrap
 
 from kani.kani import Kani
+from kani.models import ChatRole
 from kani.utils.message_formatters import assistant_message_contents_thinking
 
 
 async def chat_in_terminal_async(
-    kani: Kani, *, rounds: int = 0, stopword: str = None, echo: bool = False, ai_first: bool = False, width: int = None
+    kani: Kani,
+    *,
+    rounds: int = 0,
+    stopword: str = None,
+    echo: bool = False,
+    ai_first: bool = False,
+    width: int = None,
+    show_function_args: bool = False,
+    show_function_returns: bool = False,
+    verbose: bool = False,
 ):
     """Async version of :func:`.chat_in_terminal`.
     Use in environments when there is already an asyncio loop running (e.g. Google Colab).
     """
     if os.getenv("KANI_DEBUG") is not None:
         logging.basicConfig(level=logging.DEBUG)
+    if verbose:
+        echo = show_function_args = show_function_returns = True
 
     try:
         round_num = 0
@@ -34,8 +46,14 @@ async def chat_in_terminal_async(
                 query = None
 
             # print completion(s)
-            async for msg in kani.full_round_str(query, message_formatter=assistant_message_contents_thinking):
-                print_width(msg, width=width, prefix="AI: ")
+            async for msg in kani.full_round(query):
+                # assistant
+                if msg.role == ChatRole.ASSISTANT:
+                    text = assistant_message_contents_thinking(msg, show_args=show_function_args)
+                    print_width(text, width=width, prefix="AI: ")
+                # function
+                elif msg.role == ChatRole.FUNCTION and show_function_returns:
+                    print_width(msg.text, width=width, prefix="FUNC: ")
     except KeyboardInterrupt:
         pass
     finally:
@@ -60,6 +78,10 @@ def chat_in_terminal(kani: Kani, **kwargs):
     :param bool ai_first: Whether the user should send the first message (default) or the model should generate a
         completion before prompting the user for a message.
     :param int width: The maximum width of the printed outputs (default unlimited).
+    :param bool show_function_args: Whether to print the arguments the model is calling functions with for each call
+        (default false).
+    :param bool show_function_returns: Whether to print the results of each function call (default false).
+    :param bool verbose: Equivalent to setting ``echo``, ``show_function_args``, and ``show_function_returns`` to True.
     """
     try:
         asyncio.get_running_loop()
