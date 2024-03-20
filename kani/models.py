@@ -8,7 +8,7 @@ import warnings
 from functools import cached_property
 from typing import Any, ClassVar, Sequence, Type, TypeAlias, Union
 
-from pydantic import BaseModel as PydanticBase, Field, model_serializer, model_validator
+from pydantic import BaseModel as PydanticBase, model_serializer, model_validator
 
 from .exceptions import MissingMessagePartType
 
@@ -189,19 +189,6 @@ class ChatMessage(BaseModel):
             kwargs["tool_calls"] = (ToolCall.from_function_call(kwargs.pop("function_call")),)
         super().__init__(**kwargs)
 
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    """A unique internal ID per message. 
-    
-    This can be used to index the messages in a database or otherwise store references to a particular message.
-    Engines can also set this field (e.g. to reflect the ID of a message stored on a remote server).
-    
-    .. note::
-        kani internals rely on this attribute to cache message attributes like token length. If you must modify the
-        content of a message permanently, you should generate a new ID for the message.
-    
-    By default, kani uses a UUID4 for each new message.
-    """
-
     role: ChatRole
     """Who said the message?"""
 
@@ -291,10 +278,6 @@ class ChatMessage(BaseModel):
         This does not validate the updated attributes!
         This is mostly just a convenience wrapper around ``.model_copy``.
 
-        .. warning::
-            Unless the ID of the message is explicitly copied with ``new_msg = msg.copy_with(id=msg.id)``, a new message
-            ID will be given to the new message.
-
         Only one of (content, text, parts) may be passed and will update the other two attributes accordingly.
 
         Only one of (tool_calls, function_call) may be passed and will update the other accordingly.
@@ -315,8 +298,5 @@ class ChatMessage(BaseModel):
             if "tool_calls" in new_values:
                 raise ValueError("Only one of 'function_call' or 'tool_calls' may be provided.")
             new_values["tool_calls"] = (ToolCall.from_function_call(new_values.pop("function_call")),)
-
-        # === identity ===
-        new_values.setdefault("id", str(uuid.uuid4()))
 
         return super().copy_with(**new_values)

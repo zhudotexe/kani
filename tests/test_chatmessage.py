@@ -10,7 +10,6 @@ class _TestMessagePart(MessagePart):
 
 def test_basic():
     msg = ChatMessage(role=ChatRole.USER, content="Hello world")
-    assert msg.id
     assert msg.role == ChatRole.USER
     assert msg.content == "Hello world"
     assert msg.text == "Hello world"
@@ -46,15 +45,12 @@ def test_copy_parts():
     msg = ChatMessage(role=ChatRole.USER, content=["Hello world", part])
 
     text_copy = msg.copy_with(text="asdf")
-    assert text_copy.id != msg.id
     assert text_copy.content == "asdf"
 
     part_copy = msg.copy_with(parts=["foo"])
-    assert part_copy.id != msg.id
     assert part_copy.content == ["foo"]
 
     content_copy = msg.copy_with(content="zxcv")
-    assert content_copy.id != msg.id
     assert content_copy.content == "zxcv"
 
     assert msg.content == ["Hello world", part]
@@ -68,12 +64,10 @@ def test_copy_tools():
 
     bar_call = ToolCall.from_function("bar")
     calls_copy = msg.copy_with(tool_calls=[bar_call])
-    assert calls_copy.id != msg.id
     assert calls_copy.tool_calls == [bar_call]
     assert calls_copy.function_call == bar_call.function
 
     func_copy = msg.copy_with(function_call=bar_call.function)
-    assert func_copy.id != msg.id
     assert len(func_copy.tool_calls) == 1
     assert func_copy.function_call == bar_call.function
 

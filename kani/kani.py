@@ -113,11 +113,6 @@ class Kani:
                 raise ValueError(f"AIFunction {f.name!r} is already registered!")
             self.functions[f.name] = f
 
-        # cache
-        # since this is str -> int this is very cheap now, and we don't need to weakref it
-        # will get GCed when a Kani inst is deleted, which should be fine
-        self._message_tokens = dict()
-
     # === main entrypoints ===
     async def chat_round(self, query: QueryType, **kwargs) -> ChatMessage:
         """Perform a single chat round (user -> model -> user, no functions allowed).
@@ -253,12 +248,7 @@ class Kani:
 
     def message_token_len(self, message: ChatMessage):
         """Returns the number of tokens used by a given message."""
-        try:
-            return self._message_tokens[message.id]
-        except KeyError:
-            mlen = self.engine.message_len(message)
-            self._message_tokens[message.id] = mlen
-            return mlen
+        return self.engine.message_len(message)
 
     async def get_model_completion(self, include_functions: bool = True, **kwargs) -> BaseCompletion:
         """Get the model's completion with the current chat state.
@@ -285,11 +275,7 @@ class Kani:
         else:
             completion = await self.engine.predict(messages=messages, **kwargs)
 
-        # cache its length
-        message = completion.message
-        self._message_tokens[message.id] = completion.completion_tokens or self.message_token_len(message)
-        # and log it too
-        message_log.debug(f"<<< {message}")
+        message_log.debug(f"<<< {completion.message}")
         return completion
 
     # ==== overridable methods ====

@@ -121,17 +121,8 @@ conversations), and an assistant message can contain a ``function_call`` (discus
 At a high level, a :class:`.Kani` is responsible for managing a list of :class:`.ChatMessage`: the chat session
 associated with it. You can access the chat messages through the :attr:`.Kani.chat_history` attribute.
 
-You may even modify the chat history (e.g. append or delete ChatMessages) to change the prompt at any time.
-
-.. caution::
-    To edit the content of a message in the chat history, it is highly recommended to replace the object rather than to
-    mutate it. Although we do not enforce immutability of ChatMessages as of v1.0, mutating a message's contents in
-    a Kani instance can have unexpected side effects.
-
-    For example, to edit the last message, you could set ``ai.chat_history[-1] = ChatMessage.assistant("...")``.
-
-    You can use the :meth:`.ChatMessage.copy_with` convenience method to make a copy with only certain attributes
-    updated.
+You may even modify the chat history (e.g. append or delete ChatMessages or edit a message's content) to change the
+prompt at any time.
 
 .. warning::
     In some advanced use cases, :attr:`.ChatMessage.content` may be a tuple of :class:`.MessagePart` or ``str`` rather
