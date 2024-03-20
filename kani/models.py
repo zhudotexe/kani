@@ -5,9 +5,10 @@ import enum
 import json
 import uuid
 import warnings
-from typing import ClassVar, Sequence, Type, TypeAlias, Union
+from functools import cached_property
+from typing import Any, ClassVar, Sequence, Type, TypeAlias, Union
 
-from pydantic import BaseModel as PydanticBase, ConfigDict, model_serializer, model_validator
+from pydantic import BaseModel as PydanticBase, Field, model_serializer, model_validator
 
 from .exceptions import MissingMessagePartType
 
@@ -50,23 +51,23 @@ class ChatRole(enum.Enum):
 class FunctionCall(BaseModel):
     """Represents a model's request to call a single function."""
 
-    model_config = ConfigDict(frozen=True)
-
     name: str
     """The name of the requested function."""
 
     arguments: str
     """The arguments to call it with, encoded in JSON."""
 
-    @property
-    def kwargs(self) -> dict:
-        """The arguments to call the function with, with JSON decoded to a Python dict."""
+    @cached_property
+    def kwargs(self) -> dict[str, Any]:
+        """The arguments to call the function with, as a Python dictionary."""
         return json.loads(self.arguments)
 
     @classmethod
     def with_args(cls, name: str, **kwargs):
         """Create a function call with the given arguments (e.g. for few-shot prompting)."""
-        return cls(name=name, arguments=json.dumps(kwargs))
+        inst = cls(name=name, arguments=json.dumps(kwargs))
+        inst.__dict__["kwargs"] = kwargs  # set the cached property here as a minor optimization
+        return inst
 
 
 class ToolCall(BaseModel):
@@ -74,8 +75,6 @@ class ToolCall(BaseModel):
 
     See :ref:`functioncall_v_toolcall` for more information about tool calls vs function calls.
     """
-
-    model_config = ConfigDict(frozen=True)
 
     id: str
     """The request ID created by the engine.
@@ -114,8 +113,6 @@ class MessagePart(BaseModel, abc.ABC):
     By default, if coerced to a string, will raise a warning noting that rich message part data was lost.
     For more information see :doc:`advanced/messageparts`.
     """
-
-    model_config = ConfigDict(frozen=True)
 
     # ==== serdes ====
     # used for saving/loading - map qualname to messagepart type
@@ -184,20 +181,32 @@ class MessagePart(BaseModel, abc.ABC):
 class ChatMessage(BaseModel):
     """Represents a message in the chat context."""
 
-    model_config = ConfigDict(frozen=True)
-
     def __init__(self, **kwargs):
         # translate a function_call into tool_calls
         if "function_call" in kwargs:
             if "tool_calls" in kwargs:
-                raise ValueError("Only one of function_call or tool_calls may be provided.")
+                raise ValueError("Only one of `function_call` or `tool_calls` may be provided.")
             kwargs["tool_calls"] = (ToolCall.from_function_call(kwargs.pop("function_call")),)
         super().__init__(**kwargs)
+
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    """A unique internal ID per message. 
+    
+    This can be used to index the messages in a database or otherwise store references to a particular message.
+    Engines can also set this field (e.g. to reflect the ID of a message stored on a remote server).
+    
+    .. note::
+        kani internals rely on this attribute to cache message attributes like token length. If you must modify the
+        content of a message permanently, you should generate a new ID for the message.
+    
+    By default, kani uses a UUID4 for each new message.
+    """
 
     role: ChatRole
     """Who said the message?"""
 
-    content: str | tuple[MessagePart | str, ...] | None
+    # ==== content ====
+    content: str | list[MessagePart | str] | None
     """The data used to create this message. Generally, you should use :attr:`text` or :attr:`parts` instead."""
 
     @property
@@ -226,15 +235,16 @@ class ChatMessage(BaseModel):
             return []
         elif isinstance(content, str):
             return [content]
-        return list(content)
+        return content
 
     name: str | None = None
     """The name of the user who sent the message, if set (user/function messages only)."""
 
+    # ==== tool calling ====
     tool_call_id: str | None = None
     """The ID for a requested :class:`.ToolCall` which this message is a response to (function messages only)."""
 
-    tool_calls: tuple[ToolCall, ...] | None = None
+    tool_calls: list[ToolCall] | None = None
     """The tool calls requested by the model (assistant messages only)."""
 
     @property
@@ -253,6 +263,7 @@ class ChatMessage(BaseModel):
             )
         return self.tool_calls[0].function
 
+    # ==== constructors ====
     @classmethod
     def system(cls, content: str | Sequence[MessagePart | str], **kwargs):
         """Create a new system message."""
@@ -273,20 +284,22 @@ class ChatMessage(BaseModel):
         """Create a new function message."""
         return cls(role=ChatRole.FUNCTION, content=content, name=name, tool_call_id=tool_call_id, **kwargs)
 
+    # ==== helpers ====
     def copy_with(self, **new_values):
         """Make a shallow copy of this object, updating the passed attributes (if any) to new values.
 
         This does not validate the updated attributes!
         This is mostly just a convenience wrapper around ``.model_copy``.
 
+        .. warning::
+            Unless the ID of the message is explicitly copied with ``new_msg = msg.copy_with(id=msg.id)``, a new message
+            ID will be given to the new message.
+
         Only one of (content, text, parts) may be passed and will update the other two attributes accordingly.
 
         Only one of (tool_calls, function_call) may be passed and will update the other accordingly.
         """
         # === content ===
-        # ensure the content is immutable
-        if "content" in new_values and not isinstance(new_values["content"], str):
-            new_values["content"] = tuple(new_values["content"])
         # ensure that setting either text or parts works
         if "text" in new_values:
             if "content" in new_values:
@@ -295,10 +308,15 @@ class ChatMessage(BaseModel):
         if "parts" in new_values:
             if "content" in new_values:
                 raise ValueError("At most one of ('content', 'text', 'parts') can be set.")
-            new_values["content"] = tuple(new_values.pop("parts"))
+            new_values["content"] = list(new_values.pop("parts"))
+
         # === tool calls ===
         if "function_call" in new_values:
             if "tool_calls" in new_values:
-                raise ValueError("Only one of function_call or tool_calls may be provided.")
+                raise ValueError("Only one of 'function_call' or 'tool_calls' may be provided.")
             new_values["tool_calls"] = (ToolCall.from_function_call(new_values.pop("function_call")),)
+
+        # === identity ===
+        new_values.setdefault("id", str(uuid.uuid4()))
+
         return super().copy_with(**new_values)

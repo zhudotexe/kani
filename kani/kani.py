@@ -2,7 +2,6 @@ import asyncio
 import inspect
 import logging
 import warnings
-import weakref
 from typing import AsyncIterable, Callable
 
 from .ai_function import AIFunction
@@ -115,7 +114,9 @@ class Kani:
             self.functions[f.name] = f
 
         # cache
-        self._message_tokens = weakref.WeakKeyDictionary()
+        # since this is str -> int this is very cheap now, and we don't need to weakref it
+        # will get GCed when a Kani inst is deleted, which should be fine
+        self._message_tokens = dict()
 
     # === main entrypoints ===
     async def chat_round(self, query: QueryType, **kwargs) -> ChatMessage:
@@ -253,10 +254,10 @@ class Kani:
     def message_token_len(self, message: ChatMessage):
         """Returns the number of tokens used by a given message."""
         try:
-            return self._message_tokens[message]
+            return self._message_tokens[message.id]
         except KeyError:
             mlen = self.engine.message_len(message)
-            self._message_tokens[message] = mlen
+            self._message_tokens[message.id] = mlen
             return mlen
 
     async def get_model_completion(self, include_functions: bool = True, **kwargs) -> BaseCompletion:
@@ -284,9 +285,9 @@ class Kani:
         else:
             completion = await self.engine.predict(messages=messages, **kwargs)
 
-        # cache its length (if the completion isn't saved to state, this weakrefs and gc's later)
+        # cache its length
         message = completion.message
-        self._message_tokens[message] = completion.completion_tokens or self.message_token_len(message)
+        self._message_tokens[message.id] = completion.completion_tokens or self.message_token_len(message)
         # and log it too
         message_log.debug(f"<<< {message}")
         return completion

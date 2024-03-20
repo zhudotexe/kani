@@ -123,9 +123,10 @@ associated with it. You can access the chat messages through the :attr:`.Kani.ch
 
 You may even modify the chat history (e.g. append or delete ChatMessages) to change the prompt at any time.
 
-.. tip::
-    To edit the content of a message in the chat history, you must replace the object. ChatMessages are
-    immutable by default.
+.. caution::
+    To edit the content of a message in the chat history, it is highly recommended to replace the object rather than to
+    mutate it. Although we do not enforce immutability of ChatMessages as of v1.0, mutating a message's contents in
+    a Kani instance can have unexpected side effects.
 
     For example, to edit the last message, you could set ``ai.chat_history[-1] = ChatMessage.assistant("...")``.
 

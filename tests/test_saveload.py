@@ -61,24 +61,24 @@ async def test_saveload_tool_calls(tmp_path):
     assert ai.chat_history == loaded.chat_history
 
 
-class TestMessagePart1(MessagePart):
+class _TestMessagePart1(MessagePart):
     data: str
 
 
-class TestMessagePart2(MessagePart):
+class _TestMessagePart2(MessagePart):
     data: str
 
 
 async def test_saveload_messageparts(tmp_path):
     """Test that message parts are serialized and deserialized into the right classes."""
-    apart1 = TestMessagePart1(data="apart1")
-    apart2 = TestMessagePart2(data="apart2")
-    hpart1 = TestMessagePart1(data="hpart1")
-    hpart2 = TestMessagePart2(data="hpart2")
+    apart1 = _TestMessagePart1(data="apart1")
+    apart2 = _TestMessagePart2(data="apart2")
+    hpart1 = _TestMessagePart1(data="hpart1")
+    hpart2 = _TestMessagePart2(data="hpart2")
     # ensure that different instances with the same data are the same
-    assert apart1 == TestMessagePart1(data="apart1")
+    assert apart1 == _TestMessagePart1(data="apart1")
     # ensure that different classes/data are not
-    assert apart1 != TestMessagePart2(data="apart1")
+    assert apart1 != _TestMessagePart2(data="apart1")
     assert apart1 != hpart1
 
     # init kani state
