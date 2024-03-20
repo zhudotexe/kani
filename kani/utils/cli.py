@@ -4,6 +4,7 @@ import asyncio
 import logging
 import os
 import textwrap
+from typing import overload
 
 from kani.kani import Kani
 from kani.models import ChatRole
@@ -58,6 +59,21 @@ async def chat_in_terminal_async(
         pass
     finally:
         await kani.engine.close()
+
+
+@overload
+def chat_in_terminal(
+    kani: Kani,
+    *,
+    rounds: int = 0,
+    stopword: str = None,
+    echo: bool = False,
+    ai_first: bool = False,
+    width: int = None,
+    show_function_args: bool = False,
+    show_function_returns: bool = False,
+    verbose: bool = False,
+): ...
 
 
 def chat_in_terminal(kani: Kani, **kwargs):
