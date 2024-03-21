@@ -229,7 +229,7 @@ class PromptPipeline:
         Apply the pipeline to a list of kani messages. The return type will vary based on the steps in the pipeline;
         if no steps are defined the return type will be a copy of the input messages.
         """
-        # let's use the lower-level model_copy() to preserve IDs since these are temporary mutable messages
+        # let's use the lower-level model_copy() since we aren't changing anything
         data = [m.model_copy() for m in msgs]
 
         # and apply the pipeline
@@ -241,6 +241,13 @@ class PromptPipeline:
         return data
 
     # ==== utils ====
+    def compile(self):
+        """
+        Compile the pipeline, merging non-conflicting operations and reducing the number of loops required. This
+        will automatically be called the first time the pipeline is executed if not eagerly compiled.
+        """
+        return self
+
     def explain(self):
         """
         Print out a summary of the pipeline and test cases based on the steps in the pipeline.

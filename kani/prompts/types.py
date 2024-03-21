@@ -4,7 +4,7 @@ from typing import Any, Callable
 from kani.models import ChatMessage, ChatRole, ToolCall
 
 PipelineMsgT = ChatMessage
-"""The type of messages in the pipeline"""  # todo are we making chatmessage mutable?
+"""The type of messages in the pipeline"""
 
 RoleFilterT = ChatRole | Collection[ChatRole]
 """A role or list of roles to apply a step to"""
