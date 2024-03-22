@@ -1,6 +1,27 @@
+import pprint
+from typing import TypeVar, overload
+
 from kani.models import ChatMessage, ChatRole
+from kani.prompts.base import PipelineStep
 from kani.prompts.docutils import autoparams
+from kani.prompts.steps import (
+    Apply,
+    ConversationFmt,
+    EnsureStart,
+    FunctionCallFmt,
+    MergeConsecutive,
+    Remove,
+    TranslateRole,
+    Wrap,
+)
 from kani.prompts.types import ApplyCallableT, FunctionCallStrT, PredicateFilterT, RoleFilterT
+
+# pre python3.11 Self type - let's just call it a PromptPipeline
+try:
+    from typing import Self
+except ImportError:
+    # noinspection PyTypeHints
+    Self = TypeVar("Self", bound="PromptPipeline")
 
 
 class PromptPipeline:
@@ -19,17 +40,13 @@ class PromptPipeline:
     To inspect the inputs/outputs of your pipeline, you can use :meth:`explain` to print a detailed explanation of the
     pipeline and multiple examples (selected based on the pipeline steps).
 
-    **Automatic Optimization**
-
-    The first time the pipeline is applied, it will automatically compile the intermediate operations to optimize
-    the pipeline (e.g. reducing redundant loops and merging nonconflicting operations). To compile this eagerly, call
-    :meth:`compile` as the last step in your pipeline.
-
     **Example**
 
     Here's an example using the PromptPipeline to build a LLaMA 2 chat-style prompt:
 
     .. code-block:: python
+
+        from kani import PromptPipeline, ChatRole
 
         pipe = (
             PromptPipeline()
@@ -64,12 +81,17 @@ class PromptPipeline:
         prompt = pipe(ai.get_prompt())
     """
 
-    def __init__(self):
-        self.steps = []
+    def __init__(self, steps: list[PipelineStep] = None):
+        if steps is None:
+            steps = []
+        self.steps = steps
 
     # ==== steps ====
+    @overload
+    def translate_role(self, *, to: ChatRole, role: RoleFilterT = None, predicate: PredicateFilterT = None) -> Self: ...
+
     @autoparams
-    def translate_role(self, *, to: ChatRole, role: RoleFilterT = None, predicate: PredicateFilterT = None):
+    def translate_role(self, **kwargs):
         """
         Change the role of the matching messages.
         (e.g. for models which do not support native function calling, make all FUNCTION messages a USER message)
@@ -77,13 +99,16 @@ class PromptPipeline:
         :param to: The new role to translate the matching messages to.
         {ALL_FILTERS}
         """
-        # self.steps.append(TranslateRole(from_, to))
+        self.steps.append(TranslateRole(**kwargs))
         return self
 
-    @autoparams
+    @overload
     def wrap(
         self, *, prefix: str = None, suffix: str = None, role: RoleFilterT = None, predicate: PredicateFilterT = None
-    ):
+    ) -> Self: ...
+
+    @autoparams
+    def wrap(self, **kwargs):
         """
         Wrap the matching messages with a given string prefix and/or suffix.
 
@@ -94,12 +119,16 @@ class PromptPipeline:
         :param suffix: The suffix to add after each matching message, if any.
         {ALL_FILTERS}
         """
+        self.steps.append(Wrap(**kwargs))
         return self
 
-    @autoparams
+    @overload
     def merge_consecutive(
         self, *, sep: str, out_role: ChatRole = None, role: RoleFilterT = None, predicate: PredicateFilterT = None
-    ):
+    ) -> Self: ...
+
+    @autoparams
+    def merge_consecutive(self, **kwargs):
         r"""
         If multiple messages that match are found consecutively, merge them into a single message whose contents
         are equivalent to the contents of the merged messages joined by ``sep``.
@@ -116,14 +145,20 @@ class PromptPipeline:
             Similarly, if a predicate is specified, this method will merge all consecutive messages which match the
             given predicate.
 
-        :param sep: The prefix to add before each matching message, if any.
+        :param sep: The string to add between each matching message (similar to ``sep.join(...)``).
         :param out_role: The role of the merged message to use. This is required if multiple ``role``\ s are specified
             or ``role`` is not set; otherwise it defaults to the common role of the merged messages.
         {ALL_FILTERS}
         """
+        self.steps.append(MergeConsecutive(**kwargs))
         return self
 
-    def function_call_fmt(self, func: FunctionCallStrT, *, prefix: str = "\n", sep: str = "", suffix: str = None):
+    @overload
+    def function_call_fmt(
+        self, func: FunctionCallStrT, *, prefix: str = "\n", sep: str = "", suffix: str = ""
+    ) -> Self: ...
+
+    def function_call_fmt(self, *args, **kwargs):
         """
         For each message with one or more requested tool calls, call the provided function on each requested tool call
         and append it to the message's content.
@@ -135,20 +170,28 @@ class PromptPipeline:
         :param sep: If two or more tool calls are formatted, the string to insert between them.
         :param suffix: If at least one tool call is formatted, a suffix to insert after the formatted string.
         """
+        self.steps.append(FunctionCallFmt(*args, **kwargs))
         return self
 
     # removers
+    @overload
+    def remove(self, *, role: RoleFilterT = None, predicate: PredicateFilterT = None) -> Self: ...
+
     @autoparams
-    def remove(self, *, role: RoleFilterT = None, predicate: PredicateFilterT = None):
+    def remove(self, **kwargs):
         """
         Remove all messages that match the filters from the output.
 
         {ALL_FILTERS}
         """
+        self.steps.append(Remove(**kwargs))
         return self
 
+    @overload
+    def ensure_start(self, *, role: RoleFilterT = None, predicate: PredicateFilterT = None) -> Self: ...
+
     @autoparams
-    def ensure_start(self, *, role: RoleFilterT = None, predicate: PredicateFilterT = None):
+    def ensure_start(self, **kwargs):
         """
         Ensure that the output starts with a message with the given role by removing all messages from the start that
         do NOT match the given filters, such that the first message in the output matches.
@@ -158,12 +201,16 @@ class PromptPipeline:
 
         {ALL_FILTERS}
         """
+        self.steps.append(EnsureStart(**kwargs))
         return self
 
+    @overload
+    def apply(self, func: ApplyCallableT, *, role: RoleFilterT = None, predicate: PredicateFilterT = None) -> Self: ...
+
     @autoparams
-    def apply(self, func: ApplyCallableT, *, role: RoleFilterT = None, predicate: PredicateFilterT = None):
+    def apply(self, *args, **kwargs):
         """
-        Apply the given function to all matched messages.
+        Apply the given function to all matched messages. Replace the message with the function's return value.
 
         The function may take 1-3 positional parameters: the first will always be the matched message at the current
         pipeline step, the second will be whether or not the message is the last one in the list of messages, and the
@@ -174,9 +221,11 @@ class PromptPipeline:
             step in the pipeline. If this function returns ``None``, the input message will be removed from the output.
         {ALL_FILTERS}
         """
+        self.steps.append(Apply(*args, **kwargs))
         return self
 
     # ==== terminals ====
+    @overload
     def conversation_fmt(
         self,
         *,
@@ -197,7 +246,9 @@ class PromptPipeline:
         # FUNCTION messages (if not specified, defaults to user)
         function_prefix: str = None,
         function_suffix: str = None,
-    ):
+    ) -> Self: ...
+
+    def conversation_fmt(self, **kwargs):
         """
         Takes in the list of messages and joins them into a single conversation-formatted string by:
 
@@ -221,6 +272,7 @@ class PromptPipeline:
         :param function_prefix: A prefix to add before each USER message.
         :param function_suffix: A suffix to add after each USER message.
         """
+        self.steps.append(ConversationFmt(**kwargs))
         return self
 
     # ==== eval ====
@@ -233,7 +285,6 @@ class PromptPipeline:
         data = [m.model_copy() for m in msgs]
 
         # and apply the pipeline
-        # TODO compilation
         for step in self.steps:
             data = step.execute(data)
 
@@ -241,17 +292,30 @@ class PromptPipeline:
         return data
 
     # ==== utils ====
-    def compile(self):
-        """
-        Compile the pipeline, merging non-conflicting operations and reducing the number of loops required. This
-        will automatically be called the first time the pipeline is executed if not eagerly compiled.
-        """
-        return self
-
     def explain(self):
         """
-        Print out a summary of the pipeline and test cases based on the steps in the pipeline.
-
-        TODO: return a list of test case summaries for unit testing?
+        Print out a summary of the pipeline and an example conversation transformation based on the steps in the
+        pipeline.
         """
-        # TODO
+        print(f"===== Prompt Pipeline ({len(self.steps)} steps) =====")
+        listwidth = len(str(len(self.steps)))
+        for idx, step in enumerate(self.steps):
+            print(f"{idx + 1:>{listwidth}}. {step.explain()}")
+        print()
+        print("----- Example -----")
+        # todo
+        print(
+            f"!!! Some edge cases are not represented as this pipeline does not have special handling for them. To"
+            f" view all test cases, use `.explain(all=True)` or set any of the following keyword arguments to True:"
+            f" TODO"  # todo
+        )
+
+    def __repr__(self):
+        steps_fmt = pprint.pformat(self.steps)
+        return f"{type(self).__name__}({steps_fmt})"
+
+    def __len__(self):
+        return len(self.steps)
+
+    def __getitem__(self, item):
+        return self.steps[item]
