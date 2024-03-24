@@ -3,7 +3,6 @@ import itertools
 
 from kani.models import ChatRole
 from kani.prompts.base import FilterMixin, PipelineStep
-from kani.prompts.examples import PipelineExample
 from kani.prompts.types import ApplyCallableT, FunctionCallStrT, PipelineMsgT
 
 
@@ -20,9 +19,6 @@ class TranslateRole(FilterMixin, PipelineStep):
 
     def explain(self) -> str:
         return f"Translate all {self.explain_note()} to {self.to.value} messages"
-
-    def examples(self) -> list[PipelineExample]:
-        pass
 
 
 class Wrap(FilterMixin, PipelineStep):
@@ -45,9 +41,6 @@ class Wrap(FilterMixin, PipelineStep):
             return f"Add {self.suffix!r} to the end of each {self.explain_note('or', plural=False)}"
         return "This step doesn't do anything as configured - you should supply a prefix or suffix."
 
-    def examples(self) -> list[PipelineExample]:
-        pass
-
 
 class MergeConsecutive(FilterMixin, PipelineStep):
     def __init__(self, *, sep: str, out_role: ChatRole = None, **filter_kwargs):
@@ -55,19 +48,20 @@ class MergeConsecutive(FilterMixin, PipelineStep):
         self.sep = sep
         self.out_role = out_role
 
-        if not isinstance(self.role, ChatRole) and self.out_role is None:
-            raise ValueError(
-                "You must supply an `out_role` if a `.merge_consecutive` pipeline step can match messages with"
-                " different roles."
-            )
+        if self.out_role is None:
+            if isinstance(self.role, ChatRole):
+                self.out_role = self.role
+            else:
+                raise ValueError(
+                    "You must supply an `out_role` if a `.merge_consecutive` pipeline step can match messages with"
+                    " different roles."
+                )
 
     def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
         out = []
 
         # group messages by whether they match the filter, putting consecutive matching messages into a list
-        for matching, group_msgs in itertools.groupby(
-            msgs, key=lambda m: self.matches_filter(m) and m.role != ChatRole.FUNCTION
-        ):
+        for matching, group_msgs in itertools.groupby(msgs, key=self.matches_filter):
             group_msgs = list(group_msgs)
             # nonmatching messages get sent to output unchanged
             if not matching:
@@ -89,8 +83,17 @@ class MergeConsecutive(FilterMixin, PipelineStep):
             )
         return f"Merge consecutive {self.explain_note()} into a single message by inserting {self.sep!r} between them"
 
-    def examples(self) -> list[PipelineExample]:
-        pass
+    def explain_example_kwargs(self) -> dict[str, bool]:
+        kwargs = super().explain_example_kwargs()
+        if self.matches_role(ChatRole.USER):
+            kwargs["consecutive_user"] = True
+        if self.matches_role(ChatRole.ASSISTANT):
+            kwargs["consecutive_assistant"] = True
+        if self.matches_role(ChatRole.SYSTEM):
+            kwargs["consecutive_system"] = True
+        if self.matches_role(ChatRole.FUNCTION):
+            kwargs["multi_function_call"] = True
+        return kwargs
 
 
 class FunctionCallFmt(PipelineStep):
@@ -118,8 +121,11 @@ class FunctionCallFmt(PipelineStep):
         fmt_repr = f"{self.prefix}{{{self.sep!r}.join(f(tc) for tc in msg.tool_calls)}}{self.suffix}"
         return f"Apply the given function to each tool call, and append {fmt_repr!r} to each message with tool calls"
 
-    def examples(self) -> list[PipelineExample]:
-        pass
+    def explain_example_kwargs(self) -> dict[str, bool]:
+        kwargs = {"function_call": True}
+        if self.sep:
+            kwargs["multi_function_call"] = True
+        return kwargs
 
 
 class Remove(FilterMixin, PipelineStep):
@@ -132,9 +138,6 @@ class Remove(FilterMixin, PipelineStep):
     def explain(self) -> str:
         return f"Remove all {self.explain_note()}"
 
-    def examples(self) -> list[PipelineExample]:
-        pass
-
 
 class EnsureStart(FilterMixin, PipelineStep):
     def __init__(self, **filter_kwargs):
@@ -146,9 +149,6 @@ class EnsureStart(FilterMixin, PipelineStep):
 
     def explain(self) -> str:
         return f"Ensure that the prompt starts with a {self.explain_note('or', plural=False)}"
-
-    def examples(self) -> list[PipelineExample]:
-        pass
 
 
 class Apply(FilterMixin, PipelineStep):
@@ -185,9 +185,6 @@ class Apply(FilterMixin, PipelineStep):
 
     def explain(self) -> str:
         return f"Apply the given function to each {self.explain_note('and', plural=False)}"
-
-    def examples(self) -> list[PipelineExample]:
-        pass
 
 
 # ==== terminals ====
@@ -227,11 +224,16 @@ class ConversationFmt(PipelineStep):
 
     def execute(self, msgs: list[PipelineMsgT]) -> str:
         parts = []
-        for msg in msgs:
+        for idx, msg in enumerate(msgs):
             if msg.role == ChatRole.USER:
                 parts.append(f"{self.user_prefix}{msg.text}{self.user_suffix}")
             elif msg.role == ChatRole.ASSISTANT:
-                parts.append(f"{self.assistant_prefix}{msg.text}{self.assistant_suffix}")
+                # if this is the last message and we want custom ends, use the last suffix instead
+                if idx == len(msgs) - 1 and self.assistant_suffix_if_last is not None:
+                    assistant_suffix = self.assistant_suffix_if_last
+                else:
+                    assistant_suffix = self.assistant_suffix
+                parts.append(f"{self.assistant_prefix}{msg.text}{assistant_suffix}")
             elif msg.role == ChatRole.SYSTEM:
                 parts.append(f"{self.system_prefix}{msg.text}{self.system_suffix}")
             else:  # function
@@ -240,10 +242,8 @@ class ConversationFmt(PipelineStep):
         # join
         prompt = self.sep.join(parts)
 
-        # generation suffix
-        if msgs and msgs[-1].role == ChatRole.ASSISTANT and self.assistant_suffix_if_last is not None:
-            prompt += self.assistant_suffix_if_last
-        else:
+        # generation suffix if we aren't ending on an assistant message with a special asst_suffix_if_last
+        if not (msgs and msgs[-1].role == ChatRole.ASSISTANT and self.assistant_suffix_if_last is not None):
             prompt += self.generation_suffix
 
         return prompt
@@ -251,8 +251,11 @@ class ConversationFmt(PipelineStep):
     def explain(self) -> str:
         return "Format the messages into a single conversation-formatted string (see example)"
 
-    def examples(self) -> list[PipelineExample]:
-        pass
+    def explain_example_kwargs(self) -> dict[str, bool]:
+        kwargs = {}
+        if self.function_prefix != self.user_prefix or self.function_suffix != self.user_suffix:
+            kwargs["function_call"] = True
+        return kwargs
 
 
 # ==== helpers ====
@@ -278,6 +281,7 @@ def _merge_messages(msgs: list[PipelineMsgT], sep: str, out_role: ChatRole) -> P
     # we'll use the first message as the returned one
     out_msg = msgs[0]
     out_msg.role = out_role
+    out_msg.tool_call_id = None  # if we are merging function calls, something is wacky and we should strip this
     if not all(m.tool_calls is None for m in msgs):
         out_msg.tool_calls = list(itertools.chain.from_iterable(m.tool_calls or [] for m in msgs))
 

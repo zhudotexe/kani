@@ -2,7 +2,6 @@ import abc
 from typing import Iterable
 
 from kani.models import ChatRole
-from kani.prompts.examples import PipelineExample, natural_join
 from kani.prompts.types import PipelineMsgT, PredicateFilterT, RoleFilterT
 
 
@@ -15,9 +14,9 @@ class PipelineStep(abc.ABC):
         """Return a string explaining what this step does."""
         raise NotImplementedError
 
-    def examples(self) -> list[PipelineExample]:
-        """Return a list of examples the pipeline explain should include."""
-        raise NotImplementedError
+    def explain_example_kwargs(self) -> dict[str, bool]:
+        """Return a dict of kwargs to pass to examples.build_conversation to ensure relevant examples are included."""
+        return {}
 
     def __repr__(self):
         attrs = ", ".join(f"{k}={v!r}" for k, v in self.__dict__.items())
@@ -40,10 +39,7 @@ class FilterMixin:
     def matches_filter(self, msg: PipelineMsgT) -> bool:
         """Whether or not a message matches the filter"""
         # role(s)
-        if isinstance(self.role, ChatRole):
-            if msg.role != self.role:
-                return False
-        elif self.role and msg.role not in self.role:
+        if not self.matches_role(msg.role):
             return False
 
         # predicate
@@ -53,7 +49,15 @@ class FilterMixin:
         # default
         return True
 
-    # explain helper
+    def matches_role(self, role: ChatRole) -> bool:
+        """Whether or not this filter unconditionally matches the given role (only checks *role*, not *predicate*)"""
+        if isinstance(self.role, ChatRole):
+            return role == self.role
+        elif self.role:
+            return role in self.role
+        return True
+
+    # explain helpers
     def explain_note(self, join_sep="or", plural=True) -> str:
         """Returns a short note with the conditions this step applies to.
         (e.g. "messages" or "system messages that match the given predicate")
@@ -75,3 +79,16 @@ class FilterMixin:
             out += f" that {'match' if plural else 'matches'} the given predicate"
 
         return out
+
+    # by default, let's include function call if any filtered step targets functions
+    def explain_example_kwargs(self) -> dict[str, bool]:
+        if self.matches_role(ChatRole.FUNCTION):
+            return {"function_call": True}
+        return {}
+
+
+def natural_join(elems: list[str], sep: str):
+    sep = f" {sep} "
+    if len(elems) < 3:
+        return sep.join(elems)
+    return ", ".join(elems[:-1]) + f",{sep}{elems[-1]}"

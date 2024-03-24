@@ -1,9 +1,14 @@
+import functools
+import itertools
+import operator
 import pprint
+import time
 from typing import TypeVar, overload
 
 from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import PipelineStep
 from kani.prompts.docutils import autoparams
+from kani.prompts.examples import ALL_EXAMPLE_KWARGS, build_conversation
 from kani.prompts.steps import (
     Apply,
     ConversationFmt,
@@ -133,10 +138,6 @@ class PromptPipeline:
         If multiple messages that match are found consecutively, merge them into a single message whose contents
         are equivalent to the contents of the merged messages joined by ``sep``.
 
-        .. note::
-            This method will not merge FUNCTION messages as they contain metadata that cannot be merged with other
-            messages. If you need to merge FUNCTION messages, you should translate them into another role first.
-
         .. caution::
             If multiple roles are specified, this method will merge them as a group (e.g. if ``role=(USER, ASSISTANT)``,
             a USER message followed by an ASSISTANT message will be merged together into one with a role of
@@ -265,8 +266,9 @@ class PromptPipeline:
         :param assistant_prefix: A prefix to add before each ASSISTANT message.
         :param assistant_suffix: A suffix to add after each ASSISTANT message.
         :param assistant_suffix_if_last: If not None and the prompt ends with an ASSISTANT message, this string will be
-            added to the end of the prompt *instead* of the ``generation_suffix``. This is intended to allow consecutive
-            ASSISTANT messages to continue generation from an unfinished prior message.
+            added to the end of the prompt *instead* of the ``assistant_suffix + generation_suffix``.
+            This is intended to allow consecutive ASSISTANT messages to continue generation from an unfinished prior
+            message.
         :param system_prefix: A prefix to add before each SYSTEM message.
         :param system_suffix: A suffix to add after each SYSTEM message.
         :param function_prefix: A prefix to add before each USER message.
@@ -292,23 +294,64 @@ class PromptPipeline:
         return data
 
     # ==== utils ====
-    def explain(self):
+    def explain(self, example: list[ChatMessage] = None, *, all_cases=False, **kwargs):
         """
         Print out a summary of the pipeline and an example conversation transformation based on the steps in the
         pipeline.
+
+        .. caution::
+            This method will run the pipeline on an example constructed based on the steps in this pipeline. You may
+            encounter unexpected side effects if your pipeline uses :meth:`apply` with a function with side effects.
         """
-        print(f"===== Prompt Pipeline ({len(self.steps)} steps) =====")
+        hdg = f"Prompt Pipeline ({len(self.steps)} steps)"
+        print(f"{hdg}\n{'=' * len(hdg)}")
         listwidth = len(str(len(self.steps)))
         for idx, step in enumerate(self.steps):
             print(f"{idx + 1:>{listwidth}}. {step.explain()}")
         print()
-        print("----- Example -----")
-        # todo
-        print(
-            f"!!! Some edge cases are not represented as this pipeline does not have special handling for them. To"
-            f" view all test cases, use `.explain(all=True)` or set any of the following keyword arguments to True:"
-            f" TODO"  # todo
-        )
+
+        # example
+        print("Example\n-------")
+        if all_cases:
+            example_kwargs = {k: True for k in ALL_EXAMPLE_KWARGS}
+        else:
+            example_kwargs = functools.reduce(operator.or_, (s.explain_example_kwargs() for s in self.steps), kwargs)
+
+        examples_msg_grps = build_conversation(**example_kwargs)
+        examples_msgs = list(itertools.chain.from_iterable(examples_msg_grps))
+
+        # run and time example
+        start = time.perf_counter()
+        example_out = self(examples_msgs)
+        end = time.perf_counter()
+        exec_time = end - start
+
+        # print example i/o
+        print(f"*Execution time: {exec_time * 1000:.3}ms*")
+        print("### Input\n```py\n[", end="")
+        for grp in examples_msg_grps:
+            print()
+            for msg in grp:
+                print(f" {msg!r}")
+        print("]\n```\n")
+
+        print("### Output")
+        if isinstance(example_out, str):
+            print("```text")
+            print(example_out)
+        else:
+            print("```py")
+            pprint.pprint(example_out)
+        print("```\n")
+
+        # print note
+        unused_kwargs = [k for k in ALL_EXAMPLE_KWARGS if k not in example_kwargs]
+        if unused_kwargs and not example:
+            print(
+                "### Note\nSome edge cases are not represented in this example. To view all test cases, use"
+                f" `.explain(all_cases=True)` or set any of the following keyword arguments: {unused_kwargs}.\n"
+                "You may also specify your own test case with `.explain(example=...)`."
+            )
 
     def __repr__(self):
         steps_fmt = pprint.pformat(self.steps)
