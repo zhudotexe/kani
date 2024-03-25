@@ -123,7 +123,8 @@ class Kani:
 
         This is slightly faster when you are chatting with a kani with no AI functions defined.
 
-        :param query: The contents of the user's chat message.
+        :param query: The contents of the user's chat message. Can be None to generate a completion without a user
+            prompt.
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
         :returns: The model's reply.
         """
@@ -138,7 +139,8 @@ class Kani:
         # do the chat round
         async with self.lock:
             # add the user's chat input to the state
-            await self.add_to_history(ChatMessage.user(query))
+            if query is not None:
+                await self.add_to_history(ChatMessage.user(query))
 
             # and get a completion
             completion = await self.get_model_completion(**kwargs)
@@ -162,13 +164,15 @@ class Kani:
             async for msg in kani.full_round("How's the weather?"):
                 print(msg.text)
 
-        :param query: The content of the user's chat message.
+        :param query: The content of the user's chat message. Can be None to generate a completion without a user
+            prompt.
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
         """
         retry = 0
         is_model_turn = True
         async with self.lock:
-            await self.add_to_history(ChatMessage.user(query))
+            if query is not None:
+                await self.add_to_history(ChatMessage.user(query))
 
             while is_model_turn:
                 # do the model prediction
