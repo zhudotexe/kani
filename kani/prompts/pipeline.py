@@ -64,8 +64,9 @@ class PromptPipeline:
             # If we see two consecutive USER messages, merge them together into one with a
             # newline in between.
             .merge_consecutive(role=ChatRole.USER, sep="\n")
-            # Similarly for ASSISTANT, but simply concatenate them.
-            .merge_consecutive(role=ChatRole.ASSISTANT, sep="")
+            # Similarly for ASSISTANT, but with a space (kani automatically strips whitespace from the ends of
+            # generations).
+            .merge_consecutive(role=ChatRole.ASSISTANT, sep=" ")
 
             # Finally, wrap USER and ASSISTANT messages in the instruction tokens. If our
             # message list ends with an ASSISTANT message, don't add the EOS token
