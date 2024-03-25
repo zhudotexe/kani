@@ -175,7 +175,7 @@ class Apply(FilterMixin, PipelineStep):
         for i, msg in enumerate(msgs):
             # for each matching message, append f(msg) if it's not None
             if self.matches_filter(msg):
-                replacement = self.func_wrapped(msgs, i == len(msgs) - 1, i)
+                replacement = self.func_wrapped(msg, i == len(msgs) - 1, i)
                 if replacement is not None:
                     out.append(replacement)
             # else just append the msg unchanged
