@@ -106,6 +106,10 @@ This table lists the engines built in to kani:
 
 When you are finished with an engine, release its resources with :meth:`.BaseEngine.close`.
 
+Streaming
+^^^^^^^^^
+TODO
+
 Concept: Chat Messages
 ----------------------
 Each message contains the ``role`` (a :class:`.ChatRole`: system, assistant, user, or function) that sent the message

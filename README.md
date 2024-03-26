@@ -50,7 +50,7 @@ more:
 - **Lightweight and high-level** - kani implements common boilerplate to interface with language models without forcing
   you to use opinionated prompt frameworks or complex library-specific tooling.
 - **Model agnostic** - kani provides a simple interface to implement: token counting and completion generation.
-  Implement these two, and kani can run with any language model.
+  kani lets developers switch which language model runs on the backend without major code refactors.
 - **Automatic chat memory management** - Allow chat sessions to flow without worrying about managing the number of
   tokens in the history - kani takes care of it.
 - **Function calling with model feedback and retry** - Give models access to functions in just one line of code.
@@ -80,6 +80,7 @@ Then, let's use kani to create a simple chatbot using ChatGPT as a backend.
 
 ```python
 # import the library
+import asyncio
 from kani import Kani, chat_in_terminal
 from kani.engines.openai import OpenAIEngine
 
@@ -95,9 +96,15 @@ engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
 # system_prompt="You are..." here.
 ai = Kani(engine)
 
-# kani comes with a utility to interact with a kani through your terminal! Check out 
-# the docs for how to use kani programmatically.
+# kani comes with a utility to interact with a kani through your terminal...
 chat_in_terminal(ai)
+
+# or you can use kani programmatically in an async function!
+async def main():
+    resp = await ai.chat_round("What is the airspeed velocity of an unladen swallow?")
+    print(resp.text)
+
+asyncio.run(main())
 ```
 
 kani makes the time to set up a working chat model short, while offering the programmer deep customizability over
