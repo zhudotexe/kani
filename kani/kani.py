@@ -2,7 +2,7 @@ import asyncio
 import inspect
 import logging
 import warnings
-from typing import AsyncIterable, Callable
+from typing import AsyncIterable, Callable, Literal, overload
 
 from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
@@ -117,8 +117,6 @@ class Kani:
     async def chat_round(self, query: QueryType, **kwargs) -> ChatMessage:
         """Perform a single chat round (user -> model -> user, no functions allowed).
 
-        This is slightly faster when you are chatting with a kani with no AI functions defined.
-
         :param query: The contents of the user's chat message. Can be None to generate a completion without a user
             prompt.
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
@@ -149,11 +147,14 @@ class Kani:
         msg = await self.chat_round(query, **kwargs)
         return msg.text
 
+    async def chat_round_stream(self, query: QueryType, **kwargs) -> StreamManager:
+        ...  # TODO
+
     async def full_round(self, query: QueryType, **kwargs) -> AsyncIterable[ChatMessage]:
         """Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
 
         Yields each non-user ChatMessage created during the round.
-        A ChatMessage will have at least one of (content, function_call).
+        A ChatMessage will have at least one of ``(content, function_call)``.
 
         Use this in an async for loop, like so::
 
@@ -231,6 +232,9 @@ class Kani:
         async for message in self.full_round(query, **kwargs):
             if text := message_formatter(message):
                 yield text
+
+    async def full_round_stream(self, query: QueryType, **kwargs) -> AsyncIterable[StreamManager]:
+        ...  # TODO
 
     # ==== helpers ====
     @property
