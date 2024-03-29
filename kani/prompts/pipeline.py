@@ -3,7 +3,7 @@ import itertools
 import operator
 import pprint
 import time
-from typing import TypeVar, overload
+from typing import overload
 
 from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import PipelineStep
@@ -26,7 +26,9 @@ try:
     from typing import Self
 except ImportError:
     # noinspection PyTypeHints
-    Self = TypeVar("Self", bound="PromptPipeline")
+    # this returns a forwardref to the class since it is unlikely that it will be subclassed, and it makes sphinx
+    # sad to use a generic typevar here
+    Self = "PromptPipeline"
 
 
 class PromptPipeline:
