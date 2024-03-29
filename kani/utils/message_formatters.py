@@ -46,6 +46,6 @@ def assistant_message_contents_thinking(msg: ChatMessage, show_args=False):
         # no args: just print the function name
         else:
             called_functions = "; ".join(tc.function.name for tc in msg.tool_calls)
-        function_calls = f"Thinking... [{called_functions}]"
+        function_calls = f"\nThinking... [{called_functions}]"
 
-    return text + function_calls
+    return (text + function_calls).strip()
