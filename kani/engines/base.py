@@ -1,5 +1,6 @@
 import abc
 import warnings
+from collections.abc import AsyncIterable
 
 from kani.ai_function import AIFunction
 from kani.models import ChatMessage
@@ -95,6 +96,35 @@ class BaseEngine(abc.ABC):
                 "Developers: If this warning is incorrect, please implement `function_token_reserve()`."
             )
         return 0
+
+    async def stream(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        """
+        Optional: Stream a completion from the engine, token-by-token.
+
+        This method's signature is the same as :meth:`predict`.
+
+        This method should yield strings as an asynchronous iterable.
+
+        Optionally, this method may also yield a :class:`.BaseCompletion`. If it does, it MUST be the last item
+        yielded by this method.
+
+        If an engine does not implement streaming, this method will yield the entire text of the completion in a single
+        chunk by default.
+
+        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+            guaranteed to be less than max_context_size.
+        :param functions: The functions the LM is allowed to call.
+        :param hyperparams: Any additional parameters to pass to the engine.
+        """
+        warnings.warn(
+            f"This {type(self).__name__} does not implement streaming. This stream will yield the entire completion in"
+            " one single chunk."
+        )
+        completion = await self.predict(messages, functions, **hyperparams)
+        yield completion.message.text
+        yield completion
 
     async def close(self):
         """Optional: Clean up any resources the engine might need."""
