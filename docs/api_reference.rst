@@ -48,6 +48,18 @@ AI Function
 .. autoclass:: kani.AIParam
     :members:
 
+Prompting
+---------
+.. automodule:: kani.prompts
+
+.. autoclass:: kani.PromptPipeline
+    :members:
+
+    .. automethod:: __call__
+
+.. autoclass:: kani.prompts.PipelineStep
+    :members:
+
 Internals
 ---------
 .. autoclass:: kani.FunctionCallResult

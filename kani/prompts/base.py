@@ -6,6 +6,13 @@ from kani.prompts.types import PipelineMsgT, PredicateFilterT, RoleFilterT
 
 
 class PipelineStep(abc.ABC):
+    """
+    The base class for all pipeline steps.
+
+    If needed, you can subclass this and manually add steps to a :class:`.PromptPipeline`, but this is generally not
+    necessary (consider using :meth:`.PromptPipeline.apply` instead).
+    """
+
     def execute(self, msgs: list[PipelineMsgT]):
         """Apply this step's effects on the pipeline."""
         raise NotImplementedError
