@@ -1,5 +1,5 @@
 import asyncio
-from typing import AsyncIterable
+from collections.abc import AsyncIterable
 
 from kani.engines.base import BaseCompletion, Completion
 from kani.models import ChatMessage
