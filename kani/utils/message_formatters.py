@@ -36,16 +36,29 @@ def assistant_message_contents_thinking(msg: ChatMessage, show_args=False):
     if not msg.tool_calls:
         function_calls = ""
     else:
-        # with args: show a nice repr (e.g. `get_weather(location="San Francisco, CA", unit="fahrenheit")`)
-        if show_args:
-            parts = []
-            for tc in msg.tool_calls:
-                args = ", ".join(f"{kwarg}={v!r}" for kwarg, v in tc.function.kwargs.items())
-                parts.append(f"{tc.function.name}({args})")
-            called_functions = "; ".join(parts)
-        # no args: just print the function name
-        else:
-            called_functions = "; ".join(tc.function.name for tc in msg.tool_calls)
-        function_calls = f"\nThinking... [{called_functions}]"
+        function_calls = f"\n{assistant_message_thinking(msg, show_args)}"
 
     return (text + function_calls).strip()
+
+
+def assistant_message_thinking(msg: ChatMessage, show_args=False):
+    """Return "Thinking..." on assistant messages with function calls, ignoring any content.
+
+    This is useful if you are streaming the message's contents.
+
+    If *show_args* is True, include the arguments to each function call.
+    """
+    if msg.role != ChatRole.ASSISTANT or not msg.tool_calls:
+        return
+
+    # with args: show a nice repr (e.g. `get_weather(location="San Francisco, CA", unit="fahrenheit")`)
+    if show_args:
+        parts = []
+        for tc in msg.tool_calls:
+            args = ", ".join(f"{kwarg}={v!r}" for kwarg, v in tc.function.kwargs.items())
+            parts.append(f"{tc.function.name}({args})")
+        called_functions = "; ".join(parts)
+    # no args: just print the function name
+    else:
+        called_functions = "; ".join(tc.function.name for tc in msg.tool_calls)
+    return f"Thinking... [{called_functions}]"

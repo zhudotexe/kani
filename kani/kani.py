@@ -10,7 +10,7 @@ from .engines.base import BaseCompletion, BaseEngine
 from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, WrappedCallException
 from .internal import ExceptionHandleResult, FunctionCallResult
 from .models import ChatMessage, ChatRole, FunctionCall, QueryType, ToolCall
-from .streaming import StreamManager
+from .streaming import DummyStream, StreamManager
 from .utils.message_formatters import assistant_message_contents
 from .utils.typing import PathLike, SavedKani
 
@@ -141,6 +141,70 @@ class Kani:
         await self.add_to_history(message)
         return message
 
+    async def _full_round(self, query: QueryType, *, _kani_is_stream=False, **kwargs):
+        """Underlying handler for full_round with stream support."""
+        retry = 0
+        is_model_turn = True
+        async with self.lock:
+            if query is not None:
+                await self.add_to_history(ChatMessage.user(query))
+
+            while is_model_turn:
+                # do the model prediction (stream or no stream)
+                if _kani_is_stream:
+                    stream = self.get_model_stream(**kwargs)
+                    manager = StreamManager(stream, role=ChatRole.ASSISTANT, after=self._add_completion_to_history)
+                    yield manager
+                    message = await manager.message()
+                else:
+                    completion = await self.get_model_completion(**kwargs)
+                    message = await self._add_completion_to_history(completion)
+                    yield message
+
+                # if function call, do it and attempt retry if it's wrong
+                if not message.tool_calls:
+                    return
+
+                # run each tool call in parallel
+                async def _do_tool_call(tc: ToolCall):
+                    try:
+                        return await self.do_function_call(tc.function, tool_call_id=tc.id)
+                    except FunctionCallException as e:
+                        return await self.handle_function_call_exception(tc.function, e, retry, tool_call_id=tc.id)
+
+                # and update results after they are completed
+                is_model_turn = False
+                should_retry_call = False
+                n_errs = 0
+                results = await asyncio.gather(*(_do_tool_call(tc) for tc in message.tool_calls))
+                for result in results:
+                    # save the result to the chat history
+                    await self.add_to_history(result.message)
+
+                    # yield it, possibly in dummy streammanager
+                    if _kani_is_stream:
+                        yield DummyStream(result.message)
+                    else:
+                        yield result.message
+
+                    if isinstance(result, ExceptionHandleResult):
+                        is_model_turn = True
+                        n_errs += 1
+                        # retry if any function says so
+                        should_retry_call = should_retry_call or result.should_retry
+                    else:
+                        # allow model to generate response if any function says so
+                        is_model_turn = is_model_turn or result.is_model_turn
+
+                # if we encountered an error, increment the retry counter and allow the model to generate a response
+                if n_errs:
+                    retry += 1
+                    if not should_retry_call:
+                        # disable function calling on the next go
+                        kwargs["include_functions"] = False
+                else:
+                    retry = 0
+
     # === main entrypoints ===
     async def chat_round(self, query: QueryType, **kwargs) -> ChatMessage:
         """Perform a single chat round (user -> model -> user, no functions allowed).
@@ -188,7 +252,7 @@ class Kani:
             async for elem in self.get_model_stream(**_kwargs):
                 yield elem
 
-        return StreamManager(_impl(), after=self._add_completion_to_history, lock=self.lock)
+        return StreamManager(_impl(), role=ChatRole.ASSISTANT, after=self._add_completion_to_history, lock=self.lock)
 
     async def full_round(self, query: QueryType, **kwargs) -> AsyncIterable[ChatMessage]:
         """Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
@@ -205,55 +269,8 @@ class Kani:
             prompt.
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
         """
-        retry = 0
-        is_model_turn = True
-        async with self.lock:
-            if query is not None:
-                await self.add_to_history(ChatMessage.user(query))
-
-            while is_model_turn:
-                # do the model prediction
-                completion = await self.get_model_completion(**kwargs)
-                message = await self._add_completion_to_history(completion)
-                yield message
-
-                # if function call, do it and attempt retry if it's wrong
-                if not message.tool_calls:
-                    return
-
-                # run each tool call in parallel
-                async def _do_tool_call(tc: ToolCall):
-                    try:
-                        return await self.do_function_call(tc.function, tool_call_id=tc.id)
-                    except FunctionCallException as e:
-                        return await self.handle_function_call_exception(tc.function, e, retry, tool_call_id=tc.id)
-
-                # and update results after they are completed
-                is_model_turn = False
-                should_retry_call = False
-                n_errs = 0
-                results = await asyncio.gather(*(_do_tool_call(tc) for tc in message.tool_calls))
-                for result in results:
-                    # save the result to the chat history
-                    await self.add_to_history(result.message)
-                    yield result.message
-                    if isinstance(result, ExceptionHandleResult):
-                        is_model_turn = True
-                        n_errs += 1
-                        # retry if any function says so
-                        should_retry_call = should_retry_call or result.should_retry
-                    else:
-                        # allow model to generate response if any function says so
-                        is_model_turn = is_model_turn or result.is_model_turn
-
-                # if we encountered an error, increment the retry counter and allow the model to generate a response
-                if n_errs:
-                    retry += 1
-                    if not should_retry_call:
-                        # disable function calling on the next go
-                        kwargs["include_functions"] = False
-                else:
-                    retry = 0
+        async for elem in self._full_round(query, _kani_is_stream=False, **kwargs):
+            yield elem
 
     async def full_round_str(
         self,
@@ -273,7 +290,26 @@ class Kani:
                 yield text
 
     async def full_round_stream(self, query: QueryType, **kwargs) -> AsyncIterable[StreamManager]:
-        ...  # TODO
+        """
+        Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
+
+        Yields a stream of tokens for each non-user ChatMessage created during the round.
+
+        To consume tokens from a stream, use this class as so::
+
+            async for stream in ai.full_round_stream("What is the airspeed velocity of an unladen swallow?"):
+                async for token in stream:
+                    print(token, end="")
+                msg = await stream.message()
+
+        Each :class:`.StreamManager` object yielded by this method contains a :attr:`.StreamManager.role` attribute
+        that can be used to determine if a message is from the engine or a function call. This attribute will be
+        available *before* iterating over the stream.
+
+        The arguments are the same as :meth:`full_round`.
+        """
+        async for elem in self._full_round(query, _kani_is_stream=True, **kwargs):
+            yield elem
 
     # ==== helpers ====
     @property

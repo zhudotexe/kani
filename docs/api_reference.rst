@@ -78,6 +78,8 @@ Utilities
 
 .. autofunction:: kani.chat_in_terminal_async
 
+.. autofunction:: kani.print_stream
+
 Message Formatters
 ^^^^^^^^^^^^^^^^^^
 .. automodule:: kani.utils.message_formatters
