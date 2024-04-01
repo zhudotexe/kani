@@ -2,13 +2,15 @@ import asyncio
 import inspect
 import logging
 import warnings
-from typing import AsyncIterable, Callable, Literal, overload
+from collections.abc import AsyncIterable
+from typing import Callable
 
 from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
 from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, WrappedCallException
 from .internal import ExceptionHandleResult, FunctionCallResult
 from .models import ChatMessage, ChatRole, FunctionCall, QueryType, ToolCall
+from .streaming import StreamManager
 from .utils.message_formatters import assistant_message_contents
 from .utils.typing import PathLike, SavedKani
 
@@ -23,11 +25,15 @@ class Kani:
 
     ``chat_round(query: str, **kwargs) -> ChatMessage``
 
-    ``full_round(query: str, **kwargs) -> AsyncIterable[ChatMessage]``
-
     ``chat_round_str(query: str, **kwargs) -> str``
 
+    ``chat_round_stream(query: str, **kwargs) -> StreamManager``
+
+    ``full_round(query: str, **kwargs) -> AsyncIterable[ChatMessage]``
+
     ``full_round_str(query: str, message_formatter: Callable[[ChatMessage], str], **kwargs) -> AsyncIterable[str]``
+
+    ``full_round_stream(query: str, **kwargs) -> AsyncIterable[StreamManager]``
 
     **Function Calling**
 
@@ -113,6 +119,28 @@ class Kani:
                 raise ValueError(f"AIFunction {f.name!r} is already registered!")
             self.functions[f.name] = f
 
+    # ==== internals ====
+    async def _chat_round_before(self, query: QueryType, **kwargs):
+        """Common preflight for chat_round_*, returns the kwargs for get_model_completion/stream"""
+        # warn if the user has functions defined and has not explicitly silenced them in this call
+        if self.functions and "include_functions" not in kwargs:
+            warnings.warn(
+                f"You have defined functions in the body of {type(self).__name__} but chat_round() will not call"
+                " functions. Use full_round() instead.\nIf this is intentional, use chat_round(...,"
+                " include_functions=False) to silence this warning."
+            )
+        kwargs["include_functions"] = False
+        # add the user's chat input to the state
+        if query is not None:
+            await self.add_to_history(ChatMessage.user(query))
+        return kwargs
+
+    async def _add_completion_to_history(self, completion: BaseCompletion):
+        """Add the message in the completion to the chat history and return it"""
+        message = completion.message
+        await self.add_to_history(message)
+        return message
+
     # === main entrypoints ===
     async def chat_round(self, query: QueryType, **kwargs) -> ChatMessage:
         """Perform a single chat round (user -> model -> user, no functions allowed).
@@ -122,33 +150,45 @@ class Kani:
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
         :returns: The model's reply.
         """
-        # warn if the user has functions defined and has not explicitly silenced them in this call
-        if self.functions and "include_functions" not in kwargs:
-            warnings.warn(
-                f"You have defined functions in the body of {type(self).__name__} but chat_round() will not call"
-                " functions. Use full_round() instead.\nIf this is intentional, use chat_round(...,"
-                " include_functions=False) to silence this warning."
-            )
-        kwargs = {**kwargs, "include_functions": False}
-        # do the chat round
         async with self.lock:
-            # add the user's chat input to the state
-            if query is not None:
-                await self.add_to_history(ChatMessage.user(query))
-
-            # and get a completion
+            kwargs = await self._chat_round_before(query, **kwargs)
             completion = await self.get_model_completion(**kwargs)
-            message = completion.message
-            await self.add_to_history(message)
-            return message
+            return await self._add_completion_to_history(completion)
 
     async def chat_round_str(self, query: QueryType, **kwargs) -> str:
         """Like :meth:`chat_round`, but only returns the text content of the message."""
         msg = await self.chat_round(query, **kwargs)
         return msg.text
 
-    async def chat_round_stream(self, query: QueryType, **kwargs) -> StreamManager:
-        ...  # TODO
+    def chat_round_stream(self, query: QueryType, **kwargs) -> StreamManager:
+        """
+        Returns a stream of tokens from the engine as they are generated.
+
+        To consume tokens from a stream, use this class as so::
+
+            stream = ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
+            async for token in stream:
+                print(token, end="")
+            msg = await stream.message()
+
+        .. tip::
+            For compatibility and ease of refactoring, awaiting the stream itself will also return the message, i.e.::
+
+                msg = await ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
+
+            (note the ``await`` that is not present in the above examples).
+
+        The arguments are the same as :meth:`chat_round`.
+        """
+
+        # this is kind of cursed - we need to run the preflight stuff before we start yielding tokens but
+        # this is a synch context so we'll delegate the iterator to do it before it starts yielding
+        async def _impl():
+            _kwargs = await self._chat_round_before(query, **kwargs)
+            async for elem in self.get_model_stream(**_kwargs):
+                yield elem
+
+        return StreamManager(_impl(), after=self._add_completion_to_history, lock=self.lock)
 
     async def full_round(self, query: QueryType, **kwargs) -> AsyncIterable[ChatMessage]:
         """Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
@@ -174,8 +214,7 @@ class Kani:
             while is_model_turn:
                 # do the model prediction
                 completion = await self.get_model_completion(**kwargs)
-                message = completion.message
-                await self.add_to_history(message)
+                message = await self._add_completion_to_history(completion)
                 yield message
 
                 # if function call, do it and attempt retry if it's wrong
@@ -281,6 +320,27 @@ class Kani:
 
         message_log.debug(f"<<< {completion.message}")
         return completion
+
+    async def get_model_stream(self, include_functions: bool = True, **kwargs) -> AsyncIterable[str | BaseCompletion]:
+        """Get the model's completion with the current chat state as a stream.
+        This is a low-level method like :meth:`get_model_completion` but for streams.
+        """
+        messages = await self.get_prompt()
+        n_messages = len(messages)
+        if n_messages == 0:
+            message_log.debug("[0]>>> [requested completion with no prompt]")
+        else:
+            message_log.debug(f"[{n_messages}]>>> {messages[-1]}")
+
+        # get the model's completion at the given state
+        if include_functions:
+            stream = self.engine.stream(messages=messages, functions=list(self.functions.values()), **kwargs)
+        else:
+            stream = self.engine.stream(messages=messages, **kwargs)
+
+        message_log.debug(f"<<< STREAM...")
+        async for elem in stream:
+            yield elem
 
     # ==== overridable methods ====
     async def get_prompt(self) -> list[ChatMessage]:
