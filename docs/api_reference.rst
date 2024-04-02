@@ -48,6 +48,15 @@ AI Function
 .. autoclass:: kani.AIParam
     :members:
 
+Streaming
+---------
+.. autoclass:: kani.streaming.StreamManager
+    :members:
+
+    .. automethod:: __await__
+
+    .. automethod:: __aiter__
+
 Prompting
 ---------
 .. automodule:: kani.prompts

@@ -8,7 +8,7 @@ from kani.models import ChatMessage, ChatRole
 
 class StreamManager:
     """
-    This class is responsible for managing a stream returned by an engine.
+    This class is responsible for managing a stream returned by an engine. It should not be constructed manually.
 
     To consume tokens from a stream, use this class as so::
 
@@ -114,7 +114,7 @@ class StreamManager:
         # allow anything waiting on the stream to finish to progress
         self._finished.set()
 
-    def __aiter__(self):
+    def __aiter__(self) -> AsyncIterable[str]:
         """Iterate over tokens yielded from the engine."""
         # enforce that it can only be iterated over once
         if self._awaited:
@@ -128,7 +128,7 @@ class StreamManager:
 
     # ==== final result getters ====
     def __await__(self):
-        """Awaiting the StreamManager is equivalent to awaiting ``StreamManager.message()``."""
+        """Awaiting the StreamManager is equivalent to awaiting :meth:`message`."""
         return self.message().__await__()
 
     async def completion(self) -> BaseCompletion:
