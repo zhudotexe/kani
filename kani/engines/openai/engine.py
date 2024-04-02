@@ -1,11 +1,12 @@
 import functools
+from typing import AsyncIterable
 
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
-from kani.models import ChatMessage
+from kani.models import ChatMessage, ChatRole
 from . import function_calling
-from .translation import ChatCompletion, translate_functions, translate_messages
-from ..base import BaseEngine
+from .translation import ChatCompletion, openai_tc_to_kani_tc, translate_functions, translate_messages
+from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
     import tiktoken
@@ -17,10 +18,9 @@ except ImportError as e:
 
 # https://platform.openai.com/docs/models
 CONTEXT_SIZES_BY_PREFIX = [
-    ("gpt-3.5-turbo-0125", 16384),
-    ("gpt-3.5-turbo-1106", 16384),
-    ("gpt-3.5-turbo-16k", 16384),
-    ("gpt-3.5-turbo", 4096),
+    ("gpt-3.5-turbo-instruct", 4096),
+    ("gpt-3.5-turbo-0613", 4096),
+    ("gpt-3.5-turbo", 16385),
     # gpt-4-turbo models aren't prefixed differently...
     # TODO make the default gpt-4 128k and keep the pre-turbo ones at 8k after gpt-4 defaults to 128k
     ("gpt-4-1106", 128000),
@@ -30,13 +30,14 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("gpt-4-32k", 32768),
     ("gpt-4", 8192),
     # fine-tunes
-    ("ft:gpt-3.5-turbo-16k", 16384),
-    ("ft:gpt-3.5-turbo", 4096),
+    ("ft:gpt-3.5-turbo-instruct", 4096),
+    ("ft:gpt-3.5-turbo-0613", 4096),
+    ("ft:gpt-3.5-turbo", 16385),
     ("ft:gpt-4-32k", 32768),
     ("ft:gpt-4", 8192),
     # completion models
-    ("text-davinci-", 4096),
-    ("code-", 8000),
+    ("babbage-002", 16384),
+    ("davinci-002", 16384),
     # catch-all
     ("", 2048),  # e.g. aba/babbage/curie/davinci
 ]
@@ -125,6 +126,53 @@ class OpenAIEngine(BaseEngine):
         )
         # translate into Kani spec and return
         return ChatCompletion(openai_completion=completion)
+
+    async def stream(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        if functions:
+            tool_specs = translate_functions(functions)
+        else:
+            tool_specs = None
+        # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
+        translated_messages = translate_messages(messages)
+        # make API call
+        stream = await self.client.chat.completions.create(
+            model=self.model,
+            messages=translated_messages,
+            tools=tool_specs,
+            stream=True,
+            **self.hyperparams,
+            **hyperparams,
+        )
+
+        # save requested tool calls and content as streamed
+        content_chunks = []
+        tool_call_partials = {}  # index -> tool call
+
+        # iterate over the stream and yield/save
+        async for chunk in stream:
+            delta = chunk.choices[0].delta
+
+            # yield content
+            if delta.content is not None:
+                content_chunks.append(delta.content)
+                yield delta.content
+
+            # tool calls are partials, save a mapping to the latest state and we'll translate them later once complete
+            if delta.tool_calls:
+                # each tool call can have EITHER the function.name/id OR function.arguments
+                for tc in delta.tool_calls:
+                    if tc.id is not None:
+                        tool_call_partials[tc.index] = tc
+                    else:
+                        partial = tool_call_partials[tc.index]
+                        partial.function.arguments += tc.function.arguments
+
+        # construct the final completion with streamed tool calls
+        content = None if not content_chunks else "".join(content_chunks)
+        tool_calls = [openai_tc_to_kani_tc(tc) for tc in sorted(tool_call_partials.values(), key=lambda c: c.index)]
+        yield Completion(message=ChatMessage(role=ChatRole.ASSISTANT, content=content, tool_calls=tool_calls))
 
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
         if not functions:

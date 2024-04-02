@@ -19,6 +19,7 @@ try:
         ChatCompletionToolParam,
         ChatCompletionUserMessageParam,
     )
+    from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall
     from openai.types.chat.chat_completion_message_tool_call import Function as ChatCompletionMessageFunctionCall
     from openai.types.chat.chat_completion_message_tool_call_param import (
         Function as ChatCompletionMessageToolCallFunctionParam,
@@ -134,7 +135,7 @@ def openai_cm_to_kani_cm(msg: ChatCompletionMessage) -> ChatMessage:
     return ChatMessage(role=role, content=msg.content, tool_calls=tool_calls)
 
 
-def openai_tc_to_kani_tc(tc: ChatCompletionMessageToolCall) -> ToolCall:
+def openai_tc_to_kani_tc(tc: ChatCompletionMessageToolCall | ChoiceDeltaToolCall) -> ToolCall:
     return ToolCall(id=tc.id, type=tc.type, function=openai_fc_to_kani_fc(tc.function))
 
 
