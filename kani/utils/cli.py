@@ -172,16 +172,23 @@ async def print_stream(stream: StreamManager, width: int = None, prefix: str = "
     """
     prefix_len = len(prefix)
     line_indent = " " * prefix_len
-    print(prefix, end="")
+    prefix_printed = False
 
     # print tokens until they overflow width then newline and indent
     line_len = prefix_len
     async for token in stream:
+        # only print the prefix if the model actually yields anything
+        if not prefix_printed:
+            print(prefix, end="")
+            prefix_printed = True
+
+        # then do bookkeeping and print the token
         line_len += len(token)
         if width and line_len > width:
             print(f"\n{line_indent}", end="")
             line_len = prefix_len
         print(token, end="", flush=True)
 
-    # newline at the end to flush
-    print()
+    # newline at the end to flush if we printed anything
+    if prefix_printed:
+        print()
