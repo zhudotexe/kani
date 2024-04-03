@@ -74,6 +74,31 @@ class HuggingEngine(BaseEngine):
         if self.model.device.type != self.device:
             self.model.to(device)
 
+        if self.token_reserve == 0 and self.pipeline:
+            self.token_reserve = self._infer_token_reserve()
+
+    def _infer_token_reserve(self):
+        """If token_reserve is not set and we have a pipeline, infer it."""
+        prompt = self.pipeline.execute([], for_measurement=True)
+        if isinstance(prompt, torch.Tensor):
+            return len(prompt[0])
+        # prompt str to tokens
+        tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
+        return len(tokenized)
+
+    def message_len(self, message: ChatMessage) -> int:
+        # default concrete base behaviour:
+        if self.pipeline is None:
+            raise NotImplementedError(
+                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
+            )
+        prompt = self.pipeline.execute([message], for_measurement=True)
+        if isinstance(prompt, torch.Tensor):
+            return len(prompt[0])
+        # prompt str to tokens
+        tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
+        return len(tokenized)
+
     def build_prompt(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
     ) -> str | torch.Tensor:
@@ -88,19 +113,6 @@ class HuggingEngine(BaseEngine):
                 "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
             )
         return self.pipeline(messages)
-
-    def message_len(self, message: ChatMessage) -> int:
-        # default concrete base behaviour:
-        if self.pipeline is None:
-            raise NotImplementedError(
-                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
-            )
-        prompt = self.pipeline.execute([message], for_measurement=True)
-        if isinstance(prompt, torch.Tensor):
-            return len(prompt[0])
-        # prompt str to tokens
-        tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
-        return len(tokenized)
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams

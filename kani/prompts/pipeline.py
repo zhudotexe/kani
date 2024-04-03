@@ -274,8 +274,8 @@ class PromptPipeline:
             message.
         :param system_prefix: A prefix to add before each SYSTEM message.
         :param system_suffix: A suffix to add after each SYSTEM message.
-        :param function_prefix: A prefix to add before each USER message.
-        :param function_suffix: A suffix to add after each USER message.
+        :param function_prefix: A prefix to add before each FUNCTION message.
+        :param function_suffix: A suffix to add after each FUNCTION message.
         """
         self.steps.append(ConversationFmt(**kwargs))
         return self

@@ -239,14 +239,12 @@ class ConversationFmt(PipelineStep):
             else:  # function
                 parts.append(f"{self.function_prefix}{msg.text}{self.function_suffix}")
 
-        # join
-        prompt = self.sep.join(parts)
-
         # generation suffix if we aren't ending on an assistant message with a special asst_suffix_if_last
         if not (msgs and msgs[-1].role == ChatRole.ASSISTANT and self.assistant_suffix_if_last is not None):
-            prompt += self.generation_suffix
+            parts.append(self.generation_suffix)
 
-        return prompt
+        # join
+        return self.sep.join(parts)
 
     def explain(self) -> str:
         return "Format the messages into a single conversation-formatted string (see example)"
