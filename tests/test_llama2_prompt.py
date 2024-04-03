@@ -1,18 +1,11 @@
 """Tests to ensure the LLaMA v2 prompt is correct."""
 
 from kani import ChatMessage
-from kani.engines.llama2_prompt import build_str
+from kani.prompts.impl import LLAMA2_PIPELINE
 
 
 def prompt_str(messages: list[ChatMessage]) -> str:
-    out = ""
-    for content, bos, eos in build_str(messages):
-        if bos:
-            out += "<s>"
-        out += content
-        if eos:
-            out += "</s>"
-    return out
+    return LLAMA2_PIPELINE(messages)
 
 
 def test_basic():
@@ -20,7 +13,7 @@ def test_basic():
         ChatMessage.user("Hello there."),
         ChatMessage.assistant("General Kenobi."),
     ]
-    expected = "<s>[INST] Hello there. [/INST] General Kenobi. </s>"
+    expected = "<s>[INST] Hello there. [/INST] General Kenobi."
     assert prompt_str(messages) == expected
 
     messages = [
@@ -28,7 +21,7 @@ def test_basic():
         ChatMessage.user("Hello there."),
         ChatMessage.assistant("General Kenobi."),
     ]
-    expected = "<s>[INST] <<SYS>>\nI am a system message.\n<</SYS>>\n\nHello there. [/INST] General Kenobi. </s>"
+    expected = "<s>[INST] <<SYS>>\nI am a system message.\n<</SYS>>\n\nHello there. [/INST] General Kenobi."
     assert prompt_str(messages) == expected
 
 
@@ -42,7 +35,7 @@ def test_2round():
     ]
     expected = (
         "<s>[INST] <<SYS>>\nI am a system message.\n<</SYS>>\n\nHello there. [/INST] General Kenobi. </s>"
-        "<s>[INST] I am: [/INST] a potato. </s>"
+        "<s>[INST] I am: [/INST] a potato."
     )
     assert prompt_str(messages) == expected
 
@@ -56,7 +49,7 @@ def test_2system():
     ]
     expected = (
         "<s>[INST] <<SYS>>\nI am a system message.\n<</SYS>>\n\n"
-        "<<SYS>>\nBut wait, there's more.\n<</SYS>>\n\nHello there. [/INST] General Kenobi. </s>"
+        "<<SYS>>\nBut wait, there's more.\n<</SYS>>\n\nHello there. [/INST] General Kenobi."
     )
     assert prompt_str(messages) == expected
 
@@ -70,7 +63,7 @@ def test_2user():
     ]
     expected = (
         "<s>[INST] <<SYS>>\nI am a system message.\n<</SYS>>\n\n"
-        "Hello there.I am another message. [/INST] General Kenobi. </s>"
+        "Hello there.\nI am another message. [/INST] General Kenobi."
     )
     assert prompt_str(messages) == expected
 
@@ -84,6 +77,6 @@ def test_2asst():
     ]
     expected = (
         "<s>[INST] <<SYS>>\nI am a system message.\n<</SYS>>\n\n"
-        "Hello there. [/INST] General Kenobi.I am another message. </s>"
+        "Hello there. [/INST] General Kenobi. I am another message."
     )
     assert prompt_str(messages) == expected

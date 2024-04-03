@@ -1,8 +1,7 @@
-import abc
-
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
+from kani.prompts.pipeline import PromptPipeline
 from ..base import BaseEngine, Completion
 
 try:
@@ -15,12 +14,12 @@ except ImportError:
     ) from None
 
 
-class HuggingEngine(BaseEngine, abc.ABC):
+class HuggingEngine(BaseEngine):
     """Base engine for all HuggingFace text-generation models.
 
     This class implements the main decoding logic for any HuggingFace model based on a pretrained
-    ``AutoModelForCausalLM``. To implement a new HuggingFace model, just implement :meth:`~.HuggingEngine.build_prompt`
-    and :meth:`~.BaseEngine.message_len` for the specified model.
+    ``AutoModelForCausalLM``. As most models use model-specific chat templates, this base class accepts a
+    :class:`.PromptPipeline` to translate kani ChatMessages into a model-specific string.
 
     **GPU Support**
 
@@ -34,6 +33,8 @@ class HuggingEngine(BaseEngine, abc.ABC):
         self,
         model_id: str,
         max_context_size: int,
+        prompt_pipeline: PromptPipeline = None,
+        *,
         use_auth_token=None,
         device: str | None = None,
         tokenizer_kwargs: dict = None,
@@ -43,6 +44,8 @@ class HuggingEngine(BaseEngine, abc.ABC):
         """
         :param model_id: The ID of the model to load from HuggingFace.
         :param max_context_size: The context size of the model.
+        :param prompt_pipeline: The pipeline to translate a list of kani ChatMessages into the model-specific chat
+            format (see :class:`.PromptPipeline`).
         :param use_auth_token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
         :param device: The hardware device to use. If not specified, uses CUDA if available; otherwise uses CPU.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
@@ -59,6 +62,8 @@ class HuggingEngine(BaseEngine, abc.ABC):
 
         self.model_id = model_id
         self.max_context_size = max_context_size
+        self.pipeline = prompt_pipeline
+
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
         self.model = AutoModelForCausalLM.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
@@ -69,13 +74,33 @@ class HuggingEngine(BaseEngine, abc.ABC):
         if self.model.device.type != self.device:
             self.model.to(device)
 
-    @abc.abstractmethod
     def build_prompt(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
     ) -> str | torch.Tensor:
-        """Given the list of messages from kani, build either a single string representing the prompt for the model,
-        or build the token tensor."""
-        raise NotImplementedError
+        """
+        Given the list of messages from kani, build either a single string representing the prompt for the model,
+        or build the token tensor.
+
+        The default behaviour is to call the supplied pipeline.
+        """
+        if self.pipeline is None:
+            raise NotImplementedError(
+                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
+            )
+        return self.pipeline(messages)
+
+    def message_len(self, message: ChatMessage) -> int:
+        # default concrete base behaviour:
+        if self.pipeline is None:
+            raise NotImplementedError(
+                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
+            )
+        prompt = self.pipeline.execute([message], for_measurement=True)
+        if isinstance(prompt, torch.Tensor):
+            return len(prompt[0])
+        # prompt str to tokens
+        tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
+        return len(tokenized)
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
@@ -92,9 +117,9 @@ class HuggingEngine(BaseEngine, abc.ABC):
         prompt = self.build_prompt(messages, functions)
         if isinstance(prompt, str):
             # prompt str to tokens
-            tokenized = self.tokenizer(prompt, return_tensors="pt", return_length=True)
-            input_len = int(tokenized.length)
-            input_toks = tokenized.input_ids
+            tokenized = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
+            input_toks = tokenized
+            input_len = len(tokenized[0])
         elif isinstance(prompt, torch.Tensor):
             input_toks = prompt
             input_len = len(input_toks[0])

@@ -286,11 +286,30 @@ class PromptPipeline:
         Apply the pipeline to a list of kani messages. The return type will vary based on the steps in the pipeline;
         if no steps are defined the return type will be a copy of the input messages.
         """
+        return self.execute(msgs)
+
+    def execute(self, msgs: list[ChatMessage], *, deepcopy=False, for_measurement=False):
+        """
+        Apply the pipeline to a list of kani messages. The return type will vary based on the steps in the pipeline;
+        if no steps are defined the return type will be a copy of the input messages.
+
+        This lower-level method offers more fine-grained control over the steps that are run (e.g. to measure the
+        length of a single message).
+
+        :param deepcopy: Whether to deep-copy each message before running the pipeline.
+        :param for_measurement: If the pipeline is being run to measure the length of a single message. In this case,
+            any ``ensure_start`` steps will be ignored.
+        """
         # let's use the lower-level model_copy() since we aren't changing anything
-        data = [m.model_copy() for m in msgs]
+        data = [m.model_copy(deep=deepcopy) for m in msgs]
 
         # and apply the pipeline
         for step in self.steps:
+            # for measurement: ignore ensure_start
+            if for_measurement and isinstance(step, EnsureStart):
+                continue
+
+            # apply step
             data = step.execute(data)
 
         # return the result
