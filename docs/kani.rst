@@ -87,10 +87,6 @@ here's how you might implement a simple chat:
     # use `asyncio.run` to call your async function to start the program
     asyncio.run(chat_with_kani())
 
-.. seealso::
-
-    The source code of :func:`.chat_in_terminal`.
-
 Engines
 ^^^^^^^
 Engines are responsible for interfacing with a language model.
@@ -105,10 +101,6 @@ This table lists the engines built in to kani:
     out :doc:`engines` or the :class:`.BaseEngine` API documentation.
 
 When you are finished with an engine, release its resources with :meth:`.BaseEngine.close`.
-
-Streaming
-^^^^^^^^^
-TODO
 
 Concept: Chat Messages
 ----------------------
@@ -160,6 +152,59 @@ prompt at any time.
         ChatMessage(role=ChatRole.USER, content="Hello kani!"),
         ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
     ]
+
+Streaming
+---------
+kani supports streaming to print tokens from the engine as they are received. Streaming is designed to be a drop-in
+superset of the ``chat_round`` and ``full_round`` methods, allowing you to gradually refactor your code without ever
+leaving it in a broken state.
+
+To request a stream from the engine, use :meth:`.Kani.chat_round_stream` or :meth:`.Kani.full_round_stream`. These
+methods will return a :class:`.StreamManager`, which you can use in different ways to consume the stream.
+
+The simplest way to consume the stream is to iterate over it with ``async for``, which will yield a stream of
+:class:`str`.
+
+.. code-block:: python
+
+    # CHAT ROUND:
+    stream = ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
+    async for token in stream:
+        print(token, end="")
+    msg = await stream.message()
+
+    # FULL ROUND:
+    async for stream in ai.full_round_stream("What is the airspeed velocity of an unladen swallow?")
+        async for token in stream:
+            print(token, end="")
+        msg = await stream.message()
+
+After a stream finishes, its contents will be available as a :class:`.ChatMessage`. You can retrieve the final
+message or :class:`.BaseCompletion` with:
+
+.. code-block:: python
+
+    msg = await stream.message()
+    completion = await stream.completion()
+
+The final :class:`.ChatMessage` may contain non-yielded tokens (e.g. a request for a function call). If the final
+message or completion is requested before the stream is iterated over, the stream manager will consume the entire
+stream.
+
+.. tip::
+    For compatibility and ease of refactoring, awaiting the stream itself will also return the message, i.e.:
+
+    .. code-block:: python
+
+        msg = await ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
+
+    (note the ``await`` that is not present in the above examples). This allows you to refactor your code by changing
+    ``chat_round`` to ``chat_round_stream`` without other changes.
+
+    .. code-block:: diff
+
+        - msg = await ai.chat_round("What is the airspeed velocity of an unladen swallow?")
+        + msg = await ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
 
 Few-Shot Prompting
 ------------------

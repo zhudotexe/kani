@@ -99,10 +99,12 @@ ai = Kani(engine)
 # kani comes with a utility to interact with a kani through your terminal...
 chat_in_terminal(ai)
 
+
 # or you can use kani programmatically in an async function!
 async def main():
     resp = await ai.chat_round("What is the airspeed velocity of an unladen swallow?")
     print(resp.text)
+
 
 asyncio.run(main())
 ```
@@ -120,8 +122,9 @@ decorator.
 
 ```python
 # import the library
+import asyncio
 from typing import Annotated
-from kani import AIParam, Kani, ai_function, chat_in_terminal
+from kani import AIParam, Kani, ai_function, chat_in_terminal, ChatRole
 from kani.engines.openai import OpenAIEngine
 
 # set up the engine as above
@@ -144,12 +147,46 @@ class MyKani(Kani):
 
 
 ai = MyKani(engine)
+
+# the terminal utility allows you to test function calls...
 chat_in_terminal(ai)
+
+
+# and you can track multiple rounds programmatically.
+async def main():
+    async for msg in ai.full_round("What's the weather in Tokyo?"):
+        print(msg.role, msg.text)
+
+
+asyncio.run(main())
 ```
 
 kani guarantees that function calls are valid by the time they reach your methods while allowing you to focus on
 writing code. For more information, check
 out [the function calling docs](https://kani.readthedocs.io/en/latest/function_calling.html).
+
+## Streaming
+
+kani supports streaming responses from the underlying language model token-by-token, even in the presence of function
+calls. Streaming is designed to be a drop-in superset of the ``chat_round`` and ``full_round`` methods, allowing you to
+gradually refactor your code without ever leaving it in a broken state.
+
+```python
+async def stream_chat():
+    stream = ai.chat_round_stream("What does kani mean?")
+    async for token in stream:
+        print(token, end="")
+    print()
+    msg = await stream.message()  # or `await stream`
+
+
+async def stream_with_function_calling():
+    async for stream in ai.full_round_stream("What's the weather in Tokyo?"):
+        async for token in stream:
+            print(token, end="")
+        print()
+        msg = await stream.message()
+```
 
 ## Why kani?
 
@@ -166,7 +203,6 @@ kani is to LangChain as Flask (or FastAPI) is to Django.
 
 kani is appropriate for everyone from academic researchers to industry professionals to hobbyists to use without
 worrying about under-the-hood hacks.
-
 
 ## Docs
 
