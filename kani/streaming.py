@@ -105,7 +105,7 @@ class StreamManager:
         # of all the yielded tokens
         if self._completion is None:
             content = "".join(yielded_tokens)
-            self._completion = Completion(message=ChatMessage(role=self.role, content=content))
+            self._completion = Completion(message=ChatMessage(role=self.role, content=content.strip()))
 
         # run the callback, if any
         if self._after is not None:
