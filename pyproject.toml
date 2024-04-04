@@ -29,7 +29,7 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "kani[huggingface,llama,openai,ctransformers,anthropic]",
+    "kani[huggingface,llama,openai,anthropic]",
 ]
 
 huggingface = [
@@ -43,10 +43,6 @@ llama = [
 openai = [
     "openai>=1.0.0,<2.0.0",
     "tiktoken>=0.4.0,<1.0.0",
-]
-
-ctransformers = [
-    "ctransformers>=0.2.25,<1.0.0",
 ]
 
 anthropic = [
