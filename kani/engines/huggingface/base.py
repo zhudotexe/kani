@@ -1,12 +1,11 @@
-import asyncio
 import functools
+from threading import Thread
 from typing import AsyncIterable
 
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
-from .streaming import AsyncTextIteratorStreamer
 from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
@@ -182,21 +181,18 @@ class HuggingEngine(BaseEngine):
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
         input_toks, input_len, hyperparams = self._get_generate_args(messages, functions, **hyperparams)
-        streamer = AsyncTextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=streamer_timeout)
+        streamer = TextIteratorStreamer(
+            self.tokenizer, skip_prompt=True, skip_special_tokens=True, timeout=streamer_timeout
+        )
 
         # run it through the model in another thread so that we can get the tokens in this thread
         generate_func = functools.partial(self.model.generate, input_toks, streamer=streamer, **hyperparams)
-        gen_fut = asyncio.get_event_loop().run_in_executor(None, generate_func)
+        thread = Thread(target=generate_func)
+        thread.start()
 
         # then wait for tokens from the task
-        async for token in streamer:
+        for token in streamer:
             yield token
 
-        # finally get the completion and return as normal
-        output = await gen_fut
-        # decode to tokens
-        # the completion shouldn't include the prompt or stop token
-        content = self.tokenizer.decode(output[0][input_len:-1]).strip()
-        yield Completion(
-            ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - (input_len + 1)
-        )
+        # finally clean up the thread
+        thread.join()
