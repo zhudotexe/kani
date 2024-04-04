@@ -61,7 +61,7 @@ class LlamaCppEngine(BaseEngine):
         self.pipeline = prompt_pipeline
 
         model_load_kwargs.setdefault("n_ctx", max_context_size)
-        self.model = Llama.from_pretrained(repo_id, model_file=filename, **model_load_kwargs)
+        self.model = Llama.from_pretrained(repo_id=repo_id, filename=filename, **model_load_kwargs)
         self.hyperparams = hyperparams
 
         self.max_context_size = max_context_size or self.model.n_ctx()
