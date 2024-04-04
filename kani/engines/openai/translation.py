@@ -1,13 +1,11 @@
 """Helpers to translate kani chat objects into OpenAI params."""
 
-from typing import TYPE_CHECKING
-
 from kani.ai_function import AIFunction
 from kani.engines.base import BaseCompletion
-from kani.exceptions import PromptError
+from kani.exceptions import MissingModelDependencies, PromptError
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 
-if TYPE_CHECKING:
+try:
     from openai.types.chat import (
         ChatCompletion as OpenAIChatCompletion,
         ChatCompletionAssistantMessageParam,
@@ -27,6 +25,10 @@ if TYPE_CHECKING:
         Function as ChatCompletionMessageToolCallFunctionParam,
     )
     from openai.types.shared_params import FunctionDefinition
+except ImportError as e:
+    raise MissingModelDependencies(
+        'The OpenAIEngine requires extra dependencies. Please install kani with "pip install kani[openai]".'
+    ) from None
 
 
 # ==== kani -> openai ====
