@@ -5,7 +5,7 @@ If your language model backend is available on HuggingFace or is compatible with
 
 .. versionadded:: 1.0.0
     For most models that use a chat template, you won't even need to create a new engine class - instead, you can pass
-    a :class:`.PromptPipeline` .. TODO to which class?
+    a :class:`.PromptPipeline` to the :class:`.HuggingEngine`.
 
 If you do create a new engine, instead of having to implement the prediction logic, all you have to do is subclass
 :class:`.HuggingEngine` and implement :meth:`~.HuggingEngine.build_prompt` and :meth:`~.BaseEngine.message_len`.

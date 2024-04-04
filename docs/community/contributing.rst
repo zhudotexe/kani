@@ -11,8 +11,6 @@ You can contribute in many ways: helping us develop the library,
 
 (Funding agencies: the core devs are PhD students - you can support us that way too! |:wink:| Send us an email.)
 
-.. todo: cite us
-
 Contributing Code
 -----------------
 When contributing code and opening PRs, there are a couple things to keep in mind. kani is built on the principles

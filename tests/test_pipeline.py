@@ -183,7 +183,6 @@ def test_ensure_start(role):
 
 
 def test_apply():
-    # todo why are you failing
     # noop apply
     pipe = PromptPipeline().apply(lambda m: m)
     assert len(pipe(EXAMPLE_MSGS)) == len(EXAMPLE_MSGS)
