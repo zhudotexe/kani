@@ -186,14 +186,14 @@ class HuggingEngine(BaseEngine):
 
         # run it through the model in another thread so that we can get the tokens in this thread
         generate_func = functools.partial(self.model.generate, input_toks, streamer=streamer, **hyperparams)
-        task = asyncio.create_task(asyncio.get_event_loop().run_in_executor(None, generate_func))
+        gen_fut = asyncio.get_event_loop().run_in_executor(None, generate_func)
 
         # then wait for tokens from the task
         async for token in streamer:
             yield token
 
         # finally get the completion and return as normal
-        output = await task
+        output = await gen_fut
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
         content = self.tokenizer.decode(output[0][input_len:-1]).strip()
