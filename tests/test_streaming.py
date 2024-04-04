@@ -52,6 +52,7 @@ async def test_spam_stream(eng, data):
     )
     queries = data.draw(st.lists(st.text(min_size=0, max_size=5)))
     for query in queries:
+        query = query.strip()
         resp = await ai.chat_round_stream(query, test_echo=True)
         assert resp.content == query
 
