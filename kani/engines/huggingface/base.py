@@ -35,7 +35,7 @@ class HuggingEngine(BaseEngine):
         max_context_size: int,
         prompt_pipeline: PromptPipeline = None,
         *,
-        use_auth_token=None,
+        token=None,
         device: str | None = None,
         tokenizer_kwargs: dict = None,
         model_load_kwargs: dict = None,
@@ -46,7 +46,7 @@ class HuggingEngine(BaseEngine):
         :param max_context_size: The context size of the model.
         :param prompt_pipeline: The pipeline to translate a list of kani ChatMessages into the model-specific chat
             format (see :class:`.PromptPipeline`).
-        :param use_auth_token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
+        :param token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
         :param device: The hardware device to use. If not specified, uses CUDA if available; otherwise uses CPU.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
@@ -57,8 +57,8 @@ class HuggingEngine(BaseEngine):
         if model_load_kwargs is None:
             model_load_kwargs = {}
 
-        tokenizer_kwargs.setdefault("token", use_auth_token)
-        model_load_kwargs.setdefault("token", use_auth_token)
+        tokenizer_kwargs.setdefault("token", hyperparams.get("use_auth_token", token))
+        model_load_kwargs.setdefault("token", hyperparams.pop("use_auth_token", token))
 
         self.model_id = model_id
         self.max_context_size = max_context_size

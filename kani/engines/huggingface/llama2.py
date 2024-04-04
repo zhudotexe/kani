@@ -53,7 +53,7 @@ class LlamaEngine(HuggingEngine):
     def __init__(self, model_id: str = "meta-llama/Llama-2-7b-chat-hf", *args, **kwargs):
         """
         :param model_id: The ID of the model to load from HuggingFace.
-        :param use_auth_token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
+        :param token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
         :param max_context_size: The context size of the model.
         :param device: The hardware device to use. If not specified, uses CUDA if available; otherwise uses CPU.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
