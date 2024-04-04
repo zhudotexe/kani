@@ -57,8 +57,8 @@ class HuggingEngine(BaseEngine):
         if model_load_kwargs is None:
             model_load_kwargs = {}
 
-        tokenizer_kwargs.setdefault("use_auth_token", use_auth_token)
-        model_load_kwargs.setdefault("use_auth_token", use_auth_token)
+        tokenizer_kwargs.setdefault("token", use_auth_token)
+        model_load_kwargs.setdefault("token", use_auth_token)
 
         self.model_id = model_id
         self.max_context_size = max_context_size

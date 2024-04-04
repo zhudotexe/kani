@@ -61,31 +61,16 @@ example shows the :class:`.LlamaEngine`, but the same arguments should apply to 
 :class:`.HuggingEngine`.
 
 .. code-block:: python
-    :emphasize-lines: 4-7
+
+    from transformers import BitsAndBytesConfig
+    from kani.engines.huggingface.llama2 import LlamaEngine
+
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
 
     engine = LlamaEngine(
         use_auth_token=True,
-        strict=True,
         model_load_kwargs={
             "device_map": "auto",
-            "load_in_4bit": True,
+            "quantization_config": quantization_config,
         },
     )
-
-
-**Memory Usage Comparison**
-
-This table shows the effect of enabling fp4 quantization on GPU memory usage and inference speed on ``Llama-2-7b-chat``.
-
-These numbers represent the average of three runs on a consumer RTX 4070ti (12GB memory) with greedy sampling.
-
-+--------------+----------------------+----------------------------------------+
-| fp4 Enabled? | Memory Usage         | Inference Time (per token)             |
-+==============+======================+========================================+
-| No           | 26.6GB               | 1215.6 ms                              |
-+--------------+----------------------+----------------------------------------+
-| Yes          | 5.0GB (5.32x less)   | 23.6 ms (51.5x speedup\ [#shared]_)    |
-+--------------+----------------------+----------------------------------------+
-
-.. [#shared] Since the memory usage without fp4 enabled is larger than the VRAM size of my GPU, some weights were stored
-    in shared memory. This likely led to much slower inference compared to storing all weights on a GPU.
