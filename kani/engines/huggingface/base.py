@@ -1,12 +1,17 @@
+import asyncio
+import functools
+from typing import AsyncIterable
+
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
-from ..base import BaseEngine, Completion
+from .streaming import AsyncTextIteratorStreamer
+from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
     import torch
-    from transformers import AutoModelForCausalLM, AutoTokenizer
+    from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 except ImportError:
     raise MissingModelDependencies(
         'The HuggingEngine requires extra dependencies. Please install kani with "pip install kani[huggingface]". '
@@ -114,18 +119,8 @@ class HuggingEngine(BaseEngine):
             )
         return self.pipeline(messages)
 
-    async def predict(
-        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
-    ) -> Completion:
-        """
-        Given the current context of messages and available functions, get the next predicted chat message from the LM.
-
-        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
-            guaranteed to be less than max_context_size.
-        :param functions: The functions the LM is allowed to call.
-        :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
-            https://huggingface.co/docs/transformers/main_classes/text_generation)
-        """
+    def _get_generate_args(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams):
+        """Internal method to build common params for the generate call"""
         prompt = self.build_prompt(messages, functions)
         if isinstance(prompt, str):
             # prompt str to tokens
@@ -143,11 +138,65 @@ class HuggingEngine(BaseEngine):
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
         hyperparams.setdefault("max_length", self.max_context_size)  # by default HF sets this to 20, which is too small
+        return input_toks, input_len, hyperparams
+
+    async def predict(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> Completion:
+        """
+        Given the current context of messages and available functions, get the next predicted chat message from the LM.
+
+        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+            guaranteed to be less than max_context_size.
+        :param functions: The functions the LM is allowed to call.
+        :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
+            https://huggingface.co/docs/transformers/main_classes/text_generation)
+        """
+        input_toks, input_len, hyperparams = self._get_generate_args(messages, functions, **hyperparams)
+
         # run it through the model
         output = self.model.generate(input_toks, **hyperparams)
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
         content = self.tokenizer.decode(output[0][input_len:-1]).strip()
         return Completion(
+            ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - (input_len + 1)
+        )
+
+    async def stream(
+        self,
+        messages: list[ChatMessage],
+        functions: list[AIFunction] | None = None,
+        *,
+        streamer_timeout=None,
+        **hyperparams,
+    ) -> AsyncIterable[str | BaseCompletion]:
+        """
+        Given the current context of messages and available functions, get the next predicted chat message from the LM.
+
+        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+            guaranteed to be less than max_context_size.
+        :param functions: The functions the LM is allowed to call.
+        :param streamer_timeout: The maximum number of seconds to wait for the next token when streaming.
+        :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
+            https://huggingface.co/docs/transformers/main_classes/text_generation)
+        """
+        input_toks, input_len, hyperparams = self._get_generate_args(messages, functions, **hyperparams)
+        streamer = AsyncTextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=streamer_timeout)
+
+        # run it through the model in another thread so that we can get the tokens in this thread
+        generate_func = functools.partial(self.model.generate, input_toks, streamer=streamer, **hyperparams)
+        task = asyncio.create_task(asyncio.get_event_loop().run_in_executor(None, generate_func))
+
+        # then wait for tokens from the task
+        async for token in streamer:
+            yield token
+
+        # finally get the completion and return as normal
+        output = await task
+        # decode to tokens
+        # the completion shouldn't include the prompt or stop token
+        content = self.tokenizer.decode(output[0][input_len:-1]).strip()
+        yield Completion(
             ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - (input_len + 1)
         )
