@@ -5,11 +5,15 @@
 +----------------------------------------+------------------------------------+-----------------------+----------------------------------------------------------------------+
 | Claude, Claude Instant                 | ``anthropic``                      | |api|                 | :class:`kani.engines.anthropic.AnthropicEngine`                      |
 +----------------------------------------+------------------------------------+-----------------------+----------------------------------------------------------------------+
-| |:hugging:| transformers\ [#abstract]_ | ``huggingface``\ [#torch]_         | (abstract)            | :class:`kani.engines.huggingface.HuggingEngine`                      |
+| |:hugging:| transformers\ [#runtime]_  | ``huggingface``\ [#torch]_         | (runtime)             | :class:`kani.engines.huggingface.HuggingEngine`                      |
 +----------------------------------------+------------------------------------+-----------------------+----------------------------------------------------------------------+
 | |:hugging:| |:llama:| LLaMA v2         | ``huggingface, llama``\ [#torch]_  | |oss| |cpu| |gpu|     | :class:`kani.engines.huggingface.llama2.LlamaEngine`                 |
 +----------------------------------------+------------------------------------+-----------------------+----------------------------------------------------------------------+
 | |:hugging:| |:llama:| Vicuna v1.3      | ``huggingface, llama``\ [#torch]_  | |oss| |cpu| |gpu|     | :class:`kani.engines.huggingface.vicuna.VicunaEngine`                |
++----------------------------------------+------------------------------------+-----------------------+----------------------------------------------------------------------+
+| llama.cpp\ [#runtime]_                 | ``cpp``                            | (runtime)             | :class:`kani.engines.llamacpp.LlamaCppEngine`                        |
++----------------------------------------+------------------------------------+-----------------------+----------------------------------------------------------------------+
+| |:llama:| LLaMA v2 (GGUF)              | ``cpp``                            | |oss| |cpu| |gpu|     | :class:`kani.engines.llamacpp.LlamaCppEngine`                        |
 +----------------------------------------+------------------------------------+-----------------------+----------------------------------------------------------------------+
 
 **Legend**
@@ -29,3 +33,4 @@
 .. [#torch] You will also need to install `PyTorch <https://pytorch.org/get-started/locally/>`_ manually.
 .. [#abstract] This is an abstract class of models; kani includes a couple concrete implementations for
   reference.
+.. [#runtime] This is a model runtime that can support multiple models using a :class:`.PromptPipeline`.

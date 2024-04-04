@@ -29,7 +29,7 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "kani[huggingface,llama,openai,anthropic]",
+    "kani[huggingface,llama,cpp,openai,anthropic]",
 ]
 
 huggingface = [
@@ -38,6 +38,11 @@ huggingface = [
 
 llama = [
     "sentencepiece~=0.1.99",
+]
+
+cpp = [
+    "llama-cpp-python>=0.2.0,<1.0.0",
+    "huggingface-hub",
 ]
 
 openai = [

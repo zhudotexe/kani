@@ -24,6 +24,10 @@ engine = LlamaEngine(model_id="meta-llama/Llama-2-7b-chat-hf", use_auth_token=Tr
 from kani.engines.huggingface.vicuna import VicunaEngine
 engine = VicunaEngine(model_id="lmsys/vicuna-7b-v1.3")
 
+# ==== LLaMA v2 (llama.cpp) ====
+from kani.engines.llamacpp import LlamaCppEngine
+engine = LlamaCppEngine(repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_K_M.gguf")
+
 # take your pick - the kani interface is compatible with all!
 ai = Kani(engine)
 

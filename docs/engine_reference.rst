@@ -36,3 +36,8 @@ Hugging Face
 
 .. autoclass:: kani.engines.huggingface.vicuna.VicunaEngine
     :members:
+
+llama.cpp
+---------
+.. autoclass:: kani.engines.llamacpp.LlamaCppEngine
+    :members:
