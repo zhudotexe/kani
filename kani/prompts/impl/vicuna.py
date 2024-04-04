@@ -5,7 +5,7 @@ from kani.prompts.pipeline import PromptPipeline
 
 VICUNA_PIPELINE = (
     PromptPipeline()
-    .merge_consecutive(role=(ChatRole.USER, ChatRole.FUNCTION), sep="\n")
+    .merge_consecutive(role=(ChatRole.USER, ChatRole.FUNCTION), sep="\n", out_role=ChatRole.USER)
     .merge_consecutive(role=ChatRole.ASSISTANT, sep=" ")
     .conversation_fmt(
         sep="\n",
