@@ -54,6 +54,7 @@ nitpick_ignore_regex = [
     (r"py:class", r"openai\..*"),  # openai does not use sphinx for docs
     (r"py:class", r"anthropic\..*"),  # anthropic does not use sphinx for docs
     (r"py:class", r"asyncio\.\w+\..*"),  # asyncio submodule intersphinx is borked
+    (r"py:class", r"kani\..*\.T"),  # ignore generics
 ]
 
 # sphinx.ext.autodoc
