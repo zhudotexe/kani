@@ -3,7 +3,7 @@ import itertools
 import operator
 import pprint
 import time
-from typing import overload
+from typing import Generic, TypeVar, overload
 
 from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import PipelineStep
@@ -30,8 +30,11 @@ except ImportError:
     # sad to use a generic typevar here
     Self = "PromptPipeline"
 
+# use a generic to specify the return type of the pipeline
+T = TypeVar("T")
 
-class PromptPipeline:
+
+class PromptPipeline(Generic[T]):
     r"""
     This class creates a reproducible pipeline for translating a list of :class:`.ChatMessage` into an engine-specific
     format using fluent-style chaining.
@@ -250,7 +253,7 @@ class PromptPipeline:
         # FUNCTION messages (if not specified, defaults to user)
         function_prefix: str = None,
         function_suffix: str = None,
-    ) -> Self: ...
+    ) -> "PromptPipeline[str]": ...
 
     def conversation_fmt(self, **kwargs):
         """
@@ -281,14 +284,14 @@ class PromptPipeline:
         return self
 
     # ==== eval ====
-    def __call__(self, msgs: list[ChatMessage]):
+    def __call__(self, msgs: list[ChatMessage]) -> T:
         """
         Apply the pipeline to a list of kani messages. The return type will vary based on the steps in the pipeline;
         if no steps are defined the return type will be a copy of the input messages.
         """
         return self.execute(msgs)
 
-    def execute(self, msgs: list[ChatMessage], *, deepcopy=False, for_measurement=False):
+    def execute(self, msgs: list[ChatMessage], *, deepcopy=False, for_measurement=False) -> T:
         """
         Apply the pipeline to a list of kani messages. The return type will vary based on the steps in the pipeline;
         if no steps are defined the return type will be a copy of the input messages.

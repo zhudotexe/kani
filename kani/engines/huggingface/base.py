@@ -37,7 +37,7 @@ class HuggingEngine(BaseEngine):
         self,
         model_id: str,
         max_context_size: int,
-        prompt_pipeline: PromptPipeline = None,
+        prompt_pipeline: PromptPipeline[str | torch.Tensor] = None,
         *,
         token=None,
         device: str | None = None,

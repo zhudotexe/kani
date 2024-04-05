@@ -36,7 +36,7 @@ class LlamaCppEngine(BaseEngine):
         repo_id: str,
         filename: str = None,
         max_context_size: int = 0,
-        prompt_pipeline: PromptPipeline = LLAMA2_PIPELINE,
+        prompt_pipeline: PromptPipeline[str | list[int]] = LLAMA2_PIPELINE,
         *,
         model_load_kwargs: dict = None,
         **hyperparams,
