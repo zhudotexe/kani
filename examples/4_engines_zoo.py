@@ -10,11 +10,12 @@ from kani import Kani, chat_in_terminal
 
 # ==== OpenAI (GPT) ====
 from kani.engines.openai import OpenAIEngine
-engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4")
 
 # ==== Anthropic (Claude) ====
+# see https://docs.anthropic.com/claude/docs/models-overview for a list of model IDs
 from kani.engines.anthropic import AnthropicEngine
-engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-2.1")
+engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-3-opus-20240229")
 
 # ==== LLaMA v2 (Hugging Face) ====
 from kani.engines.huggingface.llama2 import LlamaEngine
