@@ -167,10 +167,15 @@ class Kani:
 
                 # run each tool call in parallel
                 async def _do_tool_call(tc: ToolCall):
+                    # call the method and set the is_tool_call_error attr (if the impl has not already set it)
                     try:
-                        return await self.do_function_call(tc.function, tool_call_id=tc.id)
+                        tc_result = await self.do_function_call(tc.function, tool_call_id=tc.id)
+                        if tc_result.message.is_tool_call_error is None:
+                            tc_result.message.is_tool_call_error = False
                     except FunctionCallException as e:
-                        return await self.handle_function_call_exception(tc.function, e, retry, tool_call_id=tc.id)
+                        tc_result = await self.handle_function_call_exception(tc.function, e, retry, tool_call_id=tc.id)
+                        tc_result.message.is_tool_call_error = True
+                    return tc_result
 
                 # and update results after they are completed
                 is_model_turn = False

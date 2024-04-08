@@ -234,6 +234,10 @@ class ChatMessage(BaseModel):
     tool_calls: list[ToolCall] | None = None
     """The tool calls requested by the model (assistant messages only)."""
 
+    is_tool_call_error: bool | None = None
+    """If this is a FUNCTION message containing the results of a function call, whether the function call raised an
+    exception."""
+
     @property
     def function_call(self) -> FunctionCall | None:
         """If there is exactly one tool call to a function, return that tool call's requested function.
