@@ -1,19 +1,16 @@
 import functools
+import itertools
 import json
 import os
 
 from kani.ai_function import AIFunction
-from kani.exceptions import MissingModelDependencies
-from kani.models import ChatMessage, ChatRole
+from kani.exceptions import KaniException, MissingModelDependencies
+from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
 from ..base import BaseEngine, Completion
 
 try:
     from anthropic import AI_PROMPT, HUMAN_PROMPT, AsyncAnthropic
-
-    # anthropic async client loads a small json file using anyio for some reason; hook into the underlying loader
-    # noinspection PyProtectedMember
-    from anthropic._tokenizers import sync_get_tokenizer
 except ImportError as e:
     raise MissingModelDependencies(
         'The AnthropicEngine requires extra dependencies. Please install kani with "pip install kani[anthropic]".'
@@ -41,8 +38,12 @@ def content_transform(msg: ChatMessage):
     # }
     if msg.role != ChatRole.FUNCTION:
         return msg.text
-    # todo is_error
     result = {"type": "tool_result", "tool_use_id": msg.tool_call_id, "content": msg.text}
+
+    # tool call error
+    if msg.is_tool_call_error:
+        result["is_error"] = True
+
     return [result]
 
 
@@ -73,7 +74,7 @@ class AnthropicEngine(BaseEngine):
     def __init__(
         self,
         api_key: str = None,
-        model: str = "claude-3-haiku",
+        model: str = "claude-3-haiku-20240307",
         max_tokens: int = 512,
         max_context_size: int = None,
         *,
@@ -122,6 +123,10 @@ class AnthropicEngine(BaseEngine):
         # token counting - claude 3+ does not release tokenizer so we have to do heuristics and cache
         self.token_cache = {}
         if model.startswith("claude-2"):
+            # anthropic async client loads a json file using anyio for some reason; hook into the underlying loader
+            # noinspection PyProtectedMember
+            from anthropic._tokenizers import sync_get_tokenizer
+
             self.tokenizer = sync_get_tokenizer()
         else:
             # claude 3 tokenizer just... doesn't exist
@@ -163,6 +168,7 @@ class AnthropicEngine(BaseEngine):
         return n // 4
 
     def _message_len_tokenizer(self, message):
+        # this only applies to claude-2
         # human messages are prefixed with `\n\nHuman: ` and assistant with `\n\nAssistant:`
         if message.role == ChatRole.USER:
             mlen = 5
@@ -204,23 +210,63 @@ class AnthropicEngine(BaseEngine):
         # and translate to dict spec
         messages = CLAUDE_PIPELINE(messages)
 
+        # merge FUNCTION, USER consecutives into one with multiple parts
+        prompt_msgs = []
+        for role, group_msgs in itertools.groupby(messages, key=lambda m: m["role"]):
+            group_msgs = list(group_msgs)
+            # >1 consecutive user messages get merged
+            if role == "user" and len(group_msgs) > 1:
+                # turn str parts into {type: text, text: ...}
+                prompt_msg_content = []
+                for msg in group_msgs:
+                    if isinstance(msg["content"], str):
+                        prompt_msg_content.append({"type": "text", "text": msg["content"]})
+                    else:
+                        prompt_msg_content.append(msg["content"])
+                # and output the final msg
+                prompt_msgs.append({"role": "user", "content": prompt_msg_content})
+            # else send to output
+            else:
+                prompt_msgs.extend(group_msgs)
+
         # --- tools ---
         if functions:
             kwargs["tools"] = [
                 {"name": f.name, "description": f.desc, "input_schema": f.json_schema} for f in functions
             ]
 
+        # --- completion ---
         completion = await self.client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
-            messages=messages,
+            messages=prompt_msgs,
             **kwargs,
             **self.hyperparams,
             **hyperparams,
         )
 
-        # todo translate to kani
-        return Completion(message=ChatMessage.assistant(completion.completion.strip()))
+        # translate to kani
+        tool_calls = []
+        text_parts = []
+        for part in completion.content:
+            if part.type == "text":
+                text_parts.append(part.text)
+            elif part.type == "tool_use":
+                fc = FunctionCall(name=part.name, arguments=json.dumps(part.input))
+                tc = ToolCall(id=part.id, type="function", function=fc)
+                tool_calls.append(tc)
+            else:
+                raise KaniException(
+                    f"The engine returned an unknown part: {part.type}. Please report this as an issue on GitHub with"
+                    " instructions on how to reproduce this issue."
+                )
+        content = text_parts[0] if len(text_parts) == 1 else text_parts
+
+        return Completion(
+            message=ChatMessage.assistant(content, tool_calls=tool_calls or None),
+            prompt_tokens=completion.usage.input_tokens,
+            completion_tokens=completion.usage.output_tokens,
+        )
 
     async def close(self):
         await self.client.close()
