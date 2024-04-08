@@ -2,12 +2,13 @@ import functools
 import itertools
 import json
 import os
+from typing import AsyncIterable
 
 from kani.ai_function import AIFunction
 from kani.exceptions import KaniException, MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
-from ..base import BaseEngine, Completion
+from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
     from anthropic import AI_PROMPT, HUMAN_PROMPT, AsyncAnthropic
@@ -194,9 +195,8 @@ class AnthropicEngine(BaseEngine):
         return n // 4
 
     # ==== requests ====
-    async def predict(
-        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
-    ) -> Completion:
+    @staticmethod
+    def _prepare_request(messages, functions):
         kwargs = {}
 
         # --- messages ---
@@ -235,20 +235,13 @@ class AnthropicEngine(BaseEngine):
                 {"name": f.name, "description": f.desc, "input_schema": f.json_schema} for f in functions
             ]
 
-        # --- completion ---
-        completion = await self.client.messages.create(
-            model=self.model,
-            max_tokens=self.max_tokens,
-            messages=prompt_msgs,
-            **kwargs,
-            **self.hyperparams,
-            **hyperparams,
-        )
+        return kwargs, prompt_msgs
 
-        # translate to kani
+    @staticmethod
+    def _translate_anthropic_message(message):
         tool_calls = []
         text_parts = []
-        for part in completion.content:
+        for part in message.content:
             if part.type == "text":
                 text_parts.append(part.text)
             elif part.type == "tool_use":
@@ -264,9 +257,46 @@ class AnthropicEngine(BaseEngine):
 
         return Completion(
             message=ChatMessage.assistant(content, tool_calls=tool_calls or None),
-            prompt_tokens=completion.usage.input_tokens,
-            completion_tokens=completion.usage.output_tokens,
+            prompt_tokens=message.usage.input_tokens,
+            completion_tokens=message.usage.output_tokens,
         )
+
+    async def predict(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> Completion:
+        kwargs, prompt_msgs = self._prepare_request(messages, functions)
+
+        # --- completion ---
+        message = await self.client.messages.create(
+            model=self.model,
+            max_tokens=self.max_tokens,
+            messages=prompt_msgs,
+            **kwargs,
+            **self.hyperparams,
+            **hyperparams,
+        )
+
+        # translate to kani
+        return self._translate_anthropic_message(message)
+
+    async def stream(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        kwargs, prompt_msgs = self._prepare_request(messages, functions)
+
+        async with self.client.messages.stream(
+            model=self.model,
+            max_tokens=self.max_tokens,
+            messages=prompt_msgs,
+            **kwargs,
+            **self.hyperparams,
+            **hyperparams,
+        ) as stream:
+            async for text in stream.text_stream:
+                yield text
+
+            message = await stream.get_final_message()
+            yield self._translate_anthropic_message(message)
 
     async def close(self):
         await self.client.close()
