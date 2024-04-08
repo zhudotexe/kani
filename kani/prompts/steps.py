@@ -1,9 +1,11 @@
 import inspect
 import itertools
+from typing import Any, Callable
 
-from kani.models import ChatRole
+from kani.exceptions import PromptError
+from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import FilterMixin, PipelineStep
-from kani.prompts.types import ApplyCallableT, FunctionCallStrT, PipelineMsgT
+from kani.prompts.types import ApplyCallableT, ApplyResultT, FunctionCallStrT, PipelineMsgT
 
 
 # ==== steps ====
@@ -151,6 +153,51 @@ class EnsureStart(FilterMixin, PipelineStep):
         return f"Ensure that the prompt starts with a {self.explain_note('or', plural=False)}"
 
 
+class EnsureBoundFunctionCalls(PipelineStep):
+    def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+        bound = []
+        free_toolcall_ids = set()
+        for m in msgs:
+            # if this is not a function result and there are free tool call IDs, raise
+            if m.role != ChatRole.FUNCTION and free_toolcall_ids:
+                raise PromptError(
+                    f"Encountered a {m.role.value!r} message but expected a FUNCTION message to satisfy the pending"
+                    f" tool call(s): {free_toolcall_ids}"
+                )
+            # asst: add tool call IDs to freevars
+            if m.role == ChatRole.ASSISTANT and m.tool_calls:
+                for tc in m.tool_calls:
+                    free_toolcall_ids.add(tc.id)
+            # func: bind freevars
+            elif m.role == ChatRole.FUNCTION:
+                # has ID: bind it if requested; yeet if not
+                if m.tool_call_id is not None:
+                    if m.tool_call_id in free_toolcall_ids:
+                        free_toolcall_ids.remove(m.tool_call_id)
+                    else:
+                        # this happens if the tool call is pushed out of context but the result is still here,
+                        # and we have always included messages beforehand
+                        continue  # yeet this message
+                # no ID: bind if unambiguous
+                elif len(free_toolcall_ids) == 1:
+                    m.tool_call_id = free_toolcall_ids.pop()
+                # no ID: error if ambiguous
+                elif len(free_toolcall_ids) > 1:
+                    raise PromptError(
+                        "Got a FUNCTION message with no tool_call_id but multiple tool calls are pending"
+                        f" ({free_toolcall_ids})! Set the tool_call_id to resolve the pending tool requests."
+                    )
+                # otherwise pass the FUNCTION message through
+            bound.append(m)
+        return bound
+
+    def explain(self) -> str:
+        return "Ensure that each function call is bound"
+
+    def explain_example_kwargs(self) -> dict[str, bool]:
+        return {"function_call": True}
+
+
 class Apply(FilterMixin, PipelineStep):
     def __init__(self, func: ApplyCallableT, **filter_kwargs):
         super().__init__(**filter_kwargs)
@@ -170,7 +217,7 @@ class Apply(FilterMixin, PipelineStep):
                 f" {len(sig.parameters)} parameters)."
             )
 
-    def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+    def execute(self, msgs: list[PipelineMsgT]) -> list[ApplyResultT]:
         out = []
         for i, msg in enumerate(msgs):
             # for each matching message, append f(msg) if it's not None
@@ -252,6 +299,47 @@ class ConversationFmt(PipelineStep):
     def explain_example_kwargs(self) -> dict[str, bool]:
         kwargs = {}
         if self.function_prefix != self.user_prefix or self.function_suffix != self.user_suffix:
+            kwargs["function_call"] = True
+        return kwargs
+
+
+class ConversationDict(PipelineStep):
+    def __init__(
+        self,
+        *,
+        system_role: str = "system",
+        user_role: str = "user",
+        assistant_role: str = "assistant",
+        function_role: str = "tool",
+        content_transform: Callable[[ChatMessage], Any] = lambda msg: msg.text,
+        additional_keys: Callable[[ChatMessage], dict] = lambda msg: {},
+    ):
+        self.role_to_str = {
+            ChatRole.SYSTEM: system_role,
+            ChatRole.USER: user_role,
+            ChatRole.ASSISTANT: assistant_role,
+            ChatRole.FUNCTION: function_role,
+        }
+        self.content_transform = content_transform
+        self.additional_keys = additional_keys
+
+    def execute(self, msgs: list[PipelineMsgT]) -> list[dict[str, Any]]:
+        out = []
+        for msg in msgs:
+            msg_dict = {
+                "role": self.role_to_str[msg.role],
+                "content": self.content_transform(msg),
+                **self.additional_keys(msg),
+            }
+            out.append(msg_dict)
+        return out
+
+    def explain(self) -> str:
+        return 'Return the messages as dictionaries with {"role": ..., "content": ...} keys (see example)'
+
+    def explain_example_kwargs(self) -> dict[str, bool]:
+        kwargs = {}
+        if self.role_to_str[ChatRole.FUNCTION] != "function":
             kwargs["function_call"] = True
         return kwargs
 

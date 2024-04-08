@@ -3,7 +3,7 @@ import itertools
 import operator
 import pprint
 import time
-from typing import Generic, TypeVar, overload
+from typing import Any, Callable, Generic, TypeVar, overload
 
 from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import PipelineStep
@@ -11,7 +11,9 @@ from kani.prompts.docutils import autoparams
 from kani.prompts.examples import ALL_EXAMPLE_KWARGS, build_conversation
 from kani.prompts.steps import (
     Apply,
+    ConversationDict,
     ConversationFmt,
+    EnsureBoundFunctionCalls,
     EnsureStart,
     FunctionCallFmt,
     MergeConsecutive,
@@ -19,7 +21,7 @@ from kani.prompts.steps import (
     TranslateRole,
     Wrap,
 )
-from kani.prompts.types import ApplyCallableT, FunctionCallStrT, PredicateFilterT, RoleFilterT
+from kani.prompts.types import ApplyCallableT, ApplyResultT, FunctionCallStrT, PredicateFilterT, RoleFilterT
 
 # pre python3.11 Self type - let's just call it a PromptPipeline
 try:
@@ -212,7 +214,29 @@ class PromptPipeline(Generic[T]):
         return self
 
     @overload
-    def apply(self, func: ApplyCallableT, *, role: RoleFilterT = None, predicate: PredicateFilterT = None) -> Self: ...
+    def ensure_bound_function_calls(self) -> Self: ...
+
+    @autoparams
+    def ensure_bound_function_calls(self):
+        """
+        Ensure that each FUNCTION message is preceded by an ASSISTANT message requesting it, and that each FUNCTION
+        message's ``tool_call_id`` matches the request. If a FUNCTION message has no ``tool_call_id`` (e.g. a few-shot
+        prompt), bind it to a preceding ASSISTANT message if it is unambiguous.
+
+        This is generally only useful if you end the pipeline with :meth:`conversation_dict`.
+
+        Will remove hanging FUNCTION messages (i.e. messages where the corresponding request was managed out of the
+        model's context) from the beginning of the prompt if necessary.
+
+        :raises PromptError: if it is impossible to bind each function call to a request unambiguously.
+        """
+        self.steps.append(EnsureBoundFunctionCalls())
+        return self
+
+    @overload
+    def apply(
+        self, func: ApplyCallableT, *, role: RoleFilterT = None, predicate: PredicateFilterT = None
+    ) -> "PromptPipeline[list[ApplyResultT]]": ...
 
     @autoparams
     def apply(self, *args, **kwargs):
@@ -281,6 +305,41 @@ class PromptPipeline(Generic[T]):
         :param function_suffix: A suffix to add after each FUNCTION message.
         """
         self.steps.append(ConversationFmt(**kwargs))
+        return self
+
+    @overload
+    def conversation_dict(
+        self,
+        *,
+        system_role: str = "system",
+        user_role: str = "user",
+        assistant_role: str = "assistant",
+        function_role: str = "tool",
+        content_transform: Callable[[ChatMessage], Any] = lambda msg: msg.text,
+        additional_keys: Callable[[ChatMessage], dict] = lambda msg: {},
+    ) -> "PromptPipeline[list[dict[str, Any]]]": ...
+
+    def conversation_dict(self, **kwargs):
+        """
+        Takes in the list of messages and returns a list of dictionaries with ("role", "content") keys.
+
+        By default, the "role" key will be "system", "user", "assistant", or "tool" unless the respective role
+        override is specified.
+
+        By default, the "content" key will be ``message.text`` unless the ``content_transform`` argument is specified.
+
+        This method should be the last step in a pipeline and will cause the pipeline to return a :class:`list[dict]`.
+
+        :param system_role: The role to give to SYSTEM messages (default "system").
+        :param user_role: The role to give to USER messages (default "user").
+        :param assistant_role: The role to give to ASSISTANT messages (default "assistant").
+        :param function_role: The role to give to FUNCTION messages (default "tool").
+        :param content_transform: A function taking in the message and returning the contents of the "content" key
+            (defaults to ``msg.text``).
+        :param additional_keys: A function taking in the message and returning a dictionary containing any additional
+            keys to add to the message's dict.
+        """
+        self.steps.append(ConversationDict(**kwargs))
         return self
 
     # ==== eval ====

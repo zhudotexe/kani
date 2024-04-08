@@ -1,5 +1,5 @@
 from collections.abc import Collection
-from typing import Any, Callable
+from typing import Callable, TypeVar
 
 from kani.models import ChatMessage, ChatRole, ToolCall
 
@@ -15,7 +15,11 @@ PredicateFilterT = Callable[[PipelineMsgT], bool]
 FunctionCallStrT = Callable[[ToolCall], str | None]
 """A callable to format a toolcall as a str"""
 
+ApplyResultT = TypeVar("ApplyResultT")
+
 ApplyCallableT = (
-    Callable[[PipelineMsgT], Any] | Callable[[PipelineMsgT, bool], Any] | Callable[[PipelineMsgT, bool, int], Any]
+    Callable[[PipelineMsgT], ApplyResultT]
+    | Callable[[PipelineMsgT, bool], ApplyResultT]
+    | Callable[[PipelineMsgT, bool, int], ApplyResultT]
 )
 """A function taking 1-3 args"""
