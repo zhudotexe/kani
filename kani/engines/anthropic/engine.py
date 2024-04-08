@@ -266,8 +266,7 @@ class AnthropicEngine(BaseEngine):
 
         return kwargs, prompt_msgs
 
-    @staticmethod
-    def _translate_anthropic_message(message):
+    def _translate_anthropic_message(self, message):
         tool_calls = []
         text_parts = []
         for part in message.content:
@@ -283,9 +282,14 @@ class AnthropicEngine(BaseEngine):
                     " instructions on how to reproduce this issue."
                 )
         content = text_parts[0] if len(text_parts) == 1 else text_parts
+        kani_msg = ChatMessage.assistant(content, tool_calls=tool_calls or None)
+
+        # also cache the message token len
+        cache_key = self.message_cache_key(kani_msg)
+        self.token_cache[cache_key] = message.usage.output_tokens
 
         return Completion(
-            message=ChatMessage.assistant(content, tool_calls=tool_calls or None),
+            message=kani_msg,
             prompt_tokens=message.usage.input_tokens,
             completion_tokens=message.usage.output_tokens,
         )
