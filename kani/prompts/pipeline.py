@@ -328,7 +328,7 @@ class PromptPipeline(Generic[T]):
 
         By default, the "content" key will be ``message.text`` unless the ``content_transform`` argument is specified.
 
-        This method should be the last step in a pipeline and will cause the pipeline to return a :class:`list[dict]`.
+        This method should be the last step in a pipeline and will cause the pipeline to return a ``list[dict]``.
 
         :param system_role: The role to give to SYSTEM messages (default "system").
         :param user_role: The role to give to USER messages (default "user").
