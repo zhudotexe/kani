@@ -2,8 +2,9 @@
 
 from kani.ai_function import AIFunction
 from kani.engines.base import BaseCompletion
-from kani.exceptions import MissingModelDependencies, PromptError
+from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
+from kani.prompts.pipeline import PromptPipeline
 
 try:
     from openai.types.chat import (
@@ -32,58 +33,6 @@ except ImportError as e:
 
 
 # ==== kani -> openai ====
-def translate_functions(functions: list[AIFunction]) -> list[ChatCompletionToolParam]:
-    return [
-        ChatCompletionToolParam(
-            type="function", function=FunctionDefinition(name=f.name, description=f.desc, parameters=f.json_schema)
-        )
-        for f in functions
-    ]
-
-
-def translate_messages(messages: list[ChatMessage]) -> list[ChatCompletionMessageParam]:
-    translated_messages = []
-    free_toolcall_ids = set()
-    for m in messages:
-        # if this is not a function result and there are free tool call IDs, raise
-        if m.role != ChatRole.FUNCTION and free_toolcall_ids:
-            raise PromptError(
-                f"Encountered a {m.role.value!r} message but expected a FUNCTION message to satisfy the pending"
-                f" tool call(s): {free_toolcall_ids}"
-            )
-        # asst: add tool call IDs to freevars
-        if m.role == ChatRole.ASSISTANT and m.tool_calls:
-            for tc in m.tool_calls:
-                free_toolcall_ids.add(tc.id)
-        # func: bind freevars
-        elif m.role == ChatRole.FUNCTION:
-            # has ID: bind it if requested; translate to FUNCTION if not
-            if m.tool_call_id is not None:
-                if m.tool_call_id in free_toolcall_ids:
-                    free_toolcall_ids.remove(m.tool_call_id)
-                else:
-                    # this happens if the tool call is pushed out of context but the result is still here,
-                    # and we have always included messages beforehand
-                    # TODO: this will eventually be deprecated - maube we just skip this message?
-                    m = m.copy_with(tool_call_id=None)
-            # no ID: bind if unambiguous
-            elif len(free_toolcall_ids) == 1:
-                m = m.copy_with(tool_call_id=free_toolcall_ids.pop())
-            # no ID: error if ambiguous
-            elif len(free_toolcall_ids) > 1:
-                raise PromptError(
-                    "Got a FUNCTION message with no tool_call_id but multiple tool calls are pending"
-                    f" ({free_toolcall_ids})! Set the tool_call_id to resolve the pending tool requests."
-                )
-            # otherwise pass the FUNCTION message through
-        translated_messages.append(kani_cm_to_openai_cm(m))
-    # if the translated messages start with a hanging TOOL call, strip it (openai limitation)
-    # though hanging FUNCTION messages are OK
-    while translated_messages and translated_messages[0]["role"] == "tool":
-        translated_messages.pop(0)
-    return translated_messages
-
-
 # decomp
 def kani_cm_to_openai_cm(msg: ChatMessage) -> ChatCompletionMessageParam:
     """Translate a kani ChatMessage into an OpenAI Message."""
@@ -115,6 +64,28 @@ def kani_tc_to_openai_tc(tc: ToolCall) -> ChatCompletionMessageToolCallParam:
     """Translate a kani ToolCall into an OpenAI dict"""
     oai_function = ChatCompletionMessageToolCallFunctionParam(name=tc.function.name, arguments=tc.function.arguments)
     return ChatCompletionMessageToolCallParam(id=tc.id, type="function", function=oai_function)
+
+
+# main
+OPENAI_PIPELINE = (
+    PromptPipeline()
+    .ensure_bound_function_calls()
+    .ensure_start(predicate=lambda msg: msg.role != ChatRole.FUNCTION)
+    .apply(kani_cm_to_openai_cm)
+)
+
+
+def translate_functions(functions: list[AIFunction]) -> list[ChatCompletionToolParam]:
+    return [
+        ChatCompletionToolParam(
+            type="function", function=FunctionDefinition(name=f.name, description=f.desc, parameters=f.json_schema)
+        )
+        for f in functions
+    ]
+
+
+def translate_messages(messages: list[ChatMessage]) -> list[ChatCompletionMessageParam]:
+    return OPENAI_PIPELINE(messages)
 
 
 # ==== openai -> kani ====
