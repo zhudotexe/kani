@@ -2,6 +2,7 @@ import functools
 import itertools
 import json
 import os
+import warnings
 from typing import AsyncIterable
 
 from kani.ai_function import AIFunction
@@ -37,15 +38,38 @@ def content_transform(msg: ChatMessage):
     #     }
     #   ]
     # }
-    if msg.role != ChatRole.FUNCTION:
-        return msg.text
-    result = {"type": "tool_result", "tool_use_id": msg.tool_call_id, "content": msg.text}
+    if msg.role == ChatRole.FUNCTION:
+        result = {"type": "tool_result", "tool_use_id": msg.tool_call_id, "content": msg.text}
 
-    # tool call error
-    if msg.is_tool_call_error:
-        result["is_error"] = True
+        # tool call error
+        if msg.is_tool_call_error:
+            result["is_error"] = True
 
-    return [result]
+        return [result]
+
+    # ASSISTANT messages with tool calls should look like:
+    # {
+    #   "role": "assistant",
+    #   "content": [
+    #     {
+    #       "type": "text",
+    #       "text": "<thinking>I need to use the get_weather, and the user wants San Francisco, CA.</thinking>"
+    #     },
+    #     {
+    #       "type": "tool_use",
+    #       "id": "toolu_01A09q90qw90lq917835lq9",
+    #       "name": "get_weather",
+    #       "input": {"location": "San Francisco, CA", "unit": "celsius"}
+    #     }
+    #   ]
+    # }
+    if msg.role == ChatRole.ASSISTANT and msg.tool_calls:
+        content = [{"type": "text", "text": str(part)} for part in msg.parts]
+        for tc in msg.tool_calls:
+            content.append({"type": "tool_use", "id": tc.id, "name": tc.function.name, "input": tc.function.kwargs})
+        return content
+
+    return msg.text
 
 
 # assumes system messages are plucked before calling
@@ -195,6 +219,11 @@ class AnthropicEngine(BaseEngine):
         return n // 4
 
     # ==== requests ====
+    def _get_client(self, functions):
+        if not functions:
+            return self.client
+        return self.client.beta.tools
+
     @staticmethod
     def _prepare_request(messages, functions):
         kwargs = {}
@@ -265,9 +294,10 @@ class AnthropicEngine(BaseEngine):
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> Completion:
         kwargs, prompt_msgs = self._prepare_request(messages, functions)
+        client = self._get_client(functions)
 
         # --- completion ---
-        message = await self.client.messages.create(
+        message = await client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
             messages=prompt_msgs,
@@ -282,21 +312,27 @@ class AnthropicEngine(BaseEngine):
     async def stream(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> AsyncIterable[str | BaseCompletion]:
-        kwargs, prompt_msgs = self._prepare_request(messages, functions)
+        if functions:
+            warnings.warn("Claude 3 does not support streaming with function calling.")
+            async for elem in super().stream(messages, functions, **hyperparams):
+                yield elem
+        else:
+            # do the stream
+            kwargs, prompt_msgs = self._prepare_request(messages, functions)
 
-        async with self.client.messages.stream(
-            model=self.model,
-            max_tokens=self.max_tokens,
-            messages=prompt_msgs,
-            **kwargs,
-            **self.hyperparams,
-            **hyperparams,
-        ) as stream:
-            async for text in stream.text_stream:
-                yield text
+            async with self.client.messages.stream(
+                model=self.model,
+                max_tokens=self.max_tokens,
+                messages=prompt_msgs,
+                **kwargs,
+                **self.hyperparams,
+                **hyperparams,
+            ) as stream:
+                async for text in stream.text_stream:
+                    yield text
 
-            message = await stream.get_final_message()
-            yield self._translate_anthropic_message(message)
+                message = await stream.get_final_message()
+                yield self._translate_anthropic_message(message)
 
     async def close(self):
         await self.client.close()
