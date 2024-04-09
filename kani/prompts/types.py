@@ -1,10 +1,13 @@
 from collections.abc import Collection
 from typing import Callable, TypeVar
 
-from kani.models import ChatMessage, ChatRole, ToolCall
+from kani.models import ChatMessage, ChatRole, MessagePart, ToolCall
 
 PipelineMsgT = ChatMessage
 """The type of messages in the pipeline"""
+
+MessageContentT = str | list[MessagePart | str] | None
+"""The type of ChatMessage.content"""
 
 RoleFilterT = ChatRole | Collection[ChatRole]
 """A role or list of roles to apply a step to"""

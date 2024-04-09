@@ -21,7 +21,15 @@ from kani.prompts.steps import (
     TranslateRole,
     Wrap,
 )
-from kani.prompts.types import ApplyCallableT, ApplyResultT, FunctionCallStrT, PredicateFilterT, RoleFilterT
+from kani.prompts.types import (
+    ApplyCallableT,
+    ApplyResultT,
+    FunctionCallStrT,
+    MessageContentT,
+    PipelineMsgT,
+    PredicateFilterT,
+    RoleFilterT,
+)
 
 # pre python3.11 Self type - let's just call it a PromptPipeline
 try:
@@ -137,14 +145,20 @@ class PromptPipeline(Generic[T]):
 
     @overload
     def merge_consecutive(
-        self, *, sep: str, out_role: ChatRole = None, role: RoleFilterT = None, predicate: PredicateFilterT = None
+        self,
+        *,
+        sep: str = None,
+        joiner: Callable[[list[PipelineMsgT]], MessageContentT] = None,
+        out_role: ChatRole = None,
+        role: RoleFilterT = None,
+        predicate: PredicateFilterT = None,
     ) -> Self: ...
 
     @autoparams
     def merge_consecutive(self, **kwargs):
         r"""
-        If multiple messages that match are found consecutively, merge them into a single message whose contents
-        are equivalent to the contents of the merged messages joined by ``sep``.
+        If multiple messages that match are found consecutively, merge them by either joining their contents with a
+        string or call a joiner function.
 
         .. caution::
             If multiple roles are specified, this method will merge them as a group (e.g. if ``role=(USER, ASSISTANT)``,
@@ -154,7 +168,10 @@ class PromptPipeline(Generic[T]):
             Similarly, if a predicate is specified, this method will merge all consecutive messages which match the
             given predicate.
 
-        :param sep: The string to add between each matching message (similar to ``sep.join(...)``).
+        :param sep: The string to add between each matching message. Mutually exclusive with ``joiner``.
+            If this is set, this is roughly equivalent to ``joiner=lambda msgs: sep.join(m.text for m in msgs)``.
+        :param joiner: A function that will take a list of all messages in a consecutive group and return the final
+            string. Mutually exclusive with ``sep``.
         :param out_role: The role of the merged message to use. This is required if multiple ``role``\ s are specified
             or ``role`` is not set; otherwise it defaults to the common role of the merged messages.
         {ALL_FILTERS}
@@ -261,7 +278,9 @@ class PromptPipeline(Generic[T]):
         self,
         *,
         # general formatting
+        prefix: str = "",
         sep: str = "",
+        suffix: str = "",
         generation_suffix: str = "",
         # message-specific formatting
         # USER messages
@@ -289,7 +308,9 @@ class PromptPipeline(Generic[T]):
 
         This method should be the last step in a pipeline and will cause the pipeline to return a :class:`str`.
 
+        :param prefix: A string to insert once before the rest of the prompt, unconditionally.
         :param sep: A string to insert between messages, if any. Similar to ``sep.join(...)``.
+        :param suffix: A string to insert once after the rest of the prompt, unconditionally.
         :param generation_suffix: A string to add to the end of the prompt to prompt the model to begin its turn.
         :param user_prefix: A prefix to add before each USER message.
         :param user_suffix: A suffix to add after each USER message.

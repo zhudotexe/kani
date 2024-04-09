@@ -5,7 +5,7 @@ from typing import Any, Callable
 from kani.exceptions import PromptError
 from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import FilterMixin, PipelineStep
-from kani.prompts.types import ApplyCallableT, ApplyResultT, FunctionCallStrT, PipelineMsgT
+from kani.prompts.types import ApplyCallableT, ApplyResultT, FunctionCallStrT, MessageContentT, PipelineMsgT
 
 
 # ==== steps ====
@@ -45,9 +45,22 @@ class Wrap(FilterMixin, PipelineStep):
 
 
 class MergeConsecutive(FilterMixin, PipelineStep):
-    def __init__(self, *, sep: str, out_role: ChatRole = None, **filter_kwargs):
+    def __init__(
+        self,
+        *,
+        sep: str = None,
+        joiner: Callable[[list[PipelineMsgT]], MessageContentT] = None,
+        out_role: ChatRole = None,
+        **filter_kwargs,
+    ):
         super().__init__(**filter_kwargs)
+        if sep is not None and joiner is not None:
+            raise ValueError("Only one of (sep, joiner) may be set.")
+        if sep is None and joiner is None:
+            raise ValueError("You must set at least one of (sep, joiner).")
+
         self.sep = sep
+        self.joiner = joiner
         self.out_role = out_role
 
         if self.out_role is None:
@@ -68,22 +81,21 @@ class MergeConsecutive(FilterMixin, PipelineStep):
             # nonmatching messages get sent to output unchanged
             if not matching:
                 out.extend(group_msgs)
-            # only 1 consecutive matching message, send to output
-            elif len(group_msgs) == 1:
-                out.extend(group_msgs)
             # >1 consecutive matching messages get merged
             else:
-                out.append(_merge_messages(group_msgs, self.sep, self.out_role))
+                out.append(self._do_merge(group_msgs))
 
         return out
 
     def explain(self) -> str:
+        if self.sep:
+            how = f"by inserting {self.sep!r} between them"
+        else:
+            how = "by calling the given function"
+
         if self.out_role:
-            return (
-                f"Merge consecutive {self.explain_note()} into a single {self.out_role.value} message by inserting"
-                f" {self.sep!r} between them"
-            )
-        return f"Merge consecutive {self.explain_note()} into a single message by inserting {self.sep!r} between them"
+            return f"Merge consecutive {self.explain_note()} into a single {self.out_role.value} message {how}"
+        return f"Merge consecutive {self.explain_note()} into a single message {how}"
 
     def explain_example_kwargs(self) -> dict[str, bool]:
         kwargs = super().explain_example_kwargs()
@@ -96,6 +108,42 @@ class MergeConsecutive(FilterMixin, PipelineStep):
         if self.matches_role(ChatRole.FUNCTION):
             kwargs["multi_function_call"] = True
         return kwargs
+
+    # helper
+    def _do_merge(self, msgs: list[PipelineMsgT]) -> PipelineMsgT:
+        """Helper to merge multiple messages' content, respecting if it has parts or not"""
+        if len(msgs) < 1:
+            raise ValueError("At least one message must be supplied to merge")
+
+        # if we're doing sep and only have 1 message, just ignore it and return it unchanged
+        if self.sep and len(msgs) == 1:
+            return msgs[0]
+
+        has_parts = any(isinstance(m.content, list) for m in msgs)
+
+        # we'll use the first message as the returned one
+        out_msg = msgs[0]
+        out_msg.role = self.out_role
+        out_msg.tool_call_id = None  # if we are merging function calls, something is wacky and we should strip this
+        if not all(m.tool_calls is None for m in msgs):
+            out_msg.tool_calls = list(itertools.chain.from_iterable(m.tool_calls or [] for m in msgs))
+
+        # SEP
+        if self.sep:
+            # all text: replace the first message and return it
+            if not has_parts:
+                out_msg.content = self.sep.join(m.content or "" for m in msgs)
+                return out_msg
+
+            # otherwise, build up a list, inserting sep between each
+            out_msg.content = out_msg.parts
+            for msg in msgs[1:]:
+                out_msg.content.append(self.sep)
+                out_msg.content.extend(msg.parts)
+        # JOINER
+        else:
+            out_msg.content = self.joiner(msgs)
+        return out_msg
 
 
 class FunctionCallFmt(PipelineStep):
@@ -240,7 +288,9 @@ class ConversationFmt(PipelineStep):
         self,
         *,
         # general formatting
+        prefix: str = "",
         sep: str = "",
+        suffix: str = "",
         generation_suffix: str = "",
         # message-specific formatting
         # USER messages
@@ -257,7 +307,9 @@ class ConversationFmt(PipelineStep):
         function_prefix: str = None,
         function_suffix: str = None,
     ):
+        self.prefix = prefix
         self.sep = sep
+        self.suffix = suffix
         self.generation_suffix = generation_suffix
         self.user_prefix = user_prefix
         self.user_suffix = user_suffix
@@ -291,7 +343,7 @@ class ConversationFmt(PipelineStep):
             parts.append(self.generation_suffix)
 
         # join
-        return self.sep.join(parts)
+        return self.prefix + self.sep.join(parts) + self.suffix
 
     def explain(self) -> str:
         return "Format the messages into a single conversation-formatted string (see example)"
@@ -355,30 +407,3 @@ def _wrap_content_inplace(msg: PipelineMsgT, prefix: str | None, suffix: str | N
             msg.content.insert(0, prefix)
         if suffix:
             msg.content.append(suffix)
-
-
-def _merge_messages(msgs: list[PipelineMsgT], sep: str, out_role: ChatRole) -> PipelineMsgT:
-    """Helper to merge multiple messages' content, respecting if it has parts or not"""
-    if len(msgs) < 1:
-        raise ValueError("At least one message must be supplied to merge")
-
-    has_parts = any(isinstance(m.content, list) for m in msgs)
-
-    # we'll use the first message as the returned one
-    out_msg = msgs[0]
-    out_msg.role = out_role
-    out_msg.tool_call_id = None  # if we are merging function calls, something is wacky and we should strip this
-    if not all(m.tool_calls is None for m in msgs):
-        out_msg.tool_calls = list(itertools.chain.from_iterable(m.tool_calls or [] for m in msgs))
-
-    # all text: replace the first message and return it
-    if not has_parts:
-        out_msg.content = sep.join(m.content or "" for m in msgs)
-        return out_msg
-
-    # otherwise, build up a list, inserting sep between each
-    out_msg.content = out_msg.parts
-    for msg in msgs[1:]:
-        out_msg.content.append(sep)
-        out_msg.content.extend(msg.parts)
-    return out_msg
