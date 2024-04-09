@@ -32,11 +32,23 @@ developers alike.
 kani comes with support for the following models out of the box, with a model-agnostic framework to add support for many
 more:
 
-- Every chat model available on Hugging Face through `transformers` or `llama.cpp`!
+**Hosted Models**
+
 - OpenAI Models (GPT-3.5-turbo, GPT-4, GPT-4-turbo)
 - Anthropic Models (Claude, Claude Instant)
-- LLaMA v2 (via Hugging Face or llama.cpp), fine-tunes, and models using similar prompting methods
-- Vicuna v1.3 (via Hugging Face), fine-tunes, and models using similar prompting methods
+
+**Open Source Models**
+
+kani supports every chat model available on Hugging Face through `transformers` or `llama.cpp`!
+
+In particular, we have reference implementations for the following base models, and their fine-tunes:
+
+- [Command R](https://huggingface.co/CohereForAI/c4ai-command-r-v01)
+  and [Command R+](https://huggingface.co/CohereForAI/c4ai-command-r-plus)
+- [Mistral-7B](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)
+  and [Mixtral-8x7B](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1) (uses LLaMA prompting format)
+- [LLaMA 2](https://huggingface.co/meta-llama) (all sizes)
+- [Vicuna v1.3](https://huggingface.co/lmsys/vicuna-7b-v1.3)
 
 **Interested in contributing? Check out our
 [guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**
