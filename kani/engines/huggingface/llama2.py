@@ -14,7 +14,8 @@ except ImportError:
 
 
 class LlamaEngine(HuggingEngine):
-    """Implementation of LLaMA v2 using huggingface transformers.
+    r"""
+    Implementation of LLaMA v2 using huggingface transformers.
 
     You may also use the 13b, 70b, or other LLaMA models that use the LLaMA prompt by passing the HuggingFace model
     ID to the initializer.
@@ -32,6 +33,13 @@ class LlamaEngine(HuggingEngine):
     By default, the HuggingEngine loads the model on GPU if CUDA is detected on your system. To override the device
     the model is loaded on, pass ``device="cpu|cuda"`` to the constructor.
 
+    **Usage**
+
+    .. code-block:: python
+
+        engine = LlamaEngine("meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)
+        ai = Kani(engine)
+
     .. attention::
 
         You will need to accept Meta's license in order to download the LLaMA v2 weights. Visit
@@ -44,10 +52,34 @@ class LlamaEngine(HuggingEngine):
 
     .. tip:: See :ref:`4b_quant` for information about loading a quantized model for lower memory usage.
 
-    .. code-block:: python
+    .. tip::
 
-        engine = LlamaEngine("meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)
-        ai = Kani(engine)
+        This engine is equivalent to the following usage of the base :class:`.HuggingEngine`.
+
+        .. code-block:: python
+
+            LLAMA2_PIPELINE = (
+                PromptPipeline()
+                .wrap(role=ChatRole.SYSTEM, prefix="<<SYS>>\n", suffix="\n<</SYS>>\n")
+                .translate_role(role=ChatRole.SYSTEM, to=ChatRole.USER)
+                .merge_consecutive(role=ChatRole.USER, sep="\n")
+                .merge_consecutive(role=ChatRole.ASSISTANT, sep=" ")
+                .conversation_fmt(
+                    user_prefix="<s>[INST] ",
+                    user_suffix=" [/INST]",
+                    assistant_prefix=" ",
+                    assistant_suffix=" </s>",
+                    assistant_suffix_if_last="",
+                )
+            )
+
+            engine = HuggingEngine(
+                "meta-llama/Llama-2-7b-chat-hf",
+                max_context_size=4096,
+                prompt_pipeline=LLAMA2_PIPELINE
+            )
+
+        See :class:`.PromptPipeline` for more information on reusable prompt pipelines.
     """
 
     def __init__(self, model_id: str = "meta-llama/Llama-2-7b-chat-hf", *args, **kwargs):

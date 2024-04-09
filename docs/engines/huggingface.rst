@@ -31,8 +31,12 @@ If you're running your model locally, you might run into issues because large la
 Unless you pay for a massive compute cluster (|:money_with_wings:|) or have access to one at your institution, you
 might not be able to fit models with billions of params on your GPU. That's where model quantization comes into play.
 
-    Using FP4 quantization you can expect to reduce up to 8x the model size compared to its native full precision
-    version.
+.. tip::
+
+    Thanks to the hard work of the LLM community, many models on Hugging Face also have quantized versions available
+    in the GGUF format. GGUF is the format for ``llama.cpp``, a low-level optimized LLM runtime. Unlike the name
+    suggests, it supports many more models than LLaMA. If your model has a GGUF version available, consider using the
+    :class:`.LlamaCppEngine` instead of the ``HuggingEngine`` to load a pre-quantized version.
 
 In this section, we'll show how to load HuggingFace models in FP4.
 
