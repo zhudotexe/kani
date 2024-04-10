@@ -185,6 +185,7 @@ class CommandREngine(HuggingEngine):
         tool_prompt = DEFAULT_TOOL_PROMPT.format(user_functions=function_text)
 
         # wrap the initial system message, if any
+        messages = messages.copy()
         if messages and messages[0].role == ChatRole.SYSTEM:
             messages[0] = messages[0].copy_with(content=DEFAULT_PREAMBLE + messages[0].text + tool_prompt)
         # otherwise add it in
@@ -195,6 +196,7 @@ class CommandREngine(HuggingEngine):
 
     def _build_prompt_rag(self, messages: list[ChatMessage]):
         # wrap the initial system message, if any
+        messages = messages.copy()
         if messages and messages[0].role == ChatRole.SYSTEM:
             messages[0] = messages[0].copy_with(content=DEFAULT_PREAMBLE + messages[0].text)
         # otherwise add it in

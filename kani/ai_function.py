@@ -88,7 +88,11 @@ class AIFunction:
 
             # get aiparam and add it to the list
             ai_param = get_aiparam(annotation)
-            params.append(AIParamSchema(name=name, t=type_hints[name], default=param.default, aiparam=ai_param))
+            params.append(
+                AIParamSchema(
+                    name=name, t=type_hints[name], default=param.default, aiparam=ai_param, inspect_param=param
+                )
+            )
         return params
 
     def create_json_schema(self) -> dict:

@@ -1,3 +1,4 @@
+import inspect
 import json
 
 from kani import AIFunction
@@ -95,11 +96,12 @@ def tool_call_formatter(msg: ChatMessage) -> str:
             indent=4,
         )
         return f"{text}Action: ```json\n{tool_calls}\n```"
-    else:
-        return (  # is the EOT/SOT token doing weird stuff here?
-            'Action: ```json\n[\n    {\n        "tool_name": "directly_answer",\n        "parameters": {}\n'
-            f"    }}\n]\n```<|END_OF_TURN_TOKEN|><|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>{msg.text}"
-        )
+    # else:
+    #     return (  # is the EOT/SOT token doing weird stuff here?
+    #         'Action: ```json\n[\n    {\n        "tool_name": "directly_answer",\n        "parameters": {}\n'
+    #         f"    }}\n]\n```<|END_OF_TURN_TOKEN|><|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>{msg.text}"
+    #     )
+    return msg.content
 
 
 def build_tool_pipeline(
@@ -117,7 +119,7 @@ def build_tool_pipeline(
 
     steps = []
 
-    # format function calls with an Action: prefix; otherwise do a directly_answer call
+    # format function calls with an Action: prefix
     if include_function_calls:
 
         def apply_tc_format(msg):
@@ -125,6 +127,8 @@ def build_tool_pipeline(
             return msg
 
         steps.append(Apply(apply_tc_format, role=ChatRole.ASSISTANT))
+    else:
+        steps.append(Remove(role=ChatRole.ASSISTANT, predicate=lambda msg: msg.content is None))
 
     # keep function results around as SYSTEM messages
     if include_function_results:
@@ -174,6 +178,8 @@ def build_rag_pipeline(*, include_previous_results=True, rag_instructions=DEFAUL
         .merge_consecutive(role=ChatRole.FUNCTION, joiner=function_result_joiner)
         # remove all but the last function message
         .apply(remover, role=ChatRole.FUNCTION)
+        # remove asst messages with no content (function calls)
+        .remove(role=ChatRole.ASSISTANT, predicate=lambda msg: msg.content is None)
         .conversation_fmt(
             prefix="<BOS_TOKEN>",
             generation_suffix=(
@@ -202,10 +208,7 @@ def function_prompt(f: AIFunction) -> str:
     # build params
     param_parts = []
     for param in params:
-        default = ""
-        if param.default:
-            default = f" = {param.default}"
-        param_parts.append(f"{param.name}: {param.type}{default}")
+        param_parts.append(str(param))
     params_str = ", ".join(param_parts)
 
     # build docstring

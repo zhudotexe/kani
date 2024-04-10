@@ -1,6 +1,6 @@
 import inspect
 import typing
-from typing import TYPE_CHECKING, Optional
+from typing import Optional, TYPE_CHECKING
 
 import pydantic
 
@@ -18,11 +18,12 @@ class AIParamSchema:
     This class is only used internally within kani and generally shouldn't be constructed manually.
     """
 
-    def __init__(self, name: str, t: type, default, aiparam: Optional["AIParam"] = None):
+    def __init__(self, name: str, t: type, default, aiparam: Optional["AIParam"], inspect_param: inspect.Parameter):
         self.name = name
         self.type = t
         self.default = default
         self.aiparam = aiparam
+        self.inspect_param = inspect_param
 
     @property
     def required(self):
@@ -36,6 +37,9 @@ class AIParamSchema:
     @property
     def description(self):
         return self.aiparam.desc if self.aiparam is not None else None
+
+    def __str__(self):
+        return str(self.inspect_param)
 
 
 class JSONSchemaBuilder(pydantic.json_schema.GenerateJsonSchema):
