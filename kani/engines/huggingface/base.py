@@ -1,4 +1,5 @@
 import functools
+import logging
 from threading import Thread
 from typing import AsyncIterable
 
@@ -16,6 +17,8 @@ except ImportError:
         'The HuggingEngine requires extra dependencies. Please install kani with "pip install kani[huggingface]". '
         "You will also need to install PyTorch manually."
     ) from None
+
+log = logging.getLogger(__name__)
 
 
 class HuggingEngine(BaseEngine):
@@ -116,7 +119,9 @@ class HuggingEngine(BaseEngine):
             raise NotImplementedError(
                 "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
             )
-        return self.pipeline(messages)
+        prompt = self.pipeline(messages)
+        log.debug(f"BUILT PROMPT: {prompt}")
+        return prompt
 
     def _get_generate_args(self, prompt: str | torch.Tensor, **hyperparams):
         """Internal method to build common params for the generate call"""

@@ -1,5 +1,6 @@
 import functools
 import json
+import logging
 import re
 from collections.abc import AsyncIterable
 from threading import Thread
@@ -30,6 +31,8 @@ except ImportError:
         'The CommandREngine requires extra dependencies. Please install kani with "pip install'
         " 'kani[huggingface]'\". You will also need to install PyTorch manually."
     ) from None
+
+log = logging.getLogger(__name__)
 
 
 class CommandREngine(HuggingEngine):
@@ -160,15 +163,21 @@ class CommandREngine(HuggingEngine):
     ) -> str | torch.Tensor:
         # no functions: we can just do the default simple format
         if not functions:
-            return COMMAND_R_PIPELINE(messages)
+            prompt = COMMAND_R_PIPELINE(messages)
+            log.debug(f"PROMPT: {prompt}")
+            return prompt
 
         # if we do have functions things get wacky
         # is the last message a FUNCTION? if so, we need to use the RAG template
         if messages and messages[-1].role == ChatRole.FUNCTION:
-            return self._build_prompt_rag(messages)
+            prompt = self._build_prompt_rag(messages)
+            log.debug(f"RAG PROMPT: {prompt}")
+            return prompt
 
         # otherwise use the TOOL template
-        return self._build_prompt_tools(messages, functions)
+        prompt = self._build_prompt_tools(messages, functions)
+        log.debug(f"TOOL PROMPT: {prompt}")
+        return prompt
 
     def _build_prompt_tools(self, messages: list[ChatMessage], functions: list[AIFunction]):
         # get the function definitions
@@ -203,6 +212,7 @@ class CommandREngine(HuggingEngine):
         # the completion shouldn't include the prompt or stop token
         content = self.tokenizer.decode(output[0][input_len:-1]).strip()
         completion_tokens = len(output[0]) - (input_len + 1)
+        log.debug(f"COMPLETION: {content}")
 
         # if we have tools, possibly parse out the Action
         tool_calls = None
@@ -218,6 +228,7 @@ class CommandREngine(HuggingEngine):
                 tool_calls.append(tool_call)
 
             content = None
+            log.debug(f"PARSED TOOL CALLS: {tool_calls}")
 
         return Completion(
             ChatMessage.assistant(content, tool_calls=tool_calls),
@@ -239,6 +250,7 @@ class CommandREngine(HuggingEngine):
 
         # then wait for tokens from the task
         for token in streamer:
+            log.debug(f"STREAM DELTA: {token}")
             yield token
 
         # finally clean up the thread
@@ -259,7 +271,9 @@ class CommandREngine(HuggingEngine):
             ]
         # if tool says directly answer, call again with the rag pipeline (but no result)
         elif len(tool_calls) == 1 and tool_calls[0].function.name == "directly_answer":
+            log.debug("GOT DIRECTLY_ANSWER, REPROMPTING RAG...")
             prompt = self._build_prompt_rag(messages)
+            log.debug(f"RAG PROMPT: {prompt}")
             input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
             completion = self._generate(input_toks, input_len, hyperparams, functions)
         # otherwise don't touch it
@@ -288,7 +302,9 @@ class CommandREngine(HuggingEngine):
                 ]
             # if tool says directly answer, stream with the rag pipeline (but no result)
             elif len(tool_calls) == 1 and tool_calls[0].function.name == "directly_answer":
+                log.debug("GOT DIRECTLY_ANSWER, REPROMPTING RAG...")
                 prompt = self._build_prompt_rag(messages)
+                log.debug(f"RAG PROMPT: {prompt}")
                 input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
                 async for elem in self._stream(input_toks, hyperparams, streamer_timeout=streamer_timeout):
                     yield elem
