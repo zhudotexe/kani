@@ -118,9 +118,8 @@ class HuggingEngine(BaseEngine):
             )
         return self.pipeline(messages)
 
-    def _get_generate_args(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams):
+    def _get_generate_args(self, prompt: str | torch.Tensor, **hyperparams):
         """Internal method to build common params for the generate call"""
-        prompt = self.build_prompt(messages, functions)
         if isinstance(prompt, str):
             # prompt str to tokens
             tokenized = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
@@ -151,7 +150,8 @@ class HuggingEngine(BaseEngine):
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
-        input_toks, input_len, hyperparams = self._get_generate_args(messages, functions, **hyperparams)
+        prompt = self.build_prompt(messages, functions)
+        input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
 
         # run it through the model
         output = self.model.generate(input_toks, **hyperparams)
@@ -180,7 +180,8 @@ class HuggingEngine(BaseEngine):
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
-        input_toks, input_len, hyperparams = self._get_generate_args(messages, functions, **hyperparams)
+        prompt = self.build_prompt(messages, functions)
+        input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
         streamer = TextIteratorStreamer(
             self.tokenizer, skip_prompt=True, skip_special_tokens=True, timeout=streamer_timeout
         )

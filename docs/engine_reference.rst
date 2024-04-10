@@ -34,6 +34,9 @@ Hugging Face
 .. autoclass:: kani.engines.huggingface.llama2.LlamaEngine
     :members:
 
+.. autoclass:: kani.engines.huggingface.cohere.CommandREngine
+    :members:
+
 .. autoclass:: kani.engines.huggingface.vicuna.VicunaEngine
     :members:
 

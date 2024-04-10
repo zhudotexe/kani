@@ -62,8 +62,7 @@ class AIFunction:
         inner_partial = functools.partial(self.inner, *args, **kwargs)
         return await asyncio.get_event_loop().run_in_executor(None, inner_partial)
 
-    def create_json_schema(self) -> dict:
-        """Create a JSON schema representing this function's parameters as a JSON object."""
+    def get_params(self) -> list[AIParamSchema]:
         # get list of params
         params = []
         sig = inspect.signature(self.inner)
@@ -90,8 +89,12 @@ class AIFunction:
             # get aiparam and add it to the list
             ai_param = get_aiparam(annotation)
             params.append(AIParamSchema(name=name, t=type_hints[name], default=param.default, aiparam=ai_param))
+        return params
+
+    def create_json_schema(self) -> dict:
+        """Create a JSON schema representing this function's parameters as a JSON object."""
         # create a schema generator and generate
-        return create_json_schema(params)
+        return create_json_schema(self.get_params())
 
 
 def ai_function(
