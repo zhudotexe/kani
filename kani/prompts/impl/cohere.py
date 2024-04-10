@@ -94,12 +94,13 @@ def tool_call_formatter(msg: ChatMessage):
             [{"tool_name": tc.function.name, "parameters": tc.function.kwargs} for tc in msg.tool_calls],
             indent=4,
         )
-        return f"{text}Action: ```json\n{tool_calls}\n```"
+        msg.content = f"{text}Action: ```json\n{tool_calls}\n```"
     else:
-        return (  # is the EOT/SOT token doing weird stuff here?
+        msg.content = (  # is the EOT/SOT token doing weird stuff here?
             'Action: ```json\n[\n    {\n        "tool_name": "directly_answer",\n        "parameters": {}\n'
             f"    }}\n]\n```<|END_OF_TURN_TOKEN|><|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>{msg.text}"
         )
+    return msg
 
 
 def build_tool_pipeline(
