@@ -206,7 +206,7 @@ class CommandREngine(HuggingEngine):
 
         # if we have tools, possibly parse out the Action
         tool_calls = None
-        if functions and (action_json := re.match(r"Action:\s*```json\n(.+)\n```", content, re.IGNORECASE)):
+        if functions and (action_json := re.match(r"Action:\s*```json\n(.+)\n```", content, re.IGNORECASE | re.DOTALL)):
             actions = json.loads(action_json.group(1))
 
             # translate back to kani spec
@@ -216,6 +216,8 @@ class CommandREngine(HuggingEngine):
                 tool_args = json.dumps(action["parameters"])
                 tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
                 tool_calls.append(tool_call)
+
+            content = None
 
         return Completion(
             ChatMessage.assistant(content, tool_calls=tool_calls),
@@ -292,6 +294,8 @@ class CommandREngine(HuggingEngine):
                     yield elem
             # otherwise yield as normal
             else:
+                if completion.message.text:
+                    yield completion.message.text
                 yield completion
         # otherwise stream as normal
         else:
