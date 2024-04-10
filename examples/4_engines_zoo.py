@@ -17,17 +17,34 @@ engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4")
 from kani.engines.anthropic import AnthropicEngine
 engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-3-opus-20240229")
 
-# ==== LLaMA v2 (Hugging Face) ====
+# ========== Hugging Face ==========
+# ---- LLaMA v2 (Hugging Face) ----
 from kani.engines.huggingface.llama2 import LlamaEngine
 engine = LlamaEngine(model_id="meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)  # log in with huggingface-cli
 
-# ==== Vicuna v1.3 (Hugging Face) ====
+# ---- Command R (Hugging Face) ----
+import torch
+from kani.engines.huggingface.cohere import CommandREngine
+engine = CommandREngine(
+    model_id="CohereForAI/c4ai-command-r-v01", model_load_kwargs={"device_map": "auto", "torch_dtype": torch.float16}
+)
+
+# ---- Mistral-7B (Hugging Face) ----
+from kani.engines.huggingface.llama2 import LlamaEngine
+engine = LlamaEngine(repo_id="mistralai/Mistral-7B-Instruct-v0.2")
+
+# ---- Vicuna v1.3 (Hugging Face) ----
 from kani.engines.huggingface.vicuna import VicunaEngine
 engine = VicunaEngine(model_id="lmsys/vicuna-7b-v1.3")
 
-# ==== LLaMA v2 (llama.cpp) ====
+# ========== llama.cpp ==========
+# ---- LLaMA v2 (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
 engine = LlamaCppEngine(repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_K_M.gguf")
+
+# ---- Mistral-7B (llama.cpp) ----
+from kani.engines.llamacpp import LlamaCppEngine
+engine = LlamaCppEngine(repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf")
 
 # take your pick - the kani interface is compatible with all!
 ai = Kani(engine)
