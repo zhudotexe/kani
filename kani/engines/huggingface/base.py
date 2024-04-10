@@ -76,7 +76,7 @@ class HuggingEngine(BaseEngine):
         self.hyperparams = hyperparams
 
         if device is None:
-            device = "cuda" if torch.has_cuda else "cpu"
+            device = "cuda" if torch.backends.cuda.is_built() else "cpu"
         self.device = device
         if self.model.device.type != self.device:
             self.model.to(device)

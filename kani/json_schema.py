@@ -20,7 +20,7 @@ class AIParamSchema:
 
     def __init__(self, name: str, t: type, default, aiparam: Optional["AIParam"], inspect_param: inspect.Parameter):
         self.name = name
-        self.type = t
+        self.type = t  # will not include Annotated if present
         self.default = default
         self.aiparam = aiparam
         self.inspect_param = inspect_param
@@ -39,7 +39,11 @@ class AIParamSchema:
         return self.aiparam.desc if self.aiparam is not None else None
 
     def __str__(self):
-        return str(self.inspect_param)
+        default = ""
+        if not self.required:
+            default = f" = {self.default!r}"
+        annotation = inspect.formatannotation(self.type)
+        return f"{self.name}: {annotation}{default}"
 
 
 class JSONSchemaBuilder(pydantic.json_schema.GenerateJsonSchema):

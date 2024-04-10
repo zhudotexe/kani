@@ -218,7 +218,7 @@ def function_prompt(f: AIFunction) -> str:
         doc_params = []
         for param in params:
             desc = f": {param.description}" if param.description else ""
-            doc_params.append(f"{param.name} ({param.type}){desc}")
+            doc_params.append(f"{param.name} ({inspect.formatannotation(param.type)}){desc}")
         args += "\n        ".join(doc_params)
 
     # return
