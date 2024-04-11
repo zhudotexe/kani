@@ -109,7 +109,9 @@ class PromptPipeline(Generic[T]):
 
     # ==== steps ====
     @overload
-    def translate_role(self, *, to: ChatRole, role: RoleFilterT = None, predicate: PredicateFilterT = None) -> Self: ...
+    def translate_role(
+        self, *, to: ChatRole, warn: str = None, role: RoleFilterT = None, predicate: PredicateFilterT = None
+    ) -> Self: ...
 
     @autoparams
     def translate_role(self, **kwargs):
@@ -118,6 +120,7 @@ class PromptPipeline(Generic[T]):
         (e.g. for models which do not support native function calling, make all FUNCTION messages a USER message)
 
         :param to: The new role to translate the matching messages to.
+        :param warn: A warning to emit if any messages are translated (e.g. if a model does not support certain roles).
         {ALL_FILTERS}
         """
         self.steps.append(TranslateRole(**kwargs))

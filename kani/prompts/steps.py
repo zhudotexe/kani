@@ -1,5 +1,6 @@
 import inspect
 import itertools
+import warnings
 from typing import Any, Callable
 
 from kani.exceptions import PromptError
@@ -10,12 +11,17 @@ from kani.prompts.types import ApplyCallableT, ApplyResultT, FunctionCallStrT, M
 
 # ==== steps ====
 class TranslateRole(FilterMixin, PipelineStep):
-    def __init__(self, *, to: ChatRole, **filter_kwargs):
+    def __init__(self, *, to: ChatRole, warn: str = None, **filter_kwargs):
         super().__init__(**filter_kwargs)
         self.to = to
+        self.warn = warn
 
     def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+        has_warned = False
         for msg in self.filtered(msgs):
+            if self.warn and not has_warned:
+                has_warned = True
+                warnings.warn(self.warn)
             msg.role = self.to
         return msgs
 
