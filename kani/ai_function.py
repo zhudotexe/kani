@@ -2,6 +2,7 @@ import asyncio
 import functools
 import inspect
 import typing
+import warnings
 from typing import Annotated
 
 from pydantic import validate_call
@@ -54,6 +55,14 @@ class AIFunction:
         self.__annotations__ = inner.__annotations__
         self.__module__ = inner.__module__
         self.__doc__ = inner.__doc__
+
+        # validation
+        if not self.desc:
+            warnings.warn(
+                f"The {self.name!r} @ai_function is missing a description. This may lead to request errors or poor"
+                ' performance by models. To add a description, add a """docstring""" beneath the signature or use'
+                ' @ai_function(desc="...").'
+            )
 
     async def __call__(self, *args, **kwargs):
         if self._inner_is_coro:
