@@ -40,14 +40,11 @@ async def chat_in_terminal_async(
 
             # get user query
             if not ai_first or round_num > 0:
-                query = input("USER: ").strip()if echo:
-                    print_width(query, width=width, prefix="USER: ")
+                query = input("USER: ").strip()
                 if echo:
                     print_width(query, width=width, prefix="USER: ")
                 if stopword and query == stopword:
-                    breakelse:
-                query = None
-
+                    break
             # print completion(s)
             else:
                 query = None
