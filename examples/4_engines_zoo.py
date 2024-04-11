@@ -30,8 +30,14 @@ engine = CommandREngine(
 )
 
 # ---- Mistral-7B (Hugging Face) ----
-from kani.engines.huggingface.llama2 import LlamaEngine
-engine = LlamaEngine(repo_id="mistralai/Mistral-7B-Instruct-v0.2")
+from kani.engines.huggingface import HuggingEngine
+from kani.prompts.impl import MISTRAL_PIPELINE
+engine = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.2", prompt_pipeline=MISTRAL_PIPELINE)
+
+# ---- Gemma (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.prompts.impl import GEMMA_PIPELINE
+engine = HuggingEngine(model_id="google/gemma-1.1-7b-it", prompt_pipeline=GEMMA_PIPELINE)
 
 # ---- Vicuna v1.3 (Hugging Face) ----
 from kani.engines.huggingface.vicuna import VicunaEngine
@@ -44,7 +50,10 @@ engine = LlamaCppEngine(repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_
 
 # ---- Mistral-7B (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
-engine = LlamaCppEngine(repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf")
+from kani.prompts.impl import MISTRAL_PIPELINE
+engine = LlamaCppEngine(
+    repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=MISTRAL_PIPELINE
+)
 
 # take your pick - the kani interface is compatible with all!
 ai = Kani(engine)

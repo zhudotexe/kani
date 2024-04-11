@@ -18,6 +18,13 @@
   <a href="https://discord.gg/eTepTNDxYT">
     <img alt="Discord" src="https://img.shields.io/discord/1150902904773935214?color=5865F2&label=discord&logo=discord&logoColor=white">
   </a>
+  <br/>
+  <a href="examples/4_engines_zoo.py">
+    <img alt="Model zoo" src="https://img.shields.io/badge/examples-model_zoo-blue">
+  </a>
+  <a href="examples/5_advanced_retrieval.py">
+    <img alt="Retrieval example" src="https://img.shields.io/badge/examples-retrieval-blue">
+  </a>
 </p>
 
 # kani (カニ)
@@ -47,8 +54,11 @@ In particular, we have reference implementations for the following base models, 
   and [Command R+](https://huggingface.co/CohereForAI/c4ai-command-r-plus)
 - [Mistral-7B](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)
   and [Mixtral-8x7B](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1) (uses LLaMA prompting format)
+- [Gemma](https://huggingface.co/collections/google/gemma-release-65d5efbccdbb8c4202ec078b) (all sizes)
 - [LLaMA 2](https://huggingface.co/meta-llama) (all sizes)
 - [Vicuna v1.3](https://huggingface.co/lmsys/vicuna-7b-v1.3)
+
+Check out the [Model Zoo](examples/4_engines_zoo.py) to see how to use each of these models in your application!
 
 **Interested in contributing? Check out our
 [guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**
