@@ -1,5 +1,6 @@
 import functools
 import logging
+import warnings
 from threading import Thread
 from typing import AsyncIterable
 
@@ -39,7 +40,7 @@ class HuggingEngine(BaseEngine):
     def __init__(
         self,
         model_id: str,
-        max_context_size: int,
+        max_context_size: int = None,
         prompt_pipeline: PromptPipeline[str | torch.Tensor] = None,
         *,
         token=None,
@@ -50,7 +51,7 @@ class HuggingEngine(BaseEngine):
     ):
         """
         :param model_id: The ID of the model to load from HuggingFace.
-        :param max_context_size: The context size of the model.
+        :param max_context_size: The context size of the model. If not given, will be set from the model's config.
         :param prompt_pipeline: The pipeline to translate a list of kani ChatMessages into the model-specific chat
             format (see :class:`.PromptPipeline`).
         :param token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
@@ -75,12 +76,36 @@ class HuggingEngine(BaseEngine):
         self.model = AutoModelForCausalLM.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
 
+        # ensure model is on correct device
         if device is None:
             device = "cuda" if torch.backends.cuda.is_built() else "cpu"
         self.device = device
         if self.model.device.type != self.device:
             self.model.to(device)
 
+        # token counting stuff
+        # try and infer max context size from the model config if not specified
+        if self.max_context_size is None:
+            self.max_context_size = getattr(
+                self.model.config,
+                "model_max_len",
+                getattr(self.model.config, "max_position_embeddings", None),
+            )
+            log.debug(f"Inferred max context size: {self.max_context_size}")
+
+            if self.max_context_size is None:
+                raise ValueError(
+                    "Could not infer the model's max context size from the config. Please pass the `max_context_size`"
+                    " arg."
+                )
+            elif self.max_context_size > 1e20:
+                warnings.warn(
+                    f"The inferred max context size of this model is extremely large ({self.max_context_size}). This"
+                    " may mean that the model has not configured their model_max_len correctly (or you are still using"
+                    " my code in 2050). Please pass the `max_context_size` arg to use the correct model size."
+                )
+
+        # infer the token reserve from the pipeline
         if self.token_reserve == 0 and self.pipeline:
             self.token_reserve = self._infer_token_reserve()
 

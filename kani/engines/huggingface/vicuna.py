@@ -47,7 +47,6 @@ class VicunaEngine(HuggingEngine):
         model_load_kwargs = kwargs.pop("model_load_kwargs", {})
         model_load_kwargs.setdefault("low_cpu_mem_usage", _low_cpu_mem_usage)
 
-        kwargs.setdefault("max_context_size", 2048)  # LLaMA has 2048 token window
         kwargs.setdefault("prompt_pipeline", VICUNA_PIPELINE)
         super().__init__(
             model_id, *args, tokenizer_kwargs=tokenizer_kwargs, model_load_kwargs=model_load_kwargs, **kwargs

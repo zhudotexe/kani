@@ -75,7 +75,6 @@ class LlamaEngine(HuggingEngine):
 
             engine = HuggingEngine(
                 "meta-llama/Llama-2-7b-chat-hf",
-                max_context_size=4096,
                 prompt_pipeline=LLAMA2_PIPELINE
             )
 
@@ -92,6 +91,5 @@ class LlamaEngine(HuggingEngine):
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
         :param hyperparams: Additional arguments to supply the model during generation.
         """
-        kwargs.setdefault("max_context_size", 4096)  # LLaMA has 4096 token window
         kwargs.setdefault("prompt_pipeline", LLAMA2_PIPELINE)
         super().__init__(model_id, *args, **kwargs)
