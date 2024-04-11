@@ -174,7 +174,7 @@ The simplest way to consume the stream is to iterate over it with ``async for``,
     msg = await stream.message()
 
     # FULL ROUND:
-    async for stream in ai.full_round_stream("What is the airspeed velocity of an unladen swallow?")
+    async for stream in ai.full_round_stream("What is the airspeed velocity of an unladen swallow?"):
         async for token in stream:
             print(token, end="")
         msg = await stream.message()
