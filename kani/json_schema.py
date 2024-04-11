@@ -1,6 +1,6 @@
 import inspect
 import typing
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 import pydantic
 
