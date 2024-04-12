@@ -179,6 +179,13 @@ The simplest way to consume the stream is to iterate over it with ``async for``,
             print(token, end="")
         msg = await stream.message()
 
+kani also provides a helper to print streams (:func:`kani.print_stream`):
+
+.. code-block:: python
+
+    stream = ai.chat_round_stream("What is the most interesting train line in Tokyo?")
+    await kani.print_stream(stream)
+
 After a stream finishes, its contents will be available as a :class:`.ChatMessage`. You can retrieve the final
 message or :class:`.BaseCompletion` with:
 
