@@ -183,12 +183,21 @@ async def print_stream(stream: StreamManager, width: int = None, prefix: str = "
             print(prefix, end="")
             prefix_printed = True
 
-        # then do bookkeeping and print the token
-        line_len += len(token)
-        if width and line_len > width:
-            print(f"\n{line_indent}", end="")
-            line_len = prefix_len
-        print(token, end="", flush=True)
+        # split by newlines
+        for part in token.splitlines(keepends=True):
+            # then do bookkeeping
+            line_len += len(part)
+            if width and line_len > width:
+                print(f"\n{line_indent}", end="")
+                line_len = prefix_len
+
+            # print the token
+            print(part.rstrip("\r\n"), end="", flush=True)
+
+            # print a newline if the token had one
+            if part.endswith("\n"):
+                print(f"\n{line_indent}", end="")
+                line_len = prefix_len
 
     # newline at the end to flush if we printed anything
     if prefix_printed:
