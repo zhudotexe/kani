@@ -1,16 +1,16 @@
 import functools
-import os
+from typing import AsyncIterable
 
 from kani.ai_function import AIFunction
-from kani.exceptions import MissingModelDependencies, PromptError
+from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from . import function_calling
-from .client import OpenAIClient
-from .models import ChatCompletion, FunctionSpec, OpenAIChatMessage, ToolSpec
-from ..base import BaseEngine
+from .translation import ChatCompletion, openai_tc_to_kani_tc, translate_functions, translate_messages
+from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
     import tiktoken
+    from openai import AsyncOpenAI as OpenAIClient
 except ImportError as e:
     raise MissingModelDependencies(
         'The OpenAIEngine requires extra dependencies. Please install kani with "pip install kani[openai]".'
@@ -18,10 +18,9 @@ except ImportError as e:
 
 # https://platform.openai.com/docs/models
 CONTEXT_SIZES_BY_PREFIX = [
-    ("gpt-3.5-turbo-0125", 16384),
-    ("gpt-3.5-turbo-1106", 16384),
-    ("gpt-3.5-turbo-16k", 16384),
-    ("gpt-3.5-turbo", 4096),
+    ("gpt-3.5-turbo-instruct", 4096),
+    ("gpt-3.5-turbo-0613", 4096),
+    ("gpt-3.5-turbo", 16385),
     # gpt-4-turbo models aren't prefixed differently...
     # TODO make the default gpt-4 128k and keep the pre-turbo ones at 8k after gpt-4 defaults to 128k
     ("gpt-4-1106", 128000),
@@ -31,13 +30,14 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("gpt-4-32k", 32768),
     ("gpt-4", 8192),
     # fine-tunes
-    ("ft:gpt-3.5-turbo-16k", 16384),
-    ("ft:gpt-3.5-turbo", 4096),
+    ("ft:gpt-3.5-turbo-instruct", 4096),
+    ("ft:gpt-3.5-turbo-0613", 4096),
+    ("ft:gpt-3.5-turbo", 16385),
     ("ft:gpt-4-32k", 32768),
     ("ft:gpt-4", 8192),
     # completion models
-    ("text-davinci-", 4096),
-    ("code-", 8000),
+    ("babbage-002", 16384),
+    ("davinci-002", 16384),
     # catch-all
     ("", 2048),  # e.g. aba/babbage/curie/davinci
 ]
@@ -68,29 +68,24 @@ class OpenAIEngine(BaseEngine):
         :param model: The id of the model to use (e.g. "gpt-3.5-turbo", "ft:gpt-3.5-turbo:my-org:custom_suffix:id").
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
-        :param organization: The OpenAI organization to use in requests (defaults to the API key's default org).
+        :param organization: The OpenAI organization to use in requests. By default, the org ID would be read from the
+            `OPENAI_ORG_ID` environment variable (defaults to the API key's default org if not set).
         :param retry: How many times the engine should retry failed HTTP calls with exponential backoff (default 5).
         :param api_base: The base URL of the OpenAI API to use.
         :param headers: A dict of HTTP headers to include with each request.
-        :param client: An instance of :class:`.OpenAIClient` (for reusing the same client in multiple engines). You must
-            specify exactly one of (api_key, client). If this is passed the ``organization``, ``retry``, ``api_base``,
-            and ``headers`` params will be ignored.
-        :param hyperparams: Any additional parameters to pass to
-            :meth:`.OpenAIClient.create_chat_completion`.
+        :param client: An instance of `openai.AsyncOpenAI <https://github.com/openai/openai-python>`_
+            (for reusing the same client in multiple engines).
+            You must specify exactly one of ``(api_key, client)``. If this is passed the ``organization``, ``retry``,
+            ``api_base``, and ``headers`` params will be ignored.
+        :param hyperparams: The arguments to pass to the ``create_chat_completion`` call with each request. See
+            https://platform.openai.com/docs/api-reference/chat/create for a full list of params.
         """
         if api_key and client:
             raise ValueError("You must supply no more than one of (api_key, client).")
-        if api_key is None and client is None:
-            api_key = os.getenv("OPENAI_API_KEY")
-            if api_key is None:
-                raise ValueError(
-                    "You must supply an `api_key`, `client`, or set the `OPENAI_API_KEY` environment variable to use"
-                    " the OpenAIEngine."
-                )
         if max_context_size is None:
             max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))
         self.client = client or OpenAIClient(
-            api_key, organization=organization, retry=retry, api_base=api_base, headers=headers
+            api_key=api_key, organization=organization, max_retries=retry, base_url=api_base, default_headers=headers
         )
         self.model = model
         self.max_context_size = max_context_size
@@ -116,72 +111,68 @@ class OpenAIEngine(BaseEngine):
                 mlen += len(self.tokenizer.encode(tc.function.arguments))
         return mlen
 
-    # translation helpers
-    @staticmethod
-    def translate_functions(functions: list[AIFunction], cls: type[ToolSpec] = ToolSpec) -> list[ToolSpec]:
-        return [
-            cls.from_function(FunctionSpec(name=f.name, description=f.desc, parameters=f.json_schema))
-            for f in functions
-        ]
-
-    @staticmethod
-    def translate_messages(
-        messages: list[ChatMessage], cls: type[OpenAIChatMessage] = OpenAIChatMessage
-    ) -> list[OpenAIChatMessage]:
-        translated_messages = []
-        free_toolcall_ids = set()
-        for m in messages:
-            # if this is not a function result and there are free tool call IDs, raise
-            if m.role != ChatRole.FUNCTION and free_toolcall_ids:
-                raise PromptError(
-                    f"Encountered a {m.role.value!r} message but expected a FUNCTION message to satisfy the pending"
-                    f" tool call(s): {free_toolcall_ids}"
-                )
-            # asst: add tool call IDs to freevars
-            if m.role == ChatRole.ASSISTANT and m.tool_calls:
-                for tc in m.tool_calls:
-                    free_toolcall_ids.add(tc.id)
-            # func: bind freevars
-            elif m.role == ChatRole.FUNCTION:
-                # has ID: bind it if requested; translate to FUNCTION if not
-                if m.tool_call_id is not None:
-                    if m.tool_call_id in free_toolcall_ids:
-                        free_toolcall_ids.remove(m.tool_call_id)
-                    else:
-                        # this happens if the tool call is pushed out of context but the result is still here,
-                        # and we have always included messages beforehand
-                        # TODO: this will eventually be deprecated - maube we just skip this message?
-                        m = m.copy_with(tool_call_id=None)
-                # no ID: bind if unambiguous, otherwise cry
-                elif m.tool_call_id is None:
-                    if len(free_toolcall_ids) == 1:
-                        m = m.copy_with(tool_call_id=free_toolcall_ids.pop())
-                    elif len(free_toolcall_ids) > 1:
-                        raise PromptError(
-                            "Got a FUNCTION message with no tool_call_id but multiple tool calls are pending"
-                            f" ({free_toolcall_ids})! Set the tool_call_id to resolve the pending tool requests."
-                        )
-            translated_messages.append(cls.from_chatmessage(m))
-        # if the translated messages start with a hanging TOOL call, strip it (openai limitation)
-        # though hanging FUNCTION messages are OK
-        while translated_messages and translated_messages[0].role == "tool":
-            translated_messages.pop(0)
-        return translated_messages
-
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> ChatCompletion:
         if functions:
-            tool_specs = self.translate_functions(functions)
+            tool_specs = translate_functions(functions)
         else:
             tool_specs = None
         # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
-        translated_messages = self.translate_messages(messages)
+        translated_messages = translate_messages(messages)
         # make API call
-        completion = await self.client.create_chat_completion(
+        completion = await self.client.chat.completions.create(
             model=self.model, messages=translated_messages, tools=tool_specs, **self.hyperparams, **hyperparams
         )
-        return completion
+        # translate into Kani spec and return
+        return ChatCompletion(openai_completion=completion)
+
+    async def stream(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        if functions:
+            tool_specs = translate_functions(functions)
+        else:
+            tool_specs = None
+        # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
+        translated_messages = translate_messages(messages)
+        # make API call
+        stream = await self.client.chat.completions.create(
+            model=self.model,
+            messages=translated_messages,
+            tools=tool_specs,
+            stream=True,
+            **self.hyperparams,
+            **hyperparams,
+        )
+
+        # save requested tool calls and content as streamed
+        content_chunks = []
+        tool_call_partials = {}  # index -> tool call
+
+        # iterate over the stream and yield/save
+        async for chunk in stream:
+            delta = chunk.choices[0].delta
+
+            # yield content
+            if delta.content is not None:
+                content_chunks.append(delta.content)
+                yield delta.content
+
+            # tool calls are partials, save a mapping to the latest state and we'll translate them later once complete
+            if delta.tool_calls:
+                # each tool call can have EITHER the function.name/id OR function.arguments
+                for tc in delta.tool_calls:
+                    if tc.id is not None:
+                        tool_call_partials[tc.index] = tc
+                    else:
+                        partial = tool_call_partials[tc.index]
+                        partial.function.arguments += tc.function.arguments
+
+        # construct the final completion with streamed tool calls
+        content = None if not content_chunks else "".join(content_chunks)
+        tool_calls = [openai_tc_to_kani_tc(tc) for tc in sorted(tool_call_partials.values(), key=lambda c: c.index)]
+        yield Completion(message=ChatMessage(role=ChatRole.ASSISTANT, content=content, tool_calls=tool_calls))
 
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
         if not functions:

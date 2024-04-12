@@ -14,7 +14,7 @@ sys.path.append("..")
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "kani"
-copyright = "2023, Andrew Zhu, Liam Dugan, and Alyssa Hwang"
+copyright = "2023-present, Andrew Zhu, Liam Dugan, and Alyssa Hwang"
 author = "Andrew Zhu, Liam Dugan, and Alyssa Hwang"
 
 # -- General configuration ---------------------------------------------------
@@ -51,8 +51,10 @@ nitpicky = True
 nitpick_ignore_regex = [
     (r"py:class", r"aiohttp\..*"),  # aiohttp intersphinx is borked
     (r"py:class", r"torch\..*"),  # idk if torch has intersphinx
-    (r"py:class", r"kani\.engines\.openai\.models\..*"),  # internal models are just pydantic models of the oai api
+    (r"py:class", r"openai\..*"),  # openai does not use sphinx for docs
     (r"py:class", r"anthropic\..*"),  # anthropic does not use sphinx for docs
+    (r"py:class", r"asyncio\.\w+\..*"),  # asyncio submodule intersphinx is borked
+    (r"py:class", r"kani\..*\.[\w_0-9]*T"),  # ignore generics and other typevars
 ]
 
 # sphinx.ext.autodoc

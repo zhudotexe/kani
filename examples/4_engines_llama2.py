@@ -7,7 +7,7 @@ This example shows how you can use kani to run a language model on your own mach
 from kani import Kani, chat_in_terminal
 from kani.engines.huggingface.llama2 import LlamaEngine
 
-engine = LlamaEngine(use_auth_token=True, strict=True)
+engine = LlamaEngine(use_auth_token=True)
 ai = Kani(
     engine,
     system_prompt=(

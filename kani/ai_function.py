@@ -2,6 +2,7 @@ import asyncio
 import functools
 import inspect
 import typing
+import warnings
 from typing import Annotated
 
 from pydantic import validate_call
@@ -55,6 +56,14 @@ class AIFunction:
         self.__module__ = inner.__module__
         self.__doc__ = inner.__doc__
 
+        # validation
+        if not self.desc:
+            warnings.warn(
+                f"The {self.name!r} @ai_function is missing a description. This may lead to request errors or poor"
+                ' performance by models. To add a description, add a """docstring""" beneath the signature or use'
+                ' @ai_function(desc="...").'
+            )
+
     async def __call__(self, *args, **kwargs):
         if self._inner_is_coro:
             return await self.inner(*args, **kwargs)
@@ -62,8 +71,7 @@ class AIFunction:
         inner_partial = functools.partial(self.inner, *args, **kwargs)
         return await asyncio.get_event_loop().run_in_executor(None, inner_partial)
 
-    def create_json_schema(self) -> dict:
-        """Create a JSON schema representing this function's parameters as a JSON object."""
+    def get_params(self) -> list[AIParamSchema]:
         # get list of params
         params = []
         sig = inspect.signature(self.inner)
@@ -89,9 +97,17 @@ class AIFunction:
 
             # get aiparam and add it to the list
             ai_param = get_aiparam(annotation)
-            params.append(AIParamSchema(name=name, t=type_hints[name], default=param.default, aiparam=ai_param))
+            params.append(
+                AIParamSchema(
+                    name=name, t=type_hints[name], default=param.default, aiparam=ai_param, inspect_param=param
+                )
+            )
+        return params
+
+    def create_json_schema(self) -> dict:
+        """Create a JSON schema representing this function's parameters as a JSON object."""
         # create a schema generator and generate
-        return create_json_schema(params)
+        return create_json_schema(self.get_params())
 
 
 def ai_function(

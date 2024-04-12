@@ -87,10 +87,6 @@ here's how you might implement a simple chat:
     # use `asyncio.run` to call your async function to start the program
     asyncio.run(chat_with_kani())
 
-.. seealso::
-
-    The source code of :func:`.chat_in_terminal`.
-
 Engines
 ^^^^^^^
 Engines are responsible for interfacing with a language model.
@@ -121,16 +117,8 @@ conversations), and an assistant message can contain a ``function_call`` (discus
 At a high level, a :class:`.Kani` is responsible for managing a list of :class:`.ChatMessage`: the chat session
 associated with it. You can access the chat messages through the :attr:`.Kani.chat_history` attribute.
 
-You may even modify the chat history (e.g. append or delete ChatMessages) to change the prompt at any time.
-
-.. tip::
-    To edit the content of a message in the chat history, you must replace the object. ChatMessages are
-    immutable by default.
-
-    For example, to edit the last message, you could set ``ai.chat_history[-1] = ChatMessage.assistant("...")``.
-
-    You can use the :meth:`.ChatMessage.copy_with` convenience method to make a copy with only certain attributes
-    updated.
+You may even modify the chat history (e.g. append or delete ChatMessages or edit a message's content) to change the
+prompt at any time.
 
 .. warning::
     In some advanced use cases, :attr:`.ChatMessage.content` may be a tuple of :class:`.MessagePart` or ``str`` rather
@@ -164,6 +152,66 @@ You may even modify the chat history (e.g. append or delete ChatMessages) to cha
         ChatMessage(role=ChatRole.USER, content="Hello kani!"),
         ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
     ]
+
+Streaming
+---------
+kani supports streaming to print tokens from the engine as they are received. Streaming is designed to be a drop-in
+superset of the ``chat_round`` and ``full_round`` methods, allowing you to gradually refactor your code without ever
+leaving it in a broken state.
+
+To request a stream from the engine, use :meth:`.Kani.chat_round_stream` or :meth:`.Kani.full_round_stream`. These
+methods will return a :class:`.StreamManager`, which you can use in different ways to consume the stream.
+
+The simplest way to consume the stream is to iterate over it with ``async for``, which will yield a stream of
+:class:`str`.
+
+.. code-block:: python
+
+    # CHAT ROUND:
+    stream = ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
+    async for token in stream:
+        print(token, end="")
+    msg = await stream.message()
+
+    # FULL ROUND:
+    async for stream in ai.full_round_stream("What is the airspeed velocity of an unladen swallow?"):
+        async for token in stream:
+            print(token, end="")
+        msg = await stream.message()
+
+kani also provides a helper to print streams (:func:`kani.print_stream`):
+
+.. code-block:: python
+
+    stream = ai.chat_round_stream("What is the most interesting train line in Tokyo?")
+    await kani.print_stream(stream)
+
+After a stream finishes, its contents will be available as a :class:`.ChatMessage`. You can retrieve the final
+message or :class:`.BaseCompletion` with:
+
+.. code-block:: python
+
+    msg = await stream.message()
+    completion = await stream.completion()
+
+The final :class:`.ChatMessage` may contain non-yielded tokens (e.g. a request for a function call). If the final
+message or completion is requested before the stream is iterated over, the stream manager will consume the entire
+stream.
+
+.. tip::
+    For compatibility and ease of refactoring, awaiting the stream itself will also return the message, i.e.:
+
+    .. code-block:: python
+
+        msg = await ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
+
+    (note the ``await`` that is not present in the above examples). This allows you to refactor your code by changing
+    ``chat_round`` to ``chat_round_stream`` without other changes.
+
+    .. code-block:: diff
+
+        - msg = await ai.chat_round("What is the airspeed velocity of an unladen swallow?")
+        + msg = await ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
 
 Few-Shot Prompting
 ------------------

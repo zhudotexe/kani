@@ -5,14 +5,14 @@ import logging
 import pytest
 
 from kani import ChatMessage, Kani
-from kani.engines.ctransformers.llama2 import LlamaCTransformersEngine
+from kani.engines.llamacpp import LlamaCppEngine
 
 pytestmark = pytest.mark.llama
 
 
 @pytest.fixture(scope="module")
 def llama():
-    return LlamaCTransformersEngine("TheBloke/Llama-2-7B-Chat-GGML", model_file="llama-2-7b-chat.ggmlv3.q4_K_S.bin")
+    return LlamaCppEngine(repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_K_M.gguf")
 
 
 @pytest.fixture()

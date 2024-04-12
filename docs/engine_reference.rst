@@ -21,9 +21,6 @@ OpenAI
 ------
 .. autoclass:: kani.engines.openai.OpenAIEngine
 
-.. autoclass:: kani.engines.openai.client.OpenAIClient
-    :members:
-
 Anthropic
 ---------
 .. autoclass:: kani.engines.anthropic.AnthropicEngine
@@ -37,13 +34,13 @@ Hugging Face
 .. autoclass:: kani.engines.huggingface.llama2.LlamaEngine
     :members:
 
+.. autoclass:: kani.engines.huggingface.cohere.CommandREngine
+    :members:
+
 .. autoclass:: kani.engines.huggingface.vicuna.VicunaEngine
     :members:
 
-CTransformers
--------------
-.. autoclass:: kani.engines.ctransformers.CTransformersEngine
-    :members:
-
-.. autoclass:: kani.engines.ctransformers.llama2.LlamaCTransformersEngine
+llama.cpp
+---------
+.. autoclass:: kani.engines.llamacpp.LlamaCppEngine
     :members:

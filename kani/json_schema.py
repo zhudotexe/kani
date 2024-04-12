@@ -18,11 +18,12 @@ class AIParamSchema:
     This class is only used internally within kani and generally shouldn't be constructed manually.
     """
 
-    def __init__(self, name: str, t: type, default, aiparam: Optional["AIParam"] = None):
+    def __init__(self, name: str, t: type, default, aiparam: Optional["AIParam"], inspect_param: inspect.Parameter):
         self.name = name
-        self.type = t
+        self.type = t  # will not include Annotated if present
         self.default = default
         self.aiparam = aiparam
+        self.inspect_param = inspect_param
 
     @property
     def required(self):
@@ -36,6 +37,13 @@ class AIParamSchema:
     @property
     def description(self):
         return self.aiparam.desc if self.aiparam is not None else None
+
+    def __str__(self):
+        default = ""
+        if not self.required:
+            default = f" = {self.default!r}"
+        annotation = inspect.formatannotation(self.type)
+        return f"{self.name}: {annotation}{default}"
 
 
 class JSONSchemaBuilder(pydantic.json_schema.GenerateJsonSchema):

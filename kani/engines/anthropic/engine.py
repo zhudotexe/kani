@@ -1,26 +1,87 @@
+import functools
+import itertools
+import json
 import os
 import warnings
+from typing import AsyncIterable
 
 from kani.ai_function import AIFunction
-from kani.exceptions import MissingModelDependencies, PromptError
-from kani.models import ChatMessage, ChatRole
-from ..base import BaseEngine, Completion
+from kani.exceptions import KaniException, MissingModelDependencies
+from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
+from kani.prompts.pipeline import PromptPipeline
+from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
     from anthropic import AI_PROMPT, HUMAN_PROMPT, AsyncAnthropic
-
-    # anthropic async client loads a small json file using anyio for some reason; hook into the underlying loader
-    # noinspection PyProtectedMember
-    from anthropic._tokenizers import sync_get_tokenizer
 except ImportError as e:
     raise MissingModelDependencies(
         'The AnthropicEngine requires extra dependencies. Please install kani with "pip install kani[anthropic]".'
     ) from None
 
 CONTEXT_SIZES_BY_PREFIX = [
+    ("claude-3", 200000),
     ("claude-2.1", 200000),
     ("", 100000),
 ]
+
+
+# ==== pipe ====
+def content_transform(msg: ChatMessage):
+    # FUNCTION messages should look like:
+    # {
+    #   "role": "user",
+    #   "content": [
+    #     {
+    #       "type": "tool_result",
+    #       "tool_use_id": "toolu_01A09q90qw90lq917835lq9",
+    #       "content": "65 degrees"
+    #     }
+    #   ]
+    # }
+    if msg.role == ChatRole.FUNCTION:
+        result = {"type": "tool_result", "tool_use_id": msg.tool_call_id, "content": msg.text}
+
+        # tool call error
+        if msg.is_tool_call_error:
+            result["is_error"] = True
+
+        return [result]
+
+    # ASSISTANT messages with tool calls should look like:
+    # {
+    #   "role": "assistant",
+    #   "content": [
+    #     {
+    #       "type": "text",
+    #       "text": "<thinking>I need to use the get_weather, and the user wants San Francisco, CA.</thinking>"
+    #     },
+    #     {
+    #       "type": "tool_use",
+    #       "id": "toolu_01A09q90qw90lq917835lq9",
+    #       "name": "get_weather",
+    #       "input": {"location": "San Francisco, CA", "unit": "celsius"}
+    #     }
+    #   ]
+    # }
+    if msg.role == ChatRole.ASSISTANT and msg.tool_calls:
+        content = [{"type": "text", "text": str(part)} for part in msg.parts]
+        for tc in msg.tool_calls:
+            content.append({"type": "tool_use", "id": tc.id, "name": tc.function.name, "input": tc.function.kwargs})
+        return content
+
+    return msg.text
+
+
+# assumes system messages are plucked before calling
+CLAUDE_PIPELINE = (
+    PromptPipeline()
+    .translate_role(role=ChatRole.SYSTEM, to=ChatRole.USER)
+    .merge_consecutive(role=ChatRole.USER, sep="\n")
+    .merge_consecutive(role=ChatRole.ASSISTANT, sep=" ")
+    .ensure_bound_function_calls()
+    .ensure_start(role=ChatRole.USER)
+    .conversation_dict(function_role="user", content_transform=content_transform)
+)
 
 
 class AnthropicEngine(BaseEngine):
@@ -32,13 +93,14 @@ class AnthropicEngine(BaseEngine):
     See https://docs.anthropic.com/claude/reference/selecting-a-model for a list of available models.
     """
 
-    token_reserve = 4  # each prompt ends with \n\nAssistant:
+    # because we have to estimate tokens wildly and the ctx is so long we'll just reserve a bunch
+    token_reserve = 500
 
     def __init__(
         self,
         api_key: str = None,
-        model: str = "claude-2.1",
-        max_tokens_to_sample: int = 512,
+        model: str = "claude-3-haiku-20240307",
+        max_tokens: int = 512,
         max_context_size: int = None,
         *,
         retry: int = 2,
@@ -51,7 +113,7 @@ class AnthropicEngine(BaseEngine):
         :param api_key: Your Anthropic API key. By default, the API key will be read from the `ANTHROPIC_API_KEY`
             environment variable.
         :param model: The id of the model to use (e.g. "claude-2.1", "claude-instant-1.2").
-        :param max_tokens_to_sample: The maximum number of tokens to sample at each generation (defaults to 450).
+        :param max_tokens: The maximum number of tokens to sample at each generation (defaults to 512).
             Generally, you should set this to the same number as your Kani's ``desired_response_tokens``.
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
@@ -79,12 +141,59 @@ class AnthropicEngine(BaseEngine):
             api_key=api_key, max_retries=retry, base_url=api_base, default_headers=headers
         )
         self.model = model
-        self.max_tokens_to_sample = max_tokens_to_sample
+        self.max_tokens = max_tokens
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
-        self.tokenizer = sync_get_tokenizer()
+
+        # token counting - claude 3+ does not release tokenizer so we have to do heuristics and cache
+        self.token_cache = {}
+        if model.startswith("claude-2"):
+            # anthropic async client loads a json file using anyio for some reason; hook into the underlying loader
+            # noinspection PyProtectedMember
+            from anthropic._tokenizers import sync_get_tokenizer
+
+            self.tokenizer = sync_get_tokenizer()
+        else:
+            # claude 3 tokenizer just... doesn't exist
+            # https://github.com/anthropics/anthropic-sdk-python/issues/375 pain
+            self.tokenizer = None
+
+    # ==== token counting ====
+    @staticmethod
+    def message_cache_key(message: ChatMessage):
+        # (role, content, tool calls)
+
+        # we'll use msgpart identity for the hash here since we'll always have a ref as long as it's in a message
+        # history
+        hashable_content = tuple(part if isinstance(part, str) else id(part) for part in message.parts)
+
+        # use (name, args) for tool calls
+        if message.tool_calls:
+            hashable_tool_calls = tuple((tc.function.name, tc.function.arguments) for tc in message.tool_calls)
+        else:
+            hashable_tool_calls = message.tool_calls
+
+        return hash((message.role, hashable_content, hashable_tool_calls))
 
     def message_len(self, message: ChatMessage) -> int:
+        # use cache
+        cache_key = self.message_cache_key(message)
+        if cache_key in self.token_cache:
+            return self.token_cache[cache_key]
+
+        # use tokenizer
+        if self.tokenizer is not None:
+            return self._message_len_tokenizer(message)
+
+        # panik - I guess we'll pretend that 4 chars = 1 token...?
+        n = len(message.role.value) + len(message.text)
+        if message.tool_calls:
+            for tc in message.tool_calls:
+                n += len(tc.function.name) + len(tc.function.arguments)
+        return n // 4
+
+    def _message_len_tokenizer(self, message):
+        # this only applies to claude-2
         # human messages are prefixed with `\n\nHuman: ` and assistant with `\n\nAssistant:`
         if message.role == ChatRole.USER:
             mlen = 5
@@ -97,46 +206,137 @@ class AnthropicEngine(BaseEngine):
             mlen += len(self.tokenizer.encode(message.text).ids)
         return mlen
 
-    @staticmethod
-    def build_prompt(messages: list[ChatMessage]):
-        # Claude prompts must start with a human message
-        first_human_idx = next((i for i, m in enumerate(messages) if m.role == ChatRole.USER), None)
-        if first_human_idx is None:
-            raise PromptError("Prompts to Anthropic models must contain at least one USER message.")
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
+        # wrap an inner impl to use lru_cache with frozensets
+        return self._function_token_reserve_impl(frozenset(functions))
 
-        # and make sure the system messages are included
+    @functools.lru_cache(maxsize=256)
+    def _function_token_reserve_impl(self, functions):
+        # panik, also assume len/4?
+        n = sum(len(f.name) + len(f.desc) + len(json.dumps(f.json_schema)) for f in functions)
+        return n // 4
+
+    # ==== requests ====
+    def _get_client(self, functions):
+        if not functions:
+            return self.client
+        return self.client.beta.tools
+
+    @staticmethod
+    def _prepare_request(messages, functions):
+        kwargs = {}
+
+        # --- messages ---
+        # pluck system messages
         last_system_idx = next((i for i, m in enumerate(messages) if m.role != ChatRole.SYSTEM), None)
         if last_system_idx:
-            out = ["\n\n".join(m.text for m in messages[:last_system_idx])]
-        else:
-            out = []
+            kwargs["system"] = "\n\n".join(m.text for m in messages[:last_system_idx])
+            messages = messages[last_system_idx:]
 
-        for idx, message in enumerate(messages[first_human_idx:]):
-            if message.role == ChatRole.USER:
-                out.append(f"{HUMAN_PROMPT} {message.text}")
-            elif message.role == ChatRole.ASSISTANT:
-                out.append(f"{AI_PROMPT} {message.text}")
+        # enforce ordering and function call bindings
+        # and translate to dict spec
+        messages = CLAUDE_PIPELINE(messages)
+
+        # merge FUNCTION, USER consecutives into one with multiple parts
+        prompt_msgs = []
+        for role, group_msgs in itertools.groupby(messages, key=lambda m: m["role"]):
+            group_msgs = list(group_msgs)
+            # >1 consecutive user messages get merged
+            if role == "user" and len(group_msgs) > 1:
+                # turn str parts into {type: text, text: ...}
+                prompt_msg_content = []
+                for msg in group_msgs:
+                    if isinstance(msg["content"], str):
+                        prompt_msg_content.append({"type": "text", "text": msg["content"]})
+                    else:
+                        prompt_msg_content.append(msg["content"])
+                # and output the final msg
+                prompt_msgs.append({"role": "user", "content": prompt_msg_content})
+            # else send to output
             else:
-                warnings.warn(
-                    f"Encountered a {message.role} message in the middle of the prompt - Anthropic models expect an"
-                    " optional SYSTEM message followed by alternating USER and ASSISTANT messages. Appending the"
-                    " content to the prompt..."
+                prompt_msgs.extend(group_msgs)
+
+        # --- tools ---
+        if functions:
+            kwargs["tools"] = [
+                {"name": f.name, "description": f.desc, "input_schema": f.json_schema} for f in functions
+            ]
+
+        return kwargs, prompt_msgs
+
+    def _translate_anthropic_message(self, message):
+        tool_calls = []
+        text_parts = []
+        for part in message.content:
+            if part.type == "text":
+                text_parts.append(part.text)
+            elif part.type == "tool_use":
+                fc = FunctionCall(name=part.name, arguments=json.dumps(part.input))
+                tc = ToolCall(id=part.id, type="function", function=fc)
+                tool_calls.append(tc)
+            else:
+                raise KaniException(
+                    f"The engine returned an unknown part: {part.type}. Please report this as an issue on GitHub with"
+                    " instructions on how to reproduce this issue."
                 )
-                out.append(f"\n\n{message.text}")
-        return "".join(out) + AI_PROMPT
+        content = text_parts[0] if len(text_parts) == 1 else text_parts
+        kani_msg = ChatMessage.assistant(content, tool_calls=tool_calls or None)
+
+        # also cache the message token len
+        cache_key = self.message_cache_key(kani_msg)
+        self.token_cache[cache_key] = message.usage.output_tokens
+
+        return Completion(
+            message=kani_msg,
+            prompt_tokens=message.usage.input_tokens,
+            completion_tokens=message.usage.output_tokens,
+        )
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> Completion:
-        prompt = self.build_prompt(messages)
-        completion = await self.client.completions.create(
+        kwargs, prompt_msgs = self._prepare_request(messages, functions)
+        client = self._get_client(functions)
+
+        # --- completion ---
+        message = await client.messages.create(
             model=self.model,
-            max_tokens_to_sample=self.max_tokens_to_sample,
-            prompt=prompt,
+            max_tokens=self.max_tokens,
+            messages=prompt_msgs,
+            **kwargs,
             **self.hyperparams,
             **hyperparams,
         )
-        return Completion(message=ChatMessage.assistant(completion.completion.strip()))
+
+        # translate to kani
+        return self._translate_anthropic_message(message)
+
+    async def stream(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        if functions:
+            warnings.warn("Claude 3 does not support streaming with function calling.")
+            async for elem in super().stream(messages, functions, **hyperparams):
+                yield elem
+        else:
+            # do the stream
+            kwargs, prompt_msgs = self._prepare_request(messages, functions)
+
+            async with self.client.messages.stream(
+                model=self.model,
+                max_tokens=self.max_tokens,
+                messages=prompt_msgs,
+                **kwargs,
+                **self.hyperparams,
+                **hyperparams,
+            ) as stream:
+                async for text in stream.text_stream:
+                    yield text
+
+                message = await stream.get_final_message()
+                yield self._translate_anthropic_message(message)
 
     async def close(self):
         await self.client.close()
