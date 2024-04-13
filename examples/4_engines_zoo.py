@@ -37,7 +37,7 @@ engine = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.2", prompt_pip
 # ---- Gemma (Hugging Face) ----
 from kani.engines.huggingface import HuggingEngine
 from kani.prompts.impl import GEMMA_PIPELINE
-engine = HuggingEngine(model_id="google/gemma-1.1-7b-it", prompt_pipeline=GEMMA_PIPELINE)
+engine = HuggingEngine(model_id="google/gemma-1.1-7b-it", prompt_pipeline=GEMMA_PIPELINE, use_auth_token=True)
 
 # ---- Vicuna v1.3 (Hugging Face) ----
 from kani.engines.huggingface.vicuna import VicunaEngine

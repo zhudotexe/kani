@@ -90,7 +90,7 @@ class AnthropicEngine(BaseEngine):
     This engine supports all Claude models. See https://docs.anthropic.com/claude/docs/getting-access-to-claude for
     information on accessing the Claude API.
 
-    See https://docs.anthropic.com/claude/reference/selecting-a-model for a list of available models.
+    See https://docs.anthropic.com/claude/docs/models-overview for a list of available models.
     """
 
     # because we have to estimate tokens wildly and the ctx is so long we'll just reserve a bunch
