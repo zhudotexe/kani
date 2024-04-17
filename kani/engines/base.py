@@ -129,3 +129,48 @@ class BaseEngine(abc.ABC):
     async def close(self):
         """Optional: Clean up any resources the engine might need."""
         pass
+
+
+class WrapperEngine(BaseEngine):
+    """
+    A base class for engines that are meant to wrap other engines. By default, this class takes in another engine
+    as the first parameter in its constructor and will pass through all non-overriden attributes to the wrapped
+    engine.
+    """
+
+    def __init__(self, engine: BaseEngine, *args, **kwargs):
+        """
+        :param engine: The engine to wrap.
+        """
+        super().__init__(*args, **kwargs)
+        self.engine = engine
+        """The wrapped engine."""
+
+        # passthrough attrs
+        self.max_context_size = engine.max_context_size
+        self.token_reserve = engine.token_reserve
+
+    # passthrough methods
+    def message_len(self, message: ChatMessage) -> int:
+        return self.engine.message_len(message)
+
+    async def predict(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> BaseCompletion:
+        return await self.engine.predict(messages, functions, **hyperparams)
+
+    async def stream(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        async for elem in self.engine.stream(messages, functions, **hyperparams):
+            yield elem
+
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        return self.engine.function_token_reserve(functions)
+
+    async def close(self):
+        return await self.engine.close()
+
+    # all other attributes are caught by this default passthrough handler
+    def __getattr__(self, item):
+        return getattr(self.engine, item)
