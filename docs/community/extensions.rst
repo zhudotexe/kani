@@ -13,13 +13,17 @@ make your package available on pip.
 
 Community Extensions
 --------------------
-If you've made a cool extension, add it to this table with a PR!
+If you've made a cool extension, add it to this list with a PR!
 
-+-------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------+
-| Name        | Description                                                                | Links                                                                                                        |
-+=============+============================================================================+==============================================================================================================+
-| kani-vision | Adds support for multimodal vision-language models, like GPT-4V and LLaVA. | `GitHub <https://github.com/zhudotexe/kani-vision>`_ `Docs <https://kani-vision.readthedocs.io/en/latest/>`_ |
-+-------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------+
+* **kani-ratelimits**: Adds a wrapper engine to enforce request-per-minute (RPM), token-per-minute (TPM), and/or
+  max-concurrency ratelimits before making requests to an underlying engine.
+
+  * `GitHub (kani-ratelimits) <https://github.com/zhudotexe/kani-ratelimits>`_
+
+* **kani-vision**: Adds support for multimodal vision-language models, like GPT-4V and LLaVA.
+
+  * `GitHub (kani-vision) <https://github.com/zhudotexe/kani-vision>`_
+  * `Docs (kani-vision) <https://kani-vision.readthedocs.io/en/latest/>`_
 
 Design Considerations
 ---------------------
