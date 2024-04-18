@@ -58,29 +58,11 @@ DEFAULT_RAG_INSTRUCTIONS_FAST = """Carefully perform the following instructions,
 Firstly, Decide which of the retrieved documents are relevant to the user's last input by writing 'Relevant Documents:' followed by comma-separated list of document numbers. If none are relevant, you should instead write 'None'.
 Secondly, Decide which of the retrieved documents contain facts that should be cited in a good answer to the user's last input by writing 'Cited Documents:' followed a comma-separated list of document numbers. If you dont want to cite any of them, you should instead write 'None'.
 Finally, Write 'Grounded answer:' followed by a response to the user's last input in high quality natural english. Use the symbols <co: doc> and </co: doc> to indicate when a fact comes from a document in the search result, e.g <co: 0>my fact</co: 0> for a fact from document 0."""
+
+
 # fmt: on
 
-# ==== no tool calling ====
-COMMAND_R_PIPELINE = (
-    PromptPipeline()
-    .conversation_fmt(
-        prefix="<BOS_TOKEN>",
-        generation_suffix="<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>",
-        user_prefix="<|START_OF_TURN_TOKEN|><|USER_TOKEN|>",
-        user_suffix="<|END_OF_TURN_TOKEN|>",
-        assistant_prefix="<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>",
-        assistant_suffix="<|END_OF_TURN_TOKEN|>",
-        assistant_suffix_if_last="",
-        system_prefix="<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>",
-        system_suffix="<|END_OF_TURN_TOKEN|>",
-        function_prefix="<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>\n<results>\n",
-        function_suffix="\n</results><|END_OF_TURN_TOKEN|>",
-    )
-)  # fmt: skip
-"""The pipeline to use when interfacing with Command R without tools defined."""
 
-
-# ==== tool calling (function not last) ====
 def function_result_joiner(msgs):
     contents = []
     for idx, msg in enumerate(msgs):
@@ -104,17 +86,23 @@ def tool_call_formatter(msg: ChatMessage) -> str:
     return msg.content
 
 
-def build_tool_pipeline(
-    *, include_function_calls=True, include_function_results=True, tool_instructions=DEFAULT_TOOL_INSTRUCTIONS
+def build_pipeline(
+    *,
+    include_function_calls=True,
+    include_all_function_results=True,
+    include_last_function_result=True,
+    instruction_suffix=None,
 ):
     """
-    The pipeline to use when interfacing with Command R WITH tools defined. Use this pipeline if the last message is
-    NOT a FUNCTION message.
-
     :param include_function_calls: Whether to include previous turns' function calls or just the model's answers.
-    :param include_function_results: Whether to include the results of previous turns' function calls in the context.
-    :param tool_instructions: The system prompt to send just before the model's generation turn that includes
-        instructions on the format to generate tool calls in. Generally you shouldn't change this.
+    :param include_all_function_results: Whether to include the results of all previous turns' function calls in the
+        context.
+    :param include_last_function_result: If *include_all_function_results* is False, whether to include just the last
+        function call's result (useful for RAG).
+    :param instruction_suffix: The system prompt to send just before the model's generation turn that includes
+        instructions on the format to generate the result in. Can be None to only generate a model turn.
+        For tool calling, this should be the DEFAULT_TOOL_INSTRUCTIONS.
+        For RAG, this should be DEFAULT_RAG_INSTRUCTIONS_ACC or DEFAULT_RAG_INSTRUCTIONS_FAST.
     """
 
     steps = []
@@ -130,18 +118,30 @@ def build_tool_pipeline(
     else:
         steps.append(Remove(role=ChatRole.ASSISTANT, predicate=lambda msg: msg.content is None))
 
-    # keep function results around as SYSTEM messages
-    if include_function_results:
+    # keep/drop function results
+    if include_all_function_results:
+        # keep all function results around as SYSTEM messages
         steps.append(MergeConsecutive(role=ChatRole.FUNCTION, joiner=function_result_joiner))
+    elif include_last_function_result:
+        # merge consecutive FUNCTION messages then remove all but the last (if it's the last message)
+
+        def remover(m, is_last):
+            return None if not is_last else m
+
+        steps.append(MergeConsecutive(role=ChatRole.FUNCTION, joiner=function_result_joiner))
+        steps.append(Apply(remover, role=ChatRole.FUNCTION))
     else:
+        # remove all FUNCTION messages
         steps.append(Remove(role=ChatRole.FUNCTION))
 
     steps.append(
         ConversationFmt(
             prefix="<BOS_TOKEN>",
             generation_suffix=(
-                f"<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>{tool_instructions}<|END_OF_TURN_TOKEN|>"
+                f"<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>{instruction_suffix}<|END_OF_TURN_TOKEN|>"
                 "<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>"
+                if instruction_suffix
+                else "<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>"
             ),
             user_prefix="<|START_OF_TURN_TOKEN|><|USER_TOKEN|>",
             user_suffix="<|END_OF_TURN_TOKEN|>",
@@ -156,49 +156,6 @@ def build_tool_pipeline(
     )
 
     return PromptPipeline(steps)
-
-
-# ==== tool calling (function last) ====
-def build_rag_pipeline(*, include_previous_results=True, rag_instructions=DEFAULT_RAG_INSTRUCTIONS_ACC):
-    """
-    The pipeline to use when interfacing with Command R WITH tools defined. Use this pipeline if the last message IS a
-    FUNCTION message.
-
-    :param include_previous_results: Include previous turns' results in the chat history.
-    :param rag_instructions: The system prompt to send just before the model's generation turn that includes
-        instructions on the format to generate the result in. Can be None to only generate a model turn. Defaults
-        to the "accurate" grounded RAG prompt (``from kani.prompts.impl.cohere import DEFAULT_RAG_INSTRUCTIONS_ACC``).
-    """
-
-    def remover(m, is_last):
-        return None if is_last and not include_previous_results else m
-
-    return (
-        PromptPipeline()
-        .merge_consecutive(role=ChatRole.FUNCTION, joiner=function_result_joiner)
-        # remove all but the last function message
-        .apply(remover, role=ChatRole.FUNCTION)
-        # remove asst messages with no content (function calls)
-        .remove(role=ChatRole.ASSISTANT, predicate=lambda msg: msg.content is None)
-        .conversation_fmt(
-            prefix="<BOS_TOKEN>",
-            generation_suffix=(
-                f"<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>{rag_instructions}<|END_OF_TURN_TOKEN|>"
-                "<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>"
-                if rag_instructions
-                else "<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>"
-            ),
-            user_prefix="<|START_OF_TURN_TOKEN|><|USER_TOKEN|>",
-            user_suffix="<|END_OF_TURN_TOKEN|>",
-            assistant_prefix="<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>",
-            assistant_suffix="<|END_OF_TURN_TOKEN|>",
-            assistant_suffix_if_last="",
-            system_prefix="<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>",
-            system_suffix="<|END_OF_TURN_TOKEN|>",
-            function_prefix="<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>\n<results>\n",
-            function_suffix="\n</results><|END_OF_TURN_TOKEN|>",
-        )
-    )
 
 
 # ==== helpers ====

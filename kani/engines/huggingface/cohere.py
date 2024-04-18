@@ -9,13 +9,11 @@ from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.impl.cohere import (
-    COMMAND_R_PIPELINE,
     DEFAULT_PREAMBLE,
     DEFAULT_TASK,
     DEFAULT_TOOL_INSTRUCTIONS,
     DEFAULT_TOOL_PROMPT,
-    build_rag_pipeline,
-    build_tool_pipeline,
+    build_pipeline,
     function_prompt,
     tool_call_formatter,
 )
@@ -87,6 +85,7 @@ class CommandREngine(HuggingEngine):
         tool_prompt_include_function_calls=True,
         tool_prompt_include_function_results=True,
         tool_prompt_instructions=DEFAULT_TOOL_INSTRUCTIONS,
+        rag_prompt_include_function_calls=True,
         rag_prompt_include_function_results=True,
         rag_prompt_instructions=None,
         **kwargs,
@@ -98,13 +97,15 @@ class CommandREngine(HuggingEngine):
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
         :param tool_prompt_include_function_calls: Whether to include previous turns' function calls or just the model's
-            answers.
+            answers when it is the model's generation turn and the last message is not FUNCTION.
         :param tool_prompt_include_function_results: Whether to include the results of previous turns' function calls in
-            the context.
+            the context when it is the model's generation turn and the last message is not FUNCTION.
         :param tool_prompt_instructions: The system prompt to send just before the model's generation turn that includes
             instructions on the format to generate tool calls in. Generally you shouldn't change this.
+        :param rag_prompt_include_function_calls: Whether to include previous turns' function calls or just the model's
+            answers when it is the model's generation turn and the last message is FUNCTION.
         :param rag_prompt_include_function_results: Whether to include the results of previous turns' function calls in
-            the context.
+            the context when it is hte model's generation turn and the last message is FUNCTION.
         :param rag_prompt_instructions: The system prompt to send just before the model's generation turn that includes
             instructions on the format to generate the result in. Can be None to only generate a model turn. Defaults
             to ``None`` to for maximum interoperability between models. Options:
@@ -120,14 +121,18 @@ class CommandREngine(HuggingEngine):
 
         self._tool_prompt_include_function_calls = tool_prompt_include_function_calls
 
-        self._tool_pipeline = build_tool_pipeline(
+        self._default_pipeline = build_pipeline()
+        self._tool_pipeline = build_pipeline(
             include_function_calls=tool_prompt_include_function_calls,
-            include_function_results=tool_prompt_include_function_results,
-            tool_instructions=tool_prompt_instructions,
+            include_all_function_results=tool_prompt_include_function_results,
+            include_last_function_result=tool_prompt_include_function_results,
+            instruction_suffix=tool_prompt_instructions,
         )
-        self._rag_pipeline = build_rag_pipeline(
-            include_previous_results=rag_prompt_include_function_results,
-            rag_instructions=rag_prompt_instructions,
+        self._rag_pipeline = build_pipeline(
+            include_function_calls=rag_prompt_include_function_calls,
+            include_all_function_results=rag_prompt_include_function_results,
+            include_last_function_result=True,
+            instruction_suffix=rag_prompt_instructions,
         )
 
     # ==== token counting ====
@@ -163,7 +168,7 @@ class CommandREngine(HuggingEngine):
     ) -> str | torch.Tensor:
         # no functions: we can just do the default simple format
         if not functions:
-            prompt = COMMAND_R_PIPELINE(messages)
+            prompt = self._default_pipeline(messages)
             log.debug(f"PROMPT: {prompt}")
             return prompt
 
@@ -297,21 +302,22 @@ class CommandREngine(HuggingEngine):
             completion = self._generate(input_toks, input_len, hyperparams, functions)
 
             tool_calls = completion.message.tool_calls or []
-            # if the model generated multiple calls that happen to include a directly_answer, remove the directly_answer
-            if len(tool_calls) > 1:
-                completion.message.tool_calls = [
-                    tc for tc in completion.message.tool_calls if tc.function.name != "directly_answer"
-                ]
+
             # if tool says directly answer, stream with the rag pipeline (but no result)
-            elif len(tool_calls) == 1 and tool_calls[0].function.name == "directly_answer":
+            if len(tool_calls) == 1 and tool_calls[0].function.name == "directly_answer":
                 log.debug("GOT DIRECTLY_ANSWER, REPROMPTING RAG...")
                 prompt = self._build_prompt_rag(messages)
                 log.debug(f"RAG PROMPT: {prompt}")
                 input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
                 async for elem in self._stream(input_toks, hyperparams, streamer_timeout=streamer_timeout):
                     yield elem
-            # otherwise yield as normal
+            # if the model generated multiple calls that happen to include a directly_answer, remove the directly_answer
+            # then yield as normal
             else:
+                if completion.message.tool_calls:
+                    completion.message.tool_calls = [
+                        tc for tc in completion.message.tool_calls if tc.function.name != "directly_answer"
+                    ]
                 if completion.message.text:
                     yield completion.message.text
                 yield completion
