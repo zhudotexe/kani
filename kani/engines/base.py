@@ -103,7 +103,7 @@ class BaseEngine(abc.ABC):
         """
         Optional: Stream a completion from the engine, token-by-token.
 
-        This method's signature is the same as :meth:`predict`.
+        This method's signature is the same as :meth:`.BaseEngine.predict`.
 
         This method should yield strings as an asynchronous iterable.
 
