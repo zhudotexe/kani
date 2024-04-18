@@ -50,6 +50,7 @@ kani supports every chat model available on Hugging Face through `transformers` 
 
 In particular, we have reference implementations for the following base models, and their fine-tunes:
 
+- [LLaMA 3](https://huggingface.co/collections/meta-llama/meta-llama-3-66214712577ca38149ebb2b6) (all sizes)
 - [Command R](https://huggingface.co/CohereForAI/c4ai-command-r-v01)
   and [Command R+](https://huggingface.co/CohereForAI/c4ai-command-r-plus)
 - [Mistral-7B](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)
