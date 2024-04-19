@@ -1,10 +1,16 @@
 import inspect
 import json
+import logging
+import re
+from collections import namedtuple
 
 from kani import AIFunction
-from kani.models import ChatMessage, ChatRole
+from kani.engines import Completion
+from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
 from kani.prompts.steps import Apply, ConversationFmt, MergeConsecutive, Remove
+
+log = logging.getLogger(__name__)
 
 # ==== default prompts ====
 # fmt: off
@@ -160,6 +166,7 @@ def build_pipeline(
 
 # ==== helpers ====
 def function_prompt(f: AIFunction) -> str:
+    """Build the Cohere python signature prompt for a given AIFunction."""
     params = f.get_params()
 
     # build params
@@ -180,3 +187,123 @@ def function_prompt(f: AIFunction) -> str:
 
     # return
     return f'```python\ndef {f.name}({params_str}) -> List[Dict]:\n    """{f.desc}{args}\n    """\n    pass\n```'
+
+
+CommandRToolCallInfo = namedtuple("CommandRToolCallInfo", "is_directly_answer filtered_tool_calls")
+
+
+class CommandRMixin:
+    """Common Command R functionality to share between engines"""
+
+    def __init__(
+        self,
+        *args,
+        tool_prompt_include_function_calls=True,
+        tool_prompt_include_function_results=True,
+        tool_prompt_instructions=DEFAULT_TOOL_INSTRUCTIONS,
+        rag_prompt_include_function_calls=True,
+        rag_prompt_include_function_results=True,
+        rag_prompt_instructions=None,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self._tool_prompt_include_function_calls = tool_prompt_include_function_calls
+
+        self._default_pipeline = build_pipeline()
+        self._tool_pipeline = build_pipeline(
+            include_function_calls=tool_prompt_include_function_calls,
+            include_all_function_results=tool_prompt_include_function_results,
+            include_last_function_result=tool_prompt_include_function_results,
+            instruction_suffix=tool_prompt_instructions,
+        )
+        self._rag_pipeline = build_pipeline(
+            include_function_calls=rag_prompt_include_function_calls,
+            include_all_function_results=rag_prompt_include_function_results,
+            include_last_function_result=True,
+            instruction_suffix=rag_prompt_instructions,
+        )
+
+    # ==== prompting ====
+    def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
+        # no functions: we can just do the default simple format
+        if not functions:
+            prompt = self._default_pipeline(messages)
+            log.debug(f"PROMPT: {prompt}")
+            return prompt
+
+        # if we do have functions things get wacky
+        # is the last message a FUNCTION? if so, we need to use the RAG template
+        if messages and messages[-1].role == ChatRole.FUNCTION:
+            prompt = self._build_prompt_rag(messages)
+            log.debug(f"RAG PROMPT: {prompt}")
+            return prompt
+
+        # otherwise use the TOOL template
+        prompt = self._build_prompt_tools(messages, functions)
+        log.debug(f"TOOL PROMPT: {prompt}")
+        return prompt
+
+    def _build_prompt_tools(self, messages: list[ChatMessage], functions: list[AIFunction]):
+        # get the function definitions
+        function_text = "\n\n".join(map(function_prompt, functions))
+        tool_prompt = DEFAULT_TOOL_PROMPT.format(user_functions=function_text)
+
+        # wrap the initial system message, if any
+        messages = messages.copy()
+        if messages and messages[0].role == ChatRole.SYSTEM:
+            messages[0] = messages[0].copy_with(content=DEFAULT_PREAMBLE + messages[0].text + tool_prompt)
+        # otherwise add it in
+        else:
+            messages.insert(0, ChatMessage.system(DEFAULT_PREAMBLE + DEFAULT_TASK + tool_prompt))
+
+        return self._tool_pipeline(messages)
+
+    def _build_prompt_rag(self, messages: list[ChatMessage]):
+        # wrap the initial system message, if any
+        messages = messages.copy()
+        if messages and messages[0].role == ChatRole.SYSTEM:
+            messages[0] = messages[0].copy_with(content=DEFAULT_PREAMBLE + messages[0].text)
+        # otherwise add it in
+        else:
+            messages.insert(0, ChatMessage.system(DEFAULT_PREAMBLE + DEFAULT_TASK))
+
+        return self._rag_pipeline(messages)
+
+    # ==== completions ====
+    @staticmethod
+    def _parse_completion(content: str, parse_functions=True, **kwargs) -> Completion:
+        """Given the completion string, parse out any function calls."""
+        log.debug(f"COMPLETION: {content}")
+
+        # if we have tools, possibly parse out the Action
+        tool_calls = None
+        if parse_functions and (
+            action_json := re.match(r"Action:\s*```json\n(.+)\n```", content, re.IGNORECASE | re.DOTALL)
+        ):
+            actions = json.loads(action_json.group(1))
+
+            # translate back to kani spec
+            tool_calls = []
+            for action in actions:
+                tool_name = action["tool_name"]
+                tool_args = json.dumps(action["parameters"])
+                tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
+                tool_calls.append(tool_call)
+
+            content = None
+            log.debug(f"PARSED TOOL CALLS: {tool_calls}")
+
+        return Completion(ChatMessage.assistant(content, tool_calls=tool_calls), **kwargs)
+
+    @staticmethod
+    def _toolcall_info(tool_calls: list[ToolCall]) -> CommandRToolCallInfo:
+        """Return an info tuple containing Command R-specific metadata (is_directly_answer, filtered_tcs)."""
+        tool_calls = tool_calls or []
+
+        # if tool says directly answer, stream with the rag pipeline (but no result)
+        if len(tool_calls) == 1 and tool_calls[0].function.name == "directly_answer":
+            return CommandRToolCallInfo(is_directly_answer=True, filtered_tool_calls=[])
+        # if the model generated multiple calls that happen to include a directly_answer, remove the directly_answer
+        # then yield as normal
+        tool_calls = [tc for tc in tool_calls if tc.function.name != "directly_answer"]
+        return CommandRToolCallInfo(is_directly_answer=False, filtered_tool_calls=tool_calls)

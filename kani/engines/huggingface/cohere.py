@@ -1,19 +1,13 @@
 import functools
-import json
 import logging
-import re
 from collections.abc import AsyncIterable
 from threading import Thread
 
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
-from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
+from kani.models import ChatMessage, ChatRole
 from kani.prompts.impl.cohere import (
-    DEFAULT_PREAMBLE,
-    DEFAULT_TASK,
-    DEFAULT_TOOL_INSTRUCTIONS,
-    DEFAULT_TOOL_PROMPT,
-    build_pipeline,
+    CommandRMixin,
     function_prompt,
     tool_call_formatter,
 )
@@ -33,7 +27,7 @@ except ImportError:
 log = logging.getLogger(__name__)
 
 
-class CommandREngine(HuggingEngine):
+class CommandREngine(CommandRMixin, HuggingEngine):
     """Implementation of Command R (35B) and Command R+ (104B) using huggingface transformers.
 
     Model IDs:
@@ -78,18 +72,7 @@ class CommandREngine(HuggingEngine):
 
     token_reserve = 200  # generous reserve due to large ctx size and weird 3-mode prompt
 
-    def __init__(
-        self,
-        model_id: str = "CohereForAI/c4ai-command-r-v01",
-        *args,
-        tool_prompt_include_function_calls=True,
-        tool_prompt_include_function_results=True,
-        tool_prompt_instructions=DEFAULT_TOOL_INSTRUCTIONS,
-        rag_prompt_include_function_calls=True,
-        rag_prompt_include_function_results=True,
-        rag_prompt_instructions=None,
-        **kwargs,
-    ):
+    def __init__(self, model_id: str = "CohereForAI/c4ai-command-r-v01", *args, **kwargs):
         """
         :param model_id: The ID of the model to load from HuggingFace.
         :param max_context_size: The context size of the model (defaults to Command R's size of 128k).
@@ -119,22 +102,6 @@ class CommandREngine(HuggingEngine):
         kwargs.setdefault("max_context_size", 128000)
         super().__init__(model_id, *args, **kwargs)
 
-        self._tool_prompt_include_function_calls = tool_prompt_include_function_calls
-
-        self._default_pipeline = build_pipeline()
-        self._tool_pipeline = build_pipeline(
-            include_function_calls=tool_prompt_include_function_calls,
-            include_all_function_results=tool_prompt_include_function_results,
-            include_last_function_result=tool_prompt_include_function_results,
-            instruction_suffix=tool_prompt_instructions,
-        )
-        self._rag_pipeline = build_pipeline(
-            include_function_calls=rag_prompt_include_function_calls,
-            include_all_function_results=rag_prompt_include_function_results,
-            include_last_function_result=True,
-            instruction_suffix=rag_prompt_instructions,
-        )
-
     # ==== token counting ====
     def message_len(self, message: ChatMessage) -> int:
         # prompt str to tokens
@@ -162,54 +129,6 @@ class CommandREngine(HuggingEngine):
         function_tokens = len(self.tokenizer.encode(function_text, add_special_tokens=False))
         return function_tokens + default_prompt_tokens
 
-    # ==== prompt ====
-    def build_prompt(
-        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
-    ) -> str | torch.Tensor:
-        # no functions: we can just do the default simple format
-        if not functions:
-            prompt = self._default_pipeline(messages)
-            log.debug(f"PROMPT: {prompt}")
-            return prompt
-
-        # if we do have functions things get wacky
-        # is the last message a FUNCTION? if so, we need to use the RAG template
-        if messages and messages[-1].role == ChatRole.FUNCTION:
-            prompt = self._build_prompt_rag(messages)
-            log.debug(f"RAG PROMPT: {prompt}")
-            return prompt
-
-        # otherwise use the TOOL template
-        prompt = self._build_prompt_tools(messages, functions)
-        log.debug(f"TOOL PROMPT: {prompt}")
-        return prompt
-
-    def _build_prompt_tools(self, messages: list[ChatMessage], functions: list[AIFunction]):
-        # get the function definitions
-        function_text = "\n\n".join(map(function_prompt, functions))
-        tool_prompt = DEFAULT_TOOL_PROMPT.format(user_functions=function_text)
-
-        # wrap the initial system message, if any
-        messages = messages.copy()
-        if messages and messages[0].role == ChatRole.SYSTEM:
-            messages[0] = messages[0].copy_with(content=DEFAULT_PREAMBLE + messages[0].text + tool_prompt)
-        # otherwise add it in
-        else:
-            messages.insert(0, ChatMessage.system(DEFAULT_PREAMBLE + DEFAULT_TASK + tool_prompt))
-
-        return self._tool_pipeline(messages)
-
-    def _build_prompt_rag(self, messages: list[ChatMessage]):
-        # wrap the initial system message, if any
-        messages = messages.copy()
-        if messages and messages[0].role == ChatRole.SYSTEM:
-            messages[0] = messages[0].copy_with(content=DEFAULT_PREAMBLE + messages[0].text)
-        # otherwise add it in
-        else:
-            messages.insert(0, ChatMessage.system(DEFAULT_PREAMBLE + DEFAULT_TASK))
-
-        return self._rag_pipeline(messages)
-
     # ==== generate ====
     def _generate(self, input_toks, input_len, hyperparams, functions):
         """Generate and return a completion (may be a directly_answer call)."""
@@ -219,28 +138,8 @@ class CommandREngine(HuggingEngine):
         # the completion shouldn't include the prompt or stop token
         content = self.tokenizer.decode(output[0][input_len:-1]).strip()
         completion_tokens = len(output[0]) - (input_len + 1)
-        log.debug(f"COMPLETION: {content}")
-
-        # if we have tools, possibly parse out the Action
-        tool_calls = None
-        if functions and (action_json := re.match(r"Action:\s*```json\n(.+)\n```", content, re.IGNORECASE | re.DOTALL)):
-            actions = json.loads(action_json.group(1))
-
-            # translate back to kani spec
-            tool_calls = []
-            for action in actions:
-                tool_name = action["tool_name"]
-                tool_args = json.dumps(action["parameters"])
-                tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
-                tool_calls.append(tool_call)
-
-            content = None
-            log.debug(f"PARSED TOOL CALLS: {tool_calls}")
-
-        return Completion(
-            ChatMessage.assistant(content, tool_calls=tool_calls),
-            prompt_tokens=input_len,
-            completion_tokens=completion_tokens,
+        return self._parse_completion(
+            content, functions is not None, prompt_tokens=input_len, completion_tokens=completion_tokens
         )
 
     async def _stream(self, input_toks, hyperparams, *, streamer_timeout=None) -> AsyncIterable[str | Completion]:
@@ -270,14 +169,12 @@ class CommandREngine(HuggingEngine):
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
         completion = self._generate(input_toks, input_len, hyperparams, functions)
 
-        tool_calls = completion.message.tool_calls or []
+        cmd_r_tc_info = self._toolcall_info(completion.message.tool_calls)
+
         # if the model generated multiple calls that happen to include a directly_answer, remove the directly_answer
-        if len(tool_calls) > 1:
-            completion.message.tool_calls = [
-                tc for tc in completion.message.tool_calls if tc.function.name != "directly_answer"
-            ]
+        completion.message.tool_calls = cmd_r_tc_info.filtered_tool_calls
         # if tool says directly answer, call again with the rag pipeline (but no result)
-        elif len(tool_calls) == 1 and tool_calls[0].function.name == "directly_answer":
+        if cmd_r_tc_info.is_directly_answer:
             log.debug("GOT DIRECTLY_ANSWER, REPROMPTING RAG...")
             prompt = self._build_prompt_rag(messages)
             log.debug(f"RAG PROMPT: {prompt}")
@@ -301,10 +198,9 @@ class CommandREngine(HuggingEngine):
             input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
             completion = self._generate(input_toks, input_len, hyperparams, functions)
 
-            tool_calls = completion.message.tool_calls or []
-
+            cmd_r_tc_info = self._toolcall_info(completion.message.tool_calls)
             # if tool says directly answer, stream with the rag pipeline (but no result)
-            if len(tool_calls) == 1 and tool_calls[0].function.name == "directly_answer":
+            if cmd_r_tc_info.is_directly_answer:
                 log.debug("GOT DIRECTLY_ANSWER, REPROMPTING RAG...")
                 prompt = self._build_prompt_rag(messages)
                 log.debug(f"RAG PROMPT: {prompt}")
@@ -314,10 +210,7 @@ class CommandREngine(HuggingEngine):
             # if the model generated multiple calls that happen to include a directly_answer, remove the directly_answer
             # then yield as normal
             else:
-                if completion.message.tool_calls:
-                    completion.message.tool_calls = [
-                        tc for tc in completion.message.tool_calls if tc.function.name != "directly_answer"
-                    ]
+                completion.message.tool_calls = cmd_r_tc_info.filtered_tool_calls
                 if completion.message.text:
                     yield completion.message.text
                 yield completion
