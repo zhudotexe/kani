@@ -28,8 +28,10 @@ engine = HuggingEngine(
     use_auth_token=True,  # log in with huggingface-cli
     # suggested args from the Llama model card
     model_load_kwargs={"device_map": "auto", "torch_dtype": torch.bfloat16},
-    eos_token_id=[128001, 128009],  # [<|end_of_text|>, <|eot_id|>]
 )
+
+# NOTE: If you're running transformers<4.40 and LLaMA 3 continues generating after the <|eot_id|> token,
+# add `eos_token_id=[128001, 128009]` or upgrade transformers
 
 # ---- LLaMA v2 (Hugging Face) ----
 from kani.engines.huggingface.llama2 import LlamaEngine
