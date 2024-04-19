@@ -6,11 +6,7 @@ from threading import Thread
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
-from kani.prompts.impl.cohere import (
-    CommandRMixin,
-    function_prompt,
-    tool_call_formatter,
-)
+from kani.prompts.impl.cohere import CommandRMixin, function_prompt, tool_call_formatter
 from .base import HuggingEngine
 from ..base import Completion
 
