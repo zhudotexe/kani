@@ -18,6 +18,21 @@ from kani.engines.anthropic import AnthropicEngine
 engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-3-opus-20240229")
 
 # ========== Hugging Face ==========
+# ---- LLaMA v3 (Hugging Face) ----
+import torch
+from kani.engines.huggingface import HuggingEngine
+from kani.prompts.impl import LLAMA3_PIPELINE
+engine = HuggingEngine(
+    model_id="meta-llama/Meta-Llama-3-8B-Instruct",
+    prompt_pipeline=LLAMA3_PIPELINE,
+    use_auth_token=True,  # log in with huggingface-cli
+    # suggested args from the Llama model card
+    model_load_kwargs={"device_map": "auto", "torch_dtype": torch.bfloat16},
+)
+
+# NOTE: If you're running transformers<4.40 and LLaMA 3 continues generating after the <|eot_id|> token,
+# add `eos_token_id=[128001, 128009]` or upgrade transformers
+
 # ---- LLaMA v2 (Hugging Face) ----
 from kani.engines.huggingface.llama2 import LlamaEngine
 engine = LlamaEngine(model_id="meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)  # log in with huggingface-cli

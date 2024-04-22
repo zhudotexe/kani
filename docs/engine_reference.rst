@@ -5,13 +5,17 @@ Engine Reference
 
 Base
 ----
-.. autoclass:: kani.engines.base.BaseEngine
+.. autoclass:: kani.engines.BaseEngine
     :members:
+
+.. autoclass:: kani.engines.Completion
+    :members:
+
+.. autoclass:: kani.engines.WrapperEngine
+
+    .. autoattribute:: engine
 
 .. autoclass:: kani.engines.base.BaseCompletion
-    :members:
-
-.. autoclass:: kani.engines.base.Completion
     :members:
 
 .. autoclass:: kani.engines.httpclient.BaseClient

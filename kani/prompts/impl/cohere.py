@@ -1,10 +1,16 @@
 import inspect
 import json
+import logging
+import re
+from collections import namedtuple
 
 from kani import AIFunction
-from kani.models import ChatMessage, ChatRole
+from kani.engines import Completion
+from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
 from kani.prompts.steps import Apply, ConversationFmt, MergeConsecutive, Remove
+
+log = logging.getLogger(__name__)
 
 # ==== default prompts ====
 # fmt: off
@@ -58,29 +64,11 @@ DEFAULT_RAG_INSTRUCTIONS_FAST = """Carefully perform the following instructions,
 Firstly, Decide which of the retrieved documents are relevant to the user's last input by writing 'Relevant Documents:' followed by comma-separated list of document numbers. If none are relevant, you should instead write 'None'.
 Secondly, Decide which of the retrieved documents contain facts that should be cited in a good answer to the user's last input by writing 'Cited Documents:' followed a comma-separated list of document numbers. If you dont want to cite any of them, you should instead write 'None'.
 Finally, Write 'Grounded answer:' followed by a response to the user's last input in high quality natural english. Use the symbols <co: doc> and </co: doc> to indicate when a fact comes from a document in the search result, e.g <co: 0>my fact</co: 0> for a fact from document 0."""
+
+
 # fmt: on
 
-# ==== no tool calling ====
-COMMAND_R_PIPELINE = (
-    PromptPipeline()
-    .conversation_fmt(
-        prefix="<BOS_TOKEN>",
-        generation_suffix="<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>",
-        user_prefix="<|START_OF_TURN_TOKEN|><|USER_TOKEN|>",
-        user_suffix="<|END_OF_TURN_TOKEN|>",
-        assistant_prefix="<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>",
-        assistant_suffix="<|END_OF_TURN_TOKEN|>",
-        assistant_suffix_if_last="",
-        system_prefix="<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>",
-        system_suffix="<|END_OF_TURN_TOKEN|>",
-        function_prefix="<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>\n<results>\n",
-        function_suffix="\n</results><|END_OF_TURN_TOKEN|>",
-    )
-)  # fmt: skip
-"""The pipeline to use when interfacing with Command R without tools defined."""
 
-
-# ==== tool calling (function not last) ====
 def function_result_joiner(msgs):
     contents = []
     for idx, msg in enumerate(msgs):
@@ -104,17 +92,23 @@ def tool_call_formatter(msg: ChatMessage) -> str:
     return msg.content
 
 
-def build_tool_pipeline(
-    *, include_function_calls=True, include_function_results=True, tool_instructions=DEFAULT_TOOL_INSTRUCTIONS
+def build_pipeline(
+    *,
+    include_function_calls=True,
+    include_all_function_results=True,
+    include_last_function_result=True,
+    instruction_suffix=None,
 ):
     """
-    The pipeline to use when interfacing with Command R WITH tools defined. Use this pipeline if the last message is
-    NOT a FUNCTION message.
-
     :param include_function_calls: Whether to include previous turns' function calls or just the model's answers.
-    :param include_function_results: Whether to include the results of previous turns' function calls in the context.
-    :param tool_instructions: The system prompt to send just before the model's generation turn that includes
-        instructions on the format to generate tool calls in. Generally you shouldn't change this.
+    :param include_all_function_results: Whether to include the results of all previous turns' function calls in the
+        context.
+    :param include_last_function_result: If *include_all_function_results* is False, whether to include just the last
+        function call's result (useful for RAG).
+    :param instruction_suffix: The system prompt to send just before the model's generation turn that includes
+        instructions on the format to generate the result in. Can be None to only generate a model turn.
+        For tool calling, this should be the DEFAULT_TOOL_INSTRUCTIONS.
+        For RAG, this should be DEFAULT_RAG_INSTRUCTIONS_ACC or DEFAULT_RAG_INSTRUCTIONS_FAST.
     """
 
     steps = []
@@ -130,18 +124,30 @@ def build_tool_pipeline(
     else:
         steps.append(Remove(role=ChatRole.ASSISTANT, predicate=lambda msg: msg.content is None))
 
-    # keep function results around as SYSTEM messages
-    if include_function_results:
+    # keep/drop function results
+    if include_all_function_results:
+        # keep all function results around as SYSTEM messages
         steps.append(MergeConsecutive(role=ChatRole.FUNCTION, joiner=function_result_joiner))
+    elif include_last_function_result:
+        # merge consecutive FUNCTION messages then remove all but the last (if it's the last message)
+
+        def remover(m, is_last):
+            return None if not is_last else m
+
+        steps.append(MergeConsecutive(role=ChatRole.FUNCTION, joiner=function_result_joiner))
+        steps.append(Apply(remover, role=ChatRole.FUNCTION))
     else:
+        # remove all FUNCTION messages
         steps.append(Remove(role=ChatRole.FUNCTION))
 
     steps.append(
         ConversationFmt(
             prefix="<BOS_TOKEN>",
             generation_suffix=(
-                f"<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>{tool_instructions}<|END_OF_TURN_TOKEN|>"
+                f"<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>{instruction_suffix}<|END_OF_TURN_TOKEN|>"
                 "<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>"
+                if instruction_suffix
+                else "<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>"
             ),
             user_prefix="<|START_OF_TURN_TOKEN|><|USER_TOKEN|>",
             user_suffix="<|END_OF_TURN_TOKEN|>",
@@ -158,51 +164,9 @@ def build_tool_pipeline(
     return PromptPipeline(steps)
 
 
-# ==== tool calling (function last) ====
-def build_rag_pipeline(*, include_previous_results=True, rag_instructions=DEFAULT_RAG_INSTRUCTIONS_ACC):
-    """
-    The pipeline to use when interfacing with Command R WITH tools defined. Use this pipeline if the last message IS a
-    FUNCTION message.
-
-    :param include_previous_results: Include previous turns' results in the chat history.
-    :param rag_instructions: The system prompt to send just before the model's generation turn that includes
-        instructions on the format to generate the result in. Can be None to only generate a model turn. Defaults
-        to the "accurate" grounded RAG prompt (``from kani.prompts.impl.cohere import DEFAULT_RAG_INSTRUCTIONS_ACC``).
-    """
-
-    def remover(m, is_last):
-        return None if is_last and not include_previous_results else m
-
-    return (
-        PromptPipeline()
-        .merge_consecutive(role=ChatRole.FUNCTION, joiner=function_result_joiner)
-        # remove all but the last function message
-        .apply(remover, role=ChatRole.FUNCTION)
-        # remove asst messages with no content (function calls)
-        .remove(role=ChatRole.ASSISTANT, predicate=lambda msg: msg.content is None)
-        .conversation_fmt(
-            prefix="<BOS_TOKEN>",
-            generation_suffix=(
-                f"<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>{rag_instructions}<|END_OF_TURN_TOKEN|>"
-                "<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>"
-                if rag_instructions
-                else "<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>"
-            ),
-            user_prefix="<|START_OF_TURN_TOKEN|><|USER_TOKEN|>",
-            user_suffix="<|END_OF_TURN_TOKEN|>",
-            assistant_prefix="<|START_OF_TURN_TOKEN|><|CHATBOT_TOKEN|>",
-            assistant_suffix="<|END_OF_TURN_TOKEN|>",
-            assistant_suffix_if_last="",
-            system_prefix="<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>",
-            system_suffix="<|END_OF_TURN_TOKEN|>",
-            function_prefix="<|START_OF_TURN_TOKEN|><|SYSTEM_TOKEN|>\n<results>\n",
-            function_suffix="\n</results><|END_OF_TURN_TOKEN|>",
-        )
-    )
-
-
 # ==== helpers ====
 def function_prompt(f: AIFunction) -> str:
+    """Build the Cohere python signature prompt for a given AIFunction."""
     params = f.get_params()
 
     # build params
@@ -223,3 +187,123 @@ def function_prompt(f: AIFunction) -> str:
 
     # return
     return f'```python\ndef {f.name}({params_str}) -> List[Dict]:\n    """{f.desc}{args}\n    """\n    pass\n```'
+
+
+CommandRToolCallInfo = namedtuple("CommandRToolCallInfo", "is_directly_answer filtered_tool_calls")
+
+
+class CommandRMixin:
+    """Common Command R functionality to share between engines"""
+
+    def __init__(
+        self,
+        *args,
+        tool_prompt_include_function_calls=True,
+        tool_prompt_include_function_results=True,
+        tool_prompt_instructions=DEFAULT_TOOL_INSTRUCTIONS,
+        rag_prompt_include_function_calls=True,
+        rag_prompt_include_function_results=True,
+        rag_prompt_instructions=None,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self._tool_prompt_include_function_calls = tool_prompt_include_function_calls
+
+        self._default_pipeline = build_pipeline()
+        self._tool_pipeline = build_pipeline(
+            include_function_calls=tool_prompt_include_function_calls,
+            include_all_function_results=tool_prompt_include_function_results,
+            include_last_function_result=tool_prompt_include_function_results,
+            instruction_suffix=tool_prompt_instructions,
+        )
+        self._rag_pipeline = build_pipeline(
+            include_function_calls=rag_prompt_include_function_calls,
+            include_all_function_results=rag_prompt_include_function_results,
+            include_last_function_result=True,
+            instruction_suffix=rag_prompt_instructions,
+        )
+
+    # ==== prompting ====
+    def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str:
+        # no functions: we can just do the default simple format
+        if not functions:
+            prompt = self._default_pipeline(messages)
+            log.debug(f"PROMPT: {prompt}")
+            return prompt
+
+        # if we do have functions things get wacky
+        # is the last message a FUNCTION? if so, we need to use the RAG template
+        if messages and messages[-1].role == ChatRole.FUNCTION:
+            prompt = self._build_prompt_rag(messages)
+            log.debug(f"RAG PROMPT: {prompt}")
+            return prompt
+
+        # otherwise use the TOOL template
+        prompt = self._build_prompt_tools(messages, functions)
+        log.debug(f"TOOL PROMPT: {prompt}")
+        return prompt
+
+    def _build_prompt_tools(self, messages: list[ChatMessage], functions: list[AIFunction]):
+        # get the function definitions
+        function_text = "\n\n".join(map(function_prompt, functions))
+        tool_prompt = DEFAULT_TOOL_PROMPT.format(user_functions=function_text)
+
+        # wrap the initial system message, if any
+        messages = messages.copy()
+        if messages and messages[0].role == ChatRole.SYSTEM:
+            messages[0] = messages[0].copy_with(content=DEFAULT_PREAMBLE + messages[0].text + tool_prompt)
+        # otherwise add it in
+        else:
+            messages.insert(0, ChatMessage.system(DEFAULT_PREAMBLE + DEFAULT_TASK + tool_prompt))
+
+        return self._tool_pipeline(messages)
+
+    def _build_prompt_rag(self, messages: list[ChatMessage]):
+        # wrap the initial system message, if any
+        messages = messages.copy()
+        if messages and messages[0].role == ChatRole.SYSTEM:
+            messages[0] = messages[0].copy_with(content=DEFAULT_PREAMBLE + messages[0].text)
+        # otherwise add it in
+        else:
+            messages.insert(0, ChatMessage.system(DEFAULT_PREAMBLE + DEFAULT_TASK))
+
+        return self._rag_pipeline(messages)
+
+    # ==== completions ====
+    @staticmethod
+    def _parse_completion(content: str, parse_functions=True, **kwargs) -> Completion:
+        """Given the completion string, parse out any function calls."""
+        log.debug(f"COMPLETION: {content}")
+
+        # if we have tools, possibly parse out the Action
+        tool_calls = None
+        if parse_functions and (
+            action_json := re.match(r"Action:\s*```json\n(.+)\n```", content, re.IGNORECASE | re.DOTALL)
+        ):
+            actions = json.loads(action_json.group(1))
+
+            # translate back to kani spec
+            tool_calls = []
+            for action in actions:
+                tool_name = action["tool_name"]
+                tool_args = json.dumps(action["parameters"])
+                tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
+                tool_calls.append(tool_call)
+
+            content = None
+            log.debug(f"PARSED TOOL CALLS: {tool_calls}")
+
+        return Completion(ChatMessage.assistant(content, tool_calls=tool_calls), **kwargs)
+
+    @staticmethod
+    def _toolcall_info(tool_calls: list[ToolCall]) -> CommandRToolCallInfo:
+        """Return an info tuple containing Command R-specific metadata (is_directly_answer, filtered_tcs)."""
+        tool_calls = tool_calls or []
+
+        # if tool says directly answer, stream with the rag pipeline (but no result)
+        if len(tool_calls) == 1 and tool_calls[0].function.name == "directly_answer":
+            return CommandRToolCallInfo(is_directly_answer=True, filtered_tool_calls=[])
+        # if the model generated multiple calls that happen to include a directly_answer, remove the directly_answer
+        # then yield as normal
+        tool_calls = [tc for tc in tool_calls if tc.function.name != "directly_answer"]
+        return CommandRToolCallInfo(is_directly_answer=False, filtered_tool_calls=tool_calls)
