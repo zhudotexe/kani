@@ -131,8 +131,8 @@ def build_pipeline(
     elif include_last_function_result:
         # merge consecutive FUNCTION messages then remove all but the last (if it's the last message)
 
-        def remover(m, is_last):
-            return None if not is_last else m
+        def remover(m, ctx):
+            return None if not ctx.is_last_of_type else m
 
         steps.append(MergeConsecutive(role=ChatRole.FUNCTION, joiner=function_result_joiner))
         steps.append(Apply(remover, role=ChatRole.FUNCTION))

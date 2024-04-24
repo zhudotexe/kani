@@ -268,14 +268,12 @@ class Apply(FilterMixin, PipelineStep):
         # func introspection: generate a wrapper for the right number of args provided
         sig = inspect.signature(func)
         if len(sig.parameters) == 1:
-            self.func_wrapped = lambda msg, is_last, idx: self.func(msg)
+            self.func_wrapped = lambda msg, ctx: self.func(msg)
         elif len(sig.parameters) == 2:
-            self.func_wrapped = lambda msg, is_last, idx: self.func(msg, is_last)
-        elif len(sig.parameters) == 3:
             self.func_wrapped = self.func
         else:
             raise ValueError(
-                "The applied function must have 1 to 3 positional parameters (msg, is_last, idx) (got a function with"
+                "The applied function must have 1 to 2 positional parameters (msg, ctx) (got a function with"
                 f" {len(sig.parameters)} parameters)."
             )
 
@@ -284,7 +282,8 @@ class Apply(FilterMixin, PipelineStep):
         for i, msg in enumerate(msgs):
             # for each matching message, append f(msg) if it's not None
             if self.matches_filter(msg):
-                replacement = self.func_wrapped(msg, i == len(msgs) - 1, i)
+                ctx = ApplyContext(msg=msg, is_last=i == len(msgs) - 1, idx=i, messages=msgs)
+                replacement = self.func_wrapped(msg, ctx)
                 if replacement is not None:
                     out.append(replacement)
             # else just append the msg unchanged

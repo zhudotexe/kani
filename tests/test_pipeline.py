@@ -193,8 +193,8 @@ def test_apply():
     assert len(pipe(EXAMPLE_MSGS)) == 0
 
     # 2 args: translate last to SYSTEM
-    def translate_last(msg, is_last):
-        if is_last:
+    def translate_last(msg, ctx):
+        if ctx.is_last:
             msg.role = ChatRole.SYSTEM
         return msg
 
@@ -203,8 +203,8 @@ def test_apply():
     assert pipe(EXAMPLE_MSGS)[-1].role == ChatRole.SYSTEM
 
     # 3 args: translate even msgs to SYSTEM
-    def translate_even(msg, _, idx):
-        if idx % 2 == 0:
+    def translate_even(msg, ctx):
+        if ctx.idx % 2 == 0:
             msg.role = ChatRole.SYSTEM
         return msg
 

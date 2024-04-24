@@ -1,4 +1,5 @@
 from collections.abc import Collection
+from dataclasses import dataclass
 from typing import Callable, TypeVar
 
 from kani.models import ChatMessage, ChatRole, MessagePart, ToolCall
@@ -20,9 +21,21 @@ FunctionCallStrT = Callable[[ToolCall], str | None]
 
 ApplyResultT = TypeVar("ApplyResultT")
 
-ApplyCallableT = (
-    Callable[[PipelineMsgT], ApplyResultT]
-    | Callable[[PipelineMsgT, bool], ApplyResultT]
-    | Callable[[PipelineMsgT, bool, int], ApplyResultT]
-)
-"""A function taking 1-3 args"""
+
+@dataclass
+class ApplyContext:
+    """Context about where a message lives in the pipeline for an arbitrary Apply operation."""
+
+    msg: PipelineMsgT
+    is_last: bool
+    idx: int
+    messages: list[PipelineMsgT]
+
+    @property
+    def is_last_of_type(self):
+        """This message is the last one of its role in the pipeline."""
+        return self.msg is [m for m in self.messages if m.role == self.msg.role][-1]
+
+
+ApplyCallableT = Callable[[PipelineMsgT], ApplyResultT] | Callable[[PipelineMsgT, ApplyContext], ApplyResultT]
+"""A function taking 1-2 args"""
