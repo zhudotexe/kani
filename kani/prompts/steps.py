@@ -12,6 +12,7 @@ from kani.prompts.types import (
     ApplyContext,
     ApplyResultT,
     FunctionCallStrT,
+    MacroApplyCallableT,
     MessageContentT,
     PipelineMsgT,
 )
@@ -293,6 +294,17 @@ class Apply(FilterMixin, PipelineStep):
 
     def explain(self) -> str:
         return f"Apply the given function to each {self.explain_note('and', plural=False)}"
+
+
+class MacroApply(PipelineStep):
+    def __init__(self, func: MacroApplyCallableT):
+        self.func = func
+
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[ApplyResultT]:
+        return self.func(msgs, functions)
+
+    def explain(self) -> str:
+        return "Apply the given function to the list of all messages in the pipeline"
 
 
 # ==== terminals ====

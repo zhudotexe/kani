@@ -50,3 +50,8 @@ class ApplyContext:
 
 ApplyCallableT = Callable[[PipelineMsgT], ApplyResultT] | Callable[[PipelineMsgT, ApplyContext], ApplyResultT]
 """A function taking 1-2 args"""
+
+MacroApplyResultT = TypeVar("MacroApplyResultT")
+
+MacroApplyCallableT = Callable[[list[PipelineMsgT], list[AIFunction]], list[MacroApplyResultT]]
+"""A function taking 2 args (msgs, funcs)"""
