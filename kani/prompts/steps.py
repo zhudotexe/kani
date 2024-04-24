@@ -282,7 +282,7 @@ class Apply(FilterMixin, PipelineStep):
         for i, msg in enumerate(msgs):
             # for each matching message, append f(msg) if it's not None
             if self.matches_filter(msg):
-                ctx = ApplyContext(msg=msg, is_last=i == len(msgs) - 1, idx=i, messages=msgs)
+                ctx = ApplyContext(msg=msg, is_last=i == len(msgs) - 1, idx=i, messages=msgs, functions=functions)
                 replacement = self.func_wrapped(msg, ctx)
                 if replacement is not None:
                     out.append(replacement)

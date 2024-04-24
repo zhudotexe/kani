@@ -69,6 +69,9 @@ Prompting
 .. autoclass:: kani.prompts.PipelineStep
     :members:
 
+.. autoclass:: kani.prompts.ApplyContext
+    :members:
+
 Internals
 ---------
 .. autoclass:: kani.FunctionCallResult

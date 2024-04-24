@@ -264,11 +264,10 @@ class PromptPipeline(Generic[T]):
         """
         Apply the given function to all matched messages. Replace the message with the function's return value.
 
-        The function may take 1-3 positional parameters: the first will always be the matched message at the current
-        pipeline step, the second will be whether or not the message is the last one in the list of messages, and the
-        third will be the index of the message in the list of messages.
+        The function may take 1-2 positional parameters: the first will always be the matched message at the current
+        pipeline step, and the second will be the context this operation is occurring in (a :class:`.ApplyContext`).
 
-        :param func: A function that takes 1-3 positional parameters ``(msg, is_last, idx)`` that will be called
+        :param func: A function that takes 1-2 positional parameters ``(msg, ctx)`` that will be called
             on each matching message. If this function does not return a :class:`ChatMessage`, it should be the last
             step in the pipeline. If this function returns ``None``, the input message will be removed from the output.
         {ALL_FILTERS}

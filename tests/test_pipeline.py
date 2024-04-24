@@ -3,7 +3,7 @@ import itertools
 import pytest
 from hypothesis import given, strategies as st
 
-from kani import ChatMessage, ChatRole, FunctionCall, PromptPipeline, ToolCall
+from kani import AIFunction, ChatMessage, ChatRole, FunctionCall, PromptPipeline, ToolCall
 from kani.prompts.base import FilterMixin, PipelineStep
 from kani.prompts.examples import ALL_EXAMPLE_KWARGS, build_conversation
 from kani.prompts.types import PipelineMsgT
@@ -11,7 +11,7 @@ from kani.prompts.types import PipelineMsgT
 
 # ==== bases ====
 class DummyFilterStep(FilterMixin, PipelineStep):
-    def execute(self, msgs: list[PipelineMsgT]):
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]):
         return list(self.filtered(msgs))
 
 
