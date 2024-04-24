@@ -5,6 +5,7 @@ import pprint
 import time
 from typing import Any, Callable, Generic, TypeVar, overload
 
+from kani.ai_function import AIFunction
 from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import PipelineStep
 from kani.prompts.docutils import autoparams
@@ -367,14 +368,16 @@ class PromptPipeline(Generic[T]):
         return self
 
     # ==== eval ====
-    def __call__(self, msgs: list[ChatMessage]) -> T:
+    def __call__(self, msgs: list[ChatMessage], functions: list[AIFunction] = None) -> T:
         """
         Apply the pipeline to a list of kani messages. The return type will vary based on the steps in the pipeline;
         if no steps are defined the return type will be a copy of the input messages.
         """
-        return self.execute(msgs)
+        return self.execute(msgs, functions)
 
-    def execute(self, msgs: list[ChatMessage], *, deepcopy=False, for_measurement=False) -> T:
+    def execute(
+        self, msgs: list[ChatMessage], functions: list[AIFunction] = None, *, deepcopy=False, for_measurement=False
+    ) -> T:
         """
         Apply the pipeline to a list of kani messages. The return type will vary based on the steps in the pipeline;
         if no steps are defined the return type will be a copy of the input messages.
@@ -382,10 +385,15 @@ class PromptPipeline(Generic[T]):
         This lower-level method offers more fine-grained control over the steps that are run (e.g. to measure the
         length of a single message).
 
+        :param msgs: The messages to apply the pipeline to.
+        :param functions: Any functions available to the model.
         :param deepcopy: Whether to deep-copy each message before running the pipeline.
         :param for_measurement: If the pipeline is being run to measure the length of a single message. In this case,
             any ``ensure_start`` steps will be ignored.
         """
+        if functions is None:
+            functions = []
+
         # let's use the lower-level model_copy() since we aren't changing anything
         data = [m.model_copy(deep=deepcopy) for m in msgs]
 
@@ -396,7 +404,7 @@ class PromptPipeline(Generic[T]):
                 continue
 
             # apply step
-            data = step.execute(data)
+            data = step.execute(data, functions)
 
         # return the result
         return data

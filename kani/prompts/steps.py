@@ -3,10 +3,18 @@ import itertools
 import warnings
 from typing import Any, Callable
 
+from kani.ai_function import AIFunction
 from kani.exceptions import PromptError
 from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import FilterMixin, PipelineStep
-from kani.prompts.types import ApplyCallableT, ApplyResultT, FunctionCallStrT, MessageContentT, PipelineMsgT
+from kani.prompts.types import (
+    ApplyCallableT,
+    ApplyContext,
+    ApplyResultT,
+    FunctionCallStrT,
+    MessageContentT,
+    PipelineMsgT,
+)
 
 
 # ==== steps ====
@@ -16,7 +24,7 @@ class TranslateRole(FilterMixin, PipelineStep):
         self.to = to
         self.warn = warn
 
-    def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[PipelineMsgT]:
         has_warned = False
         for msg in self.filtered(msgs):
             if self.warn and not has_warned:
@@ -35,7 +43,7 @@ class Wrap(FilterMixin, PipelineStep):
         self.prefix = prefix
         self.suffix = suffix
 
-    def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[PipelineMsgT]:
         for msg in self.filtered(msgs):
             _wrap_content_inplace(msg, self.prefix, self.suffix)
         return msgs
@@ -78,7 +86,7 @@ class MergeConsecutive(FilterMixin, PipelineStep):
                     " different roles."
                 )
 
-    def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[PipelineMsgT]:
         out = []
 
         # group messages by whether they match the filter, putting consecutive matching messages into a list
@@ -159,7 +167,7 @@ class FunctionCallFmt(PipelineStep):
         self.sep = sep
         self.suffix = suffix
 
-    def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[PipelineMsgT]:
         # for each message with 1+ tool calls,
         for msg in msgs:
             if not msg.tool_calls:
@@ -188,7 +196,7 @@ class Remove(FilterMixin, PipelineStep):
     def __init__(self, **filter_kwargs):
         super().__init__(**filter_kwargs)
 
-    def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[PipelineMsgT]:
         return [m for m in msgs if not self.matches_filter(m)]
 
     def explain(self) -> str:
@@ -199,7 +207,7 @@ class EnsureStart(FilterMixin, PipelineStep):
     def __init__(self, **filter_kwargs):
         super().__init__(**filter_kwargs)
 
-    def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[PipelineMsgT]:
         first_matching_idx = next((i for i, msg in enumerate(msgs) if self.matches_filter(msg)), len(msgs))
         return msgs[first_matching_idx:]
 
@@ -208,7 +216,7 @@ class EnsureStart(FilterMixin, PipelineStep):
 
 
 class EnsureBoundFunctionCalls(PipelineStep):
-    def execute(self, msgs: list[PipelineMsgT]) -> list[PipelineMsgT]:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[PipelineMsgT]:
         bound = []
         free_toolcall_ids = set()
         for m in msgs:
@@ -271,7 +279,7 @@ class Apply(FilterMixin, PipelineStep):
                 f" {len(sig.parameters)} parameters)."
             )
 
-    def execute(self, msgs: list[PipelineMsgT]) -> list[ApplyResultT]:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[ApplyResultT]:
         out = []
         for i, msg in enumerate(msgs):
             # for each matching message, append f(msg) if it's not None
@@ -327,7 +335,7 @@ class ConversationFmt(PipelineStep):
         self.function_prefix = function_prefix if function_prefix is not None else user_prefix
         self.function_suffix = function_suffix if function_suffix is not None else user_suffix
 
-    def execute(self, msgs: list[PipelineMsgT]) -> str:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> str:
         parts = []
         for idx, msg in enumerate(msgs):
             if msg.role == ChatRole.USER:
@@ -381,7 +389,7 @@ class ConversationDict(PipelineStep):
         self.content_transform = content_transform
         self.additional_keys = additional_keys
 
-    def execute(self, msgs: list[PipelineMsgT]) -> list[dict[str, Any]]:
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[dict[str, Any]]:
         out = []
         for msg in msgs:
             msg_dict = {
