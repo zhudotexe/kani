@@ -277,9 +277,7 @@ class PromptPipeline(Generic[T]):
         return self
 
     @overload
-    def macro_apply(
-        self, func: MacroApplyCallableT, *, role: RoleFilterT = None, predicate: PredicateFilterT = None
-    ) -> "PromptPipeline[list[MacroApplyResultT]]": ...
+    def macro_apply(self, func: MacroApplyCallableT) -> "PromptPipeline[list[MacroApplyResultT]]": ...
 
     @autoparams
     def macro_apply(self, *args, **kwargs):
