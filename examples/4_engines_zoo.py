@@ -76,9 +76,9 @@ engine = LlamaCppEngine(repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_
 
 # ---- Mistral-7B (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
-from kani.prompts.impl import MISTRAL_V3_PIPELINE
+from kani.prompts.impl import MISTRAL_V1_PIPELINE
 engine = LlamaCppEngine(
-    repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=MISTRAL_V3_PIPELINE
+    repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=MISTRAL_V1_PIPELINE
 )
 
 # take your pick - the kani interface is compatible with all!
