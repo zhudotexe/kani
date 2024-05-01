@@ -37,17 +37,28 @@ engine = HuggingEngine(
 from kani.engines.huggingface.llama2 import LlamaEngine
 engine = LlamaEngine(model_id="meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)  # log in with huggingface-cli
 
+# ---- Mixtral-8x22B (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.prompts.impl import MISTRAL_V3_PIPELINE
+engine = HuggingEngine(
+    model_id="mistralai/Mixtral-8x22B-Instruct-v0.1",
+    prompt_pipeline=MISTRAL_V3_PIPELINE,
+    model_load_kwargs={"device_map": "auto", "torch_dtype": torch.bfloat16},
+)
+
+# ---- Mistral-7B (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.prompts.impl import MISTRAL_V1_PIPELINE
+engine = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.2", prompt_pipeline=MISTRAL_V1_PIPELINE)
+
+# Also use the MISTRAL_V1_PIPELINE for Mixtral-8x7B (i.e. mistralai/Mixtral-8x7B-Instruct-v0.1).
+
 # ---- Command R (Hugging Face) ----
 import torch
 from kani.engines.huggingface.cohere import CommandREngine
 engine = CommandREngine(
     model_id="CohereForAI/c4ai-command-r-v01", model_load_kwargs={"device_map": "auto", "torch_dtype": torch.float16}
 )
-
-# ---- Mistral-7B (Hugging Face) ----
-from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl import MISTRAL_PIPELINE
-engine = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.2", prompt_pipeline=MISTRAL_PIPELINE)
 
 # ---- Gemma (Hugging Face) ----
 from kani.engines.huggingface import HuggingEngine
@@ -65,9 +76,9 @@ engine = LlamaCppEngine(repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_
 
 # ---- Mistral-7B (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
-from kani.prompts.impl import MISTRAL_PIPELINE
+from kani.prompts.impl import MISTRAL_V1_PIPELINE
 engine = LlamaCppEngine(
-    repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=MISTRAL_PIPELINE
+    repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=MISTRAL_V1_PIPELINE
 )
 
 # take your pick - the kani interface is compatible with all!

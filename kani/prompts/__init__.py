@@ -5,3 +5,4 @@ consumed by an engine (e.g. ``str``, ``list[dict]``, or ``torch.Tensor``).
 
 from .base import PipelineStep
 from .pipeline import PromptPipeline
+from .types import ApplyContext

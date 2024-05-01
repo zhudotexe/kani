@@ -131,6 +131,30 @@ class HuggingEngine(BaseEngine):
         tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
         return len(tokenized)
 
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        # default concrete base behaviour:
+        if self.pipeline is None:
+            raise NotImplementedError(
+                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
+            )
+        prompt = self.pipeline.execute([], functions, for_measurement=True)
+        if isinstance(prompt, torch.Tensor):
+            toklen = len(prompt[0])
+        else:
+            # prompt str to tokens
+            tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
+            toklen = len(tokenized)
+
+        # warn if there are functions but no tokens
+        if functions and toklen == 0:
+            warnings.warn(
+                "Functions were given to the model, but the function prompt returned 0 tokens! This model may not"
+                " support function calling, or you may need to implement"
+                f" `{type(self).__name__}.function_token_reserve()`."
+            )
+
+        return toklen
+
     def build_prompt(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
     ) -> str | torch.Tensor:
@@ -144,7 +168,7 @@ class HuggingEngine(BaseEngine):
             raise NotImplementedError(
                 "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
             )
-        prompt = self.pipeline(messages)
+        prompt = self.pipeline(messages, functions)
         log.debug(f"BUILT PROMPT: {prompt}")
         return prompt
 

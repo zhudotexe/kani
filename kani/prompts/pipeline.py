@@ -5,6 +5,7 @@ import pprint
 import time
 from typing import Any, Callable, Generic, TypeVar, overload
 
+from kani.ai_function import AIFunction
 from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import PipelineStep
 from kani.prompts.docutils import autoparams
@@ -16,6 +17,7 @@ from kani.prompts.steps import (
     EnsureBoundFunctionCalls,
     EnsureStart,
     FunctionCallFmt,
+    MacroApply,
     MergeConsecutive,
     Remove,
     TranslateRole,
@@ -25,6 +27,8 @@ from kani.prompts.types import (
     ApplyCallableT,
     ApplyResultT,
     FunctionCallStrT,
+    MacroApplyCallableT,
+    MacroApplyResultT,
     MessageContentT,
     PipelineMsgT,
     PredicateFilterT,
@@ -243,8 +247,6 @@ class PromptPipeline(Generic[T]):
         message's ``tool_call_id`` matches the request. If a FUNCTION message has no ``tool_call_id`` (e.g. a few-shot
         prompt), bind it to a preceding ASSISTANT message if it is unambiguous.
 
-        This is generally only useful if you end the pipeline with :meth:`conversation_dict`.
-
         Will remove hanging FUNCTION messages (i.e. messages where the corresponding request was managed out of the
         model's context) from the beginning of the prompt if necessary.
 
@@ -263,16 +265,34 @@ class PromptPipeline(Generic[T]):
         """
         Apply the given function to all matched messages. Replace the message with the function's return value.
 
-        The function may take 1-3 positional parameters: the first will always be the matched message at the current
-        pipeline step, the second will be whether or not the message is the last one in the list of messages, and the
-        third will be the index of the message in the list of messages.
+        The function may take 1-2 positional parameters: the first will always be the matched message at the current
+        pipeline step, and the second will be the context this operation is occurring in (a :class:`.ApplyContext`).
 
-        :param func: A function that takes 1-3 positional parameters ``(msg, is_last, idx)`` that will be called
+        :param func: A function that takes 1-2 positional parameters ``(msg, ctx)`` that will be called
             on each matching message. If this function does not return a :class:`ChatMessage`, it should be the last
             step in the pipeline. If this function returns ``None``, the input message will be removed from the output.
         {ALL_FILTERS}
         """
         self.steps.append(Apply(*args, **kwargs))
+        return self
+
+    @overload
+    def macro_apply(self, func: MacroApplyCallableT) -> "PromptPipeline[list[MacroApplyResultT]]": ...
+
+    @autoparams
+    def macro_apply(self, *args, **kwargs):
+        """
+        Apply the given function to the list of all messages in the pipeline.
+        This step can effectively be used to create an ad-hoc step.
+
+        The function must take 2 positional parameters: the first is the list of messages, and the second is
+        the list of available functions.
+
+        :param func: A function that takes 2 positional parameters ``(messages, functions)`` that will be called
+            on the list of messages. If this function does not return a ``list[ChatMessage]``, it should be the
+            last step in the pipeline.
+        """
+        self.steps.append(MacroApply(*args, **kwargs))
         return self
 
     # ==== terminals ====
@@ -367,14 +387,16 @@ class PromptPipeline(Generic[T]):
         return self
 
     # ==== eval ====
-    def __call__(self, msgs: list[ChatMessage]) -> T:
+    def __call__(self, msgs: list[ChatMessage], functions: list[AIFunction] = None, **kwargs) -> T:
         """
         Apply the pipeline to a list of kani messages. The return type will vary based on the steps in the pipeline;
         if no steps are defined the return type will be a copy of the input messages.
         """
-        return self.execute(msgs)
+        return self.execute(msgs, functions, **kwargs)
 
-    def execute(self, msgs: list[ChatMessage], *, deepcopy=False, for_measurement=False) -> T:
+    def execute(
+        self, msgs: list[ChatMessage], functions: list[AIFunction] = None, *, deepcopy=False, for_measurement=False
+    ) -> T:
         """
         Apply the pipeline to a list of kani messages. The return type will vary based on the steps in the pipeline;
         if no steps are defined the return type will be a copy of the input messages.
@@ -382,10 +404,15 @@ class PromptPipeline(Generic[T]):
         This lower-level method offers more fine-grained control over the steps that are run (e.g. to measure the
         length of a single message).
 
+        :param msgs: The messages to apply the pipeline to.
+        :param functions: Any functions available to the model.
         :param deepcopy: Whether to deep-copy each message before running the pipeline.
         :param for_measurement: If the pipeline is being run to measure the length of a single message. In this case,
             any ``ensure_start`` steps will be ignored.
         """
+        if functions is None:
+            functions = []
+
         # let's use the lower-level model_copy() since we aren't changing anything
         data = [m.model_copy(deep=deepcopy) for m in msgs]
 
@@ -396,7 +423,7 @@ class PromptPipeline(Generic[T]):
                 continue
 
             # apply step
-            data = step.execute(data)
+            data = step.execute(data, functions)
 
         # return the result
         return data

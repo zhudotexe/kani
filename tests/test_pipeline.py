@@ -3,7 +3,7 @@ import itertools
 import pytest
 from hypothesis import given, strategies as st
 
-from kani import ChatMessage, ChatRole, FunctionCall, PromptPipeline, ToolCall
+from kani import AIFunction, ChatMessage, ChatRole, FunctionCall, PromptPipeline, ToolCall
 from kani.prompts.base import FilterMixin, PipelineStep
 from kani.prompts.examples import ALL_EXAMPLE_KWARGS, build_conversation
 from kani.prompts.types import PipelineMsgT
@@ -11,7 +11,7 @@ from kani.prompts.types import PipelineMsgT
 
 # ==== bases ====
 class DummyFilterStep(FilterMixin, PipelineStep):
-    def execute(self, msgs: list[PipelineMsgT]):
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]):
         return list(self.filtered(msgs))
 
 
@@ -193,8 +193,8 @@ def test_apply():
     assert len(pipe(EXAMPLE_MSGS)) == 0
 
     # 2 args: translate last to SYSTEM
-    def translate_last(msg, is_last):
-        if is_last:
+    def translate_last(msg, ctx):
+        if ctx.is_last:
             msg.role = ChatRole.SYSTEM
         return msg
 
@@ -203,8 +203,8 @@ def test_apply():
     assert pipe(EXAMPLE_MSGS)[-1].role == ChatRole.SYSTEM
 
     # 3 args: translate even msgs to SYSTEM
-    def translate_even(msg, _, idx):
-        if idx % 2 == 0:
+    def translate_even(msg, ctx):
+        if ctx.idx % 2 == 0:
             msg.role = ChatRole.SYSTEM
         return msg
 

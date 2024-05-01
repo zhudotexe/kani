@@ -1,6 +1,7 @@
 import abc
 from typing import Iterable
 
+from kani.ai_function import AIFunction
 from kani.models import ChatRole
 from kani.prompts.types import PipelineMsgT, PredicateFilterT, RoleFilterT
 
@@ -13,7 +14,7 @@ class PipelineStep(abc.ABC):
     necessary (consider using :meth:`.PromptPipeline.apply` instead).
     """
 
-    def execute(self, msgs: list[PipelineMsgT]):
+    def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]):
         """Apply this step's effects on the pipeline."""
         raise NotImplementedError
 
