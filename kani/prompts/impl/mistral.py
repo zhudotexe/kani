@@ -1,9 +1,8 @@
-import abc
 import json
 import re
 
 from kani.ai_function import AIFunction
-from kani.engines import BaseEngine, Completion
+from kani.engines import Completion, WrapperEngine
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts import ApplyContext, PromptPipeline
 
@@ -120,8 +119,8 @@ MISTRAL_V3_PIPELINE = (
 
 # ==== function call parsing ====
 # [TOOL_CALLS][{'name': 'get_current_weather', 'arguments': {'location': 'Paris, France', 'format': 'celsius'}}]</s>
-class MixtralFunctionCallingMixin(BaseEngine, abc.ABC):
-    """Common Mixtral-8x22B function calling parsing mixin."""
+class MixtralFunctionCallingAdapter(WrapperEngine):
+    """Common Mixtral-8x22B function calling parsing wrapper."""
 
     @staticmethod
     def _parse_tool_calls(content: str) -> tuple[str, list[ToolCall]]:

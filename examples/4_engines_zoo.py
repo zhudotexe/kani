@@ -39,12 +39,14 @@ engine = LlamaEngine(model_id="meta-llama/Llama-2-7b-chat-hf", use_auth_token=Tr
 
 # ---- Mixtral-8x22B (Hugging Face) ----
 from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl import MISTRAL_V3_PIPELINE
-engine = HuggingEngine(
+from kani.prompts.impl.mistral import MISTRAL_V3_PIPELINE, MixtralFunctionCallingAdapter
+model = HuggingEngine(
     model_id="mistralai/Mixtral-8x22B-Instruct-v0.1",
     prompt_pipeline=MISTRAL_V3_PIPELINE,
     model_load_kwargs={"device_map": "auto", "torch_dtype": torch.bfloat16},
 )
+# to enable function calling:
+engine = MixtralFunctionCallingAdapter(model)
 
 # ---- Mistral-7B (Hugging Face) ----
 from kani.engines.huggingface import HuggingEngine
