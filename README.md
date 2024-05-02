@@ -85,6 +85,27 @@ Check out the [Model Zoo](examples/4_engines_zoo.py) to see how to use each of t
 - **Asynchronous design from the start** - kani can scale to run multiple chat sessions in parallel easily, without
   having to manage multiple processes or programs.
 
+## Installation
+
+kani requires Python 3.10 or above. To install model-specific dependencies, kani uses various extras (brackets after
+the library name in `pip install`). To determine which extra(s) to install, see
+the [model table](https://kani.readthedocs.io/en/latest/engines.html), or use the `[all]` extra to install everything.
+
+```shell
+# for OpenAI models
+$ pip install "kani[openai]~=1.0.0rc1"
+# for Hugging Face models
+$ pip install "kani[huggingface]~=1.0.0rc1" torch
+# or install everything:
+$ pip install "kani[all]~=1.0.0rc1"
+```
+
+For the most up-to-date changes and new models, you can also install the development version from Git's `main` branch:
+
+```shell
+$ pip install "kani[all] @ git+https://github.com/zhudotexe/kani.git@main"
+```
+
 ## Quickstart
 
 <a href="https://colab.research.google.com/github/zhudotexe/kani/blob/main/examples/colab_examples.ipynb">
@@ -97,7 +118,7 @@ First, install the library. In this quickstart, we'll use the OpenAI engine, tho
 is [model-agnostic](https://kani.readthedocs.io/en/latest/engines.html).
 
 ```shell
-$ pip install "kani[openai]"
+$ pip install "kani[openai]~=1.0.0rc1"
 ```
 
 Then, let's use kani to create a simple chatbot using ChatGPT as a backend.
