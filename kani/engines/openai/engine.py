@@ -7,6 +7,7 @@ from kani.models import ChatMessage, ChatRole
 from . import function_calling
 from .translation import ChatCompletion, openai_tc_to_kani_tc, translate_functions, translate_messages
 from ..base import BaseCompletion, BaseEngine, Completion
+from ..mixins import TokenCached
 
 try:
     import tiktoken
@@ -43,7 +44,7 @@ CONTEXT_SIZES_BY_PREFIX = [
 ]
 
 
-class OpenAIEngine(BaseEngine):
+class OpenAIEngine(TokenCached, BaseEngine):
     """Engine for using the OpenAI API.
 
     This engine supports all chat-based models and fine-tunes.
@@ -84,6 +85,9 @@ class OpenAIEngine(BaseEngine):
             raise ValueError("You must supply no more than one of (api_key, client).")
         if max_context_size is None:
             max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))
+
+        super().__init__()
+
         self.client = client or OpenAIClient(
             api_key=api_key, organization=organization, max_retries=retry, base_url=api_base, default_headers=headers
         )
@@ -100,6 +104,9 @@ class OpenAIEngine(BaseEngine):
             self.tokenizer = tiktoken.get_encoding("cl100k_base")
 
     def message_len(self, message: ChatMessage) -> int:
+        if (cached_len := self.get_cached_message_len(message)) is not None:
+            return cached_len
+
         mlen = 7
         if message.text:
             mlen += len(self.tokenizer.encode(message.text))
@@ -109,6 +116,8 @@ class OpenAIEngine(BaseEngine):
             for tc in message.tool_calls:
                 mlen += len(self.tokenizer.encode(tc.function.name))
                 mlen += len(self.tokenizer.encode(tc.function.arguments))
+
+        self.set_cached_message_len(message, mlen)
         return mlen
 
     async def predict(
@@ -125,7 +134,9 @@ class OpenAIEngine(BaseEngine):
             model=self.model, messages=translated_messages, tools=tool_specs, **self.hyperparams, **hyperparams
         )
         # translate into Kani spec and return
-        return ChatCompletion(openai_completion=completion)
+        kani_cmpl = ChatCompletion(openai_completion=completion)
+        self.set_cached_message_len(kani_cmpl.message, kani_cmpl.completion_tokens)
+        return kani_cmpl
 
     async def stream(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
@@ -142,6 +153,7 @@ class OpenAIEngine(BaseEngine):
             messages=translated_messages,
             tools=tool_specs,
             stream=True,
+            stream_options={"include_usage": True},
             **self.hyperparams,
             **hyperparams,
         )
@@ -149,9 +161,18 @@ class OpenAIEngine(BaseEngine):
         # save requested tool calls and content as streamed
         content_chunks = []
         tool_call_partials = {}  # index -> tool call
+        usage = None
 
         # iterate over the stream and yield/save
         async for chunk in stream:
+            # save usage if present
+            if chunk.usage is not None:
+                usage = chunk.usage
+
+            if not chunk.choices:
+                continue
+
+            # process content delta
             delta = chunk.choices[0].delta
 
             # yield content
@@ -172,7 +193,10 @@ class OpenAIEngine(BaseEngine):
         # construct the final completion with streamed tool calls
         content = None if not content_chunks else "".join(content_chunks)
         tool_calls = [openai_tc_to_kani_tc(tc) for tc in sorted(tool_call_partials.values(), key=lambda c: c.index)]
-        yield Completion(message=ChatMessage(role=ChatRole.ASSISTANT, content=content, tool_calls=tool_calls))
+        msg = ChatMessage(role=ChatRole.ASSISTANT, content=content, tool_calls=tool_calls)
+        if usage:
+            self.set_cached_message_len(msg, usage.completion_tokens)
+        yield Completion(message=msg)
 
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
         if not functions:

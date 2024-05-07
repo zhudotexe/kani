@@ -6,6 +6,7 @@ from kani.ai_function import AIFunction
 from kani.models import ChatMessage
 
 
+# ==== completions ====
 class BaseCompletion(abc.ABC):
     """Base class for all LM engine completions."""
 
@@ -47,6 +48,7 @@ class Completion(BaseCompletion):
         return self._completion_tokens
 
 
+# ==== base engines ====
 class BaseEngine(abc.ABC):
     """Base class for all LM engines.
 
@@ -131,6 +133,7 @@ class BaseEngine(abc.ABC):
         pass
 
 
+# ==== utils ====
 class WrapperEngine(BaseEngine):
     """
     A base class for engines that are meant to wrap other engines. By default, this class takes in another engine

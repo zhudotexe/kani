@@ -10,6 +10,7 @@ from kani.exceptions import KaniException, MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
 from ..base import BaseCompletion, BaseEngine, Completion
+from ..mixins import TokenCached
 
 try:
     from anthropic import AI_PROMPT, HUMAN_PROMPT, AsyncAnthropic
@@ -84,7 +85,7 @@ CLAUDE_PIPELINE = (
 )
 
 
-class AnthropicEngine(BaseEngine):
+class AnthropicEngine(TokenCached, BaseEngine):
     """Engine for using the Anthropic API.
 
     This engine supports all Claude models. See https://docs.anthropic.com/claude/docs/getting-access-to-claude for
@@ -137,6 +138,9 @@ class AnthropicEngine(BaseEngine):
                 )
         if max_context_size is None:
             max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))
+
+        super().__init__()
+
         self.client = client or AsyncAnthropic(
             api_key=api_key, max_retries=retry, base_url=api_base, default_headers=headers
         )
@@ -159,27 +163,9 @@ class AnthropicEngine(BaseEngine):
             self.tokenizer = None
 
     # ==== token counting ====
-    @staticmethod
-    def message_cache_key(message: ChatMessage):
-        # (role, content, tool calls)
-
-        # we'll use msgpart identity for the hash here since we'll always have a ref as long as it's in a message
-        # history
-        hashable_content = tuple(part if isinstance(part, str) else id(part) for part in message.parts)
-
-        # use (name, args) for tool calls
-        if message.tool_calls:
-            hashable_tool_calls = tuple((tc.function.name, tc.function.arguments) for tc in message.tool_calls)
-        else:
-            hashable_tool_calls = message.tool_calls
-
-        return hash((message.role, hashable_content, hashable_tool_calls))
-
     def message_len(self, message: ChatMessage) -> int:
-        # use cache
-        cache_key = self.message_cache_key(message)
-        if cache_key in self.token_cache:
-            return self.token_cache[cache_key]
+        if (cached_len := self.get_cached_message_len(message)) is not None:
+            return cached_len
 
         # use tokenizer
         if self.tokenizer is not None:
@@ -285,8 +271,7 @@ class AnthropicEngine(BaseEngine):
         kani_msg = ChatMessage.assistant(content, tool_calls=tool_calls or None)
 
         # also cache the message token len
-        cache_key = self.message_cache_key(kani_msg)
-        self.token_cache[cache_key] = message.usage.output_tokens
+        self.set_cached_message_len(kani_msg, message.usage.output_tokens)
 
         return Completion(
             message=kani_msg,
