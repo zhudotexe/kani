@@ -1,6 +1,7 @@
 import functools
 import itertools
 import json
+import logging
 import os
 import warnings
 from typing import AsyncIterable
@@ -24,6 +25,8 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("claude-2.1", 200000),
     ("", 100000),
 ]
+
+log = logging.getLogger(__name__)
 
 
 # ==== pipe ====
@@ -237,7 +240,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
                     if isinstance(msg["content"], str):
                         prompt_msg_content.append({"type": "text", "text": msg["content"]})
                     else:
-                        prompt_msg_content.append(msg["content"])
+                        prompt_msg_content.extend(msg["content"])
                 # and output the final msg
                 prompt_msgs.append({"role": "user", "content": prompt_msg_content})
             # else send to output
@@ -249,6 +252,8 @@ class AnthropicEngine(TokenCached, BaseEngine):
             kwargs["tools"] = [
                 {"name": f.name, "description": f.desc, "input_schema": f.json_schema} for f in functions
             ]
+
+        log.debug(f"Claude message format: {prompt_msgs}")
 
         return kwargs, prompt_msgs
 
