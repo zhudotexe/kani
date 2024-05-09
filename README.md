@@ -93,11 +93,11 @@ the [model table](https://kani.readthedocs.io/en/latest/engines.html), or use th
 
 ```shell
 # for OpenAI models
-$ pip install "kani[openai]~=1.0.0rc1"
+$ pip install "kani[openai]"
 # for Hugging Face models
-$ pip install "kani[huggingface]~=1.0.0rc1" torch
+$ pip install "kani[huggingface]" torch
 # or install everything:
-$ pip install "kani[all]~=1.0.0rc1"
+$ pip install "kani[all]"
 ```
 
 For the most up-to-date changes and new models, you can also install the development version from Git's `main` branch:
@@ -118,7 +118,7 @@ First, install the library. In this quickstart, we'll use the OpenAI engine, tho
 is [model-agnostic](https://kani.readthedocs.io/en/latest/engines.html).
 
 ```shell
-$ pip install "kani[openai]~=1.0.0rc1"
+$ pip install "kani[openai]"
 ```
 
 Then, let's use kani to create a simple chatbot using ChatGPT as a backend.
