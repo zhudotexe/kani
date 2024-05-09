@@ -45,7 +45,11 @@ model = HuggingEngine(
     prompt_pipeline=MISTRAL_V3_PIPELINE,
     model_load_kwargs={"device_map": "auto", "torch_dtype": torch.bfloat16},
 )
+
 # to enable function calling:
+# NOTE: as of May 2024, the huggingface implementation of Mixtral-8x22B function calling is broken:
+# https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1/discussions/27
+# this comment will be removed once it is fixed - until then, you should use another backend
 engine = MixtralFunctionCallingAdapter(model)
 
 # ---- Mistral-7B (Hugging Face) ----
