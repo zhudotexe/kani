@@ -136,7 +136,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
             api_key = os.getenv("ANTHROPIC_API_KEY")
             if api_key is None:
                 raise ValueError(
-                    "You must supply an `api_key`, `client`, or set the `OPENAI_API_KEY` environment variable to use"
+                    "You must supply an `api_key`, `client`, or set the `ANTHROPIC_API_KEY` environment variable to use"
                     " the OpenAIEngine."
                 )
         if max_context_size is None:
