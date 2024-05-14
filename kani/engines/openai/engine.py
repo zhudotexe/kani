@@ -1,4 +1,5 @@
 import functools
+import warnings
 from typing import AsyncIterable
 
 from kani.ai_function import AIFunction
@@ -22,6 +23,8 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("gpt-3.5-turbo-instruct", 4096),
     ("gpt-3.5-turbo-0613", 4096),
     ("gpt-3.5-turbo", 16385),
+    # gpt-4o
+    ("gpt-4o", 128000),
     # gpt-4-turbo models aren't prefixed differently...
     # TODO make the default gpt-4 128k and keep the pre-turbo ones at 8k after gpt-4 defaults to 128k
     ("gpt-4-1106", 128000),
@@ -101,6 +104,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
         try:
             self.tokenizer = tiktoken.encoding_for_model(self.model)
         except KeyError:
+            warnings.warn(f"Could not find a tokenizer for the {self.model} model. You may need to update tiktoken.")
             self.tokenizer = tiktoken.get_encoding("cl100k_base")
 
     def message_len(self, message: ChatMessage) -> int:

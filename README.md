@@ -41,7 +41,7 @@ more:
 
 **Hosted Models**
 
-- OpenAI Models (GPT-3.5-turbo, GPT-4, GPT-4-turbo)
+- OpenAI Models (GPT-3.5-turbo, GPT-4, GPT-4-turbo, GPT-4o)
 - Anthropic Models (Claude, Claude Instant)
 
 **Open Source Models**
