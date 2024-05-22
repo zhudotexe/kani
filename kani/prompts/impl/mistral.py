@@ -180,3 +180,6 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
             if inner_completion:
                 tool_calls = (inner_completion.message.tool_calls or []) + tool_calls
             yield Completion(ChatMessage.assistant(content, tool_calls=tool_calls))
+
+
+MistralFunctionCallingAdapter = MixtralFunctionCallingAdapter

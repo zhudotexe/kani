@@ -53,6 +53,13 @@ model = HuggingEngine(
 engine = MixtralFunctionCallingAdapter(model)
 
 # ---- Mistral-7B (Hugging Face) ----
+# v0.3 (supports function calling):
+from kani.engines.huggingface import HuggingEngine
+from kani.prompts.impl.mistral import MISTRAL_V3_PIPELINE, MistralFunctionCallingAdapter
+model = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.3", prompt_pipeline=MISTRAL_V3_PIPELINE)
+engine = MistralFunctionCallingAdapter(model)
+
+# v0.2:
 from kani.engines.huggingface import HuggingEngine
 from kani.prompts.impl import MISTRAL_V1_PIPELINE
 engine = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.2", prompt_pipeline=MISTRAL_V1_PIPELINE)
