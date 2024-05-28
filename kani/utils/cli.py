@@ -74,8 +74,6 @@ async def chat_in_terminal_async(
                     elif msg.role == ChatRole.FUNCTION and show_function_returns:
                         print_width(msg.text, width=width, prefix="FUNC: ")
     except KeyboardInterrupt:
-        pass
-    finally:
         await kani.engine.close()
 
 
