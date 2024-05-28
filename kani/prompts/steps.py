@@ -217,8 +217,11 @@ class EnsureStart(FilterMixin, PipelineStep):
 
 
 class EnsureBoundFunctionCalls(PipelineStep):
+    def __init__(self, id_translator: Callable[[str], str] = None):
+        super().__init__()
+        self.id_translator = id_translator
+
     def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[PipelineMsgT]:
-        bound = []
         free_toolcall_ids = set()
         for m in msgs:
             # if this is not a function result and there are free tool call IDs, raise
@@ -251,8 +254,15 @@ class EnsureBoundFunctionCalls(PipelineStep):
                         f" ({free_toolcall_ids})! Set the tool_call_id to resolve the pending tool requests."
                     )
                 # otherwise pass the FUNCTION message through
-            bound.append(m)
-        return bound
+
+            # translate the id(s) if needed
+            if self.id_translator is not None:
+                if m.tool_calls is not None:
+                    for tc in m.tool_calls:
+                        tc.id = self.id_translator(tc.id)
+                if m.tool_call_id is not None:
+                    m.tool_call_id = self.id_translator(m.tool_call_id)
+        return msgs
 
     def explain(self) -> str:
         return "Ensure that each function call is bound"

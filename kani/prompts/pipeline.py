@@ -238,10 +238,10 @@ class PromptPipeline(Generic[T]):
         return self
 
     @overload
-    def ensure_bound_function_calls(self) -> Self: ...
+    def ensure_bound_function_calls(self, id_translator: Callable[[str], str] = None) -> Self: ...
 
     @autoparams
-    def ensure_bound_function_calls(self):
+    def ensure_bound_function_calls(self, *args, **kwargs):
         """
         Ensure that each FUNCTION message is preceded by an ASSISTANT message requesting it, and that each FUNCTION
         message's ``tool_call_id`` matches the request. If a FUNCTION message has no ``tool_call_id`` (e.g. a few-shot
@@ -250,9 +250,11 @@ class PromptPipeline(Generic[T]):
         Will remove hanging FUNCTION messages (i.e. messages where the corresponding request was managed out of the
         model's context) from the beginning of the prompt if necessary.
 
+        :param id_translator: A function that takes a function ID (usually a UUID4 string) and returns a translated ID.
+            Used for engines that require the function_call_id to be in particular formats (e.g., Mistral).
         :raises PromptError: if it is impossible to bind each function call to a request unambiguously.
         """
-        self.steps.append(EnsureBoundFunctionCalls())
+        self.steps.append(EnsureBoundFunctionCalls(*args, **kwargs))
         return self
 
     @overload
