@@ -1,5 +1,7 @@
 import inspect
+from typing import Annotated
 
+from kani.ai_function import AIFunction, AIParam
 from kani.models import ChatMessage, FunctionCall, ToolCall
 
 
@@ -90,6 +92,20 @@ def build_conversation(
         ],
     ]
     return [grp for grp in grps if grp]
+
+
+def build_functions(*, function_call=False, **_) -> list[AIFunction]:
+    """Return a list of AIFunctions for a test case"""
+
+    # noinspection PyUnusedLocal
+    def get_weather(location: Annotated[str, AIParam(desc="The city and state, e.g. San Francisco, CA")]):
+        """Get the current weather in a given location."""
+        pass
+
+    fcs = []
+    if function_call:
+        fcs.append(AIFunction(get_weather))
+    return fcs
 
 
 ALL_EXAMPLE_KWARGS = list(inspect.signature(build_conversation).parameters.keys())

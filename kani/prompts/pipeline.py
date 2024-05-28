@@ -9,7 +9,7 @@ from kani.ai_function import AIFunction
 from kani.models import ChatMessage, ChatRole
 from kani.prompts.base import PipelineStep
 from kani.prompts.docutils import autoparams
-from kani.prompts.examples import ALL_EXAMPLE_KWARGS, build_conversation
+from kani.prompts.examples import ALL_EXAMPLE_KWARGS, build_conversation, build_functions
 from kani.prompts.steps import (
     Apply,
     ConversationDict,
@@ -429,7 +429,9 @@ class PromptPipeline(Generic[T]):
         return data
 
     # ==== utils ====
-    def explain(self, example: list[ChatMessage] = None, *, all_cases=False, **kwargs):
+    def explain(
+        self, example: list[ChatMessage] = None, functions: list[AIFunction] = None, *, all_cases=False, **kwargs
+    ):
         """
         Print out a summary of the pipeline and an example conversation transformation based on the steps in the
         pipeline.
@@ -438,6 +440,9 @@ class PromptPipeline(Generic[T]):
             This method will run the pipeline on an example constructed based on the steps in this pipeline. You may
             encounter unexpected side effects if your pipeline uses :meth:`apply` with a function with side effects.
         """
+        if functions is None:
+            functions = []
+
         hdg = f"Prompt Pipeline ({len(self.steps)} steps)"
         print(f"{hdg}\n{'=' * len(hdg)}")
         listwidth = len(str(len(self.steps)))
@@ -454,10 +459,11 @@ class PromptPipeline(Generic[T]):
 
         examples_msg_grps = build_conversation(**example_kwargs)
         examples_msgs = list(itertools.chain.from_iterable(examples_msg_grps))
+        example_functions = build_functions(**example_kwargs)
 
         # run and time example
         start = time.perf_counter()
-        example_out = self(examples_msgs)
+        example_out = self(examples_msgs, example_functions)
         end = time.perf_counter()
         exec_time = end - start
 
