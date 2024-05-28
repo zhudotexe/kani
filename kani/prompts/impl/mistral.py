@@ -34,7 +34,7 @@ def _fmt_functions(functions: list[AIFunction]) -> str:
         }
         for f in functions
     ]
-    return f"[AVAILABLE_TOOLS]{tools_json}[/AVAILABLE_TOOLS]"
+    return f"[AVAILABLE_TOOLS] {tools_json}[/AVAILABLE_TOOLS]"
 
 
 def fmt_available_tools(msg: ChatMessage, ctx: ApplyContext) -> ChatMessage:
@@ -68,11 +68,11 @@ MISTRAL_V3_PIPELINE = (
     # generations).
     .merge_consecutive(role=ChatRole.ASSISTANT, sep=" ")
     # We wrap USER messages here since we do some shenanigans in the next step
-    .wrap(role=ChatRole.USER, prefix="[INST]", suffix="[/INST]")
+    .wrap(role=ChatRole.USER, prefix="[INST] ", suffix="[/INST]")
     # --- function calling ---
-    .ensure_bound_function_calls()
+    .ensure_bound_function_calls(id_translator=lambda x: x.replace("-", "")[:9])
     # Format function calls with the [TOOL_CALLS] format.
-    .function_call_fmt(json_tool_call, prefix="[TOOL_CALLS][", sep=",", suffix="]</s>")
+    .function_call_fmt(json_tool_call, prefix="[TOOL_CALLS] [", sep=",", suffix="]")
     # Include the call ID in the FUNCTION result.
     .apply(fmt_function_call_result, role=ChatRole.FUNCTION)
     # Include the list of available functions just before the last user message
@@ -86,9 +86,9 @@ MISTRAL_V3_PIPELINE = (
     .conversation_fmt(
         prefix="<s>",
         assistant_prefix=" ",
-        assistant_suffix=" </s>",
+        assistant_suffix="</s>",
         assistant_suffix_if_last="",
-        function_prefix="[TOOL_RESULTS]",
+        function_prefix="[TOOL_RESULTS] ",
         function_suffix="[/TOOL_RESULTS]",
     )
 )
@@ -124,7 +124,7 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
 
     @staticmethod
     def _parse_tool_calls(content: str) -> tuple[str, list[ToolCall]]:
-        tool_json = re.search(r"\[TOOL_CALLS](.+)</s>", content, re.IGNORECASE | re.DOTALL)
+        tool_json = re.search(r"\[TOOL_CALLS]\s*(.+)</s>", content, re.IGNORECASE | re.DOTALL)
         if tool_json is None:
             return content, []
         actions = json.loads(tool_json.group(1))
