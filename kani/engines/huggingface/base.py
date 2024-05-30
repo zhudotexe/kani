@@ -192,7 +192,12 @@ class HuggingEngine(BaseEngine):
         return input_toks, input_len, hyperparams
 
     async def predict(
-        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+        self,
+        messages: list[ChatMessage],
+        functions: list[AIFunction] | None = None,
+        *,
+        decode_kwargs: dict = None,
+        **hyperparams,
     ) -> Completion:
         """
         Given the current context of messages and available functions, get the next predicted chat message from the LM.
@@ -200,9 +205,14 @@ class HuggingEngine(BaseEngine):
         :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
+        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode(). Defaults to
+            ``dict(skip_special_tokens=True)``.
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
+        if decode_kwargs is None:
+            decode_kwargs = dict(skip_special_tokens=True)
+
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
 
@@ -210,7 +220,7 @@ class HuggingEngine(BaseEngine):
         output = self.model.generate(input_toks, **hyperparams)
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
-        content = self.tokenizer.decode(output[0][input_len:-1]).strip()
+        content = self.tokenizer.decode(output[0][input_len:], **decode_kwargs).strip()
         return Completion(
             ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - (input_len + 1)
         )
@@ -220,7 +230,8 @@ class HuggingEngine(BaseEngine):
         messages: list[ChatMessage],
         functions: list[AIFunction] | None = None,
         *,
-        streamer_timeout=None,
+        streamer_timeout: float | None = None,
+        decode_kwargs: dict = None,
         **hyperparams,
     ) -> AsyncIterable[str | BaseCompletion]:
         """
@@ -230,14 +241,17 @@ class HuggingEngine(BaseEngine):
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
         :param streamer_timeout: The maximum number of seconds to wait for the next token when streaming.
+        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode(). Defaults to
+            ``dict(skip_special_tokens=True)``.
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
+        if decode_kwargs is None:
+            decode_kwargs = dict(skip_special_tokens=True)
+
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
-        streamer = TextIteratorStreamer(
-            self.tokenizer, skip_prompt=True, skip_special_tokens=True, timeout=streamer_timeout
-        )
+        streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=streamer_timeout, **decode_kwargs)
 
         # run it through the model in another thread so that we can get the tokens in this thread
         output_toks = None

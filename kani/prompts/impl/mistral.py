@@ -122,9 +122,17 @@ MISTRAL_V3_PIPELINE = (
 class MixtralFunctionCallingAdapter(WrapperEngine):
     """Common Mixtral-8x22B function calling parsing wrapper."""
 
-    @staticmethod
-    def _parse_tool_calls(content: str) -> tuple[str, list[ToolCall]]:
-        tool_json = re.search(r"\[TOOL_CALLS]\s*(.+)</s>", content, re.IGNORECASE | re.DOTALL)
+    def __init__(self, *args, tool_call_token="[TOOL_CALLS]", eos_token="</s>", **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tool_call_token = tool_call_token
+        self.eos_token = eos_token
+
+    def _parse_tool_calls(self, content: str) -> tuple[str, list[ToolCall]]:
+        tool_json = re.search(
+            rf"{re.escape(self.tool_call_token)}\s*(.+)(?:{re.escape(self.eos_token)})?",
+            content,
+            re.IGNORECASE | re.DOTALL,
+        )
         if tool_json is None:
             return content, []
         actions = json.loads(tool_json.group(1))
@@ -142,11 +150,13 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
         return content[: tool_json.start()], tool_calls
 
     async def predict(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams):
+        hyperparams.setdefault("decode_kwargs", dict(skip_special_tokens=False))
         completion = await super().predict(messages, functions, **hyperparams)
 
         # if we have tools, parse
         if functions:
             completion.message.content, completion.message.tool_calls = self._parse_tool_calls(completion.message.text)
+        completion.message.content = completion.message.content.removesuffix(self.eos_token).strip()
 
         return completion
 
@@ -154,16 +164,17 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
         content_parts = []
         in_tool_call = False
         inner_completion = None
+        hyperparams.setdefault("decode_kwargs", dict(skip_special_tokens=False))
 
         # consume from the inner iterator, yielding as normal until we see a tool call or a completion
         async for elem in super().stream(messages, functions, **hyperparams):
             if isinstance(elem, str):
                 content_parts.append(elem)
                 # if we see the start of a tool call, stop yielding and start buffering
-                if elem == "[TOOL_CALLS]":
+                if elem.startswith(self.tool_call_token):
                     in_tool_call = True
                 # otherwise yield the string
-                if not in_tool_call:
+                if not in_tool_call and elem != self.eos_token:
                     yield elem
             else:
                 # save the inner completion
@@ -179,7 +190,7 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
             content, tool_calls = self._parse_tool_calls(content)
             if inner_completion:
                 tool_calls = (inner_completion.message.tool_calls or []) + tool_calls
-            yield Completion(ChatMessage.assistant(content, tool_calls=tool_calls))
+            yield Completion(ChatMessage.assistant(content.removesuffix(self.eos_token).strip(), tool_calls=tool_calls))
 
 
 MistralFunctionCallingAdapter = MixtralFunctionCallingAdapter
