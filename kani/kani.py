@@ -135,12 +135,6 @@ class Kani:
             await self.add_to_history(ChatMessage.user(query))
         return kwargs
 
-    async def _add_completion_to_history(self, completion: BaseCompletion):
-        """Add the message in the completion to the chat history and return it"""
-        message = completion.message
-        await self.add_to_history(message)
-        return message
-
     async def _full_round(self, query: QueryType, *, _kani_is_stream=False, **kwargs):
         """Underlying handler for full_round with stream support."""
         retry = 0
@@ -153,12 +147,12 @@ class Kani:
                 # do the model prediction (stream or no stream)
                 if _kani_is_stream:
                     stream = self.get_model_stream(**kwargs)
-                    manager = StreamManager(stream, role=ChatRole.ASSISTANT, after=self._add_completion_to_history)
+                    manager = StreamManager(stream, role=ChatRole.ASSISTANT, after=self.add_completion_to_history)
                     yield manager
                     message = await manager.message()
                 else:
                     completion = await self.get_model_completion(**kwargs)
-                    message = await self._add_completion_to_history(completion)
+                    message = await self.add_completion_to_history(completion)
                     yield message
 
                 # if function call, do it and attempt retry if it's wrong
@@ -222,7 +216,7 @@ class Kani:
         async with self.lock:
             kwargs = await self._chat_round_before(query, **kwargs)
             completion = await self.get_model_completion(**kwargs)
-            return await self._add_completion_to_history(completion)
+            return await self.add_completion_to_history(completion)
 
     async def chat_round_str(self, query: QueryType, **kwargs) -> str:
         """Like :meth:`chat_round`, but only returns the text content of the message."""
@@ -257,7 +251,7 @@ class Kani:
             async for elem in self.get_model_stream(**_kwargs):
                 yield elem
 
-        return StreamManager(_impl(), role=ChatRole.ASSISTANT, after=self._add_completion_to_history, lock=self.lock)
+        return StreamManager(_impl(), role=ChatRole.ASSISTANT, after=self.add_completion_to_history, lock=self.lock)
 
     async def full_round(self, query: QueryType, **kwargs) -> AsyncIterable[ChatMessage]:
         """Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
@@ -503,6 +497,18 @@ class Kani:
             msg = ChatMessage.function(call.name, str(err), tool_call_id=tool_call_id)
 
         return ExceptionHandleResult(should_retry=attempt < self.retry_attempts and err.retry, message=msg)
+
+    async def add_completion_to_history(self, completion: BaseCompletion):
+        """Add the message in the given completion to the chat history and return it.
+
+        You might want to override this to log token counts. By default, this calls :meth:`add_to_history`.
+
+        This method differs from :meth:`add_to_history` in that it is only called on model completions (stream and
+        non-stream) rather than on each message, and takes a :class:`.BaseCompletion` as input.
+        """
+        message = completion.message
+        await self.add_to_history(message)
+        return message
 
     async def add_to_history(self, message: ChatMessage):
         """Add the given message to the chat history.
