@@ -170,5 +170,6 @@ class LlamaCppEngine(BaseEngine):
                 yield text
 
         # construct the final completion
+        # https://github.com/abetlen/llama-cpp-python/issues/1498 blocks token counting impl
         content = None if not content_chunks else "".join(content_chunks)
         yield Completion(message=ChatMessage.assistant(content))

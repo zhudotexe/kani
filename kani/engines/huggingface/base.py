@@ -1,4 +1,3 @@
-import functools
 import logging
 import warnings
 from threading import Thread
@@ -241,13 +240,28 @@ class HuggingEngine(BaseEngine):
         )
 
         # run it through the model in another thread so that we can get the tokens in this thread
-        generate_func = functools.partial(self.model.generate, input_toks, streamer=streamer, **hyperparams)
-        thread = Thread(target=generate_func)
+        output_toks = None
+
+        def thread_target():
+            nonlocal output_toks  # ugly way of sending the results of .generate to the outer scope
+            output_toks = self.model.generate(input_toks, streamer=streamer, **hyperparams)
+
+        thread = Thread(target=thread_target)
         thread.start()
 
         # then wait for tokens from the task
+        yielded_tokens = []
         for token in streamer:
             yield token
+            yielded_tokens.append(token)
 
-        # finally clean up the thread
+        # clean up the thread
         thread.join()
+
+        # yield a completion with usage stats
+        content = "".join(yielded_tokens)
+        yield Completion(
+            message=ChatMessage.assistant(content=content.strip()),
+            prompt_tokens=input_len,
+            completion_tokens=len(output_toks[0]) - (input_len + 1),
+        )

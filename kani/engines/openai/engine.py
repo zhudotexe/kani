@@ -198,9 +198,15 @@ class OpenAIEngine(TokenCached, BaseEngine):
         content = None if not content_chunks else "".join(content_chunks)
         tool_calls = [openai_tc_to_kani_tc(tc) for tc in sorted(tool_call_partials.values(), key=lambda c: c.index)]
         msg = ChatMessage(role=ChatRole.ASSISTANT, content=content, tool_calls=tool_calls)
+
+        # token counting
         if usage:
             self.set_cached_message_len(msg, usage.completion_tokens)
-        yield Completion(message=msg)
+            prompt_tokens = usage.prompt_tokens
+            completion_tokens = usage.completion_tokens
+        else:
+            prompt_tokens = completion_tokens = None
+        yield Completion(message=msg, prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
 
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
         if not functions:
