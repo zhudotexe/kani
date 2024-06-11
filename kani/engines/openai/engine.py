@@ -121,6 +121,13 @@ class OpenAIEngine(TokenCached, BaseEngine):
                 mlen += len(self.tokenizer.encode(tc.function.name))
                 mlen += len(self.tokenizer.encode(tc.function.arguments))
 
+        # HACK: using gpt-4o and parallel function calling, the API randomly adds tokens based on the length of the
+        # TOOL message (see tokencounting.ipynb)???
+        # this seems to be ~ 6 + (token len / 20) tokens per message (though it randomly varies), but this formula
+        # is <10 tokens of an overestimate in most cases
+        if self.model.startswith("gpt-4o") and message.role == ChatRole.FUNCTION:
+            mlen += 6 + (mlen // 20)
+
         self.set_cached_message_len(message, mlen)
         return mlen
 
