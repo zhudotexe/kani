@@ -135,9 +135,10 @@ class Kani:
             await self.add_to_history(ChatMessage.user(query))
         return kwargs
 
-    async def _full_round(self, query: QueryType, *, _kani_is_stream=False, **kwargs):
+    async def _full_round(self, query: QueryType, *, max_function_rounds: int, _kani_is_stream: bool, **kwargs):
         """Underlying handler for full_round with stream support."""
         retry = 0
+        function_rounds = 0
         is_model_turn = True
         async with self.lock:
             if query is not None:
@@ -204,6 +205,11 @@ class Kani:
                 else:
                     retry = 0
 
+                # if we're at the max number of function rounds, don't include functions on the next go
+                function_rounds += 1
+                if max_function_rounds is not None and function_rounds >= max_function_rounds:
+                    kwargs["include_functions"] = False
+
     # === main entrypoints ===
     async def chat_round(self, query: QueryType, **kwargs) -> ChatMessage:
         """Perform a single chat round (user -> model -> user, no functions allowed).
@@ -253,7 +259,9 @@ class Kani:
 
         return StreamManager(_impl(), role=ChatRole.ASSISTANT, after=self.add_completion_to_history, lock=self.lock)
 
-    async def full_round(self, query: QueryType, **kwargs) -> AsyncIterable[ChatMessage]:
+    async def full_round(
+        self, query: QueryType, *, max_function_rounds: int = None, **kwargs
+    ) -> AsyncIterable[ChatMessage]:
         """Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
 
         Yields each non-user ChatMessage created during the round.
@@ -266,15 +274,22 @@ class Kani:
 
         :param query: The content of the user's chat message. Can be None to generate a completion without a user
             prompt.
+        :param max_function_rounds: The maximum number of function calling rounds to perform in this round. If this
+            number is reached, the model is allowed to generate a final response without any functions defined.
+            Default unlimited (continues until model's response does not contain a function call).
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
         """
-        async for elem in self._full_round(query, _kani_is_stream=False, **kwargs):
+        async for elem in self._full_round(
+            query, max_function_rounds=max_function_rounds, _kani_is_stream=False, **kwargs
+        ):
             yield elem
 
     async def full_round_str(
         self,
         query: QueryType,
         message_formatter: Callable[[ChatMessage], str | None] = assistant_message_contents,
+        *,
+        max_function_rounds: int = None,
         **kwargs,
     ) -> AsyncIterable[str]:
         """Like :meth:`full_round`, but each yielded element is a str rather than a ChatMessage.
@@ -282,13 +297,18 @@ class Kani:
         :param query: The content of the user's chat message.
         :param message_formatter: A function that returns a string to yield for each message. By default,
             ``full_round_str`` yields the content of each assistant message.
+        :param max_function_rounds: The maximum number of function calling rounds to perform in this round. If this
+            number is reached, the model is allowed to generate a final response without any functions defined.
+            Default unlimited (continues until model's response does not contain a function call).
         :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
         """
-        async for message in self.full_round(query, **kwargs):
+        async for message in self.full_round(query, max_function_rounds=max_function_rounds, **kwargs):
             if text := message_formatter(message):
                 yield text
 
-    async def full_round_stream(self, query: QueryType, **kwargs) -> AsyncIterable[StreamManager]:
+    async def full_round_stream(
+        self, query: QueryType, *, max_function_rounds: int = None, **kwargs
+    ) -> AsyncIterable[StreamManager]:
         """
         Perform a full chat round (user -> model [-> function -> model -> ...] -> user).
 
@@ -307,7 +327,9 @@ class Kani:
 
         The arguments are the same as :meth:`full_round`.
         """
-        async for elem in self._full_round(query, _kani_is_stream=True, **kwargs):
+        async for elem in self._full_round(
+            query, max_function_rounds=max_function_rounds, _kani_is_stream=True, **kwargs
+        ):
             yield elem
 
     # ==== helpers ====
