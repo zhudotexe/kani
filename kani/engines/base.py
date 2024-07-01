@@ -132,6 +132,18 @@ class BaseEngine(abc.ABC):
         """Optional: Clean up any resources the engine might need."""
         pass
 
+    # ==== internal ====
+    __ignored_repr_attrs__ = ("token_cache",)
+
+    def __repr__(self):
+        """Default: generate a repr based on the instance's __dict__."""
+        attrs = ", ".join(
+            f"{name}={value!r}"
+            for name, value in self.__dict__.items()
+            if name not in self.__ignored_repr_attrs__ and not name.startswith("_")
+        )
+        return f"{type(self).__name__}({attrs})"
+
 
 # ==== utils ====
 class WrapperEngine(BaseEngine):
@@ -173,6 +185,9 @@ class WrapperEngine(BaseEngine):
 
     async def close(self):
         return await self.engine.close()
+
+    def __repr__(self):
+        return f"{type(self).__name__}(engine={self.engine!r})"
 
     # all other attributes are caught by this default passthrough handler
     def __getattr__(self, item):

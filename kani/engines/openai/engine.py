@@ -231,3 +231,9 @@ class OpenAIEngine(TokenCached, BaseEngine):
 
     async def close(self):
         await self.client.close()
+
+    def __repr__(self):
+        return (
+            f"{type(self).__name__}(model={self.model}, max_context_size={self.max_context_size},"
+            f" hyperparams={self.hyperparams})"
+        )

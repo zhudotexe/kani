@@ -153,7 +153,6 @@ class AnthropicEngine(TokenCached, BaseEngine):
         self.hyperparams = hyperparams
 
         # token counting - claude 3+ does not release tokenizer so we have to do heuristics and cache
-        self.token_cache = {}
         if model.startswith("claude-2"):
             # anthropic async client loads a json file using anyio for some reason; hook into the underlying loader
             # noinspection PyProtectedMember
