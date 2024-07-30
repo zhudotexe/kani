@@ -223,6 +223,7 @@ class EnsureBoundFunctionCalls(PipelineStep):
 
     def execute(self, msgs: list[PipelineMsgT], functions: list[AIFunction]) -> list[PipelineMsgT]:
         free_toolcall_ids = set()
+        out = []
         for m in msgs:
             # if this is not a function result and there are free tool call IDs, raise
             if m.role != ChatRole.FUNCTION and free_toolcall_ids:
@@ -262,7 +263,9 @@ class EnsureBoundFunctionCalls(PipelineStep):
                         tc.id = self.id_translator(tc.id)
                 if m.tool_call_id is not None:
                     m.tool_call_id = self.id_translator(m.tool_call_id)
-        return msgs
+
+            out.append(m)
+        return out
 
     def explain(self) -> str:
         return "Ensure that each function call is bound"
