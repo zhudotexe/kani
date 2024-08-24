@@ -64,6 +64,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
         api_base: str = "https://api.openai.com/v1",
         headers: dict = None,
         client: OpenAIClient = None,
+        tokenizer = None,
         **hyperparams,
     ):
         """
@@ -81,6 +82,8 @@ class OpenAIEngine(TokenCached, BaseEngine):
             (for reusing the same client in multiple engines).
             You must specify exactly one of ``(api_key, client)``. If this is passed the ``organization``, ``retry``,
             ``api_base``, and ``headers`` params will be ignored.
+        :param tokenizer: The tokenizer to use for token estimation - for OpenAI models this will be loaded
+            automatically. A class with a ``.encode(text: str)`` method that returns a list (usually of token ids).
         :param hyperparams: The arguments to pass to the ``create_chat_completion`` call with each request. See
             https://platform.openai.com/docs/api-reference/chat/create for a full list of params.
         """
@@ -97,10 +100,12 @@ class OpenAIEngine(TokenCached, BaseEngine):
         self.model = model
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
-        self.tokenizer = None  # tiktoken caches a tokenizer globally in module, so we can unconditionally load it
+        self.tokenizer = tokenizer  # tiktoken caches a tokenizer globally in module, so we can unconditionally load it
         self._load_tokenizer()
 
     def _load_tokenizer(self):
+        if self.tokenizer:
+            return
         try:
             self.tokenizer = tiktoken.encoding_for_model(self.model)
         except KeyError:
