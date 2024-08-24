@@ -278,7 +278,8 @@ University of Pennsylvania. We're all members of
 - [**Andrew Zhu**](https://zhu.codes/) started in Fall 2022. His research interests include natural language processing,
   programming languages, distributed systems, and more. He's also a full-stack software engineer, proficient in all
   manner of backend, devops, database, and frontend engineering. Andrew strives to make idiomatic, clean, performant,
-  and low-maintenance code — philosophies that are often rare in academia.
+  and low-maintenance code — philosophies that are often rare in academia. His research is supported by the NSF Graduate
+  Research Fellowship.
 - [**Liam Dugan**](https://liamdugan.com/) started in Fall 2021. His research focuses primarily on large language models
   and how humans interact with them. In particular, he is interested in human detection of generated text and whether we
   can apply those insights to automatic detection systems. He is also interested in the practical application of large
@@ -288,6 +289,8 @@ University of Pennsylvania. We're all members of
   guiding users through instructions or audiobooks allowing users to seamlessly navigate through spoken text. Beyond
   research, Alyssa chairs the Penn CIS Doctoral Association, founded the CIS PhD Mentorship Program, and was supported
   by the NSF Graduate Research Fellowship Program.
+
+We use kani actively in our research, and aim to keep it up-to-date with modern NLP practices.
 
 ## Citation
 
