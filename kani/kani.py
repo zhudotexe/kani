@@ -346,8 +346,25 @@ class Kani:
             + self.desired_response_tokens
         )
 
+    async def prompt_token_len(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **kwargs):
+        """
+        Returns the number of tokens used by the given prompt (i.e., list of messages and functions).
+
+        In general, this is preferred over :meth:`message_token_len`.
+        """
+        if inspect.iscoroutinefunction(self.engine.prompt_len):
+            return await self.engine.prompt_len(messages, functions, **kwargs)
+        return self.engine.prompt_len(messages, functions, **kwargs)
+
     def message_token_len(self, message: ChatMessage):
-        """Returns the number of tokens used by a given message."""
+        """
+        Returns the estimated number of tokens used by a single given message.
+
+        .. note::
+            The token count returned by this may not exactly reflect the actual token count (e.g., due to prompt
+            formatting or not having access to the tokenizer). It should, however, be a safe overestimate to use as
+            an upper bound.
+        """
         return self.engine.message_len(message)
 
     async def get_model_completion(self, include_functions: bool = True, **kwargs) -> BaseCompletion:
