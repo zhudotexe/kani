@@ -64,7 +64,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
         api_base: str = "https://api.openai.com/v1",
         headers: dict = None,
         client: OpenAIClient = None,
-        tokenizer = None,
+        tokenizer=None,
         **hyperparams,
     ):
         """
