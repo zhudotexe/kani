@@ -2,15 +2,14 @@ Contributing
 ============
 NLP is a fast-moving field and we couldn't dream of keeping up by ourselves. kani |:heart:| PRs!
 
-You can contribute in many ways: helping us develop the library, citing our paper (soon!), leaving a star on GitHub
+You can contribute in many ways: helping us develop the library,
+`citing our paper <https://aclanthology.org/2023.nlposs-1.8/>`_, leaving a star on GitHub
 (|StarMe|_), or even just using the library!
 
 .. |StarMe| image:: https://img.shields.io/github/stars/zhudotexe/kani?style=social&label=Star
 .. _StarMe: https://github.com/zhudotexe/kani
 
 (Funding agencies: the core devs are PhD students - you can support us that way too! |:wink:| Send us an email.)
-
-.. todo: cite us
 
 Contributing Code
 -----------------

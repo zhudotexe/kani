@@ -8,15 +8,18 @@ You will need to install ``bitsandbytes`` and ``accelerate`` from pip.
 import asyncio
 import time
 
+from transformers import BitsAndBytesConfig
+
 from kani import Kani, chat_in_terminal
 from kani.engines.huggingface.llama2 import LlamaEngine
 
+quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+
 engine = LlamaEngine(
     use_auth_token=True,
-    strict=True,
     model_load_kwargs={
         "device_map": "auto",
-        "load_in_4bit": True,
+        "quantization_config": quantization_config,
     },
 )
 ai = Kani(
@@ -41,5 +44,5 @@ async def time_completion():
 
 
 if __name__ == "__main__":
-    chat_in_terminal(ai)
-    # asyncio.run(time_completion())
+    # chat_in_terminal(ai)
+    asyncio.run(time_completion())

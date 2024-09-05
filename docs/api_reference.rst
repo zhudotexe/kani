@@ -48,6 +48,30 @@ AI Function
 .. autoclass:: kani.AIParam
     :members:
 
+Streaming
+---------
+.. autoclass:: kani.streaming.StreamManager
+    :members:
+
+    .. automethod:: __await__
+
+    .. automethod:: __aiter__
+
+Prompting
+---------
+.. automodule:: kani.prompts
+
+.. autoclass:: kani.PromptPipeline
+    :members:
+
+    .. automethod:: __call__
+
+.. autoclass:: kani.prompts.PipelineStep
+    :members:
+
+.. autoclass:: kani.prompts.ApplyContext
+    :members:
+
 Internals
 ---------
 .. autoclass:: kani.FunctionCallResult
@@ -65,6 +89,8 @@ Utilities
 .. autofunction:: kani.chat_in_terminal
 
 .. autofunction:: kani.chat_in_terminal_async
+
+.. autofunction:: kani.print_stream
 
 Message Formatters
 ^^^^^^^^^^^^^^^^^^

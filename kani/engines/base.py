@@ -1,10 +1,12 @@
 import abc
 import warnings
+from collections.abc import AsyncIterable
 
 from kani.ai_function import AIFunction
 from kani.models import ChatMessage
 
 
+# ==== completions ====
 class BaseCompletion(abc.ABC):
     """Base class for all LM engine completions."""
 
@@ -46,6 +48,7 @@ class Completion(BaseCompletion):
         return self._completion_tokens
 
 
+# ==== base engines ====
 class BaseEngine(abc.ABC):
     """Base class for all LM engines.
 
@@ -96,6 +99,96 @@ class BaseEngine(abc.ABC):
             )
         return 0
 
+    async def stream(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        """
+        Optional: Stream a completion from the engine, token-by-token.
+
+        This method's signature is the same as :meth:`.BaseEngine.predict`.
+
+        This method should yield strings as an asynchronous iterable.
+
+        Optionally, this method may also yield a :class:`.BaseCompletion`. If it does, it MUST be the last item
+        yielded by this method.
+
+        If an engine does not implement streaming, this method will yield the entire text of the completion in a single
+        chunk by default.
+
+        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+            guaranteed to be less than max_context_size.
+        :param functions: The functions the LM is allowed to call.
+        :param hyperparams: Any additional parameters to pass to the engine.
+        """
+        warnings.warn(
+            f"This {type(self).__name__} does not implement streaming. This stream will yield the entire completion in"
+            " one single chunk."
+        )
+        completion = await self.predict(messages, functions, **hyperparams)
+        yield completion.message.text
+        yield completion
+
     async def close(self):
         """Optional: Clean up any resources the engine might need."""
         pass
+
+    # ==== internal ====
+    __ignored_repr_attrs__ = ("token_cache",)
+
+    def __repr__(self):
+        """Default: generate a repr based on the instance's __dict__."""
+        attrs = ", ".join(
+            f"{name}={value!r}"
+            for name, value in self.__dict__.items()
+            if name not in self.__ignored_repr_attrs__ and not name.startswith("_")
+        )
+        return f"{type(self).__name__}({attrs})"
+
+
+# ==== utils ====
+class WrapperEngine(BaseEngine):
+    """
+    A base class for engines that are meant to wrap other engines. By default, this class takes in another engine
+    as the first parameter in its constructor and will pass through all non-overriden attributes to the wrapped
+    engine.
+    """
+
+    def __init__(self, engine: BaseEngine, *args, **kwargs):
+        """
+        :param engine: The engine to wrap.
+        """
+        super().__init__(*args, **kwargs)
+        self.engine = engine
+        """The wrapped engine."""
+
+        # passthrough attrs
+        self.max_context_size = engine.max_context_size
+        self.token_reserve = engine.token_reserve
+
+    # passthrough methods
+    def message_len(self, message: ChatMessage) -> int:
+        return self.engine.message_len(message)
+
+    async def predict(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> BaseCompletion:
+        return await self.engine.predict(messages, functions, **hyperparams)
+
+    async def stream(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        async for elem in self.engine.stream(messages, functions, **hyperparams):
+            yield elem
+
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        return self.engine.function_token_reserve(functions)
+
+    async def close(self):
+        return await self.engine.close()
+
+    def __repr__(self):
+        return f"{type(self).__name__}(engine={self.engine!r})"
+
+    # all other attributes are caught by this default passthrough handler
+    def __getattr__(self, item):
+        return getattr(self.engine, item)

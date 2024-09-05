@@ -18,6 +18,13 @@
   <a href="https://discord.gg/eTepTNDxYT">
     <img alt="Discord" src="https://img.shields.io/discord/1150902904773935214?color=5865F2&label=discord&logo=discord&logoColor=white">
   </a>
+  <br/>
+  <a href="examples/4_engines_zoo.py">
+    <img alt="Model zoo" src="https://img.shields.io/badge/examples-model_zoo-blue">
+  </a>
+  <a href="examples/5_advanced_retrieval.py">
+    <img alt="Retrieval example" src="https://img.shields.io/badge/examples-retrieval-blue">
+  </a>
 </p>
 
 # kani (カニ)
@@ -32,10 +39,28 @@ developers alike.
 kani comes with support for the following models out of the box, with a model-agnostic framework to add support for many
 more:
 
-- OpenAI Models (GPT-3.5-turbo, GPT-4, GPT-4-turbo)
+**Hosted Models**
+
+- OpenAI Models (GPT-3.5-turbo, GPT-4, GPT-4-turbo, GPT-4o)
 - Anthropic Models (Claude, Claude Instant)
-- LLaMA v2 (via Hugging Face or ctransformers) & fine-tunes
-- Vicuna v1.3 (via Hugging Face) & fine-tunes
+
+**Open Source Models**
+
+kani supports every chat model available on Hugging Face through `transformers` or `llama.cpp`!
+
+In particular, we have reference implementations for the following base models, and their fine-tunes:
+
+- [LLaMA 3](https://huggingface.co/collections/meta-llama/meta-llama-3-66214712577ca38149ebb2b6) (all sizes)
+- [Mistral-7B](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2),
+  [Mixtral-8x7B](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1),
+  and [Mixtral-8x22B](https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1)
+- [Command R](https://huggingface.co/CohereForAI/c4ai-command-r-v01)
+  and [Command R+](https://huggingface.co/CohereForAI/c4ai-command-r-plus)
+- [Gemma](https://huggingface.co/collections/google/gemma-release-65d5efbccdbb8c4202ec078b) (all sizes)
+- [LLaMA 2](https://huggingface.co/meta-llama) (all sizes)
+- [Vicuna v1.3](https://huggingface.co/lmsys/vicuna-7b-v1.3)
+
+Check out the [Model Zoo](examples/4_engines_zoo.py) to see how to use each of these models in your application!
 
 **Interested in contributing? Check out our
 [guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**
@@ -49,7 +74,7 @@ more:
 - **Lightweight and high-level** - kani implements common boilerplate to interface with language models without forcing
   you to use opinionated prompt frameworks or complex library-specific tooling.
 - **Model agnostic** - kani provides a simple interface to implement: token counting and completion generation.
-  Implement these two, and kani can run with any language model.
+  kani lets developers switch which language model runs on the backend without major code refactors.
 - **Automatic chat memory management** - Allow chat sessions to flow without worrying about managing the number of
   tokens in the history - kani takes care of it.
 - **Function calling with model feedback and retry** - Give models access to functions in just one line of code.
@@ -59,6 +84,27 @@ more:
 - **Fast to iterate and intuitive to learn** - With kani, you only write Python - we handle the rest.
 - **Asynchronous design from the start** - kani can scale to run multiple chat sessions in parallel easily, without
   having to manage multiple processes or programs.
+
+## Installation
+
+kani requires Python 3.10 or above. To install model-specific dependencies, kani uses various extras (brackets after
+the library name in `pip install`). To determine which extra(s) to install, see
+the [model table](https://kani.readthedocs.io/en/latest/engines.html), or use the `[all]` extra to install everything.
+
+```shell
+# for OpenAI models
+$ pip install "kani[openai]"
+# for Hugging Face models
+$ pip install "kani[huggingface]" torch
+# or install everything:
+$ pip install "kani[all]"
+```
+
+For the most up-to-date changes and new models, you can also install the development version from Git's `main` branch:
+
+```shell
+$ pip install "kani[all] @ git+https://github.com/zhudotexe/kani.git@main"
+```
 
 ## Quickstart
 
@@ -79,6 +125,7 @@ Then, let's use kani to create a simple chatbot using ChatGPT as a backend.
 
 ```python
 # import the library
+import asyncio
 from kani import Kani, chat_in_terminal
 from kani.engines.openai import OpenAIEngine
 
@@ -94,9 +141,17 @@ engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
 # system_prompt="You are..." here.
 ai = Kani(engine)
 
-# kani comes with a utility to interact with a kani through your terminal! Check out 
-# the docs for how to use kani programmatically.
+# kani comes with a utility to interact with a kani through your terminal...
 chat_in_terminal(ai)
+
+
+# or you can use kani programmatically in an async function!
+async def main():
+    resp = await ai.chat_round("What is the airspeed velocity of an unladen swallow?")
+    print(resp.text)
+
+
+asyncio.run(main())
 ```
 
 kani makes the time to set up a working chat model short, while offering the programmer deep customizability over
@@ -112,8 +167,9 @@ decorator.
 
 ```python
 # import the library
+import asyncio
 from typing import Annotated
-from kani import AIParam, Kani, ai_function, chat_in_terminal
+from kani import AIParam, Kani, ai_function, chat_in_terminal, ChatRole
 from kani.engines.openai import OpenAIEngine
 
 # set up the engine as above
@@ -136,12 +192,46 @@ class MyKani(Kani):
 
 
 ai = MyKani(engine)
+
+# the terminal utility allows you to test function calls...
 chat_in_terminal(ai)
+
+
+# and you can track multiple rounds programmatically.
+async def main():
+    async for msg in ai.full_round("What's the weather in Tokyo?"):
+        print(msg.role, msg.text)
+
+
+asyncio.run(main())
 ```
 
 kani guarantees that function calls are valid by the time they reach your methods while allowing you to focus on
 writing code. For more information, check
 out [the function calling docs](https://kani.readthedocs.io/en/latest/function_calling.html).
+
+## Streaming
+
+kani supports streaming responses from the underlying language model token-by-token, even in the presence of function
+calls. Streaming is designed to be a drop-in superset of the ``chat_round`` and ``full_round`` methods, allowing you to
+gradually refactor your code without ever leaving it in a broken state.
+
+```python
+async def stream_chat():
+    stream = ai.chat_round_stream("What does kani mean?")
+    async for token in stream:
+        print(token, end="")
+    print()
+    msg = await stream.message()  # or `await stream`
+
+
+async def stream_with_function_calling():
+    async for stream in ai.full_round_stream("What's the weather in Tokyo?"):
+        async for token in stream:
+            print(token, end="")
+        print()
+        msg = await stream.message()
+```
 
 ## Why kani?
 
@@ -158,7 +248,6 @@ kani is to LangChain as Flask (or FastAPI) is to Django.
 
 kani is appropriate for everyone from academic researchers to industry professionals to hobbyists to use without
 worrying about under-the-hood hacks.
-
 
 ## Docs
 
@@ -178,21 +267,6 @@ https://github.com/zhudotexe/kani/actions/workflows/pytest.yml?query=branch%3Ama
 
 Simply click on the latest build to see LLaMA's output!
 
-## Kani in the News
-
-Kani will appear at the NLP Open Source Software workshop at EMNLP 2023!
-
-We are really excited and grateful to see people talking about Kani online. We are also trending on Papers With Code,
-GitHub, and OSS Insight. Check out some recent articles and videos below!
-
-- [Researchers from the University of Pennsylvania Introduce Kani: A Lightweight, Flexible, and Model-Agnostic Open-Source AI Framework for Building Language Model Applications](https://www.marktechpost.com/2023/09/18/researchers-from-the-university-of-pennsylvania-introduce-kani-a-lightweight-flexible-and-model-agnostic-open-source-ai-framework-for-building-language-model-applications/)
-- [Unlocking AI Potential: Unveiling Kani, the Groundbreaking Open-Source Framework Revolutionizing Large Language Model Applications](https://www.cjco.com.au/article/news/unlocking-ai-potential-unveiling-kani-the-groundbreaking-open-source-framework-revolutionizing-large-language-model-applications/)
-- [Kani: A Lightweight and Customizable Framework for Language Model Applications](https://ts2.space/en/kani-a-lightweight-and-customizable-framework-for-language-model-applications/)
-- [Introducing Kani (Sanskrit Word): A Game-Changing Open-Source AI Framework for Language Models](https://www.linkedin.com/pulse/introducing-kani-sanskrit-word-game-changing/)
-    - *Kani was originally named after the Japanese word for crab and coincidentally means "knowledge" in Sanskrit.*
-- [kani: lightweight LLM framework (Japanese)](https://note.com/hamachi_jp/n/n342becc4f345)
-- [Top Trending LLM Projects of the Week: Dive into the Future of Tech! 🚀](https://www.youtube.com/watch?v=qoGKzmnhAnA)
-
 ## Who we are
 
 <img alt="University of Pennsylvania Logo" src="docs/_static/penn-logo.jpg" width="300">
@@ -204,7 +278,8 @@ University of Pennsylvania. We're all members of
 - [**Andrew Zhu**](https://zhu.codes/) started in Fall 2022. His research interests include natural language processing,
   programming languages, distributed systems, and more. He's also a full-stack software engineer, proficient in all
   manner of backend, devops, database, and frontend engineering. Andrew strives to make idiomatic, clean, performant,
-  and low-maintenance code — philosophies that are often rare in academia.
+  and low-maintenance code — philosophies that are often rare in academia. His research is supported by the NSF Graduate
+  Research Fellowship.
 - [**Liam Dugan**](https://liamdugan.com/) started in Fall 2021. His research focuses primarily on large language models
   and how humans interact with them. In particular, he is interested in human detection of generated text and whether we
   can apply those insights to automatic detection systems. He is also interested in the practical application of large
@@ -215,18 +290,32 @@ University of Pennsylvania. We're all members of
   research, Alyssa chairs the Penn CIS Doctoral Association, founded the CIS PhD Mentorship Program, and was supported
   by the NSF Graduate Research Fellowship Program.
 
+We use kani actively in our research, and aim to keep it up-to-date with modern NLP practices.
+
 ## Citation
 
 If you use Kani, please cite us as:
 
 ```
-@misc{zhu2023kani,
-      title={Kani: A Lightweight and Highly Hackable Framework for Building Language Model Applications}, 
-      author={Andrew Zhu and Liam Dugan and Alyssa Hwang and Chris Callison-Burch},
-      year={2023},
-      eprint={2309.05542},
-      archivePrefix={arXiv},
-      primaryClass={cs.SE}
+@inproceedings{zhu-etal-2023-kani,
+    title = "Kani: A Lightweight and Highly Hackable Framework for Building Language Model Applications",
+    author = "Zhu, Andrew  and
+      Dugan, Liam  and
+      Hwang, Alyssa  and
+      Callison-Burch, Chris",
+    editor = "Tan, Liling  and
+      Milajevs, Dmitrijs  and
+      Chauhan, Geeticka  and
+      Gwinnup, Jeremy  and
+      Rippeth, Elijah",
+    booktitle = "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.nlposs-1.8",
+    doi = "10.18653/v1/2023.nlposs-1.8",
+    pages = "65--77",
 }
 ```
 

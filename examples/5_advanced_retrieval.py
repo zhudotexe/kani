@@ -8,8 +8,9 @@ import json
 import os
 from typing import Annotated
 
+import httpx
+
 from kani import AIParam, Kani, ai_function, chat_in_terminal
-from kani.engines.httpclient import BaseClient
 from kani.engines.openai import OpenAIEngine
 
 api_key = os.getenv("OPENAI_API_KEY")
@@ -17,15 +18,10 @@ api_key = os.getenv("OPENAI_API_KEY")
 engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
 
 
-# let's define a client using kani's BaseClient:
-class WikipediaClient(BaseClient):
-    SERVICE_BASE = "https://en.wikipedia.org/w/api.php"
-
-
 class WikipediaRetrievalKani(Kani):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.wikipedia_client = WikipediaClient()
+        self.wikipedia_client = httpx.AsyncClient(base_url="https://en.wikipedia.org/w/api.php", follow_redirects=True)
 
     @ai_function()
     async def wikipedia(
@@ -45,7 +41,8 @@ class WikipediaRetrievalKani(Kani):
                 "formatversion": 2,
             },
         )
-        page = resp["query"]["pages"][0]
+        data = resp.json()
+        page = data["query"]["pages"][0]
         if extract := page.get("extract"):
             return extract
         return f"The page {title!r} does not exist on Wikipedia."
@@ -55,7 +52,7 @@ class WikipediaRetrievalKani(Kani):
         """Find titles of Wikipedia articles similar to the given query."""
         # https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=Train
         resp = await self.wikipedia_client.get("/", params={"action": "opensearch", "format": "json", "search": query})
-        return json.dumps(resp[1])
+        return json.dumps(resp.json()[1])
 
 
 ai = WikipediaRetrievalKani(engine)

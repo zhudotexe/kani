@@ -1,10 +1,9 @@
-import pydantic
 import pytest
 
 from kani import ChatMessage, ChatRole, MessagePart, ToolCall
 
 
-class TestMessagePart(MessagePart):
+class _TestMessagePart(MessagePart):
     def __str__(self):
         return "<TestMessagePart>"
 
@@ -19,11 +18,11 @@ def test_basic():
     assert msg.function_call is None
 
 
-def test_immutable():
+# v1.0: no more immutability >:c
+def test_mutable():
     msg = ChatMessage(role=ChatRole.USER, content="Hello world")
-    with pytest.raises(pydantic.ValidationError):
-        msg.content = "not allowed"
-    assert msg.content == "Hello world"
+    msg.content = "not allowed"
+    assert msg.content == "not allowed"
 
 
 def test_none_content():
@@ -34,27 +33,27 @@ def test_none_content():
 
 
 def test_parts():
-    part = TestMessagePart()
+    part = _TestMessagePart()
     msg = ChatMessage(role=ChatRole.USER, content=["Hello world", part])
-    assert msg.content == ("Hello world", part)
+    assert msg.content == ["Hello world", part]
     assert msg.text == "Hello world<TestMessagePart>"
     assert msg.parts == ["Hello world", part]
 
 
 def test_copy_parts():
-    part = TestMessagePart()
+    part = _TestMessagePart()
     msg = ChatMessage(role=ChatRole.USER, content=["Hello world", part])
 
     text_copy = msg.copy_with(text="asdf")
     assert text_copy.content == "asdf"
 
     part_copy = msg.copy_with(parts=["foo"])
-    assert part_copy.content == ("foo",)
+    assert part_copy.content == ["foo"]
 
     content_copy = msg.copy_with(content="zxcv")
     assert content_copy.content == "zxcv"
 
-    assert msg.content == ("Hello world", part)
+    assert msg.content == ["Hello world", part]
 
     with pytest.raises(ValueError):
         msg.copy_with(text="foo", parts=[])
@@ -82,4 +81,4 @@ def test_support_multiple_tool_calls():
 
     msg = ChatMessage(role="function", content=None, tool_calls=[tool_call1, tool_call2])
 
-    assert msg.tool_calls == (tool_call1, tool_call2)
+    assert msg.tool_calls == [tool_call1, tool_call2]

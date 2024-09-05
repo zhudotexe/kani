@@ -13,13 +13,17 @@ make your package available on pip.
 
 Community Extensions
 --------------------
-If you've made a cool extension, add it to this table with a PR!
+If you've made a cool extension, add it to this list with a PR!
 
-+-------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------+
-| Name        | Description                                                                | Links                                                                                                        |
-+=============+============================================================================+==============================================================================================================+
-| kani-vision | Adds support for multimodal vision-language models, like GPT-4V and LLaVA. | `GitHub <https://github.com/zhudotexe/kani-vision>`_ `Docs <https://kani-vision.readthedocs.io/en/latest/>`_ |
-+-------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------+
+* **kani-ratelimits**: Adds a wrapper engine to enforce request-per-minute (RPM), token-per-minute (TPM), and/or
+  max-concurrency ratelimits before making requests to an underlying engine.
+
+  * `GitHub (kani-ratelimits) <https://github.com/zhudotexe/kani-ratelimits>`_
+
+* **kani-vision**: Adds support for multimodal vision-language models, like GPT-4V and LLaVA.
+
+  * `GitHub (kani-vision) <https://github.com/zhudotexe/kani-vision>`_
+  * `Docs (kani-vision) <https://kani-vision.readthedocs.io/en/latest/>`_
 
 Design Considerations
 ---------------------
@@ -38,19 +42,22 @@ your engine *wrap* another engine:
 
     """An example showing how to wrap another kani engine."""
 
-    class MyEngineWrapper(BaseEngine):
-        def __init__(self, inner_engine: BaseEngine):
-            self.inner_engine = inner_engine
-            self.max_context_size = inner_engine.max_context_size
+    from kani.engines import BaseEngine, WrapperEngine
 
+    # subclassing WrapperEngine automatically implements passthrough of untouched attributes
+    # to the wrapped engine!
+    class MyEngineWrapper(WrapperEngine):
         def message_len(self, message):
             # wrap the inner message with the prompt framework...
             prompted_message = ChatMessage(...)
-            return self.inner_engine.message_len(prompted_message)
+            return super().message_len(prompted_message)
 
         async def predict(self, messages, functions=None, **hyperparams):
             # wrap the messages with the prompt framework and pass it to the inner engine
-            prompted_completion = await self.inner_engine.predict(prompted_messages, ...)
+            prompted_completion = await super().predict(prompted_messages, ...)
             # unwrap the resulting message (if necessary) and store the metadata separately
             completion = self.unwrap(prompted_completion)
             return completion
+
+The :class:`kani.engines.WrapperEngine` is a base class that automatically creates a constructor that takes in the
+engine to wrap, and passes through any non-overriden attributes to the wrapped engine.

@@ -2,13 +2,24 @@ import abc
 import asyncio
 import logging
 
-import aiohttp
+from ..exceptions import HTTPException, HTTPStatusException, HTTPTimeout, MissingModelDependencies
 
-from ..exceptions import HTTPException, HTTPStatusException, HTTPTimeout
+try:
+    import aiohttp
+except ImportError:
+    raise MissingModelDependencies(
+        f"The BaseClient has been deprecated as of v1.0.0. We recommend using `httpx` for HTTP requests. To continue"
+        f" using the BaseClient (not recommended), use `pip install aiohttp`."
+    )
 
 
 class BaseClient(abc.ABC):
-    """aiohttp-based HTTP client to help implement HTTP-based engines."""
+    """aiohttp-based HTTP client to help implement HTTP-based engines.
+
+    .. deprecated:: 1.0.0
+        We recommend using `httpx.AsyncClient <https://www.python-httpx.org/async/>`_ instead. This aiohttp-based client
+        will be removed in a future version.
+    """
 
     SERVICE_BASE: str
     """The base route of the HTTP API."""
