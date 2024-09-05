@@ -10,9 +10,9 @@ from kani.prompts.pipeline import PromptPipeline
 from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
-    from jinja2 import TemplateError
     import torch
     import transformers
+    from jinja2 import TemplateError
     from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 except ImportError:
     raise MissingModelDependencies(
