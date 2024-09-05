@@ -95,24 +95,6 @@ class HuggingEngine(BaseEngine):
         if self.model.device.type != self.device:
             self.model.to(device)
 
-    def message_len(self, message: ChatMessage) -> int:
-        """Return the length, in tokens, of the given chat message.
-
-        The HuggingEngine's default implementation renders the message with `apply_chat_template`.
-        """
-        # _ensure_chat_template(self.tokenizer)
-        # conversation = [{"role": message.role.value, "content": message.text}]
-        # try:
-        #     return len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
-        # except TemplateError:
-        #     # the template probably enforces user/assistant,
-        #     # HACK: let's try a dummy user message then an assistant one, and count the diff
-        #     conversation = [{"role": "user", "content": "a"}]
-        #     dummy_len = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
-        #     conversation.append({"role": message.role.value, "content": message.text})
-        #     two_len = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
-        #     return two_len - dummy_len
-
         # token counting stuff
         # try and infer max context size from the model config if not specified
         if self.max_context_size is None:
@@ -161,6 +143,24 @@ class HuggingEngine(BaseEngine):
         tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
         return len(tokenized)
 
+    # def message_len(self, message: ChatMessage) -> int:
+    #     """Return the length, in tokens, of the given chat message.
+    #
+    #     The HuggingEngine's default implementation renders the message with `apply_chat_template`.
+    #     """
+    #     _ensure_chat_template(self.tokenizer)
+    #     conversation = [{"role": message.role.value, "content": message.text}]
+    #     try:
+    #         return len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+    #     except TemplateError:
+    #         # the template probably enforces user/assistant,
+    #         # HACK: let's try a dummy user message then an assistant one, and count the diff
+    #         conversation = [{"role": "user", "content": "a"}]
+    #         dummy_len = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+    #         conversation.append({"role": message.role.value, "content": message.text})
+    #         two_len = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+    #         return two_len - dummy_len
+
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
         # default concrete base behaviour:
         if self.pipeline is None:
@@ -188,27 +188,6 @@ class HuggingEngine(BaseEngine):
     def build_prompt(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
     ) -> str | torch.Tensor:
-        """Given the list of messages from kani, build either a single string representing the prompt for the model,
-        or build the token tensor.
-
-        The default implementation uses the model tokenizer's `apply_chat_template` method.
-        """
-        _ensure_chat_template(self.tokenizer)
-        conversation = [{"role": msg.role.value, "content": msg.text} for msg in messages]
-        try:
-            return self.tokenizer.apply_chat_template(conversation, add_generation_prompt=True, return_tensors="pt")
-        except TemplateError:
-            # the template probably enforces user/assistant,
-            # HACK: let's try a dummy user message then the assistant one, and strip the len of the dummy off (pain)
-            conv2 = [{"role": "user", "content": "a"}]
-            dummy_len = len(self.tokenizer.apply_chat_template(conv2, add_generation_prompt=False))
-            conv2.extend(conversation)
-            toks = self.tokenizer.apply_chat_template(conv2, add_generation_prompt=True, return_tensors="pt")
-            return toks[dummy_len:]
-
-    async def predict(
-        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
-    ) -> Completion:
         """
         Given the list of messages from kani, build either a single string representing the prompt for the model,
         or build the token tensor.
@@ -222,6 +201,27 @@ class HuggingEngine(BaseEngine):
         prompt = self.pipeline(messages, functions)
         log.debug(f"BUILT PROMPT: {prompt}")
         return prompt
+
+    # def build_prompt(
+    #     self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
+    # ) -> str | torch.Tensor:
+    #     """Given the list of messages from kani, build either a single string representing the prompt for the model,
+    #     or build the token tensor.
+    #
+    #     The default implementation uses the model tokenizer's `apply_chat_template` method.
+    #     """
+    #     _ensure_chat_template(self.tokenizer)
+    #     conversation = [{"role": msg.role.value, "content": msg.text} for msg in messages]
+    #     try:
+    #         return self.tokenizer.apply_chat_template(conversation, add_generation_prompt=True, return_tensors="pt")
+    #     except TemplateError:
+    #         # the template probably enforces user/assistant,
+    #         # HACK: let's try a dummy user message then the assistant one, and strip the len of the dummy off (pain)
+    #         conv2 = [{"role": "user", "content": "a"}]
+    #         dummy_len = len(self.tokenizer.apply_chat_template(conv2, add_generation_prompt=False))
+    #         conv2.extend(conversation)
+    #         toks = self.tokenizer.apply_chat_template(conv2, add_generation_prompt=True, return_tensors="pt")
+    #         return toks[dummy_len:]
 
     def _get_generate_args(self, prompt: str | torch.Tensor, **hyperparams):
         """Internal method to build common params for the generate call"""
