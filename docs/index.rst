@@ -98,3 +98,4 @@ Hands-on examples are available in the `kani repository <https://github.com/zhud
     community/extensions
     community/showcase
     Discord <https://discord.gg/eTepTNDxYT>
+    Paper <https://aclanthology.org/2023.nlposs-1.8/>
