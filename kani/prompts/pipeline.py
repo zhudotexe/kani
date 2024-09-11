@@ -410,7 +410,8 @@ class PromptPipeline(Generic[T]):
         :param functions: Any functions available to the model.
         :param deepcopy: Whether to deep-copy each message before running the pipeline.
         :param for_measurement: If the pipeline is being run to measure the length of a single message. In this case,
-            any ``ensure_start`` steps will be ignored.
+            any ``ensure_start`` steps will be ignored, and the returned message may not be a valid prompt - the only
+            guarantee is on the length.
         """
         if functions is None:
             functions = []
