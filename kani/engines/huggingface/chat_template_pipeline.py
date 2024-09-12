@@ -14,11 +14,13 @@ prototyping.
 """
 
 import logging
+import warnings
 from collections import defaultdict
 from functools import cached_property
 
 from kani import AIFunction, ChatMessage, ChatRole, PromptPipeline
 from kani.exceptions import MissingModelDependencies
+from kani.prompts.steps import ConversationDict
 
 try:
     import torch
@@ -62,13 +64,14 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
         try:
             log.debug(f"Estimating padding len for {role}...")
             conversation = super().execute([ChatMessage(role=role, content="dummy")])
-            n_tokens_generated = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
-            reencoded_len = len(self.tokenizer.encode("dummy", add_special_tokens=False))
-            self._padding_len_by_role[role] = max(n_tokens_generated - reencoded_len, 0)
-            log.debug(f"{n_tokens_generated=}, {reencoded_len=}, padding estimate={n_tokens_generated - reencoded_len}")
+            conversation_len = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+            text_len = len(self.tokenizer.encode("dummy", add_special_tokens=False))
+            self._padding_len_by_role[role] = max(conversation_len - text_len, 0)
+            log.debug(f"{conversation_len=}, {text_len=}, padding estimate={conversation_len - text_len}")
         except (TemplateError, IndexError) as e:
-            log.debug("Chat template application raised an error, assuming length of role name:", e)
-            self._padding_len_by_role[role] = len(self.tokenizer.encode(role.value, add_special_tokens=False))
+            # if the template doesn't allow a bare message of this type,
+            log.debug("Chat template application raised an error, assuming length of role name plus 4 pad tokens:", e)
+            self._padding_len_by_role[role] = len(self.tokenizer.encode(role.value, add_special_tokens=False)) + 4
 
     def _chat_template_infer_token_reserve(self):
         """If token_reserve is not set and we have a pipeline, infer it."""
@@ -91,7 +94,7 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
 
     def _chat_template_function_token_reserve(self, functions: list[AIFunction]) -> OutputT:
         """Estimate the function token reserve based off the chat template."""
-        tools = [f.json_schema for f in functions]
+        tools = [f.json_schema for f in functions] if functions else None
         full_len = len(
             self.tokenizer.apply_chat_template(
                 [self._chat_template_dummy_msg], tools=tools, add_generation_prompt=False
@@ -108,7 +111,7 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
 
         The default implementation uses the model tokenizer's `apply_chat_template` method.
         """
-        tools = [f.json_schema for f in functions]
+        tools = [f.json_schema for f in functions] if functions else None
         return self.tokenizer.apply_chat_template(conversation, tools=tools, add_generation_prompt=True, tokenize=False)
 
     # ===== utils =====
@@ -126,7 +129,16 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
     ) -> OutputT:
         if functions is None:
             functions = []
-        if not self.steps:
+        if not any(isinstance(step, ConversationDict) for step in self.steps):
+            debug_msg = (
+                "ChatTemplatePromptPipeline expects the final output of the pipeline to be a list[dict] but no"
+                " ConversationDict step was found in the pipeline, appending a default ConversationDict() step..."
+            )
+            # if the user defined steps we probably want to make this more visible; otherwise default behaviour is fine
+            if self.steps:
+                warnings.warn(debug_msg)
+            else:
+                log.debug(debug_msg)
             self.conversation_dict()
 
         conversation = super().execute(msgs, functions, deepcopy=deepcopy, for_measurement=for_measurement)
@@ -155,5 +167,14 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
             # uh oh
             raise
 
-    def __repr__(self):
-        return f"{type(self).__name__}()"
+    def explain(self, *args, **kwargs):
+        super().explain(*args, **kwargs)
+        # print out inferred padding stats
+        print(
+            "\n### ChatTemplatePromptPipeline Stats\n*These metrics are inferred from the chat template and may be"
+            " slightly off from the true count.*"
+        )
+        print(f"Token Reserve: {len(self._chat_template_infer_token_reserve()[0])}")
+        print(f"Function Token Reserve: {len(self._chat_template_function_token_reserve([])[0])}")
+        for role in ChatRole:
+            print(f"{role.value} Role Padding: {self._padding_len_by_role[role]}")
