@@ -48,3 +48,11 @@ llama.cpp
 ---------
 .. autoclass:: kani.engines.llamacpp.LlamaCppEngine
     :members:
+
+Cerebras Engine
+================
+
+.. autoclass:: kani.engines.cerebras.CerebrasEngine
+   :members:
+   :undoc-members:
+   :show-inheritance:

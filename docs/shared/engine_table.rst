@@ -21,6 +21,8 @@
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
 | |:llama:| LLaMA v2 (GGUF)              | ``cpp``                            | |oss| |cpu| |gpu|            | :class:`kani.engines.llamacpp.LlamaCppEngine`                        |
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
+| Cerebras LLMs                         | ``cerebras``                      | |function| |api|             | :class:`kani.engines.cerebras.CerebrasEngine`                       |
++----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
 
 Additional models using the classes above are also supported - see the
 `model zoo <https://github.com/zhudotexe/kani/blob/main/examples/4_engines_zoo.py>`_ for a more comprehensive list of
