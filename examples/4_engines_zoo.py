@@ -30,7 +30,7 @@ engine = HuggingEngine(
     model_load_kwargs={"device_map": "auto", "torch_dtype": torch.bfloat16},
 )
 
-# NOTE: If you're running transformers<4.40 and LLaMA 3 continues generating after the <|eot_id|> token,
+# NOTE: If you're running transformers<4.40 and LLaMA 3 continues generating after the  token,
 # add `eos_token_id=[128001, 128009]` or upgrade transformers
 
 # ---- LLaMA v2 (Hugging Face) ----
@@ -93,6 +93,10 @@ from kani.prompts.impl import MISTRAL_V1_PIPELINE
 engine = LlamaCppEngine(
     repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=MISTRAL_V1_PIPELINE
 )
+
+# ========== Cerebras ==========
+from kani.engines.cerebras import CerebrasEngine
+engine = CerebrasEngine(api_key=os.getenv("CEREBRAS_API_KEY"), model="llama3.1-8b")
 
 # take your pick - the kani interface is compatible with all!
 ai = Kani(engine)

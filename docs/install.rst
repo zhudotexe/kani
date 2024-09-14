@@ -101,3 +101,9 @@ Later, anyone else running your code can install the same dependency versions by
 ``pip install -r requirements.txt``.
 
 Next, we'll take a look at basic usage of kani.
+
+To use the Cerebras engine, you can install it with:
+
+.. code-block:: console
+
+    $ pip install "kani[cerebras]"
