@@ -28,12 +28,10 @@ class HuggingEngine(BaseEngine):
     ``AutoModelForCausalLM``. As most models use model-specific chat templates, this base class accepts a
     :class:`.PromptPipeline` to translate kani ChatMessages into a model-specific string.
 
-    .. versionadded:: 0.8.0
-        The ``HuggingEngine`` is no longer abstract - it will now use models' bundled chat template to build the prompt
+    .. versionadded:: 1.2.0
+        By default, the ``HuggingEngine`` uses models' bundled chat template to build the prompt
         for chat-based models available on Hugging Face. See
         https://huggingface.co/docs/transformers/main/en/chat_templating for more information.
-
-        Requires ``transformers>=4.34.0``.
 
     **GPU Support**
 
