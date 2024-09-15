@@ -39,13 +39,13 @@ def _fmt_functions(functions: list[AIFunction]) -> str:
 
 def fmt_available_tools(msg: ChatMessage, ctx: ApplyContext) -> ChatMessage:
     # prepend tools on the last user message
-    if ctx.is_last_of_type:
+    if ctx.functions and ctx.is_last_of_type:
         msg.content = f"{_fmt_functions(ctx.functions)}{msg.text}"
     return msg
 
 
 def ensure_available_tools(msgs: list[ChatMessage], functions: list[AIFunction]) -> list[ChatMessage]:
-    if not msgs:
+    if functions and not msgs:
         msgs.insert(0, ChatMessage.user(_fmt_functions(functions)))
     return msgs
 
