@@ -1,11 +1,11 @@
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
 | Model Name                             | Extra                              | Capabilities                 | Engine                                                               |
 +========================================+====================================+==============================+======================================================================+
-| GPT-3.5-turbo, GPT-4                   | ``openai``                         | |function| |api|             | :class:`kani.engines.openai.OpenAIEngine`                            |
+| GPT-*                                  | ``openai``                         | |function| |api|             | :class:`kani.engines.openai.OpenAIEngine`                            |
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
-| Claude, Claude Instant                 | ``anthropic``                      | |function| |api|             | :class:`kani.engines.anthropic.AnthropicEngine`                      |
+| Claude-*                               | ``anthropic``                      | |function| |api|             | :class:`kani.engines.anthropic.AnthropicEngine`                      |
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
-| |:hugging:| transformers\ [#runtime]_  | ``huggingface``\ [#torch]_         | (runtime)                    | :class:`kani.engines.huggingface.HuggingEngine`                      |
+| |:hugging:| transformers\ [#hf]_       | ``huggingface``\ [#torch]_         | (model-specific)             | :class:`kani.engines.huggingface.HuggingEngine`                      |
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
 | |:hugging:| |:llama:| LLaMA 3          | ``huggingface, llama``\ [#torch]_  | |oss| |cpu| |gpu|            | :class:`kani.engines.huggingface.HuggingEngine`\ [#zoo]_             |
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
@@ -17,7 +17,7 @@
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
 | |:hugging:| |:llama:| Vicuna v1.3      | ``huggingface, llama``\ [#torch]_  | |oss| |cpu| |gpu|            | :class:`kani.engines.huggingface.vicuna.VicunaEngine`                |
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
-| llama.cpp\ [#runtime]_                 | ``cpp``                            | (runtime)                    | :class:`kani.engines.llamacpp.LlamaCppEngine`                        |
+| llama.cpp\ [#runtime]_                 | ``cpp``                            | (model-specific)             | :class:`kani.engines.llamacpp.LlamaCppEngine`                        |
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
 | |:llama:| LLaMA v2 (GGUF)              | ``cpp``                            | |oss| |cpu| |gpu|            | :class:`kani.engines.llamacpp.LlamaCppEngine`                        |
 +----------------------------------------+------------------------------------+------------------------------+----------------------------------------------------------------------+
@@ -41,8 +41,10 @@ models!
 .. |api| replace:: :abbr:`📡 (hosted API)`
 
 .. [#zoo] See the `model zoo <https://github.com/zhudotexe/kani/blob/main/examples/4_engines_zoo.py>`_ for a code sample
-  to initialize this model with the given engine.
+   to initialize this model with the given engine.
 .. [#torch] You will also need to install `PyTorch <https://pytorch.org/get-started/locally/>`_ manually.
 .. [#abstract] This is an abstract class of models; kani includes a couple concrete implementations for
   reference.
 .. [#runtime] This is a model runtime that can support multiple models using a :class:`.PromptPipeline`.
+.. [#hf] The HuggingEngine can run most models directly from HuggingFace using Chat Templates. For more fine-grained
+   control over prompting, see :class:`.PromptPipeline`.
