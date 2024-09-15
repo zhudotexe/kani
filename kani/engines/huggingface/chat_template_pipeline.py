@@ -70,7 +70,12 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
             log.debug(f"{conversation_len=}, {text_len=}, padding estimate={conversation_len - text_len}")
         except (TemplateError, IndexError) as e:
             # if the template doesn't allow a bare message of this type,
-            log.debug("Chat template application raised an error, assuming length of role name plus 4 pad tokens:", e)
+            log.warning(
+                "Estimating message token padding with chat template application raised an error, assuming messages"
+                " have a padding equal to length of role name plus 4 pad tokens. If this is incorrect, please implement"
+                " a PromptPipeline.",
+                exc_info=e,
+            )
             self._padding_len_by_role[role] = len(self.tokenizer.encode(role.value, add_special_tokens=False)) + 4
 
     def _chat_template_infer_token_reserve(self):
