@@ -7,6 +7,7 @@ from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
+from .chat_template_pipeline import ChatTemplatePromptPipeline
 from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
@@ -80,12 +81,16 @@ class HuggingEngine(BaseEngine):
 
         self.model_id = model_id
         self.max_context_size = max_context_size
-        self.pipeline = prompt_pipeline
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
         self.model = AutoModelForCausalLM.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
         self.token_reserve = token_reserve
+
+        # load the pipeline
+        if prompt_pipeline is None:
+            prompt_pipeline = ChatTemplatePromptPipeline(self.tokenizer)
+        self.pipeline = prompt_pipeline
 
         # ensure model is on correct device
         if device is None:
