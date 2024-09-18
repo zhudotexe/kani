@@ -376,6 +376,10 @@ class PromptPipeline(Generic[T]):
 
         This method should be the last step in a pipeline and will cause the pipeline to return a ``list[dict]``.
 
+        .. caution::
+            By default, this step will truncate tool calling metadata! Use ``additional_keys`` to provide tool call
+            requests on ASSISTANT messages and additional metadata like tool call IDs on FUNCTION messages.
+
         :param system_role: The role to give to SYSTEM messages (default "system").
         :param user_role: The role to give to USER messages (default "user").
         :param assistant_role: The role to give to ASSISTANT messages (default "assistant").

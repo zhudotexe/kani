@@ -144,7 +144,7 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
                 warnings.warn(debug_msg)
             else:
                 log.debug(debug_msg)
-            self.conversation_dict()
+            self.conversation_dict(additional_keys=hf_tool_use_keys)
 
         conversation = super().execute(msgs, functions, deepcopy=deepcopy, for_measurement=for_measurement)
 
@@ -183,3 +183,29 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
         print(f"Function Token Reserve: {len(self._chat_template_function_token_reserve([])[0])}")
         for role in ChatRole:
             print(f"{role.value} Role Padding: {self._padding_len_by_role[role]}")
+
+
+def hf_tool_use_keys(message: ChatMessage) -> dict:
+    """
+    Given an ASSISTANT or FUNCTION message, return extra keys for tool calling models.
+
+    See https://huggingface.co/docs/transformers/main/chat_templating#advanced-tool-use--function-calling.
+    """
+    if message.role == ChatRole.ASSISTANT and message.tool_calls:
+        # ref:
+        # tool_call = {"name": "get_current_temperature", "arguments": {"location": "Paris, France", "unit": "celsius"}}
+        # messages.append({"role": "assistant", "tool_calls": [{"type": "function", "function": tool_call}]})
+        tcs = []
+        for tc in message.tool_calls:
+            tcs.append({"type": tc.type, "function": {"name": tc.function.name, "arguments": tc.function.kwargs}})
+        return {"tool_calls": tcs}
+    elif message.role == ChatRole.FUNCTION:
+        # ref:
+        # {"role": "tool", "name": "get_current_temperature", "content": "22.0", "tool_call_id": tool_call_id}
+        data = {}
+        if message.name is not None:
+            data["name"] = message.name
+        if message.tool_call_id is not None:
+            data["tool_call_id"] = message.tool_call_id
+        return data
+    return {}
