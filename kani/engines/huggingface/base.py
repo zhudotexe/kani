@@ -78,6 +78,11 @@ class HuggingEngine(BaseEngine):
 
         tokenizer_kwargs.setdefault("token", hyperparams.get("use_auth_token", token))
         model_load_kwargs.setdefault("token", hyperparams.pop("use_auth_token", token))
+        model_load_kwargs.setdefault("torch_dtype", "auto")
+
+        has_cuda = torch.backends.cuda.is_built()
+        if has_cuda:
+            model_load_kwargs.setdefault("device_map", "auto")
 
         self.model_id = model_id
         self.max_context_size = max_context_size
@@ -94,7 +99,7 @@ class HuggingEngine(BaseEngine):
 
         # ensure model is on correct device
         if device is None:
-            device = "cuda" if torch.backends.cuda.is_built() else "cpu"
+            device = "cuda" if has_cuda else "cpu"
         self.device = device
         if self.model.device.type != self.device:
             self.model.to(device)
