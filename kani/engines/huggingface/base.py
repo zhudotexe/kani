@@ -19,7 +19,15 @@ except ImportError:
         "You will also need to install PyTorch manually."
     ) from None
 
+try:
+    import accelerate
+
+    has_accelerate = True
+except ImportError:
+    has_accelerate = False
+
 log = logging.getLogger(__name__)
+has_cuda = torch.backends.cuda.is_built()
 
 
 class HuggingEngine(BaseEngine):
@@ -79,9 +87,7 @@ class HuggingEngine(BaseEngine):
         tokenizer_kwargs.setdefault("token", hyperparams.get("use_auth_token", token))
         model_load_kwargs.setdefault("token", hyperparams.pop("use_auth_token", token))
         model_load_kwargs.setdefault("torch_dtype", "auto")
-
-        has_cuda = torch.backends.cuda.is_built()
-        if has_cuda:
+        if has_cuda and has_accelerate:
             model_load_kwargs.setdefault("device_map", "auto")
 
         self.model_id = model_id
