@@ -7,6 +7,9 @@ on: [ push, pull_request ]
 #  group: ${{ github.workflow }}-${{ github.ref }}
 #  cancel-in-progress: true
 
+env:
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest

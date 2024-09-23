@@ -7,6 +7,7 @@ from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
+from .chat_template_pipeline import ChatTemplatePromptPipeline
 from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
@@ -18,7 +19,15 @@ except ImportError:
         "You will also need to install PyTorch manually."
     ) from None
 
+try:
+    import accelerate
+
+    has_accelerate = True
+except ImportError:
+    has_accelerate = False
+
 log = logging.getLogger(__name__)
+has_cuda = torch.backends.cuda.is_built()
 
 
 class HuggingEngine(BaseEngine):
@@ -27,6 +36,11 @@ class HuggingEngine(BaseEngine):
     This class implements the main decoding logic for any HuggingFace model based on a pretrained
     ``AutoModelForCausalLM``. As most models use model-specific chat templates, this base class accepts a
     :class:`.PromptPipeline` to translate kani ChatMessages into a model-specific string.
+
+    .. versionadded:: 1.2.0
+        By default, the ``HuggingEngine`` uses models' bundled chat template to build the prompt
+        for chat-based models available on Hugging Face. See
+        https://huggingface.co/docs/transformers/main/en/chat_templating for more information.
 
     **GPU Support**
 
@@ -42,22 +56,28 @@ class HuggingEngine(BaseEngine):
         max_context_size: int = None,
         prompt_pipeline: PromptPipeline[str | torch.Tensor] = None,
         *,
+        # hf args
         token=None,
         device: str | None = None,
         tokenizer_kwargs: dict = None,
         model_load_kwargs: dict = None,
+        # kani args
+        token_reserve: int = 0,
         **hyperparams,
     ):
         """
         :param model_id: The ID of the model to load from HuggingFace.
         :param max_context_size: The context size of the model. If not given, will be set from the model's config.
         :param prompt_pipeline: The pipeline to translate a list of kani ChatMessages into the model-specific chat
-            format (see :class:`.PromptPipeline`).
+            format (see :class:`.PromptPipeline`). If not passed, uses the Hugging Face chat template if available.
         :param token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
         :param device: The hardware device to use. If not specified, uses CUDA if available; otherwise uses CPU.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
         :param hyperparams: Additional arguments to supply the model during generation.
+        :param token_reserve: The number of tokens to reserve for internal engine mechanisms (e.g. if there is a
+            generation template after the last user message). If not passed, kani will attempt to infer this from a
+            prompt pipeline.
         """
         if tokenizer_kwargs is None:
             tokenizer_kwargs = {}
@@ -66,18 +86,26 @@ class HuggingEngine(BaseEngine):
 
         tokenizer_kwargs.setdefault("token", hyperparams.get("use_auth_token", token))
         model_load_kwargs.setdefault("token", hyperparams.pop("use_auth_token", token))
+        model_load_kwargs.setdefault("torch_dtype", "auto")
+        if has_cuda and has_accelerate:
+            model_load_kwargs.setdefault("device_map", "auto")
 
         self.model_id = model_id
         self.max_context_size = max_context_size
-        self.pipeline = prompt_pipeline
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
         self.model = AutoModelForCausalLM.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
+        self.token_reserve = token_reserve
+
+        # load the pipeline
+        if prompt_pipeline is None:
+            prompt_pipeline = ChatTemplatePromptPipeline(self.tokenizer)
+        self.pipeline = prompt_pipeline
 
         # ensure model is on correct device
         if device is None:
-            device = "cuda" if torch.backends.cuda.is_built() else "cpu"
+            device = "cuda" if has_cuda else "cpu"
         self.device = device
         if self.model.device.type != self.device:
             self.model.to(device)
@@ -100,8 +128,8 @@ class HuggingEngine(BaseEngine):
             elif self.max_context_size > 1e20:
                 warnings.warn(
                     f"The inferred max context size of this model is extremely large ({self.max_context_size}). This"
-                    " may mean that the model has not configured their model_max_len correctly (or you are still using"
-                    " my code in 2050). Please pass the `max_context_size` arg to use the correct model size."
+                    " may mean that the model has not configured their model_max_len correctly. Please pass the"
+                    " `max_context_size` arg to use the correct model size."
                 )
 
         # infer the token reserve from the pipeline
@@ -118,6 +146,11 @@ class HuggingEngine(BaseEngine):
         return len(tokenized)
 
     def message_len(self, message: ChatMessage) -> int:
+        """Return the length, in tokens, of the given chat message.
+
+        The HuggingEngine's default implementation renders the message with ``apply_chat_template`` if no
+        ``prompt_pipeline`` is supplied.
+        """
         # default concrete base behaviour:
         if self.pipeline is None:
             raise NotImplementedError(
@@ -131,6 +164,8 @@ class HuggingEngine(BaseEngine):
         return len(tokenized)
 
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
         # default concrete base behaviour:
         if self.pipeline is None:
             raise NotImplementedError(
@@ -145,7 +180,7 @@ class HuggingEngine(BaseEngine):
             toklen = len(tokenized)
 
         # warn if there are functions but no tokens
-        if functions and toklen == 0:
+        if toklen == 0:
             warnings.warn(
                 "Functions were given to the model, but the function prompt returned 0 tokens! This model may not"
                 " support function calling, or you may need to implement"
@@ -221,9 +256,8 @@ class HuggingEngine(BaseEngine):
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
         content = self.tokenizer.decode(output[0][input_len:], **decode_kwargs).strip()
-        return Completion(
-            ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - (input_len + 1)
-        )
+        output_len = len(output[0]) - (input_len + 1)
+        return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=output_len)
 
     async def stream(
         self,

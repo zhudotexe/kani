@@ -3,9 +3,14 @@ HuggingFace
 If your language model backend is available on HuggingFace or is compatible with ``transformers``'
 ``AutoModelForCausalLM`` interface, kani includes a base engine that implements a prediction pipeline.
 
+.. versionadded:: 1.2.0
+    For most models that use a chat format, you won't even need to create a new engine class - kani will automatically
+    use a `Chat Template <https://huggingface.co/docs/transformers/main/en/chat_templating>`_ if a model has one
+    included.
+
 .. versionadded:: 1.0.0
-    For most models that use a chat format, you won't even need to create a new engine class - instead, you can pass
-    a :class:`.PromptPipeline` to the :class:`.HuggingEngine`.
+    For more control over the prompting of a chat model, you can pass a :class:`.PromptPipeline` to
+    the :class:`.HuggingEngine`.
 
 If you do create a new engine, instead of having to implement the prediction logic, all you have to do is subclass
 :class:`.HuggingEngine` and implement :meth:`~.HuggingEngine.build_prompt` and :meth:`~.BaseEngine.message_len`.

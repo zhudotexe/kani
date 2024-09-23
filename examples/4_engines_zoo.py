@@ -18,6 +18,10 @@ from kani.engines.anthropic import AnthropicEngine
 engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-3-opus-20240229")
 
 # ========== Hugging Face ==========
+# ---- Any Model (Chat Templates) ----
+from kani.engines.huggingface import HuggingEngine
+engine = HuggingEngine(model_id="org-id/model-id")
+
 # ---- LLaMA v3 (Hugging Face) ----
 import torch
 from kani.engines.huggingface import HuggingEngine

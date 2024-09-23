@@ -376,6 +376,10 @@ class PromptPipeline(Generic[T]):
 
         This method should be the last step in a pipeline and will cause the pipeline to return a ``list[dict]``.
 
+        .. caution::
+            By default, this step will truncate tool calling metadata! Use ``additional_keys`` to provide tool call
+            requests on ASSISTANT messages and additional metadata like tool call IDs on FUNCTION messages.
+
         :param system_role: The role to give to SYSTEM messages (default "system").
         :param user_role: The role to give to USER messages (default "user").
         :param assistant_role: The role to give to ASSISTANT messages (default "assistant").
@@ -410,7 +414,8 @@ class PromptPipeline(Generic[T]):
         :param functions: Any functions available to the model.
         :param deepcopy: Whether to deep-copy each message before running the pipeline.
         :param for_measurement: If the pipeline is being run to measure the length of a single message. In this case,
-            any ``ensure_start`` steps will be ignored.
+            any ``ensure_start`` steps will be ignored, and the returned message may not be a valid prompt - the only
+            guarantee is on the length.
         """
         if functions is None:
             functions = []
