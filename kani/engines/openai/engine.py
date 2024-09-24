@@ -23,10 +23,11 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("gpt-3.5-turbo-instruct", 4096),
     ("gpt-3.5-turbo-0613", 4096),
     ("gpt-3.5-turbo", 16385),
+    # o1
+    ("o1-", 128000),
     # gpt-4o
     ("gpt-4o", 128000),
     # gpt-4-turbo models aren't prefixed differently...
-    # TODO make the default gpt-4 128k and keep the pre-turbo ones at 8k after gpt-4 defaults to 128k
     ("gpt-4-1106", 128000),
     ("gpt-4-0125", 128000),
     ("gpt-4-vision", 128000),
