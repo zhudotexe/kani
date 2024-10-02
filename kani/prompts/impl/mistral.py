@@ -24,19 +24,20 @@ def json_tool_call(tc: ToolCall):
 
 
 def fmt_function_call_result(msg: ChatMessage):
-    result_json = {"call_id": msg.tool_call_id, "content": maybe_json(msg.text)}
+    result_json = {"content": maybe_json(msg.text), "call_id": msg.tool_call_id}
     msg.content = json.dumps(result_json)
     return msg
 
 
 def _fmt_functions(functions: list[AIFunction]) -> str:
-    tools_json = [
+    tools_payload = [
         {
             "type": "function",
             "function": {"name": f.name, "description": f.desc, "parameters": f.json_schema},
         }
         for f in functions
     ]
+    tools_json = json.dumps(tools_payload)
     return f"[AVAILABLE_TOOLS] {tools_json}[/AVAILABLE_TOOLS]"
 
 
