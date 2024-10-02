@@ -42,7 +42,8 @@ def test_chat_templates(chat_template_model_id: str):
         tokenizer = AutoTokenizer.from_pretrained(chat_template_model_id)
     except ValueError:
         pytest.skip("This model requires untrusted code, skipping")
-        raise  # this doesn't actually do anything, it's just here for flow analysis
+    if tokenizer.chat_template is None:
+        pytest.skip("This model does not have a chat template, skipping")
     pipe = ChatTemplatePromptPipeline(tokenizer)
     pipe.explain()
 

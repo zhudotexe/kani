@@ -38,7 +38,7 @@ huggingface = [
 
 llama = [
     "protobuf",
-    "sentencepiece~=0.1.99",
+    "sentencepiece>=0.1.99,<1.0.0",
 ]
 
 cpp = [
