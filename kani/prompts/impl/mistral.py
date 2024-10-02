@@ -1,10 +1,13 @@
 import json
+import logging
 import re
 
 from kani.ai_function import AIFunction
 from kani.engines import Completion, WrapperEngine
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts import ApplyContext, PromptPipeline
+
+log = logging.getLogger(__name__)
 
 
 # ref: https://github.com/mistralai/mistral-common/blob/main/src/mistral_common/tokens/tokenizers/sentencepiece.py
@@ -199,6 +202,7 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
         )
         if tool_json is None:
             return content, []
+        log.debug(f"Found tool JSON while parsing: {tool_json.group(1)}")
         actions = json.loads(tool_json.group(1))
 
         # translate back to kani spec
