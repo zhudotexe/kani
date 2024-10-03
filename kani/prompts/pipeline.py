@@ -457,16 +457,24 @@ class PromptPipeline(Generic[T]):
             print(f"{idx + 1:>{listwidth}}. {step.explain()}")
         print()
 
-        # example
+        # build examples
         print("Example\n-------")
         if all_cases:
             example_kwargs = {k: True for k in ALL_EXAMPLE_KWARGS}
         else:
             example_kwargs = functools.reduce(operator.or_, (s.explain_example_kwargs() for s in self.steps), kwargs)
 
-        examples_msg_grps = build_conversation(**example_kwargs)
-        examples_msgs = list(itertools.chain.from_iterable(examples_msg_grps))
-        example_functions = build_functions(**example_kwargs)
+        if not example:
+            examples_msg_grps = build_conversation(**example_kwargs)
+            examples_msgs = list(itertools.chain.from_iterable(examples_msg_grps))
+        else:
+            examples_msg_grps = [example]
+            examples_msgs = example
+
+        if not functions:
+            example_functions = build_functions(**example_kwargs)
+        else:
+            example_functions = functions
 
         # run and time example
         start = time.perf_counter()
