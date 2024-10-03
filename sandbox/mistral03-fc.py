@@ -3,9 +3,10 @@ from typing import Annotated
 
 from kani import AIParam, Kani, ai_function, chat_in_terminal
 from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl.mistral import MistralFunctionCallingAdapter
+from kani.prompts.impl.mistral import MISTRAL_V3_PIPELINE, MistralFunctionCallingAdapter
 
-model = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.3")
+# model = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.3", prompt_pipeline=MISTRAL_V3_PIPELINE)
+model = HuggingEngine(model_id="mistralai/Mistral-Small-Instruct-2409", prompt_pipeline=MISTRAL_V3_PIPELINE)
 engine = MistralFunctionCallingAdapter(model)
 
 
@@ -29,4 +30,4 @@ class MyKani(Kani):
 
 ai = MyKani(engine)
 if __name__ == "__main__":
-    chat_in_terminal(ai, verbose=True, stream=False)
+    chat_in_terminal(ai, verbose=True, stream=True)

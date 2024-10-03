@@ -1,10 +1,13 @@
 import json
+import logging
 import re
 
 from kani.ai_function import AIFunction
 from kani.engines import Completion, WrapperEngine
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts import ApplyContext, PromptPipeline
+
+log = logging.getLogger(__name__)
 
 
 # ref: https://github.com/mistralai/mistral-common/blob/main/src/mistral_common/tokens/tokenizers/sentencepiece.py
@@ -21,19 +24,20 @@ def json_tool_call(tc: ToolCall):
 
 
 def fmt_function_call_result(msg: ChatMessage):
-    result_json = {"call_id": msg.tool_call_id, "content": maybe_json(msg.text)}
+    result_json = {"content": maybe_json(msg.text), "call_id": msg.tool_call_id}
     msg.content = json.dumps(result_json)
     return msg
 
 
 def _fmt_functions(functions: list[AIFunction]) -> str:
-    tools_json = [
+    tools_payload = [
         {
             "type": "function",
             "function": {"name": f.name, "description": f.desc, "parameters": f.json_schema},
         }
         for f in functions
     ]
+    tools_json = json.dumps(tools_payload)
     return f"[AVAILABLE_TOOLS] {tools_json}[/AVAILABLE_TOOLS]"
 
 
@@ -94,27 +98,91 @@ MISTRAL_V3_PIPELINE = (
 )
 
 
-# tool use template
-# {{bos_token}}
-# {% set user_messages = messages | selectattr('role', 'equalto', 'user') | list %}
-# {% for message in messages %}
-#   {% if message['role'] == 'user' %}
-#       {% if message == user_messages[-1] %}
-#           {% if tools %}
-#               {{'[AVAILABLE_TOOLS]'+ tools|string + '[/AVAILABLE_TOOLS]'}}
-#           {% endif %}
-#           {{ '[INST]' + message['content'] + '[/INST]' }}
-#       {% else %}
-#           {{ '[INST]' + message['content'] + '[/INST]' }}
-#       {% endif %}
-#   {% elif message['role'] == 'assistant' %}
-#       {{ ' ' + message['content'] + ' ' + eos_token}}
-#   {% elif message['role'] == 'tool_results' %}
-#       {{'[TOOL_RESULTS]' + message['content']|string + '[/TOOL_RESULTS]'}}
-#   {% elif message['role'] == 'tool_calls' %}
-#       {{'[TOOL_CALLS]' + message['content']|string + eos_token}}
-#   {% endif %}
-# {% endfor %}"
+# {%- if messages[0]["role"] == "system" %}
+#     {%- set system_message = messages[0]["content"] %}
+#     {%- set loop_messages = messages[1:] %}
+# {%- else %}
+#     {%- set loop_messages = messages %}
+# {%- endif %}
+# {%- if not tools is defined %}
+#     {%- set tools = none %}
+# {%- endif %}
+# {%- set user_messages = loop_messages | selectattr("role", "equalto", "user") | list %}
+# {#- This block checks for alternating user/assistant messages, skipping tool calling messages #}
+# {%- set ns = namespace() %}
+# {%- set ns.index = 0 %}
+# {%- for message in loop_messages %}
+#     {%- if not (message.role == "tool" or message.role == "tool_results" or (message.tool_calls is defined and message.tool_calls is not none)) %}
+#         {%- if (message["role"] == "user") != (ns.index % 2 == 0) %}
+#             {{- raise_exception("After the optional system message, conversation roles must alternate user/assistant/user/assistant/...") }}
+#         {%- endif %}
+#         {%- set ns.index = ns.index + 1 %}
+#     {%- endif %}
+# {%- endfor %}
+# {{- bos_token }}
+# {%- for message in loop_messages %}
+#     {%- if message["role"] == "user" %}
+#         {%- if tools is not none and (message == user_messages[-1]) %}
+#             {{- "[AVAILABLE_TOOLS] [" }}
+#             {%- for tool in tools %}
+#                 {%- set tool = tool.function %}
+#                 {{- '{"type": "function", "function": {' }}
+#                 {%- for key, val in tool.items() if key != "return" %}
+#                     {%- if val is string %}
+#                         {{- '"' + key + '": "' + val + '"' }}
+#                     {%- else %}
+#                         {{- '"' + key + '": ' + val|tojson }}
+#                     {%- endif %}
+#                     {%- if not loop.last %}
+#                         {{- ", " }}
+#                     {%- endif %}
+#                 {%- endfor %}
+#                 {{- "}}" }}
+#                 {%- if not loop.last %}
+#                     {{- ", " }}
+#                 {%- else %}
+#                     {{- "]" }}
+#                 {%- endif %}
+#             {%- endfor %}
+#             {{- "[/AVAILABLE_TOOLS]" }}
+#             {%- endif %}
+#         {%- if loop.last and system_message is defined %}
+#             {{- "[INST] " + system_message + "\n\n" + message["content"] + "[/INST]" }}
+#         {%- else %}
+#             {{- "[INST] " + message["content"] + "[/INST]" }}
+#         {%- endif %}
+#     {%- elif message.tool_calls is defined and message.tool_calls is not none %}
+#         {{- "[TOOL_CALLS] [" }}
+#         {%- for tool_call in message.tool_calls %}
+#             {%- set out = tool_call.function|tojson %}
+#             {{- out[:-1] }}
+#             {%- if not tool_call.id is defined or tool_call.id|length != 9 %}
+#                 {{- raise_exception("Tool call IDs should be alphanumeric strings with length 9!") }}
+#             {%- endif %}
+#             {{- ', "id": "' + tool_call.id + '"}' }}
+#             {%- if not loop.last %}
+#                 {{- ", " }}
+#             {%- else %}
+#                 {{- "]" + eos_token }}
+#             {%- endif %}
+#         {%- endfor %}
+#     {%- elif message["role"] == "assistant" %}
+#         {{- " " + message["content"]|trim + eos_token}}
+#     {%- elif message["role"] == "tool_results" or message["role"] == "tool" %}
+#         {%- if message.content is defined and message.content.content is defined %}
+#             {%- set content = message.content.content %}
+#         {%- else %}
+#             {%- set content = message.content %}
+#         {%- endif %}
+#         {{- '[TOOL_RESULTS] {"content": ' + content|string + ", " }}
+#         {%- if not message.tool_call_id is defined or message.tool_call_id|length != 9 %}
+#             {{- raise_exception("Tool call IDs should be alphanumeric strings with length 9!") }}
+#         {%- endif %}
+#         {{- '"call_id": "' + message.tool_call_id + '"}[/TOOL_RESULTS]' }}
+#     {%- else %}
+#         {{- raise_exception("Only user and assistant roles are supported, with the exception of an initial optional system message!") }}
+#     {%- endif %}
+# {%- endfor %}
 
 
 # ==== function call parsing ====
@@ -129,12 +197,13 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
 
     def _parse_tool_calls(self, content: str) -> tuple[str, list[ToolCall]]:
         tool_json = re.search(
-            rf"{re.escape(self.tool_call_token)}\s*(.+)(?:{re.escape(self.eos_token)})?",
+            rf"{re.escape(self.tool_call_token)}\s*(.+?)\s*{re.escape(self.eos_token)}",
             content,
             re.IGNORECASE | re.DOTALL,
         )
         if tool_json is None:
             return content, []
+        log.debug(f"Found tool JSON while parsing: {tool_json.group(1)}")
         actions = json.loads(tool_json.group(1))
 
         # translate back to kani spec
@@ -168,14 +237,15 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
 
         # consume from the inner iterator, yielding as normal until we see a tool call or a completion
         async for elem in super().stream(messages, functions, **hyperparams):
+            log.debug(f"Got stream element: {elem!r}")
             if isinstance(elem, str):
                 content_parts.append(elem)
                 # if we see the start of a tool call, stop yielding and start buffering
                 if elem.startswith(self.tool_call_token):
                     in_tool_call = True
                 # otherwise yield the string
-                if not in_tool_call and elem != self.eos_token:
-                    yield elem
+                if not in_tool_call:
+                    yield elem.removesuffix(self.eos_token)
             else:
                 # save the inner completion
                 inner_completion = elem
@@ -187,10 +257,12 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
         # otherwise, parse tool calls from the content (preserving inner tool calls if necessary)
         else:
             content = "".join(content_parts)
+            log.debug(f"Content before parsing tool calls: {content!r}")
             content, tool_calls = self._parse_tool_calls(content)
             if inner_completion:
                 tool_calls = (inner_completion.message.tool_calls or []) + tool_calls
-            yield Completion(ChatMessage.assistant(content.removesuffix(self.eos_token).strip(), tool_calls=tool_calls))
+            clean_content = content.removesuffix(self.eos_token).strip()
+            yield Completion(ChatMessage.assistant(clean_content, tool_calls=tool_calls))
 
 
 MistralFunctionCallingAdapter = MixtralFunctionCallingAdapter

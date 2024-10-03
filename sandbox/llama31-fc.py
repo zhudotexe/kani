@@ -39,7 +39,7 @@ class MyKani(Kani):
         """Get the current weather in a given location."""
         # call some weather API, or just mock it for this example
         degrees = 72 if unit == "f" else 22
-        return f"Weather in {location}: Sunny, {degrees} degrees {unit}."
+        return json.dumps({"output": f"Weather in {location}: Sunny, {degrees} degrees {unit}."})
 
 
 if __name__ == "__main__":

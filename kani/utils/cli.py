@@ -73,8 +73,11 @@ async def chat_in_terminal_async(
                     # function
                     elif msg.role == ChatRole.FUNCTION and show_function_returns:
                         print_width(msg.text, width=width, prefix="FUNC: ")
-    except KeyboardInterrupt:
-        await kani.engine.close()
+    except (KeyboardInterrupt, asyncio.CancelledError):
+        # we won't close the engine here since it's common enough that people close the session in colab
+        # and if the process is closing then this will clean itself up anyway
+        # await kani.engine.close()
+        return
 
 
 @overload

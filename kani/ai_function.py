@@ -109,6 +109,12 @@ class AIFunction:
         # create a schema generator and generate
         return create_json_schema(self.get_params())
 
+    def __repr__(self):
+        return (
+            f"{type(self).__name__}(name={self.name!r}, desc={self.desc!r}, after={self.after!r},"
+            f" auto_retry={self.auto_retry!r}, auto_truncate={self.auto_truncate!r})"
+        )
+
 
 def ai_function(
     func=None,
