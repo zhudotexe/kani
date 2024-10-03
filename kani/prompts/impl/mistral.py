@@ -197,7 +197,7 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
 
     def _parse_tool_calls(self, content: str) -> tuple[str, list[ToolCall]]:
         tool_json = re.search(
-            rf"{re.escape(self.tool_call_token)}\s*(.+)(?:{re.escape(self.eos_token)})?",
+            rf"{re.escape(self.tool_call_token)}\s*(.+?)\s*{re.escape(self.eos_token)}",
             content,
             re.IGNORECASE | re.DOTALL,
         )
