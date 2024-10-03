@@ -261,7 +261,8 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
             content, tool_calls = self._parse_tool_calls(content)
             if inner_completion:
                 tool_calls = (inner_completion.message.tool_calls or []) + tool_calls
-            yield Completion(ChatMessage.assistant(content.removesuffix(self.eos_token).strip(), tool_calls=tool_calls))
+            clean_content = content.removesuffix(self.eos_token).strip()
+            yield Completion(ChatMessage.assistant(clean_content, tool_calls=tool_calls))
 
 
 MistralFunctionCallingAdapter = MixtralFunctionCallingAdapter
