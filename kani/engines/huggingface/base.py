@@ -202,7 +202,6 @@ class HuggingEngine(BaseEngine):
             raise NotImplementedError(
                 "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
             )
-        log.debug(messages)  # todo temp
         prompt = self.pipeline(messages, functions)
         log.debug(f"BUILT PROMPT: {prompt}")
         return prompt
