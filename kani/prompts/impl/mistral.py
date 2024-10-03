@@ -237,14 +237,15 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
 
         # consume from the inner iterator, yielding as normal until we see a tool call or a completion
         async for elem in super().stream(messages, functions, **hyperparams):
+            log.debug(f"Got stream element: {elem!r}")
             if isinstance(elem, str):
                 content_parts.append(elem)
                 # if we see the start of a tool call, stop yielding and start buffering
                 if elem.startswith(self.tool_call_token):
                     in_tool_call = True
                 # otherwise yield the string
-                if not in_tool_call and elem != self.eos_token:
-                    yield elem
+                if not in_tool_call:
+                    yield elem.removesuffix(self.eos_token)
             else:
                 # save the inner completion
                 inner_completion = elem
@@ -256,6 +257,7 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
         # otherwise, parse tool calls from the content (preserving inner tool calls if necessary)
         else:
             content = "".join(content_parts)
+            log.debug(f"Content before parsing tool calls: {content!r}")
             content, tool_calls = self._parse_tool_calls(content)
             if inner_completion:
                 tool_calls = (inner_completion.message.tool_calls or []) + tool_calls
