@@ -30,4 +30,4 @@ class MyKani(Kani):
 
 ai = MyKani(engine)
 if __name__ == "__main__":
-    chat_in_terminal(ai, verbose=True, stream=False)
+    chat_in_terminal(ai, verbose=True, stream=True)
