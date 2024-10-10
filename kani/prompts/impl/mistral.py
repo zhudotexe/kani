@@ -241,7 +241,8 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
             if isinstance(elem, str):
                 content_parts.append(elem)
                 # if we see the start of a tool call, stop yielding and start buffering
-                if elem.startswith(self.tool_call_token):
+                if self.tool_call_token in elem:
+                    yield elem[: elem.index(self.tool_call_token)]
                     in_tool_call = True
                 # otherwise yield the string
                 if not in_tool_call:
@@ -261,8 +262,17 @@ class MixtralFunctionCallingAdapter(WrapperEngine):
             content, tool_calls = self._parse_tool_calls(content)
             if inner_completion:
                 tool_calls = (inner_completion.message.tool_calls or []) + tool_calls
+                prompt_tokens = inner_completion.prompt_tokens
+                completion_tokens = inner_completion.completion_tokens
+            else:
+                prompt_tokens = None
+                completion_tokens = None
             clean_content = content.removesuffix(self.eos_token).strip()
-            yield Completion(ChatMessage.assistant(clean_content, tool_calls=tool_calls))
+            yield Completion(
+                ChatMessage.assistant(clean_content, tool_calls=tool_calls),
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+            )
 
 
 MistralFunctionCallingAdapter = MixtralFunctionCallingAdapter
