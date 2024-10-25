@@ -90,6 +90,12 @@ Utilities
 
 .. autofunction:: kani.chat_in_terminal_async
 
+.. autofunction:: kani.format_width
+
+.. autofunction:: kani.format_stream
+
+.. autofunction:: kani.print_width
+
 .. autofunction:: kani.print_stream
 
 Message Formatters

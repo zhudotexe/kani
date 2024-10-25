@@ -4,7 +4,7 @@ import asyncio
 import logging
 import os
 import textwrap
-from typing import overload
+from typing import AsyncIterable, overload
 
 from kani.kani import Kani
 from kani.models import ChatRole
@@ -140,6 +140,66 @@ def chat_in_terminal(kani: Kani, **kwargs):
     asyncio.run(chat_in_terminal_async(kani, **kwargs))
 
 
+# ===== format helpers =====
+def format_width(msg: str, width: int = None, prefix: str = "") -> str:
+    """
+    Format the given message such that the width of each line is less than *width*.
+    If *prefix* is provided, indents each line after the first by the length of the prefix.
+
+    .. code-block: pycon
+        >>> format_width("Hello world I am a potato", width=15, prefix="USER: ")
+        '''\
+        USER: Hello
+              world I
+              am a
+              potato\
+        '''
+    """
+    if not width:
+        return prefix + msg
+    out = []
+    wrapper = textwrap.TextWrapper(width=width, initial_indent=prefix, subsequent_indent=" " * len(prefix))
+    lines = msg.splitlines()
+    for line in lines:
+        out.append(wrapper.fill(line))
+        wrapper.initial_indent = wrapper.subsequent_indent
+    return "\n".join(out)
+
+
+async def format_stream(stream: StreamManager, width: int = None, prefix: str = "") -> AsyncIterable[str]:
+    """
+    Yield formatted tokens from a stream such that if concatenated, the width of each line is less than *width*.
+    If *prefix* is provided, indents each line after the first by the length of the prefix.
+    """
+    prefix_len = len(prefix)
+    line_indent = " " * prefix_len
+    prefix_printed = False
+
+    # print tokens until they overflow width then newline and indent
+    line_len = prefix_len
+    async for token in stream:
+        # only print the prefix if the model actually yields anything
+        if not prefix_printed:
+            yield prefix
+            prefix_printed = True
+
+        # split by newlines
+        for part in token.splitlines(keepends=True):
+            # then do bookkeeping
+            line_len += len(part)
+            if width and line_len > width:
+                yield f"\n{line_indent}"
+                line_len = prefix_len
+
+            # print the token
+            yield part.rstrip("\r\n")
+
+            # print a newline if the token had one
+            if part.endswith("\n"):
+                yield f"\n{line_indent}"
+                line_len = prefix_len
+
+
 def print_width(msg: str, width: int = None, prefix: str = ""):
     """
     Print the given message such that the width of each line is less than *width*.
@@ -152,16 +212,7 @@ def print_width(msg: str, width: int = None, prefix: str = ""):
               am a
               potato
     """
-    if not width:
-        print(prefix + msg)
-        return
-    out = []
-    wrapper = textwrap.TextWrapper(width=width, initial_indent=prefix, subsequent_indent=" " * len(prefix))
-    lines = msg.splitlines()
-    for line in lines:
-        out.append(wrapper.fill(line))
-        wrapper.initial_indent = wrapper.subsequent_indent
-    print("\n".join(out))
+    print(format_width(msg, width, prefix))
 
 
 async def print_stream(stream: StreamManager, width: int = None, prefix: str = ""):
@@ -172,34 +223,11 @@ async def print_stream(stream: StreamManager, width: int = None, prefix: str = "
     This is a helper function intended to be used with :meth:`.Kani.chat_round_stream` or
     :meth:`.Kani.full_round_stream`.
     """
-    prefix_len = len(prefix)
-    line_indent = " " * prefix_len
-    prefix_printed = False
-
-    # print tokens until they overflow width then newline and indent
-    line_len = prefix_len
-    async for token in stream:
-        # only print the prefix if the model actually yields anything
-        if not prefix_printed:
-            print(prefix, end="")
-            prefix_printed = True
-
-        # split by newlines
-        for part in token.splitlines(keepends=True):
-            # then do bookkeeping
-            line_len += len(part)
-            if width and line_len > width:
-                print(f"\n{line_indent}", end="")
-                line_len = prefix_len
-
-            # print the token
-            print(part.rstrip("\r\n"), end="", flush=True)
-
-            # print a newline if the token had one
-            if part.endswith("\n"):
-                print(f"\n{line_indent}", end="")
-                line_len = prefix_len
+    has_printed = False
+    async for part in format_stream(stream, width, prefix):
+        print(part, end="", flush=True)
+        has_printed = True
 
     # newline at the end to flush if we printed anything
-    if prefix_printed:
+    if has_printed:
         print()
