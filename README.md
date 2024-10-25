@@ -134,7 +134,7 @@ api_key = "sk-..."
 
 # kani uses an Engine to interact with the language model. You can specify other model 
 # parameters here, like temperature=0.7.
-engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
 # The kani manages the chat state, prompting, and function calling. Here, we only give 
 # it the engine to call ChatGPT, but you can specify other parameters like 
@@ -174,7 +174,7 @@ from kani.engines.openai import OpenAIEngine
 
 # set up the engine as above
 api_key = "sk-..."
-engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
 
 # subclass Kani to add AI functions

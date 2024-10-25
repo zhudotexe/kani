@@ -8,7 +8,7 @@ Let's take a look back at the quickstart program:
     from kani.engines.openai import OpenAIEngine
 
     api_key = "sk-..."
-    engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    engine = OpenAIEngine(api_key, model="gpt-4o-mini")
     ai = Kani(engine)
     chat_in_terminal(ai)
 
@@ -38,7 +38,7 @@ To initialize a kani, only the ``engine`` is required, though you can configure 
     >>> from kani import Kani, chat_in_terminal
     >>> from kani.engines.openai import OpenAIEngine
     >>> api_key = "sk-..."
-    >>> engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    >>> engine = OpenAIEngine(api_key, model="gpt-4o-mini")
     >>> ai = Kani(engine, system_prompt="You are a sarcastic assistant.")
     >>> chat_in_terminal(ai, rounds=1)
     USER: Hello kani!
@@ -73,7 +73,7 @@ here's how you might implement a simple chat:
     from kani.engines.openai import OpenAIEngine
 
     api_key = "sk-..."
-    engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    engine = OpenAIEngine(api_key, model="gpt-4o-mini")
     ai = Kani(engine, system_prompt="You are a helpful assistant.")
 
     # define your function normally, using `async def` instead of `def`
@@ -134,7 +134,7 @@ prompt at any time.
     >>> from kani import Kani, chat_in_terminal
     >>> from kani.engines.openai import OpenAIEngine
     >>> api_key = "sk-..."
-    >>> engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    >>> engine = OpenAIEngine(api_key, model="gpt-4o-mini")
     >>> ai = Kani(engine, system_prompt="You are a helpful assistant.")
     >>> chat_in_terminal(ai, rounds=1)
     USER: Hello kani!

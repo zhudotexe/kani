@@ -20,7 +20,7 @@ are limitless.
     from kani.engines.openai import OpenAIEngine
 
     api_key = "sk-..."
-    engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
     class MyKani(Kani):
         # step 1: write your methods
@@ -154,7 +154,7 @@ Here's the full example of how you might implement a function to get weather tha
     from kani.engines.openai import OpenAIEngine
 
     api_key = "sk-..."
-    engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
     class Unit(enum.Enum):
         FAHRENHEIT = "fahrenheit"

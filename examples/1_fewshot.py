@@ -10,7 +10,7 @@ from kani import ChatMessage, Kani, chat_in_terminal
 from kani.engines.openai import OpenAIEngine
 
 api_key = os.getenv("OPENAI_API_KEY")
-engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
 # create a few-shot prompt by providing query-answer pairs
 fewshot = [

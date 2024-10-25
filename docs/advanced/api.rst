@@ -9,7 +9,7 @@ that supports WebSockets, like `Insomnia <https://insomnia.rest/>`_.
 
 .. code-block:: python
 
-    engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+    engine = OpenAIEngine(api_key, model="gpt-4o-mini")
     app = FastAPI()
 
     @app.websocket("/chat")

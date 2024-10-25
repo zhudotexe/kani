@@ -6,7 +6,7 @@ from kani import AIParam, ChatMessage, Kani, ToolCall, ai_function, chat_in_term
 from kani.engines.openai import OpenAIEngine
 
 api_key = os.getenv("OPENAI_API_KEY")
-engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
 
 # from 2_function_calling_weather - skip down to L33!

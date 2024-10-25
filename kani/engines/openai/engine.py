@@ -57,7 +57,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
     def __init__(
         self,
         api_key: str = None,
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         max_context_size: int = None,
         *,
         organization: str = None,
@@ -71,7 +71,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
         """
         :param api_key: Your OpenAI API key. By default, the API key will be read from the `OPENAI_API_KEY` environment
             variable.
-        :param model: The id of the model to use (e.g. "gpt-3.5-turbo", "ft:gpt-3.5-turbo:my-org:custom_suffix:id").
+        :param model: The id of the model to use (e.g. "gpt-4o-mini", "ft:gpt-3.5-turbo:my-org:custom_suffix:id").
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
         :param organization: The OpenAI organization to use in requests. By default, the org ID would be read from the
