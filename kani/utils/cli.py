@@ -186,13 +186,14 @@ async def format_stream(stream: StreamManager, width: int = None, prefix: str = 
         # split by newlines
         for part in token.splitlines(keepends=True):
             # then do bookkeeping
-            line_len += len(part)
-            if width and line_len > width:
+            part_len = len(part)
+            if width and line_len + part_len > width:
                 yield f"\n{line_indent}"
                 line_len = prefix_len
 
             # print the token
             yield part.rstrip("\r\n")
+            line_len += part_len
 
             # print a newline if the token had one
             if part.endswith("\n"):
