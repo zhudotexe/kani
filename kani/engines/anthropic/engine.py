@@ -82,7 +82,6 @@ CLAUDE_PIPELINE = (
     .merge_consecutive(role=ChatRole.USER, sep="\n")
     .merge_consecutive(role=ChatRole.ASSISTANT, sep=" ")
     .ensure_bound_function_calls()
-    .ensure_start(role=ChatRole.USER)
     .conversation_dict(function_role="user", content_transform=content_transform)
 )
 
@@ -283,6 +282,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
         kwargs, prompt_msgs = self._prepare_request(messages, functions)
 
         # --- completion ---
+        assert len(prompt_msgs) > 0
         message = await self.client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
@@ -301,6 +301,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
         # do the stream
         kwargs, prompt_msgs = self._prepare_request(messages, functions)
 
+        assert len(prompt_msgs) > 0
         async with self.client.messages.stream(
             model=self.model,
             max_tokens=self.max_tokens,
