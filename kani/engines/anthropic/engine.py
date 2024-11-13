@@ -3,7 +3,6 @@ import itertools
 import json
 import logging
 import os
-import warnings
 from typing import AsyncIterable
 
 from kani.ai_function import AIFunction
@@ -207,11 +206,6 @@ class AnthropicEngine(TokenCached, BaseEngine):
         return n // 4
 
     # ==== requests ====
-    def _get_client(self, functions):
-        if not functions:
-            return self.client
-        return self.client.beta.tools
-
     @staticmethod
     def _prepare_request(messages, functions):
         kwargs = {}
@@ -287,10 +281,9 @@ class AnthropicEngine(TokenCached, BaseEngine):
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> Completion:
         kwargs, prompt_msgs = self._prepare_request(messages, functions)
-        client = self._get_client(functions)
 
         # --- completion ---
-        message = await client.messages.create(
+        message = await self.client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
             messages=prompt_msgs,
@@ -305,27 +298,22 @@ class AnthropicEngine(TokenCached, BaseEngine):
     async def stream(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> AsyncIterable[str | BaseCompletion]:
-        if functions:
-            warnings.warn("Claude 3 does not support streaming with function calling.")
-            async for elem in super().stream(messages, functions, **hyperparams):
-                yield elem
-        else:
-            # do the stream
-            kwargs, prompt_msgs = self._prepare_request(messages, functions)
+        # do the stream
+        kwargs, prompt_msgs = self._prepare_request(messages, functions)
 
-            async with self.client.messages.stream(
-                model=self.model,
-                max_tokens=self.max_tokens,
-                messages=prompt_msgs,
-                **kwargs,
-                **self.hyperparams,
-                **hyperparams,
-            ) as stream:
-                async for text in stream.text_stream:
-                    yield text
+        async with self.client.messages.stream(
+            model=self.model,
+            max_tokens=self.max_tokens,
+            messages=prompt_msgs,
+            **kwargs,
+            **self.hyperparams,
+            **hyperparams,
+        ) as stream:
+            async for text in stream.text_stream:
+                yield text
 
-                message = await stream.get_final_message()
-                yield self._translate_anthropic_message(message)
+            message = await stream.get_final_message()
+            yield self._translate_anthropic_message(message)
 
     async def close(self):
         await self.client.close()
