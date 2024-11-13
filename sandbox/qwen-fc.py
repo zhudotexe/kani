@@ -7,10 +7,7 @@ from typing import Annotated
 from kani import AIFunction, AIParam, ChatMessage, FunctionCall, Kani, ToolCall, ai_function, chat_in_terminal
 from kani.engines import Completion, WrapperEngine
 from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl.mistral import MistralFunctionCallingAdapter
 
-model = HuggingEngine(model_id="Qwen/Qwen2.5-72B-Instruct")
-engine = MistralFunctionCallingAdapter(model)
 log = logging.getLogger("qwen-fc")
 
 
@@ -125,7 +122,8 @@ class QwenFunctionCallingAdapter(WrapperEngine):
                 completion_tokens=completion_tokens,
             )
 
-
+model = HuggingEngine(model_id="Qwen/Qwen2.5-72B-Instruct")
+engine = QwenFunctionCallingAdapter(model)
 ai = MyKani(engine)
 if __name__ == "__main__":
     chat_in_terminal(ai, verbose=True, stream=True)
