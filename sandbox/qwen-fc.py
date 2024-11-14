@@ -88,13 +88,13 @@ class QwenFunctionCallingAdapter(WrapperEngine):
                     yield elem[: elem.index(self.tool_call_start)]
                     in_tool_call = True
                     has_seen_tool_call = True
-                # if we see the end of a tool call, start yielding again
-                if self.tool_call_end in elem:
-                    in_tool_call = False
-                    yield elem[elem.index(self.tool_call_end) + len(self.tool_call_end) :]
                 # otherwise yield the string
                 if not in_tool_call:
                     yield elem.removesuffix(self.eos)
+                # if we see the end of a tool call, start yielding again
+                if self.tool_call_end in elem:
+                    in_tool_call = False
+                    yield elem[elem.index(self.tool_call_end) + len(self.tool_call_end) :].removesuffix(self.eos)
             else:
                 # save the inner completion
                 inner_completion = elem
@@ -121,6 +121,7 @@ class QwenFunctionCallingAdapter(WrapperEngine):
                 prompt_tokens=prompt_tokens,
                 completion_tokens=completion_tokens,
             )
+
 
 model = HuggingEngine(model_id="Qwen/Qwen2.5-72B-Instruct")
 engine = QwenFunctionCallingAdapter(model)
