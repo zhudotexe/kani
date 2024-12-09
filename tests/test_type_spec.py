@@ -36,7 +36,7 @@ async def example_primitives(
     b: float,
     c: bool,
     d: int,
-    e: None,
+    e: type(None),  # https://github.com/pydantic/pydantic/issues/11073
     aa: Annotated[str, AIParam(desc="I am AA")],
     dd: Annotated[int, "I am not an AIParam"] = 2,
 ):
