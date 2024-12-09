@@ -8,7 +8,7 @@ import warnings
 from functools import cached_property
 from typing import Any, ClassVar, Sequence, Type, TypeAlias, Union
 
-from pydantic import BaseModel as PydanticBase, model_serializer, model_validator
+from pydantic import BaseModel as PydanticBase, field_serializer, model_serializer, model_validator
 
 from .exceptions import MissingMessagePartType
 
@@ -118,6 +118,7 @@ class MessagePart(BaseModel, abc.ABC):
     # used for saving/loading - map qualname to messagepart type
     _messagepart_registry: ClassVar[dict[str, Type["MessagePart"]]] = {}
 
+    # noinspection PyMethodOverriding
     def __init_subclass__(cls, **kwargs):
         """
         When a new MessagePart is defined, we need to save its type so that we can load saved JSON into the right type
@@ -304,3 +305,21 @@ class ChatMessage(BaseModel):
             new_values["tool_calls"] = (ToolCall.from_function_call(new_values.pop("function_call")),)
 
         return super().copy_with(**new_values)
+
+    # ==== pydantic stuff ====
+    @field_serializer("content", mode="wrap")
+    def _content_serializer(self, content, nxt):
+        """
+        Custom serialization logic for a list of MessageParts due to
+        https://docs.pydantic.dev/latest/concepts/serialization/#subclass-instances-for-fields-of-basemodel-dataclasses-typeddict
+        """
+        if not isinstance(content, list):
+            return nxt(content)
+
+        out = []
+        for item in content:
+            if isinstance(item, MessagePart):
+                out.append(item.model_dump())
+            else:
+                out.append(nxt(item))
+        return out
