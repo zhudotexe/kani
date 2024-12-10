@@ -56,7 +56,7 @@ async def test_llama(create_kani, gh_log):
         "---\n\n"
         "> What are some cool things to do in Tokyo?\n\n"
     )
-    gh_log.write(resp)
+    gh_log.write(resp.text)
     gh_log.write("\n\n---\n\n")
 
 
