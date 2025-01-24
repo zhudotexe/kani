@@ -13,6 +13,7 @@ If your language model backend is available on HuggingFace or is compatible with
         This means you can safely ignore this section of the documentation for most use cases! Just use:
 
         .. code-block:: python
+
             from kani.engines.huggingface import HuggingEngine
             engine = HuggingEngine(model_id="your-org/your-model-id")
 

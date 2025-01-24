@@ -7,6 +7,7 @@ Implementing an Engine
     prompt format.
 
     .. code-block:: python
+
             from kani.engines.huggingface import HuggingEngine
             engine = HuggingEngine(model_id="your-org/your-model-id")
 
@@ -42,6 +43,11 @@ the underlying model, and kani needs to know about the extra tokens added by thi
 
 Adding Function Calling
 -----------------------
+
+.. important::
+    Already have a way to build function calling prompts but just need a way to parse the outputs? Check out the list
+    of :ref:`tool-parsers`.
+
 If you're writing an engine for a model with function calling, there are a couple additional steps you need to take.
 
 Generally, to use function calling, you need to do the following:

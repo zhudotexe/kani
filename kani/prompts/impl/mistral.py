@@ -1,10 +1,8 @@
 import json
 import logging
-import re
 
 from kani.ai_function import AIFunction
-from kani.engines import Completion, WrapperEngine
-from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
+from kani.models import ChatMessage, ChatRole, ToolCall
 from kani.prompts import ApplyContext, PromptPipeline
 
 log = logging.getLogger(__name__)
@@ -186,93 +184,7 @@ MISTRAL_V3_PIPELINE = (
 
 
 # ==== function call parsing ====
-# [TOOL_CALLS][{'name': 'get_current_weather', 'arguments': {'location': 'Paris, France', 'format': 'celsius'}}]</s>
-class MixtralFunctionCallingAdapter(WrapperEngine):
-    """Common Mixtral-8x22B function calling parsing wrapper."""
+# implemented in tool_adapters/mistral - here for back-compat
+from kani.tool_parsers.mistral import MistralToolCallParser as MistralFunctionCallingAdapter  # noqa E402
 
-    def __init__(self, *args, tool_call_token="[TOOL_CALLS]", eos_token="</s>", **kwargs):
-        super().__init__(*args, **kwargs)
-        self.tool_call_token = tool_call_token
-        self.eos_token = eos_token
-
-    def _parse_tool_calls(self, content: str) -> tuple[str, list[ToolCall]]:
-        tool_json = re.search(
-            rf"{re.escape(self.tool_call_token)}\s*(.+?)\s*({re.escape(self.eos_token)})?$",
-            content,
-            re.IGNORECASE | re.DOTALL,
-        )
-        if tool_json is None:
-            return content, []
-        log.debug(f"Found tool JSON while parsing: {tool_json.group(1)}")
-        actions = json.loads(tool_json.group(1))
-
-        # translate back to kani spec
-        tool_calls = []
-        for action in actions:
-            tool_name = action["name"]
-            tool_args = json.dumps(action["arguments"])
-            tool_id = action.get("id")
-            tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args), call_id_=tool_id)
-            tool_calls.append(tool_call)
-
-        # return trimmed content and tool calls
-        return content[: tool_json.start()], tool_calls
-
-    async def predict(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams):
-        hyperparams.setdefault("decode_kwargs", dict(skip_special_tokens=False))
-        completion = await super().predict(messages, functions, **hyperparams)
-
-        # if we have tools, parse
-        if functions:
-            completion.message.content, completion.message.tool_calls = self._parse_tool_calls(completion.message.text)
-        completion.message.content = completion.message.content.removesuffix(self.eos_token).strip()
-
-        return completion
-
-    async def stream(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams):
-        content_parts = []
-        in_tool_call = False
-        inner_completion = None
-        hyperparams.setdefault("decode_kwargs", dict(skip_special_tokens=False))
-
-        # consume from the inner iterator, yielding as normal until we see a tool call or a completion
-        async for elem in super().stream(messages, functions, **hyperparams):
-            log.debug(f"Got stream element: {elem!r}")
-            if isinstance(elem, str):
-                content_parts.append(elem)
-                # if we see the start of a tool call, stop yielding and start buffering
-                if self.tool_call_token in elem:
-                    yield elem[: elem.index(self.tool_call_token)]
-                    in_tool_call = True
-                # otherwise yield the string
-                if not in_tool_call:
-                    yield elem.removesuffix(self.eos_token)
-            else:
-                # save the inner completion
-                inner_completion = elem
-
-        # we have consumed all the elements - construct a new completion
-        # if we don't have a tool call we can just yield the inner completion
-        if not in_tool_call and inner_completion:
-            yield inner_completion
-        # otherwise, parse tool calls from the content (preserving inner tool calls if necessary)
-        else:
-            content = "".join(content_parts)
-            log.debug(f"Content before parsing tool calls: {content!r}")
-            content, tool_calls = self._parse_tool_calls(content)
-            if inner_completion:
-                tool_calls = (inner_completion.message.tool_calls or []) + tool_calls
-                prompt_tokens = inner_completion.prompt_tokens
-                completion_tokens = inner_completion.completion_tokens
-            else:
-                prompt_tokens = None
-                completion_tokens = None
-            clean_content = content.removesuffix(self.eos_token).strip()
-            yield Completion(
-                ChatMessage.assistant(clean_content, tool_calls=tool_calls),
-                prompt_tokens=prompt_tokens,
-                completion_tokens=completion_tokens,
-            )
-
-
-MistralFunctionCallingAdapter = MixtralFunctionCallingAdapter
+MixtralFunctionCallingAdapter = MistralFunctionCallingAdapter

@@ -10,17 +10,25 @@ from kani import Kani, chat_in_terminal
 
 # ==== OpenAI (GPT) ====
 from kani.engines.openai import OpenAIEngine
-engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4")
+engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
 
 # ==== Anthropic (Claude) ====
 # see https://docs.anthropic.com/claude/docs/models-overview for a list of model IDs
 from kani.engines.anthropic import AnthropicEngine
-engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-3-opus-20240229")
+engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-3-5-sonnet-latest")
 
 # ========== Hugging Face ==========
 # ---- Any Model (Chat Templates) ----
 from kani.engines.huggingface import HuggingEngine
 engine = HuggingEngine(model_id="org-id/model-id")
+
+# ---- DeepSeek R1 (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.tool_parsers.deepseek import DeepSeekR1ToolCallParser
+# this method is the same for all distills of R1 as well - simply replace the model ID!
+model = HuggingEngine(model_id="deepseek-ai/DeepSeek-R1")
+engine = DeepSeekR1ToolCallParser(model)
+
 
 # ---- LLaMA v3 (Hugging Face) ----
 import torch
@@ -37,44 +45,31 @@ engine = HuggingEngine(
 # NOTE: If you're running transformers<4.40 and LLaMA 3 continues generating after the <|eot_id|> token,
 # add `eos_token_id=[128001, 128009]` or upgrade transformers
 
+# ---- Mistral Small/Large (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.prompts.impl.mistral import MISTRAL_V3_PIPELINE
+from kani.tool_parsers.mistral import MistralToolCallParser
+# small (22B):  mistralai/Mistral-Small-Instruct-2409
+# large (123B): mistralai/Mistral-Large-Instruct-2407
+model = HuggingEngine(model_id="mistralai/Mistral-Small-Instruct-2409", prompt_pipeline=MISTRAL_V3_PIPELINE)
+engine = MistralToolCallParser(model)
+
+# ---- Command R (Hugging Face) ----
+from kani.engines.huggingface.cohere import CommandREngine
+engine = CommandREngine(model_id="CohereForAI/c4ai-command-r-08-2024")
+
+# --------- older models ----------
 # ---- LLaMA v2 (Hugging Face) ----
 from kani.engines.huggingface.llama2 import LlamaEngine
 engine = LlamaEngine(model_id="meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)  # log in with huggingface-cli
 
-# ---- Mistral Small/Large (Hugging Face) ----
-from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl.mistral import MISTRAL_V3_PIPELINE, MistralFunctionCallingAdapter
-# small (22B):  mistralai/Mistral-Small-Instruct-2409
-# large (123B): mistralai/Mistral-Large-Instruct-2407
-model = HuggingEngine(model_id="mistralai/Mistral-Small-Instruct-2409", prompt_pipeline=MISTRAL_V3_PIPELINE)
-engine = MistralFunctionCallingAdapter(model)
-
 # ---- Mistral-7B (Hugging Face) ----
 # v0.3 (supports function calling):
 from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl.mistral import MISTRAL_V3_PIPELINE, MistralFunctionCallingAdapter
+from kani.prompts.impl.mistral import MISTRAL_V3_PIPELINE
+from kani.tool_parsers.mistral import MistralToolCallParser
 model = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.3", prompt_pipeline=MISTRAL_V3_PIPELINE)
-engine = MistralFunctionCallingAdapter(model)
-
-# v0.2:
-from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl import MISTRAL_V1_PIPELINE
-engine = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.2", prompt_pipeline=MISTRAL_V1_PIPELINE)
-
-# Also use the MISTRAL_V1_PIPELINE for Mixtral-8x7B (i.e. mistralai/Mixtral-8x7B-Instruct-v0.1).
-
-# ---- Command R (Hugging Face) ----
-from kani.engines.huggingface.cohere import CommandREngine
-engine = CommandREngine(model_id="CohereForAI/c4ai-command-r-v01")
-
-# ---- Gemma (Hugging Face) ----
-from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl import GEMMA_PIPELINE
-engine = HuggingEngine(model_id="google/gemma-1.1-7b-it", prompt_pipeline=GEMMA_PIPELINE, use_auth_token=True)
-
-# ---- Vicuna v1.3 (Hugging Face) ----
-from kani.engines.huggingface.vicuna import VicunaEngine
-engine = VicunaEngine(model_id="lmsys/vicuna-7b-v1.3")
+engine = MistralToolCallParser(model)
 
 # ========== llama.cpp ==========
 # ---- LLaMA v2 (llama.cpp) ----

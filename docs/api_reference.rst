@@ -102,3 +102,17 @@ Message Formatters
 ^^^^^^^^^^^^^^^^^^
 .. automodule:: kani.utils.message_formatters
     :members:
+
+.. _tool-parsers:
+
+Tool Parsers
+^^^^^^^^^^^^
+Tool parsers are used when you have an LLM's text output, which may contain tool calls in their raw format (e.g., JSON).
+They translate the raw text format into Kani's tool calling specification.
+
+.. autoclass:: kani.tool_parsers.BaseToolCallParser
+    :members:
+
+.. autoclass:: kani.tool_parsers.NaiveJSONToolCallParser
+
+.. autoclass:: kani.tool_parsers.MistralToolCallParser
