@@ -41,13 +41,14 @@ more:
 
 **Hosted Models**
 
-- OpenAI Models (GPT-3.5-turbo, GPT-4, GPT-4-turbo, GPT-4o)
-- Anthropic Models (Claude, Claude Instant)
+- OpenAI Models
+- Anthropic Models
 
 **Open Source Models**
 
-kani supports every chat model available on Hugging Face through `transformers` or `llama.cpp`!
+kani supports _every_ chat model available on Hugging Face through `transformers` or `llama.cpp`!
 
+<!--
 In particular, we have reference implementations for the following base models, and their fine-tunes:
 
 - [LLaMA 3](https://huggingface.co/collections/meta-llama/meta-llama-3-66214712577ca38149ebb2b6) (all sizes)
@@ -59,8 +60,9 @@ In particular, we have reference implementations for the following base models, 
 - [Gemma](https://huggingface.co/collections/google/gemma-release-65d5efbccdbb8c4202ec078b) (all sizes)
 - [LLaMA 2](https://huggingface.co/meta-llama) (all sizes)
 - [Vicuna v1.3](https://huggingface.co/lmsys/vicuna-7b-v1.3)
+-->
 
-Check out the [Model Zoo](examples/4_engines_zoo.py) to see how to use each of these models in your application!
+Check out the [Model Zoo](examples/4_engines_zoo.py) for some examples of loading popular models in Kani!
 
 **Interested in contributing? Check out our
 [guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**

@@ -1,5 +1,15 @@
 Implementing an Engine
 ======================
+
+.. important::
+    Looking to use a model available through HuggingFace Transformers? Before implementing your own model class, try
+    using :class:`.HuggingEngine`! If your model has a Chat Template available, Kani will automatically use the correct
+    prompt format.
+
+    .. code-block:: python
+            from kani.engines.huggingface import HuggingEngine
+            engine = HuggingEngine(model_id="your-org/your-model-id")
+
 To create your own engine, all you have to do is subclass :class:`.BaseEngine`:
 
 .. autoclass:: kani.engines.base.BaseEngine
