@@ -20,6 +20,11 @@ If you've made a cool extension, add it to this list with a PR!
 
   * `GitHub (kani-ratelimits) <https://github.com/zhudotexe/kani-ratelimits>`_
 
+* **kani-ext-vllm**: Adds support for loading models using vLLM. Supports chat templates - should be mostly a drop-in
+  replacement for a :class:`.HuggingEngine`.
+
+  * `GitHub (kani-ext-vllm) <https://github.com/zhudotexe/kani-ext-vllm>`_
+
 * **kani-vision**: Adds support for multimodal vision-language models, like GPT-4V and LLaVA.
 
   * `GitHub (kani-vision) <https://github.com/zhudotexe/kani-vision>`_
