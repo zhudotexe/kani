@@ -1,5 +1,7 @@
 """
-Usage: python trains_test.py hf/model-id [tool_call_parser_name]
+Usage: python model_test_trains.py hf/model-id [tool_call_parser_name]
+
+(This file isn't about training models - I just like Japanese trains.)
 """
 
 import asyncio
@@ -20,7 +22,7 @@ elif len(sys.argv) == 3:
     parser_cls = getattr(tool_parsers, sys.argv[2])
     engine = parser_cls(model)
 else:
-    print("Usage: python trains_test.py hf/model-id [tool_call_parser_name]")
+    print("Usage: python model_test_trains.py hf/model-id [tool_call_parser_name]")
     exit(1)
 
 
