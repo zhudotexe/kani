@@ -28,7 +28,9 @@ class DeepSeekR1ToolCallParser(BaseToolCallParser):
         tool_call_end_token: str = "<｜tool▁outputs▁end｜>",
         **kwargs,
     ):
-        super().__init__(*args, tool_call_start_token, tool_call_end_token, **kwargs)
+        super().__init__(
+            *args, tool_call_start_token=tool_call_start_token, tool_call_end_token=tool_call_end_token, **kwargs
+        )
 
     def parse_tool_calls(self, content: str):
         tool_content_match = re.search(

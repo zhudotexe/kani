@@ -25,7 +25,9 @@ class MistralToolCallParser(BaseToolCallParser):
     """
 
     def __init__(self, *args, tool_call_start_token: str = "[TOOL_CALLS]", tool_call_end_token: str = "</s>", **kwargs):
-        super().__init__(*args, tool_call_start_token, tool_call_end_token, **kwargs)
+        super().__init__(
+            *args, tool_call_start_token=tool_call_start_token, tool_call_end_token=tool_call_end_token, **kwargs
+        )
 
     def parse_tool_calls(self, content: str):
         tool_json = re.search(
