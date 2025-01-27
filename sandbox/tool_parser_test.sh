@@ -13,5 +13,5 @@
 #SBATCH --constraint=48GBgpu
 
 python sandbox/model_test_trains.py meta-llama/Llama-3.3-70B-Instruct NaiveJSONToolCallParser
-python sandbox/model_test_trains.py mistralai/Mistral-Large-Instruct-2411 MistralToolCallParser
+python sandbox/model_test_trains.py mistralai/Mistral-Large-Instruct-2407 MistralToolCallParser
 python sandbox/model_test_trains.py deepseek-ai/DeepSeek-R1 DeepSeekR1ToolCallParser

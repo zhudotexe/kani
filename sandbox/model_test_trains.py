@@ -16,9 +16,9 @@ from kani.engines.huggingface import HuggingEngine
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
 if len(sys.argv) == 2:
-    engine = HuggingEngine(model_id=sys.argv[1])
+    engine = HuggingEngine(model_id=sys.argv[1], model_load_kwargs={"trust_remote_code": True})
 elif len(sys.argv) == 3:
-    model = HuggingEngine(model_id=sys.argv[1])
+    model = HuggingEngine(model_id=sys.argv[1], model_load_kwargs={"trust_remote_code": True})
     parser_cls = getattr(tool_parsers, sys.argv[2])
     engine = parser_cls(model)
 else:

@@ -27,7 +27,7 @@ class NaiveJSONToolCallParser(BaseToolCallParser):
     def parse_tool_calls(self, content: str) -> tuple[str, list[ToolCall]]:
         """Given the string completion of the model, return the content without tool calls and the parsed tool calls."""
         try:
-            data = json.loads(content)
+            data = json.loads(content.strip())
             match data:
                 case {"name": str(name), "parameters": dict(parameters)}:
                     tc = ToolCall.from_function_call(FunctionCall.with_args(name, **parameters))
@@ -49,10 +49,10 @@ class NaiveJSONToolCallParser(BaseToolCallParser):
             if isinstance(elem, str):
                 content_parts.append(elem)
                 # if we see {, stop yielding and start buffering
-                if elem.startswith("{") and not seen_non_tool_call_token:
+                if elem.lstrip().startswith("{") and not seen_non_tool_call_token:
                     in_tool_call = True
                 # otherwise yield the string
-                if not in_tool_call:
+                if elem and not in_tool_call:
                     seen_non_tool_call_token = True
                     yield elem
             else:
