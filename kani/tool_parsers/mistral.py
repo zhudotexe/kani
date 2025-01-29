@@ -65,4 +65,6 @@ class MistralToolCallParser(BaseToolCallParser):
         async for elem in super().stream(messages, functions, **hyperparams):
             if isinstance(elem, BaseCompletion):
                 elem.message.content = elem.message.content.removesuffix(self.tool_call_end_token).strip()
-            yield elem.removesuffix(self.tool_call_end_token)
+                yield elem
+            else:
+                yield elem.removesuffix(self.tool_call_end_token)

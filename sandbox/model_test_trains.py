@@ -114,6 +114,15 @@ async def main():
     )
 
 
-ai = WikipediaRetrievalKani(engine)
+# basic system prompt since many models don't include their FC prompt in the chat template...
+system_prompt = """\
+You can use the following functions:
+
+search(query: str) -- Searches for titles of Wikipedia articles.
+wikipedia(title: Annotated[str, AIParam(desc='The article title on Wikipedia, e.g. "Train_station".')]) -- Gets the \
+article text of a Wikipedia article given its title.
+"""
+
+ai = WikipediaRetrievalKani(engine, system_prompt=system_prompt)
 if __name__ == "__main__":
     asyncio.run(main())
