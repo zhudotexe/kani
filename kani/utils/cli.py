@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import os
+import sys
 import textwrap
 from typing import AsyncIterable, overload
 
@@ -40,7 +41,8 @@ async def chat_in_terminal_async(
 
             # get user query
             if not ai_first or round_num > 0:
-                query = input("USER: ").strip()
+                query = await ainput("USER: ")
+                query = query.strip()
                 if echo:
                     print_width(query, width=width, prefix="USER: ")
                 if stopword and query == stopword:
@@ -232,3 +234,9 @@ async def print_stream(stream: StreamManager, width: int = None, prefix: str = "
     # newline at the end to flush if we printed anything
     if has_printed:
         print()
+
+
+async def ainput(string: str) -> str:
+    """input(), but async."""
+    print(string, end="", flush=True)
+    return (await asyncio.to_thread(sys.stdin.readline)).rstrip("\n")

@@ -1,5 +1,4 @@
 import asyncio
-import functools
 import inspect
 import typing
 import warnings
@@ -67,9 +66,8 @@ class AIFunction:
     async def __call__(self, *args, **kwargs):
         if self._inner_is_coro:
             return await self.inner(*args, **kwargs)
-        # run synch functions in a threadpool in order to maintain async safety
-        inner_partial = functools.partial(self.inner, *args, **kwargs)
-        return await asyncio.get_event_loop().run_in_executor(None, inner_partial)
+        # run synch functions in a thread in order to maintain async safety as best we can
+        return await asyncio.to_thread(self.inner, *args, **kwargs)
 
     def get_params(self) -> list[AIParamSchema]:
         # get list of params
