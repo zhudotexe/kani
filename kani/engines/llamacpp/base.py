@@ -64,8 +64,6 @@ class LlamaCppEngine(BaseEngine):
         self.model = Llama.from_pretrained(repo_id=repo_id, filename=filename, **model_load_kwargs)
         self.hyperparams = hyperparams
 
-        self.model.chat_format
-
         self.max_context_size = max_context_size or self.model.n_ctx()
 
         if self.token_reserve == 0 and self.pipeline:
