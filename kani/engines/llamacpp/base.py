@@ -63,11 +63,13 @@ class LlamaCppEngine(BaseEngine):
 
         # for convenience, if the filename is *-00001-of-0000X.gguf, mark all the others as additional files if not set
         if match := re.match(r"(.*?)-(\d+)-of-(\d+)\.gguf", filename):
+            log.info("Sharded GGUF file given - ensuring that all GGUF shards are downloaded")
             additional_files = []
             for n in range(int(match[3])):
                 if n == int(match[2]):
                     continue
                 additional_files.append(f"{match[1]}-*{n}-of-{match[3]}.gguf")
+            log.info(f"additional_files={additional_files}")
             model_load_kwargs.setdefault("additional_files", additional_files)
 
         model_load_kwargs.setdefault("n_ctx", max_context_size)
