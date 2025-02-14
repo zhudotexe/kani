@@ -18,7 +18,7 @@ from kani.utils.message_formatters import assistant_message_contents_thinking, a
 pipeline = ChatTemplatePromptPipeline.from_pretrained("deepseek-ai/DeepSeek-R1")
 engine = LlamaCppEngine(
     repo_id="unsloth/DeepSeek-R1-GGUF",
-    filename="DeepSeek-R1-GGUF/*UD-Q2_K_XL*.gguf",
+    filename="DeepSeek-R1-Q2_K_XS/DeepSeek-R1-Q2_K_XS-00001-of-00005.gguf",
     prompt_pipeline=pipeline,
     model_load_kwargs={"n_gpu_layers": -1},
 )

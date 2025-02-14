@@ -1,4 +1,5 @@
 import logging
+import re
 import warnings
 from typing import AsyncIterable
 
@@ -59,6 +60,15 @@ class LlamaCppEngine(BaseEngine):
         self.repo_id = repo_id
         self.filename = filename
         self.pipeline = prompt_pipeline
+
+        # for convenience, if the filename is *-00001-of-0000X.gguf, mark all the others as additional files if not set
+        if match := re.match(r"(.*?)-(\d+)-of-(\d+)\.gguf", filename):
+            additional_files = []
+            for n in range(int(match[3])):
+                if n == int(match[2]):
+                    continue
+                additional_files.append(f"{match[1]}-*{n}-of-{match[3]}.gguf")
+            model_load_kwargs.setdefault("additional_files", additional_files)
 
         model_load_kwargs.setdefault("n_ctx", max_context_size)
         self.model = Llama.from_pretrained(repo_id=repo_id, filename=filename, **model_load_kwargs)
