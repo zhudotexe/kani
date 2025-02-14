@@ -6,27 +6,23 @@ import pytest
 
 from kani import ChatMessage, Kani
 from kani.engines.llamacpp import LlamaCppEngine
+from kani.prompts.impl import LLAMA3_PIPELINE
 
 pytestmark = pytest.mark.llama
 
 
 @pytest.fixture(scope="module")
 def llama():
-    return LlamaCppEngine(repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_K_M.gguf")
+    return LlamaCppEngine(
+        repo_id="QuantFactory/Meta-Llama-3.1-8B-Instruct-GGUF",
+        filename="*.Q4_K_M.gguf",
+        prompt_pipeline=LLAMA3_PIPELINE,
+    )
 
 
 @pytest.fixture()
 def create_kani(llama):
-    default_system_prompt = (
-        "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while"
-        " being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic,"
-        " dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive"
-        " in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why"
-        " instead of answering something not correct. If you don't know the answer to a question, please don't"
-        " share false information."
-    )
-
-    def _inner(system_prompt=default_system_prompt, **kwargs):
+    def _inner(system_prompt=None, **kwargs):
         return Kani(llama, system_prompt=system_prompt, **kwargs)
 
     return _inner
@@ -52,7 +48,7 @@ async def test_llama(create_kani, gh_log):
 
     gh_log.write(
         "# LLaMA Basic\n"
-        "*This is a real output from kani running LLaMA v2 on GitHub Actions.*\n\n"
+        "*This is a real output from kani running LLaMA 3.1 on GitHub Actions.*\n\n"
         "---\n\n"
         "> What are some cool things to do in Tokyo?\n\n"
     )
@@ -71,7 +67,7 @@ async def test_chatting_llamas(create_kani, gh_log):
     tourist_response = tourist.chat_history[-1].text
     gh_log.write(
         "# LLaMAs Visit Tokyo\n"
-        "*These are real outputs from two kani running LLaMA v2 on GitHub Actions.*\n\n"
+        "*These are real outputs from two kani running LLaMA 3.1 on GitHub Actions.*\n\n"
         "---\n\n"
         f"### Tourist\n{tourist_response}\n"
     )

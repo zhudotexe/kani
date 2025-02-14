@@ -7,9 +7,9 @@ This example showcases all the different engines available and how you can switc
 import os
 
 from kani import Kani, chat_in_terminal
-
 # ==== OpenAI (GPT) ====
 from kani.engines.openai import OpenAIEngine
+
 engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
 
 # ==== Anthropic (Claude) ====
@@ -77,6 +77,8 @@ from kani.engines.huggingface import ChatTemplatePromptPipeline
 from kani.engines.llamacpp import LlamaCppEngine
 pipeline = ChatTemplatePromptPipeline.from_pretrained("org-id/base-model-id")
 engine = LlamaCppEngine(repo_id="org-id/quant-model-id", filename="*.your-quant-type.gguf", prompt_pipeline=pipeline)
+# NOTE: if the quantized model is sharded in multiple files (e.g. *-00001-of-0000X.gguf), pass the full filename of the
+# first shard only.
 
 # ---- LLaMA v2 (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
