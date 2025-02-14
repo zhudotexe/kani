@@ -72,9 +72,18 @@ model = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.3", prompt_pipe
 engine = MistralToolCallParser(model)
 
 # ========== llama.cpp ==========
+# ---- Any Model (Chat Templates) ----
+from kani.engines.huggingface import ChatTemplatePromptPipeline
+from kani.engines.llamacpp import LlamaCppEngine
+pipeline = ChatTemplatePromptPipeline.from_pretrained("org-id/base-model-id")
+engine = LlamaCppEngine(repo_id="org-id/quant-model-id", filename="*.your-quant-type.gguf", prompt_pipeline=pipeline)
+
 # ---- LLaMA v2 (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
-engine = LlamaCppEngine(repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_K_M.gguf")
+from kani.prompts.impl import LLAMA2_PIPELINE
+engine = LlamaCppEngine(
+    repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=LLAMA2_PIPELINE
+)
 
 # ---- Mistral-7B (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine

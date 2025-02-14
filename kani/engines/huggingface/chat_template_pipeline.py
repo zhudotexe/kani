@@ -53,6 +53,15 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
         self._padding_len_by_role: dict[ChatRole, int] = defaultdict(lambda: 0)
         self._has_inferred_role_paddings = False
 
+    @classmethod
+    def from_pretrained(cls, model_id: str):
+        """
+        Create a ChatTemplatePromptPipeline from a model ID.
+        Useful for applying a HF model's chat template to another engine.
+        """
+        tok = transformers.AutoTokenizer.from_pretrained(model_id)
+        return cls(tok)
+
     # ===== auto reserve inference =====
     _chat_template_dummy_msg = {"role": "user", "content": "dummy"}
 

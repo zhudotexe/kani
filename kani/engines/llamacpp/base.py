@@ -1,9 +1,10 @@
+import logging
+import warnings
 from typing import AsyncIterable
 
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
-from kani.prompts.impl import LLAMA2_PIPELINE
 from kani.prompts.pipeline import PromptPipeline
 from ..base import BaseCompletion, BaseEngine, Completion
 
@@ -15,12 +16,12 @@ except ImportError:
         'The LlamaCppEngine requires extra dependencies. Please install kani with "pip install kani[cpp]". '
     ) from None
 
+log = logging.getLogger(__name__)
+
 
 class LlamaCppEngine(BaseEngine):
     """
     This class implements the main decoding logic for any GGUF model (not just LLaMA as the name might suggest).
-
-    This engine defaults to LLaMA 2 Chat 7B with 4-bit quantization.
 
     **GPU Support**
 
@@ -36,7 +37,7 @@ class LlamaCppEngine(BaseEngine):
         repo_id: str,
         filename: str = None,
         max_context_size: int = 0,
-        prompt_pipeline: PromptPipeline[str | list[int]] = LLAMA2_PIPELINE,
+        prompt_pipeline: PromptPipeline[str | list[int]] = None,
         *,
         model_load_kwargs: dict = None,
         **hyperparams,
@@ -52,7 +53,6 @@ class LlamaCppEngine(BaseEngine):
             for more info.
         :param hyperparams: Additional arguments to supply the model during generation.
         """
-
         if model_load_kwargs is None:
             model_load_kwargs = {}
 
@@ -63,6 +63,8 @@ class LlamaCppEngine(BaseEngine):
         model_load_kwargs.setdefault("n_ctx", max_context_size)
         self.model = Llama.from_pretrained(repo_id=repo_id, filename=filename, **model_load_kwargs)
         self.hyperparams = hyperparams
+
+        self.model.chat_format
 
         self.max_context_size = max_context_size or self.model.n_ctx()
 
@@ -81,13 +83,53 @@ class LlamaCppEngine(BaseEngine):
         # default concrete base behaviour:
         if self.pipeline is None:
             raise NotImplementedError(
-                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
+                "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
+                " uses a chat template (or is a quantization of a model with a chat template), you can use the"
+                " following:\n"
+                "from kani.engines.huggingface import ChatTemplatePromptPipeline\n"
+                "pipeline = ChatTemplatePromptPipeline.from_pretrained(base_model_id)\n"
+                "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
             )
         prompt = self.pipeline.execute([message], for_measurement=True)
         if isinstance(prompt, list):
             return len(prompt)
+        elif isinstance(prompt, torch.Tensor):
+            return len(prompt[0])
         tokenized = self.model.tokenize(prompt.encode(), add_bos=False, special=True)
         return len(tokenized)
+
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
+        # default concrete base behaviour:
+        if self.pipeline is None:
+            raise NotImplementedError(
+                "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
+                " uses a chat template (or is a quantization of a model with a chat template), you can use the"
+                " following:\n"
+                "from kani.engines.huggingface import ChatTemplatePromptPipeline\n"
+                "pipeline = ChatTemplatePromptPipeline.from_pretrained(base_model_id)\n"
+                "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
+            )
+        prompt = self.pipeline.execute([], functions, for_measurement=True)
+        if isinstance(prompt, list):
+            return len(prompt)
+        elif isinstance(prompt, torch.Tensor):
+            toklen = len(prompt[0])
+        else:
+            # prompt str to tokens
+            tokenized = self.model.tokenize(prompt.encode(), add_bos=False, special=False)
+            toklen = len(tokenized)
+
+        # warn if there are functions but no tokens
+        if toklen == 0:
+            warnings.warn(
+                "Functions were given to the model, but the function prompt returned 0 tokens! This model may not"
+                " support function calling, or you may need to implement"
+                f" `{type(self).__name__}.function_token_reserve()`."
+            )
+
+        return toklen
 
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str | list[int]:
         """
@@ -98,9 +140,16 @@ class LlamaCppEngine(BaseEngine):
         """
         if self.pipeline is None:
             raise NotImplementedError(
-                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
+                "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
+                " uses a chat template (or is a quantization of a model with a chat template), you can use the"
+                " following:\n"
+                "from kani.engines.huggingface import ChatTemplatePromptPipeline\n"
+                "pipeline = ChatTemplatePromptPipeline.from_pretrained(base_model_id)\n"
+                "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
             )
-        return self.pipeline(messages)
+        prompt = self.pipeline(messages, functions)
+        log.debug(f"BUILT PROMPT: {prompt}")
+        return prompt
 
     def _get_generate_args(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams):
         """Internal method to build common params for the generate call"""
