@@ -19,6 +19,8 @@ from kani.engines.huggingface import ChatTemplatePromptPipeline
 from kani.engines.llamacpp import LlamaCppEngine
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
+logging.basicConfig(level=logging.INFO)
+
 pipeline = ChatTemplatePromptPipeline.from_pretrained("deepseek-ai/DeepSeek-R1")
 engine = LlamaCppEngine(
     repo_id="unsloth/DeepSeek-R1-GGUF",
@@ -119,5 +121,4 @@ article text of a Wikipedia article given its title.
 
 ai = WikipediaRetrievalKani(engine, system_prompt=system_prompt)
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
