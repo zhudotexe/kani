@@ -65,18 +65,10 @@ class LlamaCppEngine(BaseEngine):
         if match := re.match(r"(.*?)-(\d+)-of-(\d+)\.gguf", filename):
             log.info("Sharded GGUF file given - ensuring that all GGUF shards are downloaded")
             additional_files = []
-            # there is a bug in llama-cpp-python that makes the additional_files inherit the subfolder of the parent
-            *subfolders, basename = match[1].split("/")
-            if subfolders:
-                log.warning(
-                    "llama-cpp-python can fail to find additional model files in subfolders. If you see a 404 error,"
-                    ' try manually supplying `model_load_kwargs={"additional_files": [...]}` or use huggingface-cli to'
-                    " download model files."
-                )
             for n in range(1, int(match[3]) + 1):
                 if n == int(match[2]):
                     continue
-                additional_files.append(f"{basename}-*{n}-of-{match[3]}.gguf")
+                additional_files.append(f"{match[1]}-*{n}-of-{match[3]}.gguf")
             log.info(f"additional_files={additional_files}")
             model_load_kwargs.setdefault("additional_files", additional_files)
 
