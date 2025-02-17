@@ -9,6 +9,7 @@ CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CXX_FLAGS=-fopenmp -DLLAVA_BUILD=OFF" pip ins
 
 import asyncio
 import json
+import logging
 from typing import Annotated
 
 import httpx
@@ -118,4 +119,5 @@ article text of a Wikipedia article given its title.
 
 ai = WikipediaRetrievalKani(engine, system_prompt=system_prompt)
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
