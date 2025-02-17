@@ -2,6 +2,9 @@
 Usage: python model_test_trains.py hf/model-id [tool_call_parser_name [prompt_pipeline_name]]
 
 (This file isn't about training models - I just like Japanese trains.)
+
+NOTE: the cluster can be weird - use this for GPU install:
+CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CXX_FLAGS=-fopenmp -DLLAVA_BUILD=OFF" pip install -U llama-cpp-python==0.3.6 --force-reinstall --verbose
 """
 
 import asyncio

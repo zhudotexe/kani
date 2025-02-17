@@ -65,7 +65,7 @@ class LlamaCppEngine(BaseEngine):
         if match := re.match(r"(.*?)-(\d+)-of-(\d+)\.gguf", filename):
             log.info("Sharded GGUF file given - ensuring that all GGUF shards are downloaded")
             additional_files = []
-            for n in range(int(match[3])):
+            for n in range(1, int(match[3]) + 1):
                 if n == int(match[2]):
                     continue
                 additional_files.append(f"{match[1]}-*{n}-of-{match[3]}.gguf")
