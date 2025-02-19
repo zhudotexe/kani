@@ -57,7 +57,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/huggingface
-          key: ${{ runner.os }}-llamav2-cpp
+          key: ${{ runner.os }}-llama3-cpp
 
       - name: Run LLaMA tests
         run: pytest -m llama

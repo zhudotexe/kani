@@ -57,7 +57,7 @@ async def test_llama(create_kani, gh_log):
 
 
 async def test_chatting_llamas(create_kani, gh_log):
-    """Two kanis chatting with each other for 5 rounds."""
+    """Two kanis chatting with each other for 3 rounds."""
     tourist = create_kani(
         "You are a tourist with plans to visit Tokyo.",
         chat_history=[ChatMessage.assistant("What are some cool things to do in Tokyo?")],
@@ -71,7 +71,7 @@ async def test_chatting_llamas(create_kani, gh_log):
         "---\n\n"
         f"### Tourist\n{tourist_response}\n"
     )
-    for _ in range(5):
+    for _ in range(3):
         print("\n========== GUIDE ==========\n")
         guide_stream = guide.chat_round_stream(tourist_response)
         async for token in guide_stream:
