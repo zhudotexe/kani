@@ -64,6 +64,14 @@ class LlamaCppEngine(BaseEngine):
         # for convenience, if the filename is *-00001-of-0000X.gguf, mark all the others as additional files if not set
         if match := re.match(r"(.*?)-(\d+)-of-(\d+)\.gguf", filename):
             log.info("Sharded GGUF file given - ensuring that all GGUF shards are downloaded")
+            # there is an issue in llama-cpp-python that makes the additional_files inherit the subfolder of the parent
+            # https://github.com/abetlen/llama-cpp-python/issues/1938
+            if "/" in match[1]:
+                warnings.warn(
+                    "llama-cpp-python can fail to find additional model files in subfolders. If you see a 404 error,"
+                    " try manually using huggingface-cli to download model files. See"
+                    " https://github.com/abetlen/llama-cpp-python/issues/1938 for more information."
+                )
             additional_files = []
             for n in range(1, int(match[3]) + 1):
                 if n == int(match[2]):

@@ -29,8 +29,7 @@ from kani.tool_parsers.deepseek import DeepSeekR1ToolCallParser
 model = HuggingEngine(model_id="deepseek-ai/DeepSeek-R1")
 engine = DeepSeekR1ToolCallParser(model)
 
-
-# ---- LLaMA v3 (Hugging Face) ----
+# ---- LLaMA 3 (Hugging Face) ----
 import torch
 from kani.engines.huggingface import HuggingEngine
 from kani.prompts.impl import LLAMA3_PIPELINE
@@ -79,6 +78,20 @@ pipeline = ChatTemplatePromptPipeline.from_pretrained("org-id/base-model-id")
 engine = LlamaCppEngine(repo_id="org-id/quant-model-id", filename="*.your-quant-type.gguf", prompt_pipeline=pipeline)
 # NOTE: if the quantized model is sharded in multiple files (e.g. *-00001-of-0000X.gguf), pass the full filename of the
 # first shard only.
+
+# ---- DeepSeek R1 (2bit quantized) ----
+from kani.engines.huggingface import ChatTemplatePromptPipeline
+from kani.engines.llamacpp import LlamaCppEngine
+# NOTE: due to an issue in llama-cpp-python you will need to download the files by running the huggingface-cli command
+# manually:
+# $ huggingface-cli download unsloth/DeepSeek-R1-GGUF --include DeepSeek-R1-Q2_K_XS/*.gguf
+pipeline = ChatTemplatePromptPipeline.from_pretrained("deepseek-ai/DeepSeek-R1")
+engine = LlamaCppEngine(
+    repo_id="unsloth/DeepSeek-R1-GGUF",
+    filename="DeepSeek-R1-Q2_K_XS/DeepSeek-R1-Q2_K_XS-00001-of-00005.gguf",
+    prompt_pipeline=pipeline,
+    model_load_kwargs={"n_gpu_layers": -1, "additional_files": []},
+)
 
 # ---- LLaMA v2 (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
