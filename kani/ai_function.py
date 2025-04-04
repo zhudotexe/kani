@@ -102,10 +102,16 @@ class AIFunction:
             )
         return params
 
-    def create_json_schema(self) -> dict:
-        """Create a JSON schema representing this function's parameters as a JSON object."""
-        # create a schema generator and generate
-        return create_json_schema(self.get_params())
+    def create_json_schema(self, include_desc=True) -> dict:
+        """
+        Create a JSON schema representing this function's parameters as a JSON object.
+
+        :param include_desc: Whether to include the AIFunction's description in the generated JSON schema.
+        """
+        kwargs = {}
+        if include_desc:
+            kwargs["desc"] = self.desc
+        return create_json_schema(self.get_params(), name=self.name, **kwargs)
 
     def __repr__(self):
         return (
@@ -158,8 +164,14 @@ def ai_function(
 class AIParam:
     """Special tag to annotate types with in order to provide parameter-level metadata to kani."""
 
-    def __init__(self, desc: str):
+    def __init__(self, desc: str, *, title: str = None):
+        """
+        :param desc: The description of the parameter.
+        :param title: If set, set the title of this parameter in generated JSON schema to this; otherwise omit the title
+            (as it is already the key of the parameter in the schema).
+        """
         self.desc = desc
+        self.title = title
 
 
 def get_aiparam(annotation: type) -> AIParam | None:

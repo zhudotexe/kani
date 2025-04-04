@@ -57,4 +57,4 @@ class WikipediaRetrievalKani(Kani):
 
 ai = WikipediaRetrievalKani(engine)
 if __name__ == "__main__":
-    chat_in_terminal(ai)
+    chat_in_terminal(ai, show_function_args=True)

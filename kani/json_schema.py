@@ -38,6 +38,10 @@ class AIParamSchema:
     def description(self):
         return self.aiparam.desc if self.aiparam is not None else None
 
+    @property
+    def title(self):
+        return self.aiparam.title if self.aiparam is not None else None
+
     def __str__(self):
         default = ""
         if not self.required:
@@ -48,6 +52,10 @@ class AIParamSchema:
 
 class JSONSchemaBuilder(pydantic.json_schema.GenerateJsonSchema):
     """Subclass of the Pydantic JSON schema builder to provide more fine-grained control over titles and refs."""
+
+    def field_title_should_be_set(self, schema) -> bool:
+        # We only want titles to be set if the field explicitly set it
+        return super().field_title_should_be_set(schema) and schema.get("title") is not None
 
     def _build_definitions_remapping(self):
         # we need to remember what remappings Pydantic did so we can flatten them later
@@ -101,19 +109,20 @@ class JSONSchemaBuilder(pydantic.json_schema.GenerateJsonSchema):
         return json_schema
 
 
-def create_json_schema(params: list[AIParamSchema]) -> dict:
+def create_json_schema(params: list[AIParamSchema], name: str = "_FunctionSpec", desc: str = None) -> dict:
     """Create a JSON schema from a list of parameters to an AIFunction.
 
-    There are some subtle differences compared to how Pydantic creates JSON schemas by default; most notably,
-    some titles are omitted to minimize the token count, and defaults are not exposed.
+    There are some subtle differences compared to how Pydantic creates JSON schemas by default; most notably:
+    - singleton refs to sub-models are inserted in-place rather than requiring a ref to another key
+    - the titles of parameters are omitted unless an AIParam explicitly sets its ``title``
     """
     # create pydantic fields for each AIParam
     fields = {}
     for param in params:
-        field_kwargs = dict(description=param.description)
+        field_kwargs = dict(description=param.description, title=param.title)
         if not param.required:
             field_kwargs["default"] = param.default
         fields[param.name] = (param.type, pydantic.Field(**field_kwargs))
     # create a temp model for generating json schemas
-    pydantic_model = pydantic.create_model("_FunctionSpec", **fields)
+    pydantic_model = pydantic.create_model(name, __doc__=desc, **fields)
     return pydantic_model.model_json_schema(schema_generator=JSONSchemaBuilder, ref_template=REF_TEMPLATE)
