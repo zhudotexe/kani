@@ -12,7 +12,6 @@ from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
     import torch
-    import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 except ImportError:
     raise MissingModelDependencies(
@@ -62,7 +61,6 @@ class HuggingEngine(BaseEngine):
         device: str | None = None,
         tokenizer_kwargs: dict = None,
         model_load_kwargs: dict = None,
-        use_kv_cache: bool | transformers.Cache = True,
         # kani args
         token_reserve: int = 0,
         **hyperparams,
@@ -76,10 +74,6 @@ class HuggingEngine(BaseEngine):
         :param device: The hardware device to use. If not specified, uses CUDA if available; otherwise uses CPU.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
-        :param use_kv_cache: Whether to use a KV cache to cache past generations. If ``True``, an ``OffloadedCache``
-            will be used (default). If ``False``, a DynamicCache will be created for each generation (but not shared
-            between generations). If a cache instance is passed, that cache will be used. See
-            https://huggingface.co/docs/transformers/main/en/kv_cache for a list of caches.
         :param hyperparams: Additional arguments to supply the model during generation.
         :param token_reserve: The number of tokens to reserve for internal engine mechanisms (e.g. if there is a
             generation template after the last user message). If not passed, kani will attempt to infer this from a
@@ -103,12 +97,6 @@ class HuggingEngine(BaseEngine):
         self.model = AutoModelForCausalLM.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
         self.token_reserve = token_reserve
-        if isinstance(use_kv_cache, transformers.Cache):
-            self.kv_cache = use_kv_cache
-        elif use_kv_cache:
-            self.kv_cache = transformers.OffloadedCache()
-        else:
-            self.kv_cache = None
 
         # load the pipeline
         if prompt_pipeline is None:
@@ -236,9 +224,6 @@ class HuggingEngine(BaseEngine):
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
         hyperparams.setdefault("max_length", self.max_context_size)  # by default HF sets this to 20, which is too small
-        # the cache
-        if self.kv_cache is not None:
-            hyperparams.setdefault("past_key_values", self.kv_cache)
         return input_toks, input_len, hyperparams
 
     async def predict(
