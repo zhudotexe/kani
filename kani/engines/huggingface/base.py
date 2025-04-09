@@ -60,6 +60,7 @@ class HuggingEngine(BaseEngine):
         token=None,
         device: str | None = None,
         tokenizer_kwargs: dict = None,
+        model_cls=AutoModelForCausalLM,
         model_load_kwargs: dict = None,
         # kani args
         token_reserve: int = 0,
@@ -73,6 +74,7 @@ class HuggingEngine(BaseEngine):
         :param token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
         :param device: The hardware device to use. If not specified, uses CUDA if available; otherwise uses CPU.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
+        :param model_cls: Advanced use cases: The HF model class to use. Defaults to ``AutoModelForCausalLM``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
         :param hyperparams: Additional arguments to supply the model during generation.
         :param token_reserve: The number of tokens to reserve for internal engine mechanisms (e.g. if there is a
@@ -94,7 +96,7 @@ class HuggingEngine(BaseEngine):
         self.max_context_size = max_context_size
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
-        self.model = AutoModelForCausalLM.from_pretrained(model_id, **model_load_kwargs)
+        self.model = model_cls.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
         self.token_reserve = token_reserve
 
