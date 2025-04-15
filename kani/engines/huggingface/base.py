@@ -225,7 +225,8 @@ class HuggingEngine(BaseEngine):
             input_toks = input_toks.to(self.device)
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
-        hyperparams.setdefault("max_length", self.max_context_size)  # by default HF sets this to 20, which is too small
+        if "max_new_tokens" not in hyperparams:
+            hyperparams.setdefault("max_length", self.max_context_size)
         return input_toks, input_len, hyperparams
 
     async def predict(
