@@ -35,8 +35,9 @@ class LlamaCppEngine(BaseEngine):
 
     def __init__(
         self,
-        repo_id: str,
-        filename: str = None,
+        repo_id: str | None = None,
+        filename: str | None = None,
+        model_path: str | None = None,
         max_context_size: int = 0,
         prompt_pipeline: PromptPipeline[str | list[int]] = None,
         *,
@@ -45,7 +46,11 @@ class LlamaCppEngine(BaseEngine):
     ):
         """
         :param repo_id: The ID of the model repo to load from Hugging Face.
-        :param filename: A filename or glob pattern to match the model file in the repo.
+                If this is set, ``filename`` must be set and ``model_path`` may not be set.
+        :param filename: A filename or glob pattern to match the model file in the Hugging Face repo.
+                If this is set, ``repo_id`` must be set and ``model_path`` may not be set.
+        :param model_path: A path to the model files on local disk.
+                If this is set, neither  ``repo_id`` nor ``filename`` may be set.
         :param max_context_size: The context size of the model.
         :param prompt_pipeline: The pipeline to translate a list of kani ChatMessages into the model-specific chat
             format (see :class:`.PromptPipeline`).
@@ -57,31 +62,38 @@ class LlamaCppEngine(BaseEngine):
         if model_load_kwargs is None:
             model_load_kwargs = {}
 
+        if model_path is not None and (repo_id is not None or filename is not None):
+            raise ValueError("You cannot pass model_path if you also pass repo_id and filename (or vice versa).")
         self.repo_id = repo_id
         self.filename = filename
+        self.model_path = model_path
         self.pipeline = prompt_pipeline
 
         # for convenience, if the filename is *-00001-of-0000X.gguf, mark all the others as additional files if not set
-        if match := re.match(r"(.*?)-(\d+)-of-(\d+)\.gguf", filename):
-            log.info("Sharded GGUF file given - ensuring that all GGUF shards are downloaded")
-            # there is an issue in llama-cpp-python that makes the additional_files inherit the subfolder of the parent
-            # https://github.com/abetlen/llama-cpp-python/issues/1938
-            if "/" in match[1]:
-                warnings.warn(
-                    "llama-cpp-python can fail to find additional model files in subfolders. If you see a 404 error,"
-                    " try manually using huggingface-cli to download model files. See"
-                    " https://github.com/abetlen/llama-cpp-python/issues/1938 for more information."
-                )
-            additional_files = []
-            for n in range(1, int(match[3]) + 1):
-                if n == int(match[2]):
-                    continue
-                additional_files.append(f"{match[1]}-*{n}-of-{match[3]}.gguf")
-            log.info(f"additional_files={additional_files}")
-            model_load_kwargs.setdefault("additional_files", additional_files)
+        if filename is not None:
+            if match := re.match(r"(.*?)-(\d+)-of-(\d+)\.gguf", filename):
+                log.info("Sharded GGUF file given - ensuring that all GGUF shards are downloaded")
+                # there is an issue in llama-cpp-python that makes the additional_files inherit the subfolder of the parent
+                # https://github.com/abetlen/llama-cpp-python/issues/1938
+                if "/" in match[1]:
+                    warnings.warn(
+                        "llama-cpp-python can fail to find additional model files in subfolders. If you see a 404 error,"
+                        " try manually using huggingface-cli to download model files. See"
+                        " https://github.com/abetlen/llama-cpp-python/issues/1938 for more information."
+                    )
+                additional_files = []
+                for n in range(1, int(match[3]) + 1):
+                    if n == int(match[2]):
+                        continue
+                    additional_files.append(f"{match[1]}-*{n}-of-{match[3]}.gguf")
+                log.info(f"additional_files={additional_files}")
+                model_load_kwargs.setdefault("additional_files", additional_files)
 
         model_load_kwargs.setdefault("n_ctx", max_context_size)
-        self.model = Llama.from_pretrained(repo_id=repo_id, filename=filename, **model_load_kwargs)
+        if model_path is not None:
+            self.model = Llama(model_path=model_path, **model_load_kwargs)
+        else:
+            self.model = Llama.from_pretrained(repo_id=repo_id, filename=filename, **model_load_kwargs)
         self.hyperparams = hyperparams
 
         self.max_context_size = max_context_size or self.model.n_ctx()
