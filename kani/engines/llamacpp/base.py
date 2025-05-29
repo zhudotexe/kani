@@ -62,8 +62,15 @@ class LlamaCppEngine(BaseEngine):
         if model_load_kwargs is None:
             model_load_kwargs = {}
 
-        if model_path is not None and (repo_id is not None or filename is not None):
-            raise ValueError("You cannot pass model_path if you also pass repo_id and filename (or vice versa).")
+        # exactly one of (model_path, (repo_id, filename)) should be passed
+        if (model_path is None and (repo_id is None or filename is None)) or (
+            model_path is not None and (repo_id is not None or filename is not None)
+        ):
+            raise ValueError(
+                "Exactly one of (model_path, (repo_id, filename)) must be passed. Use `model_path` for locally"
+                " downloaded models, and `repo_id, filename` to download models from the Hugging Face hub."
+            )
+
         self.repo_id = repo_id
         self.filename = filename
         self.model_path = model_path
@@ -77,8 +84,8 @@ class LlamaCppEngine(BaseEngine):
                 # https://github.com/abetlen/llama-cpp-python/issues/1938
                 if "/" in match[1]:
                     warnings.warn(
-                        "llama-cpp-python can fail to find additional model files in subfolders. If you see a 404 error,"
-                        " try manually using huggingface-cli to download model files. See"
+                        "llama-cpp-python can fail to find additional model files in subfolders. If you see a 404"
+                        " error, try manually using huggingface-cli to download model files. See"
                         " https://github.com/abetlen/llama-cpp-python/issues/1938 for more information."
                     )
                 additional_files = []
