@@ -61,7 +61,10 @@ def test_chat_templates(chat_template_model_id: str):
     ],
 )
 def test_handmade_equivalence(model_id: str, handmade_pipe: PromptPipeline):
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(model_id)
+    except EnvironmentError:
+        pytest.skip("This model is gated and we are not logged in in this CI run, skipping")
     ct_pipe = ChatTemplatePromptPipeline(tokenizer)
     msgs = [  # no system message since not all models support it
         ChatMessage.user("Hello world!"),

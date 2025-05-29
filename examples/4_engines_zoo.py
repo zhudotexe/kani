@@ -8,14 +8,14 @@ import os
 
 from kani import Kani, chat_in_terminal
 # ==== OpenAI (GPT) ====
+# see https://platform.openai.com/docs/models for a list of model IDs
 from kani.engines.openai import OpenAIEngine
-
-engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
+engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4.1-nano")
 
 # ==== Anthropic (Claude) ====
 # see https://docs.anthropic.com/claude/docs/models-overview for a list of model IDs
 from kani.engines.anthropic import AnthropicEngine
-engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-3-5-sonnet-latest")
+engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-sonnet-4-0")
 
 # ========== Hugging Face ==========
 # ---- Any Model (Chat Templates) ----

@@ -23,10 +23,15 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("gpt-3.5-turbo-instruct", 4096),
     ("gpt-3.5-turbo-0613", 4096),
     ("gpt-3.5-turbo", 16385),
-    # o1
-    ("o1-", 128000),
+    # o1, o3, o4
+    ("o1", 200000),
+    ("o3", 200000),
+    ("o4", 200000),
+    # gpt-4.1
+    ("gpt-4.1", 1047576),
     # gpt-4o
     ("gpt-4o", 128000),
+    ("chatgpt-4o", 128000),
     # gpt-4-turbo models aren't prefixed differently...
     ("gpt-4-1106", 128000),
     ("gpt-4-0125", 128000),
@@ -91,7 +96,14 @@ class OpenAIEngine(TokenCached, BaseEngine):
         if api_key and client:
             raise ValueError("You must supply no more than one of (api_key, client).")
         if max_context_size is None:
-            max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))
+            matched_prefix, max_context_size = next(
+                (prefix, size) for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix)
+            )
+            if not matched_prefix:
+                warnings.warn(
+                    "The context length for this model was not found, defaulting to 2048 tokens. Please specify"
+                    " `max_context_size` if this is incorrect."
+                )
 
         super().__init__()
 
