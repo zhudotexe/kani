@@ -68,7 +68,7 @@ preview = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-markers = ["llama: these tests use a real LLaMA v2 model."]
+markers = ["local: these tests use a local language model."]
 
 [tool.isort]
 profile = "black"
