@@ -12,7 +12,7 @@ pytestmark = pytest.mark.local
 
 @pytest.fixture(scope="module")
 def model():
-    return HuggingEngine("google/gemma-3-1b-it")
+    return HuggingEngine("google/gemma-3-1b-it", device="cpu")
 
 
 @pytest.fixture()
