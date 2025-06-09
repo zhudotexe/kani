@@ -34,9 +34,9 @@ jobs:
       - name: Test with pytest
         run: pytest -m 'not local'
 
-  llama:
+  local-llm:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     # continue-on-error: true
 
     steps:
@@ -60,4 +60,6 @@ jobs:
           key: ${{ runner.os }}-local-llm
 
       - name: Run local model tests
+        env:
+          CI_TORCH_DEVICE: mps
         run: pytest -m local

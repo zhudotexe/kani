@@ -1,18 +1,20 @@
 """Run some tests using local small LMs."""
 
 import logging
+import os
 
 import pytest
 
 from kani import ChatMessage, Kani
 from kani.engines.huggingface import HuggingEngine
 
+CI_TORCH_DEVICE = os.getenv("CI_TORCH_DEVICE", "cpu")
 pytestmark = pytest.mark.local
 
 
 @pytest.fixture(scope="module")
 def model():
-    return HuggingEngine("google/gemma-3-1b-it", device="cpu")
+    return HuggingEngine("google/gemma-3-1b-it", device=CI_TORCH_DEVICE)
 
 
 @pytest.fixture()
