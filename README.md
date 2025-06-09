@@ -262,12 +262,12 @@ Or take a look at the hands-on examples [in this repo](https://github.com/zhudot
 
 ## Demo
 
-Want to see kani in action? Using 4-bit quantization to shrink the model, we run LLaMA v2 as part of our test suite
+Want to see kani in action? We run a small language model as part of our test suite
 right on GitHub Actions:
 
 https://github.com/zhudotexe/kani/actions/workflows/pytest.yml?query=branch%3Amain+is%3Asuccess
 
-Simply click on the latest build to see LLaMA's output!
+Simply click on the latest build to see the model's output!
 
 ## Who we are
 
