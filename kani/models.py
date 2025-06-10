@@ -63,9 +63,9 @@ class FunctionCall(BaseModel):
         return json.loads(self.arguments)
 
     @classmethod
-    def with_args(cls, name: str, **kwargs):
+    def with_args(cls, __name: str, /, **kwargs):
         """Create a function call with the given arguments (e.g. for few-shot prompting)."""
-        inst = cls(name=name, arguments=json.dumps(kwargs))
+        inst = cls(name=__name, arguments=json.dumps(kwargs))
         inst.__dict__["kwargs"] = kwargs  # set the cached property here as a minor optimization
         return inst
 
@@ -89,13 +89,13 @@ class ToolCall(BaseModel):
     """The requested function call."""
 
     @classmethod
-    def from_function(cls, name: str, *, call_id_: str = None, **kwargs):
+    def from_function(cls, __name: str, /, *, call_id_: str = None, **kwargs):
         """Create a tool call request for a function with the given name and arguments.
 
         :param call_id_: The ID to assign to the request. If not passed, generates a random ID.
         """
         call_id = call_id_ or str(uuid.uuid4())
-        return cls(id=call_id, type="function", function=FunctionCall.with_args(name, **kwargs))
+        return cls(id=call_id, type="function", function=FunctionCall.with_args(__name, **kwargs))
 
     @classmethod
     def from_function_call(cls, call: FunctionCall, call_id_: str = None):
