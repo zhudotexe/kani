@@ -102,3 +102,5 @@ async def test_saveload_messageparts(tmp_path):
     # assert equality
     assert ai.always_included_messages == loaded.always_included_messages
     assert ai.chat_history == loaded.chat_history
+    assert isinstance(loaded.chat_history[0].parts[1], _TestMessagePart1)
+    assert isinstance(loaded.chat_history[1].parts[0], _TestMessagePart2)
