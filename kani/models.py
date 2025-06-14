@@ -255,6 +255,13 @@ class ChatMessage(BaseModel):
             )
         return self.tool_calls[0].function
 
+    # ==== extra ====
+    extra: dict = {}
+    """
+    Specific engines may store additional extra data in this dictionary. See an engine's documentation for details about
+    any extras it may store or expect.
+    """
+
     # ==== constructors ====
     @classmethod
     def system(cls, content: str | Sequence[MessagePart | str], **kwargs):
