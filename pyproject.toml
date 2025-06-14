@@ -29,9 +29,14 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "kani[huggingface,llama,cpp,openai,anthropic]",
+    "kani[multimodal,huggingface,llama,cpp,openai,anthropic]",
 ]
 
+multimodal = [
+    "kani-multimodal-core",
+]
+
+# providers
 huggingface = [
     "transformers>=4.28.0,<5.0.0",
 ]

@@ -12,6 +12,26 @@ from kani.models import ChatRole
 from kani.streaming import StreamManager
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
+# optional extensions
+try:
+    from kani.ext.multimodal_core import cli as multimodal_cli
+
+    _multimodal_available = True
+except ImportError:
+
+    class _NotInstalledHelper:
+        def __init__(self, pkg: str):
+            self.pkg = pkg
+
+        def __getattr__(self, _):
+            raise ImportError(
+                f'This method requires an additional package to be installed. Use `pip install "{self.pkg}"` to install'
+                " additional dependencies."
+            )
+
+    multimodal_cli = _NotInstalledHelper("kani-multimodal-core")
+    _multimodal_available = False
+
 
 async def chat_in_terminal_async(
     kani: Kani,
@@ -42,9 +62,19 @@ async def chat_in_terminal_async(
             # get user query
             if not ai_first or round_num > 0:
                 query = await ainput("USER: ")
-                query = query.strip()
+                query = query_str = query.strip()
+
+                # multimodal handling
+                if _multimodal_available:
+                    # find @path/to/file.png parts and replace them with FileImageParts
+                    query = await multimodal_cli.parts_from_cli_query(query)
+
                 if echo:
-                    print_width(query, width=width, prefix="USER: ")
+                    # IPython
+                    if _multimodal_available and multimodal_cli._is_notebook:
+                        multimodal_cli.display_media_ipython(query, show_text=echo)
+                    else:
+                        print_width(query_str, width=width, prefix="USER: ")
                 if stopword and query == stopword:
                     break
             # print completion(s)
@@ -104,6 +134,10 @@ def chat_in_terminal(kani: Kani, **kwargs):
     Useful for playing with kani, quick prompt engineering, or demoing the library.
 
     If the environment variable ``KANI_DEBUG`` is set, debug logging will be enabled.
+
+    If ``kani-multimodal-core`` is installed, you can send multimodal media to a compatible engine with a file path
+    or URL after an ``@`` symbol (e.g. "Describe this image: @image.png").
+    Use quotes (e.g. ``@"path/to/my image.png"``) for paths with spaces in their names.
 
     .. warning::
 
