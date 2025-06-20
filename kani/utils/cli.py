@@ -7,30 +7,11 @@ import sys
 import textwrap
 from typing import AsyncIterable, overload
 
+from kani import _optional
 from kani.kani import Kani
 from kani.models import ChatRole
 from kani.streaming import StreamManager
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
-
-# optional extensions
-try:
-    from kani.ext.multimodal_core import cli as multimodal_cli
-
-    _multimodal_available = True
-except ImportError:
-
-    class _NotInstalledHelper:
-        def __init__(self, pkg: str):
-            self.pkg = pkg
-
-        def __getattr__(self, _):
-            raise ImportError(
-                f'This method requires an additional package to be installed. Use `pip install "{self.pkg}"` to install'
-                " additional dependencies."
-            )
-
-    multimodal_cli = _NotInstalledHelper("kani-multimodal-core")
-    _multimodal_available = False
 
 
 async def chat_in_terminal_async(
@@ -65,14 +46,14 @@ async def chat_in_terminal_async(
                 query = query_str = query.strip()
 
                 # multimodal handling
-                if _multimodal_available:
+                if _optional.has_multimodal_core:
                     # find @path/to/file.png parts and replace them with FileImageParts
-                    query = await multimodal_cli.parts_from_cli_query(query)
+                    query = await _optional.multimodal_cli.parts_from_cli_query(query)
 
                 if echo:
                     # IPython
-                    if _multimodal_available and multimodal_cli._is_notebook:
-                        multimodal_cli.display_media_ipython(query, show_text=echo)
+                    if _optional.has_multimodal_core and _optional.multimodal_cli._is_notebook:
+                        _optional.multimodal_cli.display_media_ipython(query, show_text=echo)
                     else:
                         print_width(query_str, width=width, prefix="USER: ")
                 if stopword and query == stopword:
