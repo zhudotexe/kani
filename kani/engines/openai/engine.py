@@ -2,10 +2,12 @@ import functools
 import warnings
 from typing import AsyncIterable
 
+from kani import _optional
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
-from . import function_calling
+from . import function_calling, mm_tokens
+from .model_constants import CONTEXT_SIZES_BY_PREFIX
 from .translation import ChatCompletion, openai_tc_to_kani_tc, translate_functions, translate_messages
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
@@ -18,40 +20,6 @@ except ImportError as e:
         'The OpenAIEngine requires extra dependencies. Please install kani with "pip install kani[openai]".'
     ) from None
 
-# https://platform.openai.com/docs/models
-CONTEXT_SIZES_BY_PREFIX = [
-    ("gpt-3.5-turbo-instruct", 4096),
-    ("gpt-3.5-turbo-0613", 4096),
-    ("gpt-3.5-turbo", 16385),
-    # o1, o3, o4
-    ("o1", 200000),
-    ("o3", 200000),
-    ("o4", 200000),
-    # gpt-4.1
-    ("gpt-4.1", 1047576),
-    # gpt-4o
-    ("gpt-4o", 128000),
-    ("chatgpt-4o", 128000),
-    # gpt-4-turbo models aren't prefixed differently...
-    ("gpt-4-1106", 128000),
-    ("gpt-4-0125", 128000),
-    ("gpt-4-vision", 128000),
-    ("gpt-4-turbo", 128000),
-    ("gpt-4-32k", 32768),
-    ("gpt-4", 8192),
-    # fine-tunes
-    ("ft:gpt-3.5-turbo-instruct", 4096),
-    ("ft:gpt-3.5-turbo-0613", 4096),
-    ("ft:gpt-3.5-turbo", 16385),
-    ("ft:gpt-4-32k", 32768),
-    ("ft:gpt-4", 8192),
-    # completion models
-    ("babbage-002", 16384),
-    ("davinci-002", 16384),
-    # catch-all
-    ("", 2048),  # e.g. aba/babbage/curie/davinci
-]
-
 
 class OpenAIEngine(TokenCached, BaseEngine):
     """Engine for using the OpenAI API.
@@ -62,7 +30,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
     def __init__(
         self,
         api_key: str = None,
-        model="gpt-4o-mini",
+        model="gpt-4.1-nano",
         max_context_size: int = None,
         *,
         organization: str = None,
@@ -130,8 +98,20 @@ class OpenAIEngine(TokenCached, BaseEngine):
             return cached_len
 
         mlen = 7
-        if message.text:
-            mlen += len(self.tokenizer.encode(message.text))
+        # main content
+        if _optional.has_multimodal_core:
+            for part in message.parts:
+                if isinstance(part, _optional.multimodal_core.AudioPart):
+                    mlen += mm_tokens.tokens_from_audio_duration(part.duration, self.model)
+                elif isinstance(part, _optional.multimodal_core.ImagePart):
+                    mlen += mm_tokens.tokens_from_image_size(part.size, self.model)
+                else:
+                    mlen += len(self.tokenizer.encode(str(part)))
+        else:
+            if message.text:
+                mlen += len(self.tokenizer.encode(message.text))
+
+        # additional keys
         if message.name:
             mlen += len(self.tokenizer.encode(message.name))
         if message.tool_calls:
