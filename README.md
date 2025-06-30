@@ -39,14 +39,9 @@ developers alike.
 kani comes with support for the following models out of the box, with a model-agnostic framework to add support for many
 more:
 
-**Hosted Models**
-
 - OpenAI Models
 - Anthropic Models
-
-**Open Source Models**
-
-kani supports _every_ chat model available on Hugging Face through `transformers` or `llama.cpp`!
+- kani supports _every_ chat model available on Hugging Face through `transformers` or `llama.cpp`!
 
 <!--
 In particular, we have reference implementations for the following base models, and their fine-tunes:
@@ -98,6 +93,8 @@ the [model table](https://kani.readthedocs.io/en/latest/engines.html), or use th
 $ pip install "kani[openai]"
 # for Hugging Face models
 $ pip install "kani[huggingface]" torch
+# for multimodal inputs
+$ pip install "kani[multimodal]"
 # or install everything:
 $ pip install "kani[all]"
 ```
@@ -234,6 +231,37 @@ async def stream_with_function_calling():
         print()
         msg = await stream.message()
 ```
+
+## Multimodal Inputs
+
+kani optionally supports multimodal inputs (images, audio, video) for various language models. To use multimodal inputs,
+install the `kani-multimodal-core` extension package or use `pip install "kani[multimodal]"`. See the
+kani-multimodal-core documentation for more info. 
+
+[//]: # (TODO link)
+
+```python
+from kani import Kani
+from kani.engines.openai import OpenAIEngine
+from kani.ext.multimodal_core import ImagePart
+
+engine = OpenAIEngine(model="gpt-4.1-nano")
+ai = Kani(engine)
+
+# notice how the arg is a list of parts rather than a single str!
+msg = await ai.chat_round_str([
+    "Please describe these images:",
+    ImagePart.from_file("path/to/image.png"),
+    await ImagePart.from_url(
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Whitehead%27s_Trogon_0A2A6014.jpg/1024px-Whitehead%27s_Trogon_0A2A6014.jpg"
+    ),
+])
+print(msg)
+
+```
+
+Multimodal handling is deeply integrated with the rest of the kani ecosystem, so you get all the benefits of kani's
+fluent tool usage and automatic context management with minimal development cost!
 
 ## Why kani?
 
