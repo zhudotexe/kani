@@ -3,8 +3,9 @@
 import asyncio
 import logging
 import os
-import sys
 import textwrap
+from concurrent.futures import Future
+from threading import Thread
 from typing import AsyncIterable, overload
 
 from kani import _optional
@@ -50,14 +51,19 @@ async def chat_in_terminal_async(
                     # find @path/to/file.png parts and replace them with FileImageParts
                     query = await _optional.multimodal_cli.parts_from_cli_query(query)
 
-                if echo:
-                    # IPython
-                    if _optional.has_multimodal_core and _optional.multimodal_cli._is_notebook:
-                        _optional.multimodal_cli.display_media_ipython(query, show_text=echo)
-                    else:
-                        print_width(query_str, width=width, prefix="USER: ")
+                # stopword
                 if stopword and query == stopword:
                     break
+
+                # echo & multimodal echo
+                if _optional.has_multimodal_core:
+                    # IPython
+                    if _optional.multimodal_cli._is_notebook:
+                        _optional.multimodal_cli.display_media_ipython(query, show_text=echo)
+                    else:
+                        _optional.multimodal_cli.display_media(query, show_text=echo)
+                elif echo:
+                    print_width(query_str, width=width, prefix="USER: ")
             # print completion(s)
             else:
                 query = None
@@ -154,7 +160,10 @@ def chat_in_terminal(kani: Kani, **kwargs):
                 f" should use `await chat_in_terminal_async(...)` instead or install `nest-asyncio`."
             )
             return
-    asyncio.run(chat_in_terminal_async(kani, **kwargs))
+    try:
+        asyncio.run(chat_in_terminal_async(kani, **kwargs))
+    except KeyboardInterrupt:
+        return
 
 
 # ===== format helpers =====
@@ -253,5 +262,18 @@ async def print_stream(stream: StreamManager, width: int = None, prefix: str = "
 
 async def ainput(string: str) -> str:
     """input(), but async."""
-    print(string, end="", flush=True)
-    return (await asyncio.to_thread(sys.stdin.readline)).rstrip("\n")
+    # doing just .to_thread causes problems when we ^C, so we need to launch our own daemon thread to handle reading
+    # input
+    future = Future()
+    future.set_running_or_notify_cancel()
+
+    def daemon():
+        try:
+            result = input(string)
+        except Exception as e:
+            future.set_exception(e)
+        else:
+            future.set_result(result)
+
+    Thread(target=daemon, daemon=True).start()
+    return await asyncio.wrap_future(future)
