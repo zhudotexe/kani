@@ -238,7 +238,7 @@ kani optionally supports multimodal inputs (images, audio, video) for various la
 install the `kani-multimodal-core` extension package or use `pip install "kani[multimodal]"`. See the
 kani-multimodal-core documentation for more info. 
 
-[//]: # (TODO link)
+[Read the kani-multimodal-core docs!](https://kani-multimodal-core.readthedocs.io)
 
 ```python
 from kani import Kani

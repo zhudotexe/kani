@@ -15,9 +15,16 @@ Community Extensions
 --------------------
 If you've made a cool extension, add it to this list with a PR!
 
+* **kani-multimodal-core**: Adds support for multimodal inputs: images, audio, and video.
+
+  * ``pip install kani-multimodal-core``
+  * `GitHub (kani-multimodal-core) <https://github.com/zhudotexe/kani-multimodal-core>`_
+  * `Docs (kani-multimodal-core) <https://kani-multimodal-core.readthedocs.io/en/latest/>`_
+
 * **kani-ratelimits**: Adds a wrapper engine to enforce request-per-minute (RPM), token-per-minute (TPM), and/or
   max-concurrency ratelimits before making requests to an underlying engine.
 
+  * ``pip install kani-ratelimits``
   * `GitHub (kani-ratelimits) <https://github.com/zhudotexe/kani-ratelimits>`_
 
 * **kani-ext-vllm**: Adds support for loading models using vLLM. Supports chat templates - should be mostly a drop-in
@@ -25,10 +32,9 @@ If you've made a cool extension, add it to this list with a PR!
 
   * `GitHub (kani-ext-vllm) <https://github.com/zhudotexe/kani-ext-vllm>`_
 
-* **kani-vision**: Adds support for multimodal vision-language models, like GPT-4V and LLaVA.
+* **kani-ext-realtime**: Adds support for OpenAI's Realtime API and full-duplex voice models with Kani.
 
-  * `GitHub (kani-vision) <https://github.com/zhudotexe/kani-vision>`_
-  * `Docs (kani-vision) <https://kani-vision.readthedocs.io/en/latest/>`_
+  * `GitHub (kani-ext-realtime) <https://github.com/zhudotexe/kani-ext-realtime>`_
 
 Design Considerations
 ---------------------
@@ -47,7 +53,7 @@ your engine *wrap* another engine:
 
     """An example showing how to wrap another kani engine."""
 
-    from kani.engines import BaseEngine, WrapperEngine
+    from kani.engines import WrapperEngine
 
     # subclassing WrapperEngine automatically implements passthrough of untouched attributes
     # to the wrapped engine!
