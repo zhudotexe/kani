@@ -154,6 +154,8 @@ class ChatCompletion(BaseCompletion):
         self.openai_completion = openai_completion
         """The underlying OpenAI ChatCompletion."""
         self._message = openai_cm_to_kani_cm(openai_completion.choices[0].message)
+        self._message.extra["openai_completion"] = openai_completion
+        self._message.extra["openai_usage"] = openai_completion.usage
 
     @property
     def message(self):

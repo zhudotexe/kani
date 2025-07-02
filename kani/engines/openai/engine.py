@@ -22,9 +22,18 @@ except ImportError as e:
 
 
 class OpenAIEngine(TokenCached, BaseEngine):
-    """Engine for using the OpenAI API.
+    """
+    Engine for using the OpenAI API.
 
     This engine supports all chat-based models and fine-tunes.
+
+    **Multimodal support**: images, audio.
+
+    **Message Extras**
+
+    * ``"openai_completion"``: The ChatCompletion (raw response) returned by the OpenAI servers. Non-streaming responses
+      only.
+    * ``"openai_usage"``: The usage data (raw response) returned by the OpenAI servers.
     """
 
     def __init__(
@@ -209,6 +218,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
             self.set_cached_message_len(msg, usage.completion_tokens)
             prompt_tokens = usage.prompt_tokens
             completion_tokens = usage.completion_tokens
+            msg.extra["openai_usage"] = usage
         else:
             prompt_tokens = completion_tokens = None
         yield Completion(message=msg, prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
