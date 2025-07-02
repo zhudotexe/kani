@@ -64,6 +64,7 @@ autodoc_member_order = "bysource"
 # sphinx.ext.intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
+    "kani.ext.multimodal_core": ("https://kani-multimodal-core.readthedocs.org/en/latest", None),
 }
 
 # sphinxext.opengraph

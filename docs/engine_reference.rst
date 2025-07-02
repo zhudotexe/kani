@@ -3,24 +3,6 @@ Engine Reference
 
 .. include:: shared/engine_table.rst
 
-Base
-----
-.. autoclass:: kani.engines.BaseEngine
-    :members:
-
-.. autoclass:: kani.engines.Completion
-    :members:
-
-.. autoclass:: kani.engines.WrapperEngine
-
-    .. autoattribute:: engine
-
-.. autoclass:: kani.engines.base.BaseCompletion
-    :members:
-
-.. autoclass:: kani.engines.httpclient.BaseClient
-    :members:
-
 OpenAI
 ------
 .. autoclass:: kani.engines.openai.OpenAIEngine
@@ -29,6 +11,7 @@ Anthropic
 ---------
 .. autoclass:: kani.engines.anthropic.AnthropicEngine
 
+.. autoclass:: kani.engines.anthropic.AnthropicPDFFilePart
 
 Hugging Face
 ------------
@@ -47,4 +30,22 @@ Hugging Face
 llama.cpp
 ---------
 .. autoclass:: kani.engines.llamacpp.LlamaCppEngine
+    :members:
+
+Base
+----
+.. autoclass:: kani.engines.BaseEngine
+    :members:
+
+.. autoclass:: kani.engines.Completion
+    :members:
+
+.. autoclass:: kani.engines.WrapperEngine
+
+    .. autoattribute:: engine
+
+.. autoclass:: kani.engines.base.BaseCompletion
+    :members:
+
+.. autoclass:: kani.engines.httpclient.BaseClient
     :members:

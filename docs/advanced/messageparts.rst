@@ -15,6 +15,12 @@ chain of thought to be visible in its output. In the example below, we'll define
 this data, and have our engine use this when building the prompt. This may be a little bit contrived, but hopefully
 it demonstrates how to use the MessagePart interface.
 
+.. note::
+
+    MessageParts are commonly used for multimodal inputs: for example, both the :class:`.OpenAIEngine` and
+    :class:`.AnthropicEngine` support image inputs using ``kani-multimodal-core``\ 's
+    :class:`~kani.ext.multimodal_core.ImagePart`.
+
 Defining a MessagePart
 ----------------------
 To define a :class:`.MessagePart`, you should create a new class that inherits from :class:`.MessagePart`.
@@ -71,13 +77,9 @@ with a string content composed of parts in ``translate_message``, then use that 
 .. code-block:: python
 
     from kani import AIFunction, ChatMessage, MessagePart
-    from kani.engines.base import BaseEngine, Completion
+    from kani.engines import WrapperEngine, Completion
 
-    class ChainOfThoughtEngine(BaseEngine):
-        def __init__(self, engine: BaseEngine):
-            self.engine = engine
-            self.max_context_size = engine.max_context_size
-
+    class ChainOfThoughtEngine(WrapperEngine):
         @staticmethod
         def translate_message(message: ChatMessage) -> ChatMessage:
             """Translate a input message into a simple string-only message to pass to the underlying engine."""
@@ -92,9 +94,6 @@ with a string content composed of parts in ``translate_message``, then use that 
             return message.copy_with(content=content.strip())
 
         # === BaseEngine interface ===
-        def message_len(self, message: ChatMessage) -> int:
-            return self.engine.message_len(self.translate_message(message))
-
         async def predict(
             self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
         ) -> Completion:
@@ -121,13 +120,6 @@ with a string content composed of parts in ``translate_message``, then use that 
                 prompt_tokens=result.prompt_tokens,
                 completion_tokens=result.completion_tokens,
             )
-
-        # additional overrides that pass-through to underlying engine
-        def function_token_reserve(self, functions):
-            return self.engine.function_token_reserve(functions)
-
-        async def close(self):
-            return await self.engine.close()
 
 Now, we can use this engine by passing an underlying engine to it, prompt our model to follow our chain-of-thought
 format, and see how it works!
