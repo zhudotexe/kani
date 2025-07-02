@@ -8,15 +8,17 @@ from typing import AsyncIterable
 
 from kani import _optional
 from kani.ai_function import AIFunction
-from kani.exceptions import KaniException, MissingModelDependencies
+from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
 from . import mm_tokens, model_constants
+from .parts import AnthropicPDFFilePart, AnthropicUnknownPart
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
 
 try:
-    from anthropic import AI_PROMPT, HUMAN_PROMPT, AsyncAnthropic
+    from anthropic import AsyncAnthropic
+    from anthropic.types import Message
 except ImportError as e:
     raise MissingModelDependencies(
         'The AnthropicEngine requires extra dependencies. Please install kani with "pip install kani[anthropic]".'
@@ -28,6 +30,62 @@ log = logging.getLogger(__name__)
 
 # ==== pipe ====
 def content_transform(msg: ChatMessage):
+    content = []
+
+    for part in msg.parts:
+        # --- multimodal ---
+        if _optional.has_multimodal_core and isinstance(part, _optional.multimodal_core.ImagePart):
+            # USER messages with images should look like:
+            # {
+            #     "role": "user",
+            #     "content": [
+            #         {
+            #             "type": "image",
+            #             "source": {
+            #                 "type": "base64",
+            #                 "media_type": image1_media_type,
+            #                 "data": image1_data,
+            #             },
+            #         },
+            #         {
+            #             "type": "text",
+            #             "text": "Describe this image."
+            #         }
+            #     ],
+            # }
+            media_type = "image/png"
+            data = part.as_b64(format="png")
+            content.append({"type": "image", "source": {"type": "base64", "media_type": media_type, "data": data}})
+        # --- PDF ---
+        elif isinstance(part, AnthropicPDFFilePart):
+            # {
+            #     "role": "user",
+            #     "content": [
+            #         {
+            #             "type": "document",
+            #             "source": {
+            #                 "type": "base64",
+            #                 "media_type": "application/pdf",
+            #                 "data": pdf_data
+            #             }
+            #         },
+            #         {
+            #             "type": "text",
+            #             "text": "What are the key findings in this document?"
+            #         }
+            #     ]
+            # }
+            media_type = "application/pdf"
+            data = part.as_b64()
+            content.append({"type": "document", "source": {"type": "base64", "media_type": media_type, "data": data}})
+        # --- AnthropicUnknownPart ----
+        elif isinstance(part, AnthropicUnknownPart):
+            # e.g. web search results, computer use, other server tools
+            content.append(part.data)
+        # default
+        else:
+            content.append({"type": "text", "text": str(part)})
+
     # FUNCTION messages should look like:
     # {
     #   "role": "user",
@@ -46,7 +104,7 @@ def content_transform(msg: ChatMessage):
         if msg.is_tool_call_error:
             result["is_error"] = True
 
-        return [result]
+        content.append(result)
 
     # ASSISTANT messages with tool calls should look like:
     # {
@@ -65,42 +123,10 @@ def content_transform(msg: ChatMessage):
     #   ]
     # }
     if msg.role == ChatRole.ASSISTANT and msg.tool_calls:
-        content = [{"type": "text", "text": str(part)} for part in msg.parts]
         for tc in msg.tool_calls:
             content.append({"type": "tool_use", "id": tc.id, "name": tc.function.name, "input": tc.function.kwargs})
-        return content
 
-    # --- multimodal ---
-    if _optional.has_multimodal_core:
-        # USER messages with images should look like:
-        # {
-        #     "role": "user",
-        #     "content": [
-        #         {
-        #             "type": "image",
-        #             "source": {
-        #                 "type": "base64",
-        #                 "media_type": image1_media_type,
-        #                 "data": image1_data,
-        #             },
-        #         },
-        #         {
-        #             "type": "text",
-        #             "text": "Describe this image."
-        #         }
-        #     ],
-        # }
-        out = []
-        for part in msg.parts:
-            if isinstance(part, _optional.multimodal_core.ImagePart):
-                media_type = "image/png"
-                data = part.as_b64(format="png")
-                out.append({"type": "image", "source": {"type": "base64", "media_type": media_type, "data": data}})
-            else:
-                out.append({"type": "text", "text": str(part)})
-        return out
-
-    return msg.text
+    return content
 
 
 # assumes system messages are plucked before calling
@@ -115,12 +141,19 @@ CLAUDE_PIPELINE = (
 
 
 class AnthropicEngine(TokenCached, BaseEngine):
-    """Engine for using the Anthropic API.
+    """
+    Engine for using the Anthropic API.
 
     This engine supports all Claude models. See https://docs.anthropic.com/claude/docs/getting-access-to-claude for
     information on accessing the Claude API.
 
     See https://docs.anthropic.com/en/docs/about-claude/models/overview for a list of available models.
+
+    **Multimodal support**: images.
+
+    **Additional capabilities**: PDF document processing. Use :class:`.AnthropicPDFFilePart`.
+
+    **Message Extras**: ``"anthropic_message"``: The Message (raw response) returned by the Anthropic servers.
     """
 
     # because we have to estimate tokens wildly and the ctx is so long we'll just reserve a bunch
@@ -269,27 +302,30 @@ class AnthropicEngine(TokenCached, BaseEngine):
 
         return kwargs, prompt_msgs
 
-    def _translate_anthropic_message(self, message):
+    def _translate_anthropic_message(self, message: Message):
         tool_calls = []
-        text_parts = []
+        parts = []
         for part in message.content:
             if part.type == "text":
-                text_parts.append(part.text)
+                parts.append(part.text)
             elif part.type == "tool_use":
                 fc = FunctionCall(name=part.name, arguments=json.dumps(part.input))
                 tc = ToolCall(id=part.id, type="function", function=fc)
                 tool_calls.append(tc)
             else:
-                raise KaniException(
-                    f"The engine returned an unknown part: {part.type}. Please report this as an issue on GitHub with"
-                    " instructions on how to reproduce this issue."
+                parts.append(AnthropicUnknownPart(type=part.type, data=part.model_dump()))
+                warnings.warn(
+                    f"The engine returned an unknown part: {part.type}. This has been saved as an AnthropicUnknownPart,"
+                    " but will not stringify to a natural language prompt for other language models."
                 )
-        content = text_parts[0] if len(text_parts) == 1 else text_parts
+        content = parts[0] if len(parts) == 1 else parts
         kani_msg = ChatMessage.assistant(content, tool_calls=tool_calls or None)
 
         # also cache the message token len
         self.set_cached_message_len(kani_msg, message.usage.output_tokens)
 
+        # set the extra
+        kani_msg.extra["anthropic_message"] = message
         return Completion(
             message=kani_msg,
             prompt_tokens=message.usage.input_tokens,
