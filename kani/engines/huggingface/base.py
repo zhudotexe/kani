@@ -19,15 +19,22 @@ except ImportError:
         "You will also need to install PyTorch manually."
     ) from None
 
+has_cuda = torch.backends.cuda.is_built()
+has_mps = torch.backends.mps.is_built()
+
 try:
     import accelerate
 
     has_accelerate = True
 except ImportError:
+    if has_cuda:
+        warnings.warn(
+            "A PyTorch install with CUDA was detected on this system, but `accelerate` is not installed. Run `pip"
+            " install accelerate` for automatic GPU mapping of Hugging Face models."
+        )
     has_accelerate = False
 
 log = logging.getLogger(__name__)
-has_cuda = torch.backends.cuda.is_built()
 
 
 class HuggingEngine(BaseEngine):
@@ -72,7 +79,7 @@ class HuggingEngine(BaseEngine):
         :param prompt_pipeline: The pipeline to translate a list of kani ChatMessages into the model-specific chat
             format (see :class:`.PromptPipeline`). If not passed, uses the Hugging Face chat template if available.
         :param token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
-        :param device: The hardware device to use. If not specified, uses CUDA if available; otherwise uses CPU.
+        :param device: The hardware device to use. If not specified, uses CUDA or MPS if available; otherwise uses CPU.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
         :param model_cls: Advanced use cases: The HF model class to use. Defaults to ``AutoModelForCausalLM``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
@@ -107,7 +114,13 @@ class HuggingEngine(BaseEngine):
 
         # ensure model is on correct device
         if device is None:
-            device = "cuda" if has_cuda else "cpu"
+            if has_cuda:
+                device = "cuda"
+            elif has_mps:
+                device = "mps"
+            else:
+                device = "cpu"
+            log.info(f"Inferred device for model weights: {device}. Set `device=...` if this is incorrect.")
         self.device = device
         if self.model.device.type != self.device:
             self.model.to(device)
