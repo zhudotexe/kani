@@ -234,7 +234,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
                 else:
                     chars += len(str(part))
         else:
-            chars = len(message.text)
+            chars += len(message.text)
 
         # tools
         if message.tool_calls:

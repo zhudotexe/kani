@@ -15,6 +15,7 @@ class AnthropicPDFFilePart(MessagePart):
     """
 
     # TODO: CLI register @handler
+    # todo: maybe refactor into a generic binaryfilepart?
 
     data: bytes
 
