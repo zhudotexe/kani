@@ -29,9 +29,10 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "kani[multimodal,huggingface,llama,cpp,openai,anthropic]",
+    "kani[multimodal,huggingface,llama,cpp,openai,anthropic,google]",
 ]
 
+# extensions
 multimodal = [
     "kani-multimodal-core",
 ]
@@ -58,6 +59,10 @@ openai = [
 
 anthropic = [
     "anthropic>=0.27.0,<1.0.0",
+]
+
+google = [
+    "google-genai>=1.0.0,<2.0.0",
 ]
 
 [project.urls]

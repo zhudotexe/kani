@@ -17,6 +17,11 @@ engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4.1-nano")
 from kani.engines.anthropic import AnthropicEngine
 engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-sonnet-4-0")
 
+# ==== Google (Gemini) ====
+# see https://ai.google.dev/gemini-api/docs/models for a list of model IDs
+from kani.engines.google import GoogleAIEngine
+engine = GoogleAIEngine(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-2.5-flash")
+
 # ========== Hugging Face ==========
 # ---- Any Model (Chat Templates) ----
 from kani.engines.huggingface import HuggingEngine

@@ -39,9 +39,11 @@ developers alike.
 kani comes with support for the following models out of the box, with a model-agnostic framework to add support for many
 more:
 
-- OpenAI Models
-- Anthropic Models
-- kani supports _every_ chat model available on Hugging Face through `transformers` or `llama.cpp`!
+- OpenAI Models (`pip install "kani[openai]"`)
+- Anthropic Models (`pip install "kani[anthropic]"`)
+- Google AI Models (`pip install "kani[google]"`)
+- and _every_ chat model available on Hugging Face through `transformers` or `llama.cpp`! 
+  (`pip install "kani[huggingface]"`)
 
 <!--
 In particular, we have reference implementations for the following base models, and their fine-tunes:

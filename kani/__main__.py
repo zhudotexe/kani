@@ -6,12 +6,14 @@ python -m kani engine-id/model-id
 Valid engine IDs:
 * openai (aliases: oai)
 * anthropic (aliases: ant, claude)
+* google (aliases: g, gemini)
 * huggingface (aliases: hf)
 
 Examples:
 python -m kani oai/gpt-4.1-nano
 python -m kani hf/meta-llama/Meta-Llama-3-8B-Instruct
 python -m kani ant/claude-sonnet-4-0
+python -m kani g/gemini-2.5-flash
 """
 
 import sys
@@ -32,6 +34,12 @@ def chat_anthropic(model_id: str):
     return AnthropicEngine(model=model_id)
 
 
+def chat_google(model_id: str):
+    from kani.engines.google import GoogleAIEngine
+
+    return GoogleAIEngine(model=model_id)
+
+
 def chat_huggingface(model_id: str):
     from kani.engines.huggingface import HuggingEngine
 
@@ -46,6 +54,10 @@ PROVIDER_MAP = {
     "anthropic": chat_anthropic,
     "ant": chat_anthropic,
     "claude": chat_anthropic,
+    # google
+    "google": chat_google,
+    "g": chat_google,
+    "gemini": chat_google,
     # huggingface
     "huggingface": chat_huggingface,
     "hf": chat_huggingface,
@@ -88,7 +100,8 @@ def chat(arg: str):
             "Examples:\n"
             "python -m kani openai/gpt-4.1-nano\n"
             "python -m kani huggingface/meta-llama/Meta-Llama-3-8B-Instruct\n"
-            "python -m kani anthropic/claude-sonnet-4-0"
+            "python -m kani anthropic/claude-sonnet-4-0\n"
+            "python -m kani google/gemini-2.5-flash"
         )
         sys.exit(1)
 
