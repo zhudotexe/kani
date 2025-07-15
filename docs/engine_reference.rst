@@ -11,8 +11,6 @@ Anthropic
 ---------
 .. autoclass:: kani.engines.anthropic.AnthropicEngine
 
-.. autoclass:: kani.engines.anthropic.AnthropicPDFFilePart
-
 Hugging Face
 ------------
 .. autoclass:: kani.engines.huggingface.HuggingEngine
