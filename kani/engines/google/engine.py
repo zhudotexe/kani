@@ -138,9 +138,8 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                     tokens += mm_tokens.tokens_from_image_size(part.size, self.model)
                 elif isinstance(part, _optional.multimodal_core.AudioPart):
                     tokens += mm_tokens.tokens_from_audio_duration(part.duration, self.model)
-                # todo
-                # elif isinstance(part, _optional.multimodal_core.VideoPart):
-                #     tokens += mm_tokens.tokens_from_video(part.duration, self.model)
+                elif isinstance(part, _optional.multimodal_core.VideoPart):
+                    tokens += mm_tokens.tokens_from_video_duration(part.duration, self.model)
                 else:
                     chars += len(str(part))
         else:
@@ -152,7 +151,7 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                 chars += len(tc.function.name) + len(tc.function.arguments)
 
         # Google documents 4 bytes per token, so we do a conservative 3.8 char/tok
-        return int(chars / 3.8)
+        return int(chars / 3.8) + tokens
 
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
         if not functions:
@@ -248,7 +247,7 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                     (
                         _optional.multimodal_core.ImagePart,
                         _optional.multimodal_core.AudioPart,
-                        # _optional.multimodal_core.VideoPart,
+                        _optional.multimodal_core.VideoPart,
                     ),
                 ):
                     # image
@@ -259,11 +258,10 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                     elif isinstance(part, _optional.multimodal_core.AudioPart):
                         media_type = "audio/wav"
                         data = part.as_wav_bytes()
-                    # video todo
-                    # elif isinstance(part, _optional.multimodal_core.ImagePart):
-                    #     media_type = "image/png"
-                    #     data = part.as_b64(format="png")
-                    #     content.append(genai_types.Part.from_bytes(data=data, mime_type=media_type))
+                    # video
+                    elif isinstance(part, _optional.multimodal_core.VideoPart):
+                        media_type = part.mime
+                        data = part.as_bytes()
                     else:
                         raise ValueError(
                             f"Invalid multimodal message part: {part!r}. This should never happen. Please open a bug"
