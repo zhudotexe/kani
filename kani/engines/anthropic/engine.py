@@ -12,7 +12,7 @@ from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
 from . import mm_tokens, model_constants
-from .parts import AnthropicPDFFilePart, AnthropicUnknownPart
+from .parts import AnthropicUnknownPart
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
 
@@ -57,7 +57,11 @@ def content_transform(msg: ChatMessage):
             data = part.as_b64(format="png")
             content.append({"type": "image", "source": {"type": "base64", "media_type": media_type, "data": data}})
         # --- PDF ---
-        elif isinstance(part, AnthropicPDFFilePart):
+        elif (
+            _optional.has_multimodal_core
+            and isinstance(part, _optional.multimodal_core.BinaryFilePart)
+            and part.mime == "application/pdf"
+        ):
             # {
             #     "role": "user",
             #     "content": [
@@ -75,9 +79,8 @@ def content_transform(msg: ChatMessage):
             #         }
             #     ]
             # }
-            media_type = "application/pdf"
             data = part.as_b64()
-            content.append({"type": "document", "source": {"type": "base64", "media_type": media_type, "data": data}})
+            content.append({"type": "document", "source": {"type": "base64", "media_type": part.mime, "data": data}})
         # --- AnthropicUnknownPart ----
         elif isinstance(part, AnthropicUnknownPart):
             # e.g. web search results, computer use, other server tools
@@ -151,7 +154,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
 
     **Multimodal support**: images.
 
-    **Additional capabilities**: PDF document processing. Use :class:`.AnthropicPDFFilePart`.
+    **Additional capabilities**: PDF document processing. Use :class:`kani.ext.multimodal_core.BinaryFilePart`.
 
     **Message Extras**: ``"anthropic_message"``: The Message (raw response) returned by the Anthropic servers.
     """
