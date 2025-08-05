@@ -247,7 +247,7 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                     (
                         _optional.multimodal_core.ImagePart,
                         _optional.multimodal_core.AudioPart,
-                        _optional.multimodal_core.VideoPart,
+                        _optional.multimodal_core.BinaryFilePart,
                     ),
                 ):
                     # image
@@ -258,8 +258,8 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                     elif isinstance(part, _optional.multimodal_core.AudioPart):
                         media_type = "audio/wav"
                         data = part.as_wav_bytes()
-                    # video
-                    elif isinstance(part, _optional.multimodal_core.VideoPart):
+                    # video/arbitrary binary
+                    elif isinstance(part, _optional.multimodal_core.BinaryFilePart):
                         media_type = part.mime
                         data = part.as_bytes()
                     else:
