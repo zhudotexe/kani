@@ -1,7 +1,7 @@
 """
 Use Kani to chat with an LLM in your terminal.
 
-python -m kani engine-id/model-id
+python -m kani <engine-id>:<model-id>
 
 Valid engine IDs:
 * openai (aliases: oai)
@@ -10,10 +10,10 @@ Valid engine IDs:
 * huggingface (aliases: hf)
 
 Examples:
-python -m kani oai/gpt-4.1-nano
-python -m kani hf/meta-llama/Meta-Llama-3-8B-Instruct
-python -m kani ant/claude-sonnet-4-0
-python -m kani g/gemini-2.5-flash
+python -m kani oai:gpt-4.1-nano
+python -m kani hf:meta-llama/Meta-Llama-3-8B-Instruct
+python -m kani ant:claude-sonnet-4-0
+python -m kani g:gemini-2.5-flash
 """
 
 import sys
@@ -96,16 +96,16 @@ def chat(arg: str):
     if "/" not in arg:
         # print usage
         print(
-            "CLI Usage: python -m kani <provider>/<model_id>\n\n"
+            "CLI Usage: python -m kani <provider>:<model_id>\n\n"
             "Examples:\n"
-            "python -m kani openai/gpt-4.1-nano\n"
-            "python -m kani huggingface/meta-llama/Meta-Llama-3-8B-Instruct\n"
-            "python -m kani anthropic/claude-sonnet-4-0\n"
-            "python -m kani google/gemini-2.5-flash"
+            "python -m kani openai:gpt-4.1-nano\n"
+            "python -m kani huggingface:meta-llama/Meta-Llama-3-8B-Instruct\n"
+            "python -m kani anthropic:claude-sonnet-4-0\n"
+            "python -m kani google:gemini-2.5-flash"
         )
         sys.exit(1)
 
-    provider, model_id = arg.split("/", 1)
+    provider, model_id = arg.split(":", 1)
     if provider not in PROVIDER_MAP:
         print(f"Invalid model provider: {provider!r}. Valid options: {list(PROVIDER_MAP)}")
         sys.exit(1)
