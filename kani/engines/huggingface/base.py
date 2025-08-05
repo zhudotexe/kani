@@ -243,14 +243,10 @@ class HuggingEngine(BaseEngine):
         :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
-        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode(). Defaults to
-            ``dict(skip_special_tokens=True)``.
+        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode().
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
-        if decode_kwargs is None:
-            decode_kwargs = dict(skip_special_tokens=True)
-
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
 
@@ -258,7 +254,7 @@ class HuggingEngine(BaseEngine):
         output = self.model.generate(input_toks, **hyperparams)
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
-        content = self.tokenizer.decode(output[0][input_len:], **decode_kwargs).strip()
+        content = self.tokenizer.decode(output[0][input_len:-1], **decode_kwargs).strip()
         output_len = len(output[0]) - (input_len + 1)
         return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=output_len)
 
@@ -278,14 +274,10 @@ class HuggingEngine(BaseEngine):
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
         :param streamer_timeout: The maximum number of seconds to wait for the next token when streaming.
-        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode(). Defaults to
-            ``dict(skip_special_tokens=True)``.
+        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode().
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
-        if decode_kwargs is None:
-            decode_kwargs = dict(skip_special_tokens=True)
-
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=streamer_timeout, **decode_kwargs)
@@ -303,6 +295,10 @@ class HuggingEngine(BaseEngine):
         # then wait for tokens from the task
         yielded_tokens = []
         for token in streamer:
+            if token.endswith(self.tokenizer.eos_token):
+                token = token[:-len(self.tokenizer.eos_token)]
+                if not token:
+                    continue
             yield token
             yielded_tokens.append(token)
 

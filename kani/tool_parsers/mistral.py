@@ -53,14 +53,11 @@ class MistralToolCallParser(BaseToolCallParser):
         return content[: tool_json.start()], tool_calls
 
     async def predict(self, messages, functions=None, **hyperparams):
-        hyperparams.setdefault("decode_kwargs", dict(skip_special_tokens=False))
         completion = await super().predict(messages, functions, **hyperparams)
         completion.message.content = completion.message.content.removesuffix(self.tool_call_end_token).strip()
         return completion
 
     async def stream(self, messages, functions=None, **hyperparams):
-        hyperparams.setdefault("decode_kwargs", dict(skip_special_tokens=False))
-
         # consume from the inner iterator, yielding as normal until we see a tool call or a completion
         async for elem in super().stream(messages, functions, **hyperparams):
             if isinstance(elem, BaseCompletion):
