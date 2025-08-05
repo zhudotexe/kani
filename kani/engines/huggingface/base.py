@@ -247,6 +247,9 @@ class HuggingEngine(BaseEngine):
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
+        if decode_kwargs is None:
+            decode_kwargs = {}
+
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
 
@@ -278,6 +281,9 @@ class HuggingEngine(BaseEngine):
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
+        if decode_kwargs is None:
+            decode_kwargs = {}
+
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=streamer_timeout, **decode_kwargs)
