@@ -1,5 +1,5 @@
 from kani.exceptions import MissingModelDependencies
-from kani.prompts.impl import LLAMA2_PIPELINE
+from kani.model_specific.llama2 import LLAMA2_PIPELINE
 from .base import HuggingEngine
 
 try:

@@ -144,8 +144,8 @@ class LlamaCppEngine(BaseEngine):
                 "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
                 " uses a chat template (or is a quantization of a model with a chat template), you can use the"
                 " following:\n"
-                "from kani.engines.huggingface import ChatTemplatePromptPipeline\n"
-                "pipeline = ChatTemplatePromptPipeline.from_pretrained(base_model_id)\n"
+                "from kani.model_specific import prompt_pipeline_for_hf_model\n"
+                "pipeline = prompt_pipeline_for_hf_model(base_model_id)\n"
                 "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
             )
         prompt = self.pipeline.execute([], functions, for_measurement=True)
@@ -180,8 +180,8 @@ class LlamaCppEngine(BaseEngine):
                 "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
                 " uses a chat template (or is a quantization of a model with a chat template), you can use the"
                 " following:\n"
-                "from kani.engines.huggingface import ChatTemplatePromptPipeline\n"
-                "pipeline = ChatTemplatePromptPipeline.from_pretrained(base_model_id)\n"
+                "from kani.model_specific import prompt_pipeline_for_hf_model\n"
+                "pipeline = prompt_pipeline_for_hf_model(base_model_id)\n"
                 "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
             )
         prompt = self.pipeline(messages, functions)

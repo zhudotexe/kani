@@ -13,7 +13,9 @@ from transformers import AutoTokenizer
 
 from kani import ChatMessage, PromptPipeline
 from kani.engines.huggingface.chat_template_pipeline import ChatTemplatePromptPipeline
-from kani.prompts.impl import GEMMA_PIPELINE, LLAMA2_PIPELINE, LLAMA3_PIPELINE, MISTRAL_V3_PIPELINE
+from kani.model_specific.llama2 import LLAMA2_PIPELINE
+from kani.model_specific.llama3 import LLAMA3_PIPELINE
+from kani.model_specific.mistral import MISTRAL_V3_PIPELINE
 
 # model IDs to always test the chat templates of
 forced_model_ids = [
@@ -58,7 +60,7 @@ def test_chat_templates(chat_template_model_id: str):
         ("meta-llama/Meta-Llama-3-8B-Instruct", LLAMA3_PIPELINE),
         ("mistralai/Mistral-7B-Instruct-v0.3", MISTRAL_V3_PIPELINE),
         ("meta-llama/Llama-2-7b-chat-hf", LLAMA2_PIPELINE),
-        ("google/gemma-1.1-7b-it", GEMMA_PIPELINE),
+        # ("google/gemma-1.1-7b-it", GEMMA_PIPELINE),
         # ("lmsys/vicuna-7b-v1.3", VICUNA_PIPELINE),  # no chat template
     ],
 )

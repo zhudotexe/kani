@@ -1,8 +1,9 @@
 import re
 
-from kani.models import MessagePart, ToolCall
+from kani.engines.huggingface.chat_template_pipeline import ChatTemplatePromptPipeline, hf_tool_use_keys
+from kani.models import FunctionCall, MessagePart, ToolCall
+from kani.parts import ReasoningPart
 from .base import BaseToolCallParser
-from .. import FunctionCall, ReasoningPart
 
 SPECIAL_TOKEN_REGEX = re.compile(r"<\|(\w+)\|>")
 TO_REGEX = re.compile(rf"to=([^\s<]+)")
@@ -16,6 +17,25 @@ ASST_MSG_REGEX = re.compile(
 )
 
 
+# ===== PROMPT PIPELINE =====
+# TODO maybe merge this into the base chat template pipeline if more people adopt this?
+# if so we can remove the pipeline from model_specific.__init__
+def _gptoss_chat_template_keys(message):
+    """Sets the thinking key based on any ReasoningPart's in the message."""
+    reasoning_parts = [p for p in message.parts if isinstance(p, ReasoningPart)]
+    reasoning = "\n".join(r.content for r in reasoning_parts)
+    keys = hf_tool_use_keys(message)
+    if reasoning:
+        keys["thinking"] = reasoning
+    return keys
+
+
+def build_gptoss_prompt_pipeline(tokenizer):
+    """We just extend the chat template pipeline with a bit of extra code to make sure the thinking key is set"""
+    return ChatTemplatePromptPipeline(tokenizer).conversation_dict(additional_keys=_gptoss_chat_template_keys)
+
+
+# ===== OUTPUT PARSER =====
 class GPTOSSParser(BaseToolCallParser):
     r"""
     Automatically handles the parsing of GPT-OSS reasoning segments and tool calls.
@@ -54,14 +74,9 @@ class GPTOSSParser(BaseToolCallParser):
 
         return parts, tcs
 
-    async def predict(self, messages, functions=None, **hyperparams):
-        translated_messages = self.translate_messages(messages)
-        return await super().predict(translated_messages, functions, **hyperparams)
-
     async def stream(self, messages, functions=None, **hyperparams):
         state = _GPTOSSStreamState(show_reasoning=self.show_reasoning)
-
-        async for elem in super().stream(translated_messages, functions, **hyperparams):
+        async for elem in super().stream(messages, functions, **hyperparams):
             if isinstance(elem, str):
                 to_yield = state.feed(elem)
                 if to_yield:

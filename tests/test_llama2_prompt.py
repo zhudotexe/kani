@@ -1,7 +1,7 @@
 """Tests to ensure the LLaMA v2 prompt is correct."""
 
 from kani import ChatMessage
-from kani.prompts.impl import LLAMA2_PIPELINE
+from kani.model_specific.llama2 import LLAMA2_PIPELINE
 
 
 def prompt_str(messages: list[ChatMessage]) -> str:

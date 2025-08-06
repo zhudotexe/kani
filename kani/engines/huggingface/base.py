@@ -7,8 +7,8 @@ from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
-from .chat_template_pipeline import ChatTemplatePromptPipeline
 from ..base import BaseCompletion, BaseEngine, Completion
+from ... import model_specific
 
 try:
     import torch
@@ -102,7 +102,8 @@ class HuggingEngine(BaseEngine):
 
         # load the pipeline
         if prompt_pipeline is None:
-            prompt_pipeline = ChatTemplatePromptPipeline(self.tokenizer)
+            # try and load a manual impl, or default to chat template if not available
+            prompt_pipeline = model_specific.prompt_pipeline_for_hf_model(model_id, self.tokenizer)
         self.pipeline = prompt_pipeline
 
         # ensure model is on correct device
@@ -302,7 +303,7 @@ class HuggingEngine(BaseEngine):
         yielded_tokens = []
         for token in streamer:
             if token.endswith(self.tokenizer.eos_token):
-                token = token[:-len(self.tokenizer.eos_token)]
+                token = token[: -len(self.tokenizer.eos_token)]
                 if not token:
                     continue
             yield token

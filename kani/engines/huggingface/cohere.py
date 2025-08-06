@@ -5,8 +5,8 @@ from threading import Thread
 
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
+from kani.model_specific.cohere import CommandRMixin, function_prompt, tool_call_formatter
 from kani.models import ChatMessage, ChatRole
-from kani.prompts.impl.cohere import CommandRMixin, function_prompt, tool_call_formatter
 from .base import HuggingEngine
 from ..base import Completion
 
@@ -52,7 +52,7 @@ class CommandREngine(CommandRMixin, HuggingEngine):
     When generating the result of a tool call turn, this implementation does NOT request the model to generate
     citations by default (unlike the Cohere API). You can enable citations by setting the ``rag_prompt_instructions``
     parameter to ``DEFAULT_RAG_INSTRUCTIONS_ACC`` or ``DEFAULT_RAG_INSTRUCTIONS_FAST`` (imported from
-    ``kani.prompts.impl.cohere``).
+    ``kani.model_specific.cohere``).
 
     See the constructor's available parameters for more information.
 
@@ -89,8 +89,8 @@ class CommandREngine(CommandRMixin, HuggingEngine):
             instructions on the format to generate the result in. Can be None to only generate a model turn. Defaults
             to ``None`` to for maximum interoperability between models. Options:
 
-            - ``from kani.prompts.impl.cohere import DEFAULT_RAG_INSTRUCTIONS_ACC``
-            - ``from kani.prompts.impl.cohere import DEFAULT_RAG_INSTRUCTIONS_FAST``
+            - ``from kani.model_specific.cohere import DEFAULT_RAG_INSTRUCTIONS_ACC``
+            - ``from kani.model_specific.cohere import DEFAULT_RAG_INSTRUCTIONS_FAST``
             - ``None`` (default)
             - another user-supplied string
         :param hyperparams: Additional arguments to supply the model during generation.
