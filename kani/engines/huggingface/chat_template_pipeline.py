@@ -133,7 +133,7 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
 
     def _chat_template_function_token_reserve(self, functions: list[AIFunction]) -> OutputT:
         """Estimate the function token reserve based off the chat template."""
-        tools = [{"type": "function", "function": f.json_schema} for f in functions] if functions else None
+        tools = _hf_tools_schema(functions)
         full_len = len(
             self.tokenizer.apply_chat_template(
                 [self._chat_template_dummy_msg], tools=tools, add_generation_prompt=False
@@ -150,7 +150,7 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
 
         The default implementation uses the model tokenizer's `apply_chat_template` method.
         """
-        tools = [{"type": "function", "function": f.json_schema} for f in functions] if functions else None
+        tools = _hf_tools_schema(functions)
         return self.tokenizer.apply_chat_template(conversation, tools=tools, add_generation_prompt=True, tokenize=False)
 
     # ===== utils =====
@@ -263,3 +263,16 @@ def _padding_length_inference_base(role: ChatRole) -> Iterable[list[ChatMessage]
     # SYSTEM: only empty
     # default, no conversation
     yield []
+
+
+def _hf_tools_schema(functions: list[AIFunction]) -> list[dict] | None:
+    # for some reason, this does not actually take a list of JSON Schema despite the docs saying so
+    # I am so angry
+    return (
+        [
+            {"type": "function", "function": {"name": f.name, "description": f.desc, "parameters": f.json_schema}}
+            for f in functions
+        ]
+        if functions
+        else None
+    )
