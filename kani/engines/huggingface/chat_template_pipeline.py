@@ -133,7 +133,7 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
 
     def _chat_template_function_token_reserve(self, functions: list[AIFunction]) -> OutputT:
         """Estimate the function token reserve based off the chat template."""
-        tools = [f.json_schema for f in functions] if functions else None
+        tools = [{"type": "function", "function": f.json_schema} for f in functions] if functions else None
         full_len = len(
             self.tokenizer.apply_chat_template(
                 [self._chat_template_dummy_msg], tools=tools, add_generation_prompt=False
@@ -150,7 +150,7 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
 
         The default implementation uses the model tokenizer's `apply_chat_template` method.
         """
-        tools = [f.json_schema for f in functions] if functions else None
+        tools = [{"type": "function", "function": f.json_schema} for f in functions] if functions else None
         return self.tokenizer.apply_chat_template(conversation, tools=tools, add_generation_prompt=True, tokenize=False)
 
     # ===== utils =====
