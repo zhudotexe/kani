@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import sys
 from typing import Annotated
 
 import httpx
@@ -13,8 +14,8 @@ from kani.utils.message_formatters import assistant_message_contents_thinking, a
 log = logging.getLogger("gptoss")
 model = HuggingEngine(
     model_id="openai/gpt-oss-20b",
-    model_load_kwargs=dict(eos_token_id=[200002, 199999, 200012]),
     chat_template_kwargs=dict(reasoning_effort="low"),
+    eos_token_id=[200002, 199999, 200012],
 )
 engine = GPTOSSParser(model, show_reasoning_in_stream=True)
 
@@ -119,6 +120,7 @@ async def main():
 
 ai = WikipediaRetrievalKani(engine, desired_response_tokens=16000)
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger("kani.model_specific.gpt_oss").setLevel(logging.DEBUG)
     asyncio.run(main())

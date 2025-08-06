@@ -1,3 +1,4 @@
+import logging
 import re
 
 from kani.engines.huggingface.chat_template_pipeline import ChatTemplatePromptPipeline, hf_tool_use_keys
@@ -15,6 +16,7 @@ ASST_MSG_REGEX = re.compile(
     r"(<\|end\|>|<\|return\|>|<\|call\|>)",
     re.DOTALL,
 )
+log = logging.getLogger(__name__)
 
 
 # ===== PROMPT PIPELINE =====
@@ -110,6 +112,7 @@ class _GPTOSSStreamState:
         return None
 
     def transition_states(self, new_state: str):
+        log.debug(f"STREAM OLD STATE: {self!r}")
         # we are about to transition states, handle the last state
         buf_str = "".join(self.buf)
         # check for to=... (in states None, start, or channel)
@@ -126,6 +129,7 @@ class _GPTOSSStreamState:
         self.buf.clear()
 
         self.state = new_state
+        log.debug(f"STREAM NEW STATE: {self!r}")
 
     def is_visible_to_user(self):
         # the content is visible to the user IFF:
@@ -135,3 +139,6 @@ class _GPTOSSStreamState:
         if self.show_reasoning:
             return self.state == "message" and self.channel in ("final", "commentary", "analysis") and self.to is None
         return self.state == "message" and self.channel in ("final", "commentary") and self.to is None
+
+    def __repr__(self):
+        return f"<_GPTOSSStreamState {self.state=} {self.channel=} {self.to=} {self.buf=}>"
