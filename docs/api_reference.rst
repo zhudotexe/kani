@@ -33,11 +33,6 @@ Common Models
     :exclude-members: model_config, model_fields, model_computed_fields
     :class-doc-from: class
 
-Exceptions
-----------
-.. automodule:: kani.exceptions
-    :members:
-
 AI Function
 -----------
 .. autofunction:: kani.ai_function
@@ -46,6 +41,16 @@ AI Function
     :members:
 
 .. autoclass:: kani.AIParam
+    :members:
+
+Common MessageParts
+-------------------
+.. automodule:: kani.parts
+    :members:
+
+Exceptions
+----------
+.. automodule:: kani.exceptions
     :members:
 
 Streaming
@@ -110,9 +115,24 @@ Tool Parsers
 Tool parsers are used when you have an LLM's text output, which may contain tool calls in their raw format (e.g., JSON).
 They translate the raw text format into Kani's tool calling specification.
 
+Tool parsers are :class:`.WrapperEngine`\ s -- this means to use them, you should **wrap** the text-only engine (e.g.,
+a :class:`.HuggingEngine`) like so:
+
+.. code-block:: python
+
+    from kani.engines.huggingface import HuggingEngine
+    from kani.tool_parsers import GPTOSSParser
+
+    model = HuggingEngine("openai/gpt-oss-20b")
+    engine = GPTOSSParser(model)
+
 .. autoclass:: kani.tool_parsers.BaseToolCallParser
     :members:
 
 .. autoclass:: kani.tool_parsers.NaiveJSONToolCallParser
 
 .. autoclass:: kani.tool_parsers.MistralToolCallParser
+
+.. autoclass:: kani.tool_parsers.DeepSeekR1ToolCallParser
+
+.. autoclass:: kani.tool_parsers.GPTOSSParser

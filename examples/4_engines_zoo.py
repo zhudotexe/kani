@@ -22,6 +22,13 @@ engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-s
 from kani.engines.huggingface import HuggingEngine
 engine = HuggingEngine(model_id="org-id/model-id")
 
+# ---- GPT-OSS (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.tool_parsers.gpt_oss import GPTOSSParser
+# this method is the same for the 20B and 120B variants - simply replace the model ID!
+model = HuggingEngine(model_id="openai/gpt-oss-20b")
+engine = GPTOSSParser(model)
+
 # ---- DeepSeek R1 (Hugging Face) ----
 from kani.engines.huggingface import HuggingEngine
 from kani.tool_parsers.deepseek import DeepSeekR1ToolCallParser

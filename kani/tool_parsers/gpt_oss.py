@@ -1,0 +1,122 @@
+import re
+
+from kani.models import MessagePart, ToolCall
+from .base import BaseToolCallParser
+from .. import FunctionCall, ReasoningPart
+
+SPECIAL_TOKEN_REGEX = re.compile(r"<\|(\w+)\|>")
+TO_REGEX = re.compile(rf"to=([^\s<]+)")
+CHANNEL_REGEX = re.compile(r"<\|channel\|>(\w+)")
+ASST_MSG_REGEX = re.compile(
+    r"(<\|start\|>(?P<role>\w+))?"
+    r"(?P<header>.*?)"
+    r"<\|message\|>(?P<content>.*?)"
+    r"(<\|end\|>|<\|return\|>|<\|call\|>)",
+    re.DOTALL,
+)
+
+
+class GPTOSSParser(BaseToolCallParser):
+    r"""
+    Automatically handles the parsing of GPT-OSS reasoning segments and tool calls.
+
+    Reasoning segments are returned as :class:`.ReasoningPart`\ s.
+    """
+
+    def __init__(self, *args, show_reasoning=False, **kwargs):
+        """
+        :param show_reasoning: Whether reasoning tokens should be yielded during streams. By default, only non-reasoning
+            tokens will be yielded, and reasoning tokens will be included in a :class:`.ReasoningPart` in the final
+            :class:`.ChatMessage`.
+        """
+        super().__init__(*args, tool_call_start_token=None, tool_call_end_token=None, **kwargs)
+        self.show_reasoning = show_reasoning
+
+    # state machine for stream on special token, regex for parse
+    def parse_tool_calls(self, content: str) -> tuple[list[MessagePart | str], list[ToolCall]]:
+        parts = []
+        tcs = []
+
+        for match in ASST_MSG_REGEX.finditer(content):
+            header = match["header"]
+            channel = c[1] if (c := CHANNEL_REGEX.search(header)) else None
+            to = t[1] if (t := TO_REGEX.search(header)) else None
+            content = match["content"]
+
+            if channel == "analysis":
+                parts.append(ReasoningPart(content=content))
+            elif to.startswith("functions."):
+                tcs.append(
+                    ToolCall.from_function_call(FunctionCall(name=to.removeprefix("functions."), arguments=content))
+                )
+            else:
+                parts.append(content)
+
+        return parts, tcs
+
+    async def predict(self, messages, functions=None, **hyperparams):
+        translated_messages = self.translate_messages(messages)
+        return await super().predict(translated_messages, functions, **hyperparams)
+
+    async def stream(self, messages, functions=None, **hyperparams):
+        state = _GPTOSSStreamState(show_reasoning=self.show_reasoning)
+
+        async for elem in super().stream(translated_messages, functions, **hyperparams):
+            if isinstance(elem, str):
+                to_yield = state.feed(elem)
+                if to_yield:
+                    yield to_yield
+            else:
+                yield elem  # probably the inner completion
+
+
+class _GPTOSSStreamState:
+    def __init__(self, show_reasoning):
+        # the last seen special token, e.g. "start", "channel", "constrain", "message"
+        # end sets this to None
+        # https://cookbook.openai.com/articles/openai-harmony#special-tokens
+        self.show_reasoning = show_reasoning
+        self.state = None
+        self.channel = None
+        self.to = None
+        self.buf = []
+
+    def feed(self, part: str):
+        # update the state machine
+        # new state
+        if match := SPECIAL_TOKEN_REGEX.fullmatch(part):
+            self.transition_states(match[1])
+        # in message state and part is visible to user: yield it
+        elif self.is_visible_to_user():
+            return part
+        # default: keep buffering
+        else:
+            self.buf.append(part)
+        return None
+
+    def transition_states(self, new_state: str):
+        # we are about to transition states, handle the last state
+        buf_str = "".join(self.buf)
+        # check for to=... (in states None, start, or channel)
+        if self.state in (None, "start", "channel") and (match := TO_REGEX.search(buf_str)):
+            self.to = match[1]
+        # check if we are finishing a channel
+        if self.state == "channel":
+            self.channel, _ = buf_str.split(" ", 1)
+
+        # if our new state is "end", clear the state
+        if new_state == "end":
+            self.channel = None
+            self.to = None
+        self.buf.clear()
+
+        self.state = new_state
+
+    def is_visible_to_user(self):
+        # the content is visible to the user IFF:
+        # - state is "message"
+        # - channel is "final" or "commentary"
+        # - to is None
+        if self.show_reasoning:
+            return self.state == "message" and self.channel in ("final", "commentary", "analysis") and self.to is None
+        return self.state == "message" and self.channel in ("final", "commentary") and self.to is None
