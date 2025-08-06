@@ -65,7 +65,7 @@ class GPTOSSParser(BaseToolCallParser):
 
             if channel == "analysis":
                 parts.append(ReasoningPart(content=content))
-            elif to.startswith("functions."):
+            elif to and to.startswith("functions."):
                 tcs.append(
                     ToolCall.from_function_call(FunctionCall(name=to.removeprefix("functions."), arguments=content))
                 )

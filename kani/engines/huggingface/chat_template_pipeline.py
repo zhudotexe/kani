@@ -47,6 +47,11 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
     """
 
     def __init__(self, tokenizer, steps=None):
+        """
+        :param tokenizer: The HF model's tokenizer, to retrieve the chat template.
+        :param steps: The steps to take in this pipeline; should always end in a ``.conversation_dict`` step. Generally
+            not needed except in exceptional cases.
+        """
         super().__init__(steps)
         self.tokenizer = tokenizer
         self._ensure_chat_template()
@@ -181,6 +186,12 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
             self.conversation_dict(additional_keys=hf_tool_use_keys)
 
         conversation = super().execute(msgs, functions, deepcopy=deepcopy, for_measurement=for_measurement)
+
+        # make any None contents an empty string to prevent some chat templates from exploding
+        # (looking at you, GPT-OSS)
+        for msg in conversation:
+            if msg["content"] is None:
+                msg["content"] = ""
 
         # infer role paddings if we have not yet done so
         if not self._has_inferred_role_paddings:

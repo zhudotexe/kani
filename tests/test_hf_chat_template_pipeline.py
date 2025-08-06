@@ -38,10 +38,9 @@ def popular_model_ids():
     return trending_model_ids
 
 
-@pytest.mark.parametrize("chat_template_model_id", [*forced_model_ids, *popular_model_ids()])
-def test_chat_templates(chat_template_model_id: str):
+def get_chat_template_pipeline(model_id):
     try:
-        tokenizer = AutoTokenizer.from_pretrained(chat_template_model_id)
+        tokenizer = AutoTokenizer.from_pretrained(model_id)
     except ValueError:
         pytest.skip("This model requires untrusted code, skipping")
     except EnvironmentError:
@@ -50,8 +49,25 @@ def test_chat_templates(chat_template_model_id: str):
         pytest.skip("This model cannot be loaded using AutoTokenizer, skipping")
     if tokenizer.chat_template is None:
         pytest.skip("This model does not have a chat template, skipping")
-    pipe = ChatTemplatePromptPipeline(tokenizer)
+    return ChatTemplatePromptPipeline(tokenizer)
+
+
+@pytest.mark.parametrize("chat_template_model_id", [*forced_model_ids, *popular_model_ids()])
+def test_chat_templates(chat_template_model_id: str):
+    pipe = get_chat_template_pipeline(chat_template_model_id)
     pipe.explain()
+
+
+@pytest.mark.parametrize("chat_template_model_id", popular_model_ids())
+def test_chat_templates_function_calls(chat_template_model_id: str):
+    pipe = get_chat_template_pipeline(chat_template_model_id)
+    pipe.explain(function_call=True)
+
+
+@pytest.mark.parametrize("chat_template_model_id", popular_model_ids())
+def test_chat_templates_all(chat_template_model_id: str):
+    pipe = get_chat_template_pipeline(chat_template_model_id)
+    pipe.explain(all_cases=True)
 
 
 @pytest.mark.parametrize(

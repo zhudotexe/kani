@@ -11,7 +11,7 @@ from kani.model_specific.gpt_oss import GPTOSSParser
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
 log = logging.getLogger("gptoss")
-model = HuggingEngine(model_id="openai/gpt-oss-20b")
+model = HuggingEngine(model_id="openai/gpt-oss-20b", model_load_kwargs=dict(eos_token_id=[200002, 199999, 200012]))
 engine = GPTOSSParser(model, show_reasoning=True)
 
 
@@ -115,4 +115,5 @@ async def main():
 ai = WikipediaRetrievalKani(engine)
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+    logging.getLogger().setLevel(logging.INFO)
     asyncio.run(main())
