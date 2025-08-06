@@ -30,9 +30,9 @@ def _gptoss_chat_template_keys(message):
     return keys
 
 
-def build_gptoss_prompt_pipeline(tokenizer):
+def build_gptoss_prompt_pipeline(tokenizer, **kwargs):
     """We just extend the chat template pipeline with a bit of extra code to make sure the thinking key is set"""
-    return ChatTemplatePromptPipeline(tokenizer).conversation_dict(additional_keys=_gptoss_chat_template_keys)
+    return ChatTemplatePromptPipeline(tokenizer, **kwargs).conversation_dict(additional_keys=_gptoss_chat_template_keys)
 
 
 # ===== OUTPUT PARSER =====
@@ -43,14 +43,14 @@ class GPTOSSParser(BaseToolCallParser):
     Reasoning segments are returned as :class:`.ReasoningPart`\ s.
     """
 
-    def __init__(self, *args, show_reasoning=False, **kwargs):
+    def __init__(self, *args, show_reasoning_in_stream=False, **kwargs):
         """
-        :param show_reasoning: Whether reasoning tokens should be yielded during streams. By default, only non-reasoning
-            tokens will be yielded, and reasoning tokens will be included in a :class:`.ReasoningPart` in the final
-            :class:`.ChatMessage`.
+        :param show_reasoning_in_stream: Whether reasoning tokens should be yielded during streams. By default, only
+            non-reasoning tokens will be yielded, and reasoning tokens will be included in a :class:`.ReasoningPart` in
+            the final :class:`.ChatMessage`.
         """
         super().__init__(*args, tool_call_start_token=None, tool_call_end_token=None, **kwargs)
-        self.show_reasoning = show_reasoning
+        self.show_reasoning_in_stream = show_reasoning_in_stream
 
     # state machine for stream on special token, regex for parse
     def parse_tool_calls(self, content: str) -> tuple[list[MessagePart | str], list[ToolCall]]:
@@ -75,7 +75,7 @@ class GPTOSSParser(BaseToolCallParser):
         return parts, tcs
 
     async def stream(self, messages, functions=None, **hyperparams):
-        state = _GPTOSSStreamState(show_reasoning=self.show_reasoning)
+        state = _GPTOSSStreamState(show_reasoning=self.show_reasoning_in_stream)
         async for elem in super().stream(messages, functions, **hyperparams):
             if isinstance(elem, str):
                 to_yield = state.feed(elem)

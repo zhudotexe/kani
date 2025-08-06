@@ -6,7 +6,7 @@ from kani.prompts import PromptPipeline
 from kani.utils.huggingface import get_base_models
 
 # list of (HF model id glob, path to import)
-# the path to import can be either a PromptPipeline instance or a function (tokenizer) => pipeline
+# the path to import can be either a PromptPipeline instance or a function (tokenizer, **kwargs) => pipeline
 PROMPT_PIPELINE_REGISTRY = [
     ("openai/gpt-oss-*", "kani.model_specific.gpt_oss.build_gptoss_prompt_pipeline"),
     ("meta-llama/Llama-2*", "kani.model_specific.llama2.LLAMA2_PIPELINE"),
@@ -28,7 +28,9 @@ PARSER_REGISTRY = [
 log = logging.getLogger(__name__)
 
 
-def prompt_pipeline_for_hf_model(model_id: str, tokenizer=None, search_parents=True, fallback_to_chat_template=True):
+def prompt_pipeline_for_hf_model(
+    model_id: str, tokenizer=None, search_parents=True, fallback_to_chat_template=True, *, chat_template_kwargs=None
+):
     """
     Find and return the correct prompt pipeline for the given HF model:
     If a handwritten pipeline is available, use that one.
@@ -36,6 +38,9 @@ def prompt_pipeline_for_hf_model(model_id: str, tokenizer=None, search_parents=T
     the parent model.
     Otherwise, use the model's chat template with default behaviour.
     """
+    if chat_template_kwargs is None:
+        chat_template_kwargs = {}
+
     for pattern, import_path in PROMPT_PIPELINE_REGISTRY:
         if fnmatch.fnmatch(model_id, pattern):
             # import the thing and return it
@@ -51,7 +56,7 @@ def prompt_pipeline_for_hf_model(model_id: str, tokenizer=None, search_parents=T
                 from transformers import AutoTokenizer
 
                 tokenizer = AutoTokenizer.from_pretrained(model_id)
-            return pipe(tokenizer)
+            return pipe(tokenizer, **chat_template_kwargs)
 
     # if there's a parent and the model is a fine-tune/quantization recurse
     if search_parents:
@@ -77,8 +82,8 @@ def prompt_pipeline_for_hf_model(model_id: str, tokenizer=None, search_parents=T
     )
 
     if tokenizer:
-        return ChatTemplatePromptPipeline(tokenizer)
-    return ChatTemplatePromptPipeline.from_pretrained(model_id)
+        return ChatTemplatePromptPipeline(tokenizer, **chat_template_kwargs)
+    return ChatTemplatePromptPipeline.from_pretrained(model_id, **chat_template_kwargs)
 
 
 def maybe_parser_for_hf_model(model_id: str, search_parents=True):

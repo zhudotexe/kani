@@ -62,6 +62,7 @@ class HuggingEngine(BaseEngine):
         tokenizer_kwargs: dict = None,
         model_cls=AutoModelForCausalLM,
         model_load_kwargs: dict = None,
+        chat_template_kwargs: dict = None,
         # kani args
         token_reserve: int = 0,
         **hyperparams,
@@ -76,6 +77,8 @@ class HuggingEngine(BaseEngine):
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
         :param model_cls: Advanced use cases: The HF model class to use. Defaults to ``AutoModelForCausalLM``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
+        :param chat_template_kwargs: The keyword arguments to pass to ``tokenizer.apply_chat_template`` if using a chat
+            template prompt pipeline.
         :param hyperparams: Additional arguments to supply the model during generation.
         :param token_reserve: The number of tokens to reserve for internal engine mechanisms (e.g. if there is a
             generation template after the last user message). If not passed, kani will attempt to infer this from a
@@ -85,6 +88,8 @@ class HuggingEngine(BaseEngine):
             tokenizer_kwargs = {}
         if model_load_kwargs is None:
             model_load_kwargs = {}
+        if chat_template_kwargs is None:
+            chat_template_kwargs = {}
 
         tokenizer_kwargs.setdefault("token", hyperparams.get("use_auth_token", token))
         model_load_kwargs.setdefault("token", hyperparams.pop("use_auth_token", token))
@@ -103,7 +108,9 @@ class HuggingEngine(BaseEngine):
         # load the pipeline
         if prompt_pipeline is None:
             # try and load a manual impl, or default to chat template if not available
-            prompt_pipeline = model_specific.prompt_pipeline_for_hf_model(model_id, self.tokenizer)
+            prompt_pipeline = model_specific.prompt_pipeline_for_hf_model(
+                model_id, self.tokenizer, chat_template_kwargs=chat_template_kwargs
+            )
         self.pipeline = prompt_pipeline
 
         # ensure model is on correct device

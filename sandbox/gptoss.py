@@ -11,8 +11,12 @@ from kani.model_specific.gpt_oss import GPTOSSParser
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
 log = logging.getLogger("gptoss")
-model = HuggingEngine(model_id="openai/gpt-oss-20b", model_load_kwargs=dict(eos_token_id=[200002, 199999, 200012]))
-engine = GPTOSSParser(model, show_reasoning=True)
+model = HuggingEngine(
+    model_id="openai/gpt-oss-20b",
+    model_load_kwargs=dict(eos_token_id=[200002, 199999, 200012]),
+    chat_template_kwargs=dict(reasoning_effort="low"),
+)
+engine = GPTOSSParser(model, show_reasoning_in_stream=True)
 
 
 # noinspection DuplicatedCode
@@ -82,14 +86,6 @@ async def print_query(query: str):
 
 async def main():
     print(engine)
-    print("======== testing query simple ========")
-    await print_query("Tell me about the Yamanote line.")
-
-    print("======== testing query complex ========")
-    await print_query(
-        "How many subway lines does each station on the Yamanote line connect to? Give me a precise list of each"
-        " station, its ID, and all the lines (if any) each connects to."
-    )
 
     print("======== testing stream simple ========")
     await stream_query(
@@ -111,8 +107,17 @@ async def main():
         "}\n```"
     )
 
+    print("======== testing query simple ========")
+    await print_query("Tell me about the Yamanote line.")
 
-ai = WikipediaRetrievalKani(engine)
+    print("======== testing stream complex 2 ========")
+    await stream_query(
+        "How many subway lines does each station on the Yamanote line connect to? Give me a precise list of each"
+        " station, its ID, and all the lines (if any) each connects to."
+    )
+
+
+ai = WikipediaRetrievalKani(engine, desired_response_tokens=16000)
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     logging.getLogger().setLevel(logging.INFO)
