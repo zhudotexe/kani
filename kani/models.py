@@ -108,10 +108,18 @@ class ToolCall(BaseModel):
 
 
 class MessagePart(BaseModel, abc.ABC):
-    """Base class for a part of a message.
+    """
+    Base class for a part of a message.
+
     Engines should inherit from this class to tag substrings with metadata or provide multimodality to an engine.
     By default, if coerced to a string, will raise a warning noting that rich message part data was lost.
     For more information see :doc:`advanced/messageparts`.
+    """
+
+    extra: dict = {}
+    """
+    Specific engines may store additional extra data in this dictionary. See an engine's documentation for details about
+    any extras it may store or expect.
     """
 
     # ==== serdes ====

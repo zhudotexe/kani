@@ -1,82 +1,25 @@
-"""
-Usage: python model_test_trains.py hf/model-id
-
-(This file isn't about training models - I just like Japanese trains.)
-"""
-
 import asyncio
 import json
+import logging
 import sys
 from typing import Annotated
 
 import httpx
 
 from kani import AIParam, ChatRole, Kani, ai_function, print_stream, print_width
-from kani.model_specific import parser_for_hf_model
+from kani.engines.huggingface import HuggingEngine
+from kani.model_specific.gpt_oss import GPTOSSParser
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
-
-# ==== engine defs ====
-def chat_openai(model_id: str):
-    from kani.engines.openai import OpenAIEngine
-
-    return OpenAIEngine(model=model_id)
-
-
-def chat_anthropic(model_id: str):
-    from kani.engines.anthropic import AnthropicEngine
-
-    return AnthropicEngine(model=model_id)
-
-
-def chat_google(model_id: str):
-    from kani.engines.google import GoogleAIEngine
-
-    return GoogleAIEngine(model=model_id)
-
-
-def chat_huggingface(model_id: str):
-    from kani.engines.huggingface import HuggingEngine
-
-    engine = HuggingEngine(model_id=model_id, model_load_kwargs={"trust_remote_code": True})
-    if parser := parser_for_hf_model(model_id):
-        engine = parser(engine)
-    return engine
-
-
-PROVIDER_MAP = {
-    # openai
-    "openai": chat_openai,
-    "oai": chat_openai,
-    # anthropic
-    "anthropic": chat_anthropic,
-    "ant": chat_anthropic,
-    "claude": chat_anthropic,
-    # google
-    "google": chat_google,
-    "g": chat_google,
-    "gemini": chat_google,
-    # huggingface
-    "huggingface": chat_huggingface,
-    "hf": chat_huggingface,
-}
-
-
-# ==== select engine ====
-def get_engine(arg):
-    provider, model_id = arg.split(":", 1)
-    if provider not in PROVIDER_MAP:
-        print(f"Invalid model provider: {provider!r}. Valid options: {list(PROVIDER_MAP)}")
-        sys.exit(1)
-
-    return PROVIDER_MAP[provider](model_id)
-
-
-if len(sys.argv) == 2:
-    engine = get_engine(sys.argv[1])
-else:
-    print("Usage: python model_test_trains.py hf/model-id")
-    exit(1)
+log = logging.getLogger("gptoss")
+engine = HuggingEngine(
+    model_id="openai/gpt-oss-20b",
+    chat_template_kwargs=dict(reasoning_effort="low"),
+    eos_token_id=[200002, 199999, 200012],
+    temperature=0.7,
+    top_k=None,
+)
+engine = GPTOSSParser(engine, show_reasoning_in_stream=True)
 
 
 # noinspection DuplicatedCode
@@ -110,8 +53,8 @@ class WikipediaRetrievalKani(Kani):
         return f"The page {title!r} does not exist on Wikipedia."
 
     @ai_function()
-    async def search(self, query: str):
-        """Find titles of Wikipedia articles similar to the given query."""
+    async def search_wikipedia(self, query: str):
+        """Find titles of Wikipedia articles similar to the given title."""
         # https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=Train
         resp = await self.wikipedia_client.get("/", params={"action": "opensearch", "format": "json", "search": query})
         return json.dumps(resp.json()[1])
@@ -134,6 +77,7 @@ async def stream_query(query: str):
 
 async def print_query(query: str):
     async for msg in ai.full_round(query):
+        log.debug(msg)
         # assistant
         if msg.role == ChatRole.ASSISTANT:
             text = assistant_message_contents_thinking(msg, show_args=True)
@@ -145,14 +89,9 @@ async def print_query(query: str):
 
 async def main():
     print(engine)
+
     print("======== testing query simple ========")
     await print_query("Tell me about the Yamanote line.")
-
-    print("======== testing query complex ========")
-    await print_query(
-        "How many subway lines does each station on the Yamanote line connect to? Give me a precise list of each"
-        " station, its ID, and all the lines (if any) each connects to."
-    )
 
     print("======== testing stream simple ========")
     await stream_query(
@@ -174,17 +113,16 @@ async def main():
         "}\n```"
     )
 
+    print("======== testing stream complex 2 ========")
+    await stream_query(
+        "How many subway lines does each station on the Yamanote line connect to? Give me a precise list of each"
+        " station, its ID, and all the lines (if any) each connects to."
+    )
 
-# basic system prompt since many models don't include their FC prompt in the chat template...
-# system_prompt = """\
-# You can use the following functions:
-#
-# search(query: str) -- Searches for titles of Wikipedia articles.
-# wikipedia(title: Annotated[str, AIParam(desc='The article title on Wikipedia, e.g. "Train_station".')]) -- Gets the \
-# article text of a Wikipedia article given its title.
-# """
-system_prompt = None
 
-ai = WikipediaRetrievalKani(engine, system_prompt=system_prompt)
+ai = WikipediaRetrievalKani(engine, desired_response_tokens=16000)
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, stream=sys.stderr)
+    logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger("kani.model_specific.gpt_oss").setLevel(logging.DEBUG)
     asyncio.run(main())

@@ -23,11 +23,6 @@ try:
         ChatCompletionToolParam,
         ChatCompletionUserMessageParam,
     )
-    from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall
-    from openai.types.chat.chat_completion_message_tool_call import Function as ChatCompletionMessageFunctionCall
-    from openai.types.chat.chat_completion_message_tool_call_param import (
-        Function as ChatCompletionMessageToolCallFunctionParam,
-    )
     from openai.types.shared_params import FunctionDefinition
 except ImportError as e:
     raise MissingModelDependencies(
@@ -69,10 +64,10 @@ def _msg_kwargs(msg: ChatMessage) -> dict:
     return data
 
 
-def kani_tc_to_openai_tc(tc: ToolCall) -> ChatCompletionMessageToolCallParam:
+def kani_tc_to_openai_tc(tc: ToolCall):
     """Translate a kani ToolCall into an OpenAI dict"""
-    oai_function = ChatCompletionMessageToolCallFunctionParam(name=tc.function.name, arguments=tc.function.arguments)
-    return ChatCompletionMessageToolCallParam(id=tc.id, type="function", function=oai_function)
+    oai_function = dict(name=tc.function.name, arguments=tc.function.arguments)
+    return dict(id=tc.id, type="function", function=oai_function)
 
 
 # --- multimodal ---
@@ -108,11 +103,9 @@ OPENAI_PIPELINE = (
 )
 
 
-def translate_functions(functions: list[AIFunction]) -> list[ChatCompletionToolParam]:
+def translate_functions(functions: list[AIFunction]) -> list[dict]:
     return [
-        ChatCompletionToolParam(
-            type="function", function=FunctionDefinition(name=f.name, description=f.desc, parameters=f.json_schema)
-        )
+        dict(type="function", function=FunctionDefinition(name=f.name, description=f.desc, parameters=f.json_schema))
         for f in functions
     ]
 
@@ -139,11 +132,11 @@ def openai_cm_to_kani_cm(msg: ChatCompletionMessage) -> ChatMessage:
     return ChatMessage(role=role, content=msg.content, tool_calls=tool_calls)
 
 
-def openai_tc_to_kani_tc(tc: ChatCompletionMessageToolCall | ChoiceDeltaToolCall) -> ToolCall:
+def openai_tc_to_kani_tc(tc) -> ToolCall:
     return ToolCall(id=tc.id, type=tc.type, function=openai_fc_to_kani_fc(tc.function))
 
 
-def openai_fc_to_kani_fc(fc: ChatCompletionMessageFunctionCall) -> FunctionCall:
+def openai_fc_to_kani_fc(fc) -> FunctionCall:
     return FunctionCall(name=fc.name, arguments=fc.arguments)
 
 

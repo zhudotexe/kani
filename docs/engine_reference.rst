@@ -22,9 +22,6 @@ Hugging Face
 .. autoclass:: kani.engines.huggingface.cohere.CommandREngine
     :members:
 
-.. autoclass:: kani.engines.huggingface.vicuna.VicunaEngine
-    :members:
-
 llama.cpp
 ---------
 .. autoclass:: kani.engines.llamacpp.LlamaCppEngine

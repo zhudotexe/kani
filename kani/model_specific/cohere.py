@@ -4,7 +4,7 @@ import logging
 import re
 from collections import namedtuple
 
-from kani import AIFunction
+from kani.ai_function import AIFunction
 from kani.engines import Completion
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline

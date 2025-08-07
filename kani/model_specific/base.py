@@ -1,4 +1,5 @@
 import logging
+import warnings
 from abc import ABC
 
 from kani.engines import Completion, WrapperEngine
@@ -20,10 +21,14 @@ class BaseToolCallParser(WrapperEngine, ABC):
     This class will handle calling the parser and interrupting streams when tool calls are detected.
     """
 
-    def __init__(self, *args, tool_call_start_token: str, tool_call_end_token: str, **kwargs):
+    def __init__(self, *args, tool_call_start_token: str | None, tool_call_end_token: str | None, **kwargs):
         super().__init__(*args, **kwargs)
         self.tool_call_start_token = tool_call_start_token
         self.tool_call_end_token = tool_call_end_token
+        # a moderate hack; globally save that we have initialized some parser
+        from kani import model_specific
+
+        model_specific._has_initialized_model_specific_parser = True
 
     def parse_tool_calls(self, content: str) -> tuple[str, list[ToolCall]]:
         """Given the string completion of the model, return the content without tool calls and the parsed tool calls."""
@@ -49,12 +54,12 @@ class BaseToolCallParser(WrapperEngine, ABC):
             if isinstance(elem, str):
                 content_parts.append(elem)
                 # if we see the start of a tool call, stop yielding and start buffering
-                if self.tool_call_start_token in elem:
+                if self.tool_call_start_token is not None and self.tool_call_start_token in elem:
                     if len(elem) > len(self.tool_call_start_token):
                         yield elem[: elem.index(self.tool_call_start_token)]
                     in_tool_call = True
                 # if we see the end of a tool call, start yielding and stop buffering
-                if self.tool_call_end_token in elem:
+                if self.tool_call_end_token is not None and self.tool_call_end_token in elem:
                     if len(elem) > len(self.tool_call_end_token):
                         yield elem[elem.index(self.tool_call_end_token) + len(self.tool_call_end_token) :]
                     in_tool_call = False
@@ -66,24 +71,27 @@ class BaseToolCallParser(WrapperEngine, ABC):
                 inner_completion = elem
 
         # we have consumed all the elements - construct a new completion
-        # if we don't have a tool call we can just yield the inner completion
-        if not in_tool_call and inner_completion:
-            yield inner_completion
-        # otherwise, parse tool calls from the content (preserving inner tool calls if necessary)
+        # parse tool calls from the content (preserving inner tool calls if necessary)
+        content = "".join(content_parts)
+        log.debug(f"Content before parsing tool calls: {content!r}")
+        content, tool_calls = self.parse_tool_calls(content)
+        if inner_completion:
+            if inner_completion.message.tool_calls and tool_calls:
+                warnings.warn(
+                    f"Both the tool parser ({type(self).__name__}) and the wrapped engine's"
+                    f" ({type(self.engine).__name__}) completion returned tool calls. These will be concatenated, but"
+                    " may lead to unexpected behaviour! Make sure you are only parsing tool calls once.\n"
+                    f"Tool parser: {tool_calls}\nInner completion: {inner_completion.message.tool_calls}",
+                    stacklevel=3,
+                )
+            tool_calls = (inner_completion.message.tool_calls or []) + tool_calls
+            prompt_tokens = inner_completion.prompt_tokens
+            completion_tokens = inner_completion.completion_tokens
         else:
-            content = "".join(content_parts)
-            log.debug(f"Content before parsing tool calls: {content!r}")
-            content, tool_calls = self.parse_tool_calls(content)
-            if inner_completion:
-                tool_calls = (inner_completion.message.tool_calls or []) + tool_calls
-                prompt_tokens = inner_completion.prompt_tokens
-                completion_tokens = inner_completion.completion_tokens
-            else:
-                prompt_tokens = None
-                completion_tokens = None
-            clean_content = content.strip()
-            yield Completion(
-                ChatMessage.assistant(clean_content, tool_calls=tool_calls),
-                prompt_tokens=prompt_tokens,
-                completion_tokens=completion_tokens,
-            )
+            prompt_tokens = None
+            completion_tokens = None
+        yield Completion(
+            ChatMessage.assistant(content, tool_calls=tool_calls),
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+        )
