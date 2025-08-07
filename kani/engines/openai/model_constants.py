@@ -1,8 +1,7 @@
 # https://platform.openai.com/docs/models
 CONTEXT_SIZES_BY_PREFIX = [
-    ("gpt-3.5-turbo-instruct", 4096),
-    ("gpt-3.5-turbo-0613", 4096),
-    ("gpt-3.5-turbo", 16385),
+    # gpt-5
+    ("gpt-5", 400000),
     # o1, o3, o4
     ("o1", 200000),
     ("o3", 200000),
@@ -19,6 +18,10 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("gpt-4-turbo", 128000),
     ("gpt-4-32k", 32768),
     ("gpt-4", 8192),
+    # gpt-3.5-turbo
+    ("gpt-3.5-turbo-instruct", 4096),
+    ("gpt-3.5-turbo-0613", 4096),
+    ("gpt-3.5-turbo", 16385),
     # fine-tunes
     ("ft:gpt-3.5-turbo-instruct", 4096),
     ("ft:gpt-3.5-turbo-0613", 4096),
