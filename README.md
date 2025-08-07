@@ -59,7 +59,6 @@ In particular, we have reference implementations for the following base models, 
   and [Command R+](https://huggingface.co/CohereForAI/c4ai-command-r-plus)
 - [Gemma](https://huggingface.co/collections/google/gemma-release-65d5efbccdbb8c4202ec078b) (all sizes)
 - [LLaMA 2](https://huggingface.co/meta-llama) (all sizes)
-- [Vicuna v1.3](https://huggingface.co/lmsys/vicuna-7b-v1.3)
 -->
 
 Check out the [Model Zoo](examples/4_engines_zoo.py) for some examples of loading popular models in Kani!

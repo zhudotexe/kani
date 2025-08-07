@@ -46,28 +46,39 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
     Use a ``.conversation_dict`` step to translate the roles of the messages, if needed.
     """
 
-    def __init__(self, tokenizer, steps=None):
+    def __init__(self, tokenizer, steps=None, **chat_template_kwargs):
+        """
+        :param tokenizer: The HF model's tokenizer, to retrieve the chat template.
+        :param steps: The steps to take in this pipeline; should always end in a ``.conversation_dict`` step. Generally
+            not needed except in exceptional cases.
+        :param chat_template_kwargs: Additional kwargs to pass to ``apply_chat_template``.
+        """
         super().__init__(steps)
         self.tokenizer = tokenizer
+        self.chat_template_kwargs = chat_template_kwargs
         self._ensure_chat_template()
         self._padding_len_by_role: dict[ChatRole, int] = defaultdict(lambda: 0)
         self._has_inferred_role_paddings = False
 
     @classmethod
-    def from_pretrained(cls, model_id: str):
+    def from_pretrained(cls, model_id: str, **kwargs):
         """
         Create a ChatTemplatePromptPipeline from a model ID.
         Useful for applying a HF model's chat template to another engine.
         """
         tok = transformers.AutoTokenizer.from_pretrained(model_id)
-        return cls(tok)
+        return cls(tok, **kwargs)
 
     # ===== auto reserve inference =====
     _chat_template_dummy_msg = {"role": "user", "content": "dummy"}
 
     @cached_property
     def _chat_template_dummy_len(self) -> int:
-        return len(self.tokenizer.apply_chat_template([self._chat_template_dummy_msg], add_generation_prompt=False))
+        return len(
+            self.tokenizer.apply_chat_template(
+                [self._chat_template_dummy_msg], add_generation_prompt=False, **self.chat_template_kwargs
+            )
+        )
 
     def _infer_padding_len(self, role: ChatRole):
         """Set up _padding_len_by_role for each message type"""
@@ -79,13 +90,19 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
 
                 # get token len of base messages + dummy message
                 conversation = super().execute(msgs)
-                conversation_len = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+                conversation_len = len(
+                    self.tokenizer.apply_chat_template(
+                        conversation, add_generation_prompt=False, **self.chat_template_kwargs
+                    )
+                )
 
                 # get token len of just base messages
                 if base_msgs:
                     base_conversation = super().execute(base_msgs)
                     base_conversation_len = len(
-                        self.tokenizer.apply_chat_template(base_conversation, add_generation_prompt=False)
+                        self.tokenizer.apply_chat_template(
+                            base_conversation, add_generation_prompt=False, **self.chat_template_kwargs
+                        )
                     )
                 else:
                     base_conversation_len = 0
@@ -115,7 +132,11 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
     def _chat_template_infer_token_reserve(self):
         """If token_reserve is not set and we have a pipeline, infer it."""
         # if at least one message is required, return a tensor with len equal to prompt w/ dummy minus dummy only
-        full_len = len(self.tokenizer.apply_chat_template([self._chat_template_dummy_msg], add_generation_prompt=True))
+        full_len = len(
+            self.tokenizer.apply_chat_template(
+                [self._chat_template_dummy_msg], add_generation_prompt=True, **self.chat_template_kwargs
+            )
+        )
         return torch.zeros((1, full_len - self._chat_template_dummy_len))  # the result gets cached in HuggingEngine
 
     # ===== pathological cases =====
@@ -123,7 +144,11 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
         """Estimate the message length of a single message based off the chat template."""
         conversation = super().execute([message])
         try:
-            out_len = len(self.tokenizer.apply_chat_template(conversation, add_generation_prompt=False))
+            out_len = len(
+                self.tokenizer.apply_chat_template(
+                    conversation, add_generation_prompt=False, **self.chat_template_kwargs
+                )
+            )
         except TemplateError:
             # the template probably enforces user/assistant,
             # return a best-effort estimate based on the estimated paddings for messages of this role
@@ -133,10 +158,10 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
 
     def _chat_template_function_token_reserve(self, functions: list[AIFunction]) -> OutputT:
         """Estimate the function token reserve based off the chat template."""
-        tools = [f.json_schema for f in functions] if functions else None
+        tools = _hf_tools_schema(functions)
         full_len = len(
             self.tokenizer.apply_chat_template(
-                [self._chat_template_dummy_msg], tools=tools, add_generation_prompt=False
+                [self._chat_template_dummy_msg], tools=tools, add_generation_prompt=False, **self.chat_template_kwargs
             )
         )
         return torch.zeros((1, full_len - self._chat_template_dummy_len))
@@ -150,8 +175,10 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
 
         The default implementation uses the model tokenizer's `apply_chat_template` method.
         """
-        tools = [f.json_schema for f in functions] if functions else None
-        return self.tokenizer.apply_chat_template(conversation, tools=tools, add_generation_prompt=True, tokenize=False)
+        tools = _hf_tools_schema(functions)
+        return self.tokenizer.apply_chat_template(
+            conversation, tools=tools, add_generation_prompt=True, tokenize=False, **self.chat_template_kwargs
+        )
 
     # ===== utils =====
     def _ensure_chat_template(self):
@@ -181,6 +208,12 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
             self.conversation_dict(additional_keys=hf_tool_use_keys)
 
         conversation = super().execute(msgs, functions, deepcopy=deepcopy, for_measurement=for_measurement)
+
+        # make any None contents an empty string to prevent some chat templates from exploding
+        # (looking at you, GPT-OSS)
+        for msg in conversation:
+            if msg["content"] is None:
+                msg["content"] = ""
 
         # infer role paddings if we have not yet done so
         if not self._has_inferred_role_paddings:
@@ -263,3 +296,16 @@ def _padding_length_inference_base(role: ChatRole) -> Iterable[list[ChatMessage]
     # SYSTEM: only empty
     # default, no conversation
     yield []
+
+
+def _hf_tools_schema(functions: list[AIFunction]) -> list[dict] | None:
+    # for some reason, this does not actually take a list of JSON Schema despite the docs saying so
+    # I am so angry
+    return (
+        [
+            {"type": "function", "function": {"name": f.name, "description": f.desc, "parameters": f.json_schema}}
+            for f in functions
+        ]
+        if functions
+        else None
+    )

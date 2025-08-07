@@ -1,11 +1,6 @@
-"""
-Usage: python model_test_trains.py hf/model-id
-
-(This file isn't about training models - I just like Japanese trains.)
-"""
-
 import asyncio
 import json
+import logging
 import sys
 from typing import Annotated
 
@@ -13,19 +8,21 @@ import httpx
 
 from kani import AIParam, ChatRole, Kani, ai_function, print_stream, print_width
 from kani.engines.huggingface import HuggingEngine
-from kani.model_specific import parser_for_hf_model
+from kani.model_specific.gpt_oss import GPTOSSParser
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
-if len(sys.argv) == 2:
-    model_id = sys.argv[1]
-    engine = HuggingEngine(model_id=model_id, model_load_kwargs={"trust_remote_code": True})
-    if parser := parser_for_hf_model(model_id):
-        engine = parser(engine)
-else:
-    print("Usage: python model_test_trains.py hf/model-id")
-    exit(1)
+log = logging.getLogger("gptoss")
+engine = HuggingEngine(
+    model_id="openai/gpt-oss-20b",
+    chat_template_kwargs=dict(reasoning_effort="low"),
+    eos_token_id=[200002, 199999, 200012],
+    temperature=0.7,
+    top_k=None,
+)
+engine = GPTOSSParser(engine, show_reasoning_in_stream=True)
 
 
+# noinspection DuplicatedCode
 class WikipediaRetrievalKani(Kani):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,8 +53,8 @@ class WikipediaRetrievalKani(Kani):
         return f"The page {title!r} does not exist on Wikipedia."
 
     @ai_function()
-    async def search(self, query: str):
-        """Find titles of Wikipedia articles similar to the given query."""
+    async def search_wikipedia(self, query: str):
+        """Find titles of Wikipedia articles similar to the given title."""
         # https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=Train
         resp = await self.wikipedia_client.get("/", params={"action": "opensearch", "format": "json", "search": query})
         return json.dumps(resp.json()[1])
@@ -80,6 +77,7 @@ async def stream_query(query: str):
 
 async def print_query(query: str):
     async for msg in ai.full_round(query):
+        log.debug(msg)
         # assistant
         if msg.role == ChatRole.ASSISTANT:
             text = assistant_message_contents_thinking(msg, show_args=True)
@@ -91,14 +89,9 @@ async def print_query(query: str):
 
 async def main():
     print(engine)
+
     print("======== testing query simple ========")
     await print_query("Tell me about the Yamanote line.")
-
-    print("======== testing query complex ========")
-    await print_query(
-        "How many subway lines does each station on the Yamanote line connect to? Give me a precise list of each"
-        " station, its ID, and all the lines (if any) each connects to."
-    )
 
     print("======== testing stream simple ========")
     await stream_query(
@@ -120,17 +113,16 @@ async def main():
         "}\n```"
     )
 
+    print("======== testing stream complex 2 ========")
+    await stream_query(
+        "How many subway lines does each station on the Yamanote line connect to? Give me a precise list of each"
+        " station, its ID, and all the lines (if any) each connects to."
+    )
 
-# basic system prompt since many models don't include their FC prompt in the chat template...
-# system_prompt = """\
-# You can use the following functions:
-#
-# search(query: str) -- Searches for titles of Wikipedia articles.
-# wikipedia(title: Annotated[str, AIParam(desc='The article title on Wikipedia, e.g. "Train_station".')]) -- Gets the \
-# article text of a Wikipedia article given its title.
-# """
-system_prompt = None
 
-ai = WikipediaRetrievalKani(engine, system_prompt=system_prompt)
+ai = WikipediaRetrievalKani(engine, desired_response_tokens=16000)
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, stream=sys.stderr)
+    logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger("kani.model_specific.gpt_oss").setLevel(logging.DEBUG)
     asyncio.run(main())

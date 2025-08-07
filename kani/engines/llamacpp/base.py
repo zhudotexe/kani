@@ -3,11 +3,12 @@ import re
 import warnings
 from typing import AsyncIterable
 
+from kani import model_specific
 from kani.ai_function import AIFunction
+from kani.engines.base import BaseCompletion, BaseEngine, Completion
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
-from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
     import torch
@@ -144,8 +145,8 @@ class LlamaCppEngine(BaseEngine):
                 "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
                 " uses a chat template (or is a quantization of a model with a chat template), you can use the"
                 " following:\n"
-                "from kani.engines.huggingface import ChatTemplatePromptPipeline\n"
-                "pipeline = ChatTemplatePromptPipeline.from_pretrained(base_model_id)\n"
+                "from kani.model_specific import prompt_pipeline_for_hf_model\n"
+                "pipeline = prompt_pipeline_for_hf_model(base_model_id)\n"
                 "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
             )
         prompt = self.pipeline.execute([], functions, for_measurement=True)
@@ -180,8 +181,8 @@ class LlamaCppEngine(BaseEngine):
                 "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
                 " uses a chat template (or is a quantization of a model with a chat template), you can use the"
                 " following:\n"
-                "from kani.engines.huggingface import ChatTemplatePromptPipeline\n"
-                "pipeline = ChatTemplatePromptPipeline.from_pretrained(base_model_id)\n"
+                "from kani.model_specific import prompt_pipeline_for_hf_model\n"
+                "pipeline = prompt_pipeline_for_hf_model(base_model_id)\n"
                 "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
             )
         prompt = self.pipeline(messages, functions)
@@ -189,7 +190,10 @@ class LlamaCppEngine(BaseEngine):
         return prompt
 
     def _get_generate_args(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams):
-        """Internal method to build common params for the generate call"""
+        """
+        Internal method to build common params for the generate call
+        and do some other pre-generate work
+        """
         prompt = self.build_prompt(messages, functions)
         if isinstance(prompt, str):
             # prompt str to tokens
@@ -200,9 +204,13 @@ class LlamaCppEngine(BaseEngine):
             input_len = len(input_toks)
         else:
             raise TypeError("build_prompt should either return a str or a list[int].")
+
         # set up hyperparams
         hyperparams = {**self.hyperparams, **hyperparams}
         hyperparams.setdefault("max_tokens", None)  # by default llama.cpp sets this to 16, which is too small
+
+        # check for a model-specific parser
+        model_specific.warn_for_uninitialized_parser(self.repo_id)
         return input_toks, input_len, hyperparams
 
     async def predict(
