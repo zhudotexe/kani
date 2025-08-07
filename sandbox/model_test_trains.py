@@ -1,5 +1,5 @@
 """
-Usage: python model_test_trains.py hf/model-id [tool_call_parser_name [prompt_pipeline_name]]
+Usage: python model_test_trains.py hf/model-id [tool_call_parser_import_path]
 
 (This file isn't about training models - I just like Japanese trains.)
 """
@@ -11,26 +11,18 @@ from typing import Annotated
 
 import httpx
 
-from kani import AIParam, ChatRole, Kani, ai_function, print_stream, print_width, tool_parsers
+from kani import AIParam, ChatRole, Kani, ai_function, print_stream, print_width
 from kani.engines.huggingface import HuggingEngine
-from kani.prompts import impl as prompt_pipelines
+from kani.model_specific import parser_for_hf_model
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
 if len(sys.argv) == 2:
-    engine = HuggingEngine(model_id=sys.argv[1], model_load_kwargs={"trust_remote_code": True})
-elif len(sys.argv) == 3:
-    model = HuggingEngine(model_id=sys.argv[1], model_load_kwargs={"trust_remote_code": True})
-    parser_cls = getattr(tool_parsers, sys.argv[2])
-    engine = parser_cls(model)
-elif len(sys.argv) == 4:
-    prompt_pipeline = getattr(prompt_pipelines, sys.argv[3])
-    model = HuggingEngine(
-        model_id=sys.argv[1], model_load_kwargs={"trust_remote_code": True}, prompt_pipeline=prompt_pipeline
-    )
-    parser_cls = getattr(tool_parsers, sys.argv[2])
-    engine = parser_cls(model)
+    model_id = sys.argv[1]
+    engine = HuggingEngine(model_id=model_id, model_load_kwargs={"trust_remote_code": True})
+    if parser := parser_for_hf_model(model_id):
+        engine = parser(engine)
 else:
-    print("Usage: python model_test_trains.py hf/model-id [tool_call_parser_name [prompt_pipeline_name]]")
+    print("Usage: python model_test_trains.py hf/model-id")
     exit(1)
 
 
@@ -130,13 +122,14 @@ async def main():
 
 
 # basic system prompt since many models don't include their FC prompt in the chat template...
-system_prompt = """\
-You can use the following functions:
-
-search(query: str) -- Searches for titles of Wikipedia articles.
-wikipedia(title: Annotated[str, AIParam(desc='The article title on Wikipedia, e.g. "Train_station".')]) -- Gets the \
-article text of a Wikipedia article given its title.
-"""
+# system_prompt = """\
+# You can use the following functions:
+#
+# search(query: str) -- Searches for titles of Wikipedia articles.
+# wikipedia(title: Annotated[str, AIParam(desc='The article title on Wikipedia, e.g. "Train_station".')]) -- Gets the \
+# article text of a Wikipedia article given its title.
+# """
+system_prompt = None
 
 ai = WikipediaRetrievalKani(engine, system_prompt=system_prompt)
 if __name__ == "__main__":

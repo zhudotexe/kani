@@ -237,6 +237,21 @@ class HuggingEngine(BaseEngine):
             hyperparams.setdefault("max_length", self.max_context_size)
         return input_toks, input_len, hyperparams
 
+    def _get_eos_tokens(self, *, return_ids=False, **hyperparams) -> list[str] | list[int]:
+        """Get the list of tokens that should end a generation."""
+        if "eos_token_id" in hyperparams:
+            genconfig_eos_token_id = hyperparams["eos_token_id"]
+        else:
+            genconfig_eos_token_id = self.model.generation_config.eos_token_id
+
+        if isinstance(genconfig_eos_token_id, list):
+            eos_token_ids = genconfig_eos_token_id
+        else:
+            eos_token_ids = [genconfig_eos_token_id]
+        if return_ids:
+            return eos_token_ids
+        return [self.tokenizer.decode(t) for t in eos_token_ids]
+
     async def predict(
         self,
         messages: list[ChatMessage],
@@ -260,12 +275,16 @@ class HuggingEngine(BaseEngine):
 
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
+        eos_tok_ids = self._get_eos_tokens(return_ids=True, **hyperparams)
 
         # run it through the model
         output = self.model.generate(input_toks, **hyperparams)
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
-        content = self.tokenizer.decode(output[0][input_len:-1], **decode_kwargs).strip()
+        if output[0][-1] in eos_tok_ids:
+            content = self.tokenizer.decode(output[0][input_len:-1], **decode_kwargs).strip()
+        else:
+            content = self.tokenizer.decode(output[0][input_len:], **decode_kwargs).strip()
         output_len = len(output[0]) - (input_len + 1)
         return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=output_len)
 
@@ -294,6 +313,7 @@ class HuggingEngine(BaseEngine):
 
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
+        eos_toks = self._get_eos_tokens(**hyperparams)
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=streamer_timeout, **decode_kwargs)
 
         # run it through the model in another thread so that we can get the tokens in this thread
@@ -309,10 +329,12 @@ class HuggingEngine(BaseEngine):
         # then wait for tokens from the task
         yielded_tokens = []
         for token in streamer:
-            if token.endswith(self.tokenizer.eos_token):
-                token = token[: -len(self.tokenizer.eos_token)]
-                if not token:
-                    continue
+            for eos_tok in eos_toks:
+                if token.endswith(eos_tok):
+                    token = token[: -len(eos_tok)]
+                    break
+            if not token:
+                continue
             yield token
             yielded_tokens.append(token)
 

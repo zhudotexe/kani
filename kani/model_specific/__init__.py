@@ -88,10 +88,36 @@ def prompt_pipeline_for_hf_model(
     return ChatTemplatePromptPipeline.from_pretrained(model_id, **chat_template_kwargs)
 
 
-def maybe_parser_for_hf_model(model_id: str, search_parents=True):
+def parser_for_hf_model(model_id: str, search_parents=True):
     """
     Find and print a warning about using the correct parser for the given HF model, if one exists and it is not in the
     stack; otherwise return None.
     This is just used for notifying the user that they might want to use the parser instead.
     """
-    # TODO
+    from kani.utils.huggingface import get_base_models
+
+    for pattern, import_path in PARSER_REGISTRY:
+        if fnmatch.fnmatch(model_id, pattern):
+            # import the thing and return it
+            # we have a test to make sure each of these is safely importable
+            mod_name, attr_name = import_path.rsplit(".", 1)
+            mod = importlib.import_module(mod_name)
+            parser = getattr(mod, attr_name)
+
+            log.info(f"A handwritten parser was found for the {model_id} model (matching {pattern}).")
+            return parser
+
+    # if there's a parent and the model is a fine-tune/quantization recurse
+    if search_parents:
+        parent_model_ids = get_base_models(model_id)
+        if len(parent_model_ids) == 1:
+            parent_model_id = parent_model_ids[0]
+            log.info(f"Searching for parsers for parent model of {model_id}: {parent_model_id}")
+            parser = parser_for_hf_model(parent_model_id)
+            if parser:
+                return parser
+        else:
+            log.info(f"Could not find parent model of {model_id} (got {parent_model_ids})")
+
+    # otherwise return None
+    return None
