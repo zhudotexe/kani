@@ -37,14 +37,18 @@ CONTEXT_SIZES_BY_PREFIX = [
 
 # ===== multimodal =====
 # ---- images ----
+# https://platform.openai.com/docs/guides/images-vision?api-mode=chat#calculating-costs
 # model_id -> multiplier
 MM_IMAGE_LOW_COST_SCALE = {
+    "gpt-5-mini": 1.62,
+    "gpt-5-nano": 2.46,
     "gpt-4.1-mini": 1.62,
     "gpt-4.1-nano": 2.46,
     "o4-mini": 1.72,
 }
 # model_id -> (base, per_patch)
 MM_IMAGE_OLD_SCALE = {
+    "gpt-5": (70, 140),
     "gpt-4o": (85, 170),
     "gpt-4.1": (85, 170),
     "gpt-4.5": (85, 170),
