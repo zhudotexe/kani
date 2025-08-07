@@ -278,7 +278,8 @@ class HuggingEngine(BaseEngine):
         eos_tok_ids = self._get_eos_tokens(return_ids=True, **hyperparams)
 
         # run it through the model
-        output = self.model.generate(input_toks, **hyperparams)
+        with torch.no_grad():
+            output = self.model.generate(input_toks, **hyperparams)
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
         if output[0][-1] in eos_tok_ids:
@@ -321,7 +322,8 @@ class HuggingEngine(BaseEngine):
 
         def thread_target():
             nonlocal output_toks  # ugly way of sending the results of .generate to the outer scope
-            output_toks = self.model.generate(input_toks, streamer=streamer, **hyperparams)
+            with torch.no_grad():
+                output_toks = self.model.generate(input_toks, streamer=streamer, **hyperparams)
 
         thread = Thread(target=thread_target)
         thread.start()
