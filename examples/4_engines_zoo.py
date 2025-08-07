@@ -10,7 +10,7 @@ from kani import Kani, chat_in_terminal
 # ==== OpenAI (GPT) ====
 # see https://platform.openai.com/docs/models for a list of model IDs
 from kani.engines.openai import OpenAIEngine
-engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4.1-nano")
+engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-5-nano")
 
 # ==== Anthropic (Claude) ====
 # see https://docs.anthropic.com/claude/docs/models-overview for a list of model IDs
@@ -26,7 +26,13 @@ engine = HuggingEngine(model_id="org-id/model-id")
 from kani.engines.huggingface import HuggingEngine
 from kani.model_specific.gpt_oss import GPTOSSParser
 # this method is the same for the 20B and 120B variants - simply replace the model ID!
-model = HuggingEngine(model_id="openai/gpt-oss-20b")
+model = HuggingEngine(
+    model_id="openai/gpt-oss-20b",
+    chat_template_kwargs=dict(reasoning_effort="low"),  # set this to "low", "medium", or "high"
+    eos_token_id=[200002, 199999, 200012],              # ensures the model stops correctly on tool calls
+    temperature=1.0,                                    # suggested decoding parameter
+    top_k=None,                                         # ensure we do not use top_k (transformers default =50)
+)
 engine = GPTOSSParser(model)
 
 # ---- DeepSeek R1 (Hugging Face) ----

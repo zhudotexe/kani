@@ -12,13 +12,14 @@ from kani.model_specific.gpt_oss import GPTOSSParser
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
 log = logging.getLogger("gptoss")
-model = HuggingEngine(
+engine = HuggingEngine(
     model_id="openai/gpt-oss-20b",
     chat_template_kwargs=dict(reasoning_effort="low"),
     eos_token_id=[200002, 199999, 200012],
     temperature=0.7,
+    top_k=None,
 )
-engine = GPTOSSParser(model, show_reasoning_in_stream=True)
+engine = GPTOSSParser(engine, show_reasoning_in_stream=True)
 
 
 # noinspection DuplicatedCode
