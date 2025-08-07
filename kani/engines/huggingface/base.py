@@ -120,6 +120,9 @@ class HuggingEngine(BaseEngine):
         if self.model.device.type != self.device:
             self.model.to(device)
 
+        # ensure model is in eval mode
+        self.model.eval()
+
         # token counting stuff
         # try and infer max context size from the model config if not specified
         if self.max_context_size is None:
@@ -217,7 +220,11 @@ class HuggingEngine(BaseEngine):
         return prompt
 
     def _get_generate_args(self, prompt: str | torch.Tensor, **hyperparams):
-        """Internal method to build common params for the generate call"""
+        """
+        Internal method to build common params for the generate call
+        and also do some chores before we generate
+        """
+        # make sure the prompt is tokenized
         if isinstance(prompt, str):
             # prompt str to tokens
             tokenized = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
@@ -228,13 +235,19 @@ class HuggingEngine(BaseEngine):
             input_len = len(input_toks[0])
         else:
             raise TypeError("build_prompt should either return a str or a Tensor.")
+
         # move the input tensor to the right device
         if input_toks.device.type != self.device:
             input_toks = input_toks.to(self.device)
+
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
         if "max_new_tokens" not in hyperparams:
             hyperparams.setdefault("max_length", self.max_context_size)
+
+        # check for a model-specific parser
+        model_specific.warn_for_uninitialized_parser(self.model_id)
+
         return input_toks, input_len, hyperparams
 
     def _get_eos_tokens(self, *, return_ids=False, **hyperparams) -> list[str] | list[int]:

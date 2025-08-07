@@ -25,6 +25,10 @@ class BaseToolCallParser(WrapperEngine, ABC):
         super().__init__(*args, **kwargs)
         self.tool_call_start_token = tool_call_start_token
         self.tool_call_end_token = tool_call_end_token
+        # a moderate hack; globally save that we have initialized some parser
+        from kani import model_specific
+
+        model_specific._has_initialized_model_specific_parser = True
 
     def parse_tool_calls(self, content: str) -> tuple[str, list[ToolCall]]:
         """Given the string completion of the model, return the content without tool calls and the parsed tool calls."""

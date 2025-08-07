@@ -1,6 +1,8 @@
 import fnmatch
+import functools
 import importlib
 import logging
+import warnings
 
 from .base import BaseToolCallParser
 
@@ -25,8 +27,13 @@ PARSER_REGISTRY = [
 ]
 
 log = logging.getLogger(__name__)
+# this is a bit hacky, but useful to prevent developer foot-guns
+# a global that tracks whether the developer has ever initialize a BaseToolCallParser
+# so we can warn them if their model has one that they are not using
+_has_initialized_model_specific_parser = False
 
 
+@functools.cache
 def prompt_pipeline_for_hf_model(
     model_id: str, tokenizer=None, search_parents=True, fallback_to_chat_template=True, *, chat_template_kwargs=None
 ):
@@ -88,6 +95,7 @@ def prompt_pipeline_for_hf_model(
     return ChatTemplatePromptPipeline.from_pretrained(model_id, **chat_template_kwargs)
 
 
+@functools.cache
 def parser_for_hf_model(model_id: str, search_parents=True):
     """
     Find and print a warning about using the correct parser for the given HF model, if one exists and it is not in the
@@ -121,3 +129,16 @@ def parser_for_hf_model(model_id: str, search_parents=True):
 
     # otherwise return None
     return None
+
+
+def warn_for_uninitialized_parser(model_id: str, stacklevel: int = 5):
+    """Log a warning if no model-specific parser is initialized and there is a handwritten parser available."""
+    if (not _has_initialized_model_specific_parser) and (parser := parser_for_hf_model(model_id)):
+        warnings.warn(
+            "You are using a model that requires additional parsing of its outputs but no model-specific parser is"
+            f" wrapping it. Consider wrapping your engine with {parser!s} in order"
+            " to correctly parse tool calls and/or reasoning chunks:\n"
+            f">>> from {parser.__module__} import {parser.__name__}\n"
+            f">>> engine = {parser.__name__}(<previous engine def>)",
+            stacklevel=stacklevel,  # hopefully, whatever called a round method
+        )
