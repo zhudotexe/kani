@@ -3,12 +3,12 @@ import warnings
 from threading import Thread
 from typing import AsyncIterable
 
+from kani import model_specific
 from kani.ai_function import AIFunction
+from kani.engines.base import BaseCompletion, BaseEngine, Completion
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
-from ..base import BaseCompletion, BaseEngine, Completion
-from ... import model_specific
 
 try:
     import torch

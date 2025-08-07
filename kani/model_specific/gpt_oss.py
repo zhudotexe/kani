@@ -6,14 +6,15 @@ from kani.models import FunctionCall, MessagePart, ToolCall
 from kani.parts import ReasoningPart
 from .base import BaseToolCallParser
 
-SPECIAL_TOKEN_REGEX = re.compile(r"<\|(\w+)\|>")
+SPECIAL_TOKEN_REGEX = re.compile(r"<\|(?P<type>\w+)\|>")
+SPECIAL_TOKEN_REGEX_2 = re.compile(r"(<\|\w+\|>)")
 TO_REGEX = re.compile(rf"to=([^\s<]+)")
 CHANNEL_REGEX = re.compile(r"<\|channel\|>(\w+)")
 ASST_MSG_REGEX = re.compile(
     r"(<\|start\|>(?P<role>\w+))?"
     r"(?P<header>.*?)"
     r"<\|message\|>(?P<content>.*?)"
-    r"(<\|end\|>|<\|return\|>|<\|call\|>)",
+    r"(<\|end\|>|<\|return\|>|<\|call\|>|$)",
     re.DOTALL,
 )
 log = logging.getLogger(__name__)
@@ -56,21 +57,23 @@ class GPTOSSParser(BaseToolCallParser):
 
     # state machine for stream on special token, regex for parse
     def parse_tool_calls(self, content: str) -> tuple[list[MessagePart | str], list[ToolCall]]:
+        log.debug(f"PARSING MSG: {content}")
         parts = []
         tcs = []
 
         for match in ASST_MSG_REGEX.finditer(content):
+            log.debug(f"PART: {match[0]}")
             header = match["header"]
             channel = c[1] if (c := CHANNEL_REGEX.search(header)) else None
             to = t[1] if (t := TO_REGEX.search(header)) else None
             content = match["content"]
 
-            if channel == "analysis":
-                parts.append(ReasoningPart(content=content))
-            elif to and to.startswith("functions."):
+            if to and to.startswith("functions."):
                 tcs.append(
                     ToolCall.from_function_call(FunctionCall(name=to.removeprefix("functions."), arguments=content))
                 )
+            elif channel == "analysis":
+                parts.append(ReasoningPart(content=content))
             else:
                 parts.append(content)
 
@@ -80,9 +83,12 @@ class GPTOSSParser(BaseToolCallParser):
         state = _GPTOSSStreamState(show_reasoning=self.show_reasoning_in_stream)
         async for elem in super().stream(messages, functions, **hyperparams):
             if isinstance(elem, str):
-                to_yield = state.feed(elem)
-                if to_yield:
-                    yield to_yield
+                for tokenlike in SPECIAL_TOKEN_REGEX_2.split(elem):
+                    if not tokenlike:
+                        continue
+                    to_yield = state.feed(tokenlike)
+                    if to_yield:
+                        yield to_yield
             else:
                 yield elem  # probably the inner completion
 
@@ -102,7 +108,7 @@ class _GPTOSSStreamState:
         # update the state machine
         # new state
         if match := SPECIAL_TOKEN_REGEX.fullmatch(part):
-            self.transition_states(match[1])
+            self.transition_states(match["type"])
         # in message state and part is visible to user: yield it
         elif self.is_visible_to_user():
             return part
@@ -112,7 +118,6 @@ class _GPTOSSStreamState:
         return None
 
     def transition_states(self, new_state: str):
-        log.debug(f"STREAM OLD STATE: {self!r}")
         # we are about to transition states, handle the last state
         buf_str = "".join(self.buf)
         # check for to=... (in states None, start, or channel)
@@ -120,7 +125,7 @@ class _GPTOSSStreamState:
             self.to = match[1]
         # check if we are finishing a channel
         if self.state == "channel":
-            self.channel, _ = buf_str.split(" ", 1)
+            self.channel, *_ = buf_str.split(" ", 1)
 
         # if our new state is "end", clear the state
         if new_state == "end":
