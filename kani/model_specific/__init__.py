@@ -94,3 +94,4 @@ def maybe_parser_for_hf_model(model_id: str, search_parents=True):
     stack; otherwise return None.
     This is just used for notifying the user that they might want to use the parser instead.
     """
+    # TODO
