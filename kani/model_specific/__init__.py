@@ -145,5 +145,5 @@ def warn_for_uninitialized_parser(model_id: str):
             " to correctly parse tool calls and/or reasoning chunks:\n"
             f">>> from {parser.__module__} import {parser.__name__}\n"
             f">>> engine = {parser.__name__}(<previous engine def>)",
-            **_warnings_kwargs
+            **_warnings_kwargs,
         )
