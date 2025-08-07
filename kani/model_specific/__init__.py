@@ -2,8 +2,7 @@ import fnmatch
 import importlib
 import logging
 
-from kani.prompts import PromptPipeline
-from kani.utils.huggingface import get_base_models
+from .base import BaseToolCallParser
 
 # list of (HF model id glob, path to import)
 # the path to import can be either a PromptPipeline instance or a function (tokenizer, **kwargs) => pipeline
@@ -38,6 +37,9 @@ def prompt_pipeline_for_hf_model(
     the parent model.
     Otherwise, use the model's chat template with default behaviour.
     """
+    from kani.prompts import PromptPipeline
+    from kani.utils.huggingface import get_base_models
+
     if chat_template_kwargs is None:
         chat_template_kwargs = {}
 

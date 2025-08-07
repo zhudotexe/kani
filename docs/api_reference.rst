@@ -45,8 +45,10 @@ AI Function
 
 Common MessageParts
 -------------------
-.. automodule:: kani.parts
+.. autoclass:: kani.parts.ReasoningPart
     :members:
+    :exclude-members: model_config, model_fields, model_computed_fields
+    :class-doc-from: class
 
 Exceptions
 ----------
@@ -110,10 +112,11 @@ Message Formatters
 
 .. _tool-parsers:
 
-Tool Parsers
-^^^^^^^^^^^^
-Tool parsers are used when you have an LLM's text output, which may contain tool calls in their raw format (e.g., JSON).
-They translate the raw text format into Kani's tool calling specification.
+Model-Specific Parsers
+^^^^^^^^^^^^^^^^^^^^^^
+Model parsers are used when you have an LLM's text output, which may contain tool calls or other interleaved content
+in their raw format (e.g., reasoning output).
+They translate the raw text format into Kani's tool calling specification and MessageParts.
 
 Tool parsers are :class:`.WrapperEngine`\ s -- this means to use them, you should **wrap** the text-only engine (e.g.,
 a :class:`.HuggingEngine`) like so:
@@ -126,13 +129,13 @@ a :class:`.HuggingEngine`) like so:
     model = HuggingEngine("openai/gpt-oss-20b")
     engine = GPTOSSParser(model)
 
-.. autoclass:: kani.tool_parsers.BaseToolCallParser
+.. autoclass:: kani.model_specific.BaseToolCallParser
     :members:
 
-.. autoclass:: kani.tool_parsers.NaiveJSONToolCallParser
+.. autoclass:: kani.model_specific.gpt_oss.GPTOSSParser
 
-.. autoclass:: kani.tool_parsers.MistralToolCallParser
+.. autoclass:: kani.model_specific.json.NaiveJSONToolCallParser
 
-.. autoclass:: kani.tool_parsers.DeepSeekR1ToolCallParser
+.. autoclass:: kani.model_specific.mistral.MistralToolCallParser
 
-.. autoclass:: kani.tool_parsers.GPTOSSParser
+.. autoclass:: kani.model_specific.deepseek.DeepSeekR1ToolCallParser
