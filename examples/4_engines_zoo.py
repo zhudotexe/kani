@@ -33,7 +33,8 @@ model = HuggingEngine(
     temperature=1.0,                                    # suggested decoding parameter
     top_k=None,                                         # ensure we do not use top_k (transformers default =50)
 )
-engine = GPTOSSParser(model)
+engine = GPTOSSParser(model, show_reasoning_in_stream=True)
+# show_reasoning_in_stream is useful for debugging the model; reasoning is in a ReasoningPart by default
 
 # ---- DeepSeek R1 (Hugging Face) ----
 from kani.engines.huggingface import HuggingEngine
