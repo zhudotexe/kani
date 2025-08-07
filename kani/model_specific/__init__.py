@@ -33,7 +33,6 @@ log = logging.getLogger(__name__)
 _has_initialized_model_specific_parser = False
 
 
-@functools.cache
 def prompt_pipeline_for_hf_model(
     model_id: str, tokenizer=None, search_parents=True, fallback_to_chat_template=True, *, chat_template_kwargs=None
 ):

@@ -1,5 +1,5 @@
 """
-Usage: python model_test_trains.py hf/model-id [tool_call_parser_import_path]
+Usage: python model_test_trains.py hf/model-id
 
 (This file isn't about training models - I just like Japanese trains.)
 """
