@@ -36,11 +36,8 @@ class BaseToolCallParser(WrapperEngine, ABC):
 
     async def predict(self, messages, functions=None, **hyperparams) -> BaseCompletion:
         completion = await super().predict(messages, functions, **hyperparams)
-
-        # if we have tools, parse them
-        if functions:
-            completion.message.content, completion.message.tool_calls = self.parse_tool_calls(completion.message.text)
-
+        # parse the string completion
+        completion.message.content, completion.message.tool_calls = self.parse_tool_calls(completion.message.text)
         return completion
 
     async def stream(self, messages, functions=None, **hyperparams):
