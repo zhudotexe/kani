@@ -1,4 +1,7 @@
+import asyncio
+import datetime
 import functools
+import io
 import json
 import logging
 import os
@@ -122,7 +125,9 @@ class GoogleAIEngine(TokenCached, BaseEngine):
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
 
+        # multimodal file caching
         self.multimodal_upload_bytes_threshold = multimodal_upload_bytes_threshold
+        self._multimodal_file_cache: dict[bytes, genai.types.File] = {}  # multimodal part sha256 -> google file
 
     # ==== token counting ====
     def message_len(self, message: ChatMessage) -> int:
@@ -250,25 +255,7 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                         _optional.multimodal_core.BinaryFilePart,
                     ),
                 ):
-                    # image
-                    if isinstance(part, _optional.multimodal_core.ImagePart):
-                        media_type = "image/png"
-                        data = part.as_bytes(format="png")
-                    # audio
-                    elif isinstance(part, _optional.multimodal_core.AudioPart):
-                        media_type = "audio/wav"
-                        data = part.as_wav_bytes()
-                    # video/arbitrary binary
-                    elif isinstance(part, _optional.multimodal_core.BinaryFilePart):
-                        media_type = part.mime
-                        data = part.as_bytes()
-                    else:
-                        raise ValueError(
-                            f"Invalid multimodal message part: {part!r}. This should never happen. Please open a bug"
-                            " report with reproduction steps."
-                        )
-                    # todo upload large files automatically using files api
-                    content.append(genai_types.Part.from_bytes(data=data, mime_type=media_type))
+                    content.append(await self._translate_multimodal_part(part))
                 # default
                 else:
                     content.append(genai_types.Part(text=str(part)))
@@ -283,6 +270,71 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                 )
 
         return genai_types.Content(role=role, parts=content)
+
+    async def _translate_multimodal_part(self, part) -> genai_types.Part:
+        """
+        Translate a multimodal kani part to a google part, uploading it to the Files API if it's large.
+
+        Caches uploaded files for re-use based on sha256.
+        """
+        # if we have uploaded this file to the files API before, add the file part
+        sha256 = part.sha256()
+        if sha256 in self._multimodal_file_cache:
+            google_file = self._multimodal_file_cache[sha256]
+            # check if the upload is still valid
+            now = datetime.datetime.now(tz=datetime.timezone.utc)
+            if now < google_file.expiration_time:
+                log.debug(f"Using cached google file part: {google_file}")
+                return genai_types.Part.from_uri(file_uri=google_file.uri, mime_type=google_file.mime_type)
+            log.debug(f"Google file part is expired, falling through to re-upload")
+        # otherwise read the file
+        # image
+        if isinstance(part, _optional.multimodal_core.ImagePart):
+            media_type = "image/png"
+            data = part.as_bytes(format="png")
+        # audio
+        elif isinstance(part, _optional.multimodal_core.AudioPart):
+            media_type = "audio/wav"
+            data = part.as_wav_bytes()
+        # video/arbitrary binary
+        elif isinstance(part, _optional.multimodal_core.BinaryFilePart):
+            media_type = part.mime
+            data = part.as_bytes()
+        else:
+            raise ValueError(
+                f"Invalid multimodal message part: {part!r}. This should never happen. Please open a"
+                " bug report with reproduction steps."
+            )
+
+        # if the file data is more than the threshold, upload it and use the file part
+        if len(data) >= self.multimodal_upload_bytes_threshold:
+            log.debug(f"Uploading multimodal file to Files API (len={len(data)})")
+            google_file = await self.client.aio.files.upload(
+                file=io.BytesIO(data), config=genai_types.UploadFileConfig(mime_type=media_type)
+            )
+            log.debug(google_file)
+            if google_file.state not in (genai_types.FileState.ACTIVE, genai_types.FileState.PROCESSING):
+                raise RuntimeError(f"Invalid google file state, file: {google_file}")
+            self._multimodal_file_cache[sha256] = google_file
+            google_part = genai_types.Part.from_uri(file_uri=google_file.uri, mime_type=google_file.mime_type)
+            if google_file.state == genai_types.FileState.ACTIVE:
+                return google_part
+            # wait until the file is done processing
+            log.debug(f"Uploaded google file part is not ACTIVE, waiting for ACTIVE")
+            for idx in range(50):
+                # poll every 5s since google does not offer a blocking wait
+                await asyncio.sleep(5)
+                google_file = await self.client.aio.files.get(name=google_file.name)
+                log.debug(f"{(idx + 1) * 5} sec...\n{google_file}")
+                if google_file.state == genai_types.FileState.ACTIVE:
+                    self._multimodal_file_cache[sha256] = google_file
+                    return google_part
+            self._multimodal_file_cache.pop(sha256, None)
+            raise RuntimeError(
+                f"Google file state is not ACTIVE after long wait, something might be wrong!\n{google_file}"
+            )
+        # otherwise just include the bytes inline
+        return genai_types.Part.from_bytes(data=data, mime_type=media_type)
 
     def _translate_google_response(self, resp: genai_types.GenerateContentResponse) -> Completion:
         tool_calls = []

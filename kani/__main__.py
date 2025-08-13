@@ -93,7 +93,7 @@ def print_version():
 
 
 def chat(arg: str):
-    if "/" not in arg:
+    if ":" not in arg:
         # print usage
         print(
             "CLI Usage: python -m kani <provider>:<model_id>\n\n"

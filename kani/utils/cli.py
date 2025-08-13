@@ -33,6 +33,10 @@ async def chat_in_terminal_async(
     """
     if os.getenv("KANI_DEBUG") is not None:
         logging.basicConfig(level=logging.DEBUG)
+    elif os.getenv("KANI_DEBUG_LOGGERS") is not None:
+        logging.basicConfig(level=logging.INFO)
+        for logger in os.getenv("KANI_DEBUG_LOGGERS").split(","):
+            logging.getLogger(logger).setLevel(logging.DEBUG)
     if verbose:
         echo = show_function_args = show_function_returns = True
 
