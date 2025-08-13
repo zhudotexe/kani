@@ -161,17 +161,11 @@ async def main():
 
     print("======== testing stream complex ========")
     await stream_query(
-        "What is the fastest way from Oku-Tama to Noboribetsu? What is the cheapest way? Use JR lines only.\nOutput a"
-        " precise list of steps needed for each route in JSON format as a list of steps. Each step should be of the"
-        " following form:\n"
-        "```json\n"
-        "{\n"
-        '    "from": "Station Name (Station ID)",\n'
-        '    "to": "Station Name (Station ID)",\n'
-        '    "line": "JR Line Name",\n'
-        '    "duration": 120, // duration in minutes\n'
-        '    "cost": 5000 // cost in yen\n'
-        "}\n```"
+        "How do I get from Oku-Tama to Noboribetsu without using the Shinkansen?\nOutput a"
+        " precise list of steps needed for each route in JSON format as a list of steps. It does not need to be a"
+        " real-time route, just an outline of how you would do it. Each step should be of the following"
+        ' form:\n```json\n{\n    "from": "Station Name (Station ID)",\n    "to": "Station Name (Station ID)",\n   '
+        ' "line": "JR Line Name",\n    "duration": 120, // duration in minutes\n    "cost": 5000 // cost in yen\n}\n```'
     )
 
 
@@ -183,7 +177,7 @@ async def main():
 # wikipedia(title: Annotated[str, AIParam(desc='The article title on Wikipedia, e.g. "Train_station".')]) -- Gets the \
 # article text of a Wikipedia article given its title.
 # """
-system_prompt = None
+system_prompt = "Answer all of the user's questions to the best of your ability with no follow-up questions."
 
 ai = WikipediaRetrievalKani(engine, system_prompt=system_prompt)
 if __name__ == "__main__":
