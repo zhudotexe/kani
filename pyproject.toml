@@ -79,6 +79,7 @@ version.path = "kani/_version.py"
 [tool.black]
 line-length = 120
 preview = true
+unstable = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

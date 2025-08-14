@@ -8,7 +8,6 @@ import pkgutil
 import sys
 
 import kani.ext
-
 from kani import Kani, chat_in_terminal
 from kani.utils.cli import create_engine_from_cli_arg
 
@@ -106,7 +105,7 @@ def main():
         epilog=CLI_EXAMPLES,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("provider_and_model",nargs="?", metavar="<provider>:<model_id>")
+    parser.add_argument("provider_and_model", nargs="?", metavar="<provider>:<model_id>")
     parser.add_argument("-V", "--version", action="store_true", help="show version and exit")
     args = parser.parse_args()
 

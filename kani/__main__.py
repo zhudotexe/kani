@@ -18,6 +18,5 @@ $ kani g:gemini-2.5-flash
 
 import kani._cli
 
-
 if __name__ == "__main__":
     kani._cli.main()
