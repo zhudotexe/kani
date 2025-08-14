@@ -11,6 +11,10 @@ Anthropic
 ---------
 .. autoclass:: kani.engines.anthropic.AnthropicEngine
 
+Google AI
+---------
+.. autoclass:: kani.engines.google.GoogleAIEngine
+
 Hugging Face
 ------------
 .. autoclass:: kani.engines.huggingface.HuggingEngine
