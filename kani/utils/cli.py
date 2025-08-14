@@ -281,3 +281,53 @@ async def ainput(string: str) -> str:
 
     Thread(target=daemon, daemon=True).start()
     return await asyncio.wrap_future(future)
+
+
+# ==== CLI engine defs ====
+def chat_openai(model_id: str):
+    from kani.engines.openai import OpenAIEngine
+
+    return OpenAIEngine(model=model_id)
+
+
+def chat_anthropic(model_id: str):
+    from kani.engines.anthropic import AnthropicEngine
+
+    return AnthropicEngine(model=model_id)
+
+
+def chat_google(model_id: str):
+    from kani.engines.google import GoogleAIEngine
+
+    return GoogleAIEngine(model=model_id)
+
+
+def chat_huggingface(model_id: str):
+    from kani.engines.huggingface import HuggingEngine
+
+    return HuggingEngine(model_id=model_id)
+
+
+CLI_PROVIDER_MAP = {
+    # openai
+    "openai": chat_openai,
+    "oai": chat_openai,
+    # anthropic
+    "anthropic": chat_anthropic,
+    "ant": chat_anthropic,
+    "claude": chat_anthropic,
+    # google
+    "google": chat_google,
+    "g": chat_google,
+    "gemini": chat_google,
+    # huggingface
+    "huggingface": chat_huggingface,
+    "hf": chat_huggingface,
+}
+
+
+def create_engine_from_cli_arg(arg: str):
+    provider, model_id = arg.split(":", 1)
+    if provider not in CLI_PROVIDER_MAP:
+        raise ValueError(f"Invalid model provider: {provider!r}. Valid options: {list(CLI_PROVIDER_MAP)}")
+    return CLI_PROVIDER_MAP[provider](model_id)

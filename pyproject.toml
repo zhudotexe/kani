@@ -70,6 +70,9 @@ google = [
 "Homepage" = "https://github.com/zhudotexe/kani"
 "Bug Tracker" = "https://github.com/zhudotexe/kani/issues"
 
+[project.scripts]
+kani = "kani._cli:main"
+
 [tool.hatch]
 version.path = "kani/_version.py"
 

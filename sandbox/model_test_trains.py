@@ -12,70 +12,13 @@ from typing import Annotated
 import httpx
 
 from kani import AIParam, ChatRole, Kani, ai_function, print_stream, print_width
-from kani.model_specific import parser_for_hf_model
+from kani.utils.cli import create_engine_from_cli_arg
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
-
-# ==== engine defs ====
-def chat_openai(model_id: str):
-    from kani.engines.openai import OpenAIEngine
-
-    return OpenAIEngine(model=model_id)
-
-
-def chat_anthropic(model_id: str):
-    from kani.engines.anthropic import AnthropicEngine
-
-    return AnthropicEngine(model=model_id)
-
-
-def chat_google(model_id: str):
-    from kani.engines.google import GoogleAIEngine
-
-    return GoogleAIEngine(model=model_id)
-
-
-def chat_huggingface(model_id: str):
-    from kani.engines.huggingface import HuggingEngine
-
-    engine = HuggingEngine(model_id=model_id, model_load_kwargs={"trust_remote_code": True})
-    if parser := parser_for_hf_model(model_id):
-        engine = parser(engine)
-    return engine
-
-
-PROVIDER_MAP = {
-    # openai
-    "openai": chat_openai,
-    "oai": chat_openai,
-    # anthropic
-    "anthropic": chat_anthropic,
-    "ant": chat_anthropic,
-    "claude": chat_anthropic,
-    # google
-    "google": chat_google,
-    "g": chat_google,
-    "gemini": chat_google,
-    # huggingface
-    "huggingface": chat_huggingface,
-    "hf": chat_huggingface,
-}
-
-
-# ==== select engine ====
-def get_engine(arg):
-    provider, model_id = arg.split(":", 1)
-    if provider not in PROVIDER_MAP:
-        print(f"Invalid model provider: {provider!r}. Valid options: {list(PROVIDER_MAP)}")
-        sys.exit(1)
-
-    return PROVIDER_MAP[provider](model_id)
-
-
 if len(sys.argv) == 2:
-    engine = get_engine(sys.argv[1])
+    engine = create_engine_from_cli_arg(sys.argv[1])
 else:
-    print("Usage: python model_test_trains.py hf/model-id")
+    print("Usage: python model_test_trains.py provider:model")
     exit(1)
 
 
