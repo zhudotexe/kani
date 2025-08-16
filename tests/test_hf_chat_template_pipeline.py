@@ -9,6 +9,7 @@ This test suite:
 import httpx
 import pytest
 import torch
+from jinja2 import TemplateError
 from transformers import AutoTokenizer
 
 from kani import ChatMessage, PromptPipeline
@@ -61,13 +62,23 @@ def test_chat_templates(chat_template_model_id: str):
 @pytest.mark.parametrize("chat_template_model_id", popular_model_ids())
 def test_chat_templates_function_calls(chat_template_model_id: str):
     pipe = get_chat_template_pipeline(chat_template_model_id)
-    pipe.explain(function_call=True)
+    try:
+        pipe.explain(function_call=True)
+    except TemplateError as e:
+        if "alternate user/assistant" in e.message:
+            pytest.skip("This chat template does not support function calls")
+        raise
 
 
 @pytest.mark.parametrize("chat_template_model_id", popular_model_ids())
 def test_chat_templates_all(chat_template_model_id: str):
     pipe = get_chat_template_pipeline(chat_template_model_id)
-    pipe.explain(all_cases=True)
+    try:
+        pipe.explain(all_cases=True)
+    except TemplateError as e:
+        if "alternate user/assistant" in e.message:
+            pytest.skip("This chat template does not support non-standard chats")
+        raise
 
 
 @pytest.mark.parametrize(
