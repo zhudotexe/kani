@@ -34,7 +34,7 @@ all = [
 
 # extensions
 multimodal = [
-    "kani-multimodal-core",
+    "kani-multimodal-core<2.0.0",
 ]
 
 # providers
