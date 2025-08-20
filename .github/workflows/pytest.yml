@@ -35,6 +35,9 @@ jobs:
         env:
           UV_SYSTEM_PYTHON: 1
 
+      - name: Print version
+        run: kani --version
+
       - name: Test with pytest
         run: pytest -m 'not local'
 

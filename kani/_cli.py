@@ -41,10 +41,11 @@ def print_version():
     from ._version import __version__
 
     # print versions
-    # ==== versions ====
-    print("{:=^48}".format(" version "))
+    # ==== environment ====
+    print("{:=^48}".format(" env "))
     print(f"kani {__version__}")
     print(f"Python {sys.version} on {sys.platform}")
+    print(f"env: {sys.prefix}")
 
     # ==== optionals ====
     print("{:=^48}".format(" optionals "))
@@ -63,7 +64,7 @@ def print_version():
 
         exts = [name for finder, name, ispkg in pkgutil.iter_modules(kani.ext.__path__, kani.ext.__name__ + ".")]
         if exts:
-            print(f"kani extensions: {'; '.join(exts)}")
+            print(f"{'kani extensions':<{max_optional_len}}: {'; '.join(exts)}")
     except ImportError:
         pass
 
