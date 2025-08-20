@@ -226,16 +226,13 @@ class OpenAIEngine(TokenCached, BaseEngine):
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
         if not functions:
             return 0
-        # wrap an inner impl to use lru_cache with frozensets
-        return self._function_token_reserve_impl(frozenset(functions))
+        # wrap an inner impl to use lru_cache with tuple
+        return self._function_token_reserve_impl(tuple(functions))
 
     @functools.lru_cache(maxsize=256)
     def _function_token_reserve_impl(self, functions):
-        # openai doesn't tell us exactly how their function prompt works, so
-        # we rely on community reverse-engineering to build the right prompt
-        # hopefully OpenAI releases a utility to calculate this in the future, this seems kind of fragile
-        prompt = function_calling.prompt(functions)
-        return len(self.tokenizer.encode(prompt)) + 16  # internal MD headers, namespace {} delimiters
+        prompt = function_calling.prompt(translate_functions(functions))
+        return len(self.tokenizer.encode(prompt))
 
     async def close(self):
         await self.client.close()
