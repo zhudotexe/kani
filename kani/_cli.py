@@ -7,7 +7,6 @@ import importlib
 import pkgutil
 import sys
 
-import kani.ext
 from kani import Kani, chat_in_terminal
 from kani.utils.cli import create_engine_from_cli_arg
 
@@ -42,10 +41,12 @@ def print_version():
     from ._version import __version__
 
     # print versions
+    # ==== versions ====
     print("{:=^48}".format(" version "))
     print(f"kani {__version__}")
     print(f"Python {sys.version} on {sys.platform}")
 
+    # ==== optionals ====
     print("{:=^48}".format(" optionals "))
     max_optional_len = max(len(lib) for lib, _ in OPTIONAL_LIBS)
     for lib, attr in OPTIONAL_LIBS:
@@ -56,13 +57,17 @@ def print_version():
         except ImportError:
             print(f"{lib:<{max_optional_len}}: False")
 
-    def iter_namespace(ns_pkg):
-        return pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + ".")
+    # --- ext ---
+    try:
+        import kani.ext
 
-    discovered_plugins = [name for finder, name, ispkg in iter_namespace(kani.ext)]
-    if discovered_plugins:
-        print(f"kani extensions: {'; '.join(discovered_plugins)}")
+        exts = [name for finder, name, ispkg in pkgutil.iter_modules(kani.ext.__path__, kani.ext.__name__ + ".")]
+        if exts:
+            print(f"kani extensions: {'; '.join(exts)}")
+    except ImportError:
+        pass
 
+    # ==== torch ====
     print("{:=^48}".format(" torch "))
     try:
         import torch
