@@ -34,7 +34,6 @@ from kani.model_specific.gpt_oss import GPTOSSParser
 model = HuggingEngine(
     model_id="openai/gpt-oss-20b",
     chat_template_kwargs=dict(reasoning_effort="low"),  # set this to "low", "medium", or "high"
-    eos_token_id=[200002, 199999, 200012],              # ensures the model stops correctly on tool calls
     temperature=1.0,                                    # suggested decoding parameter
     top_k=None,                                         # ensure we do not use top_k (transformers default =50)
 )
@@ -58,9 +57,6 @@ engine = HuggingEngine(
     model_load_kwargs={"device_map": "auto", "torch_dtype": torch.bfloat16},
 )
 
-# NOTE: If you're running transformers<4.40 and LLaMA 3 continues generating after the <|eot_id|> token,
-# add `eos_token_id=[128001, 128009]` or upgrade transformers
-
 # ---- Mistral Small/Large (Hugging Face) ----
 from kani.engines.huggingface import HuggingEngine
 from kani.model_specific.mistral import MistralToolCallParser
@@ -68,10 +64,6 @@ from kani.model_specific.mistral import MistralToolCallParser
 # large (123B): mistralai/Mistral-Large-Instruct-2407
 model = HuggingEngine(model_id="mistralai/Mistral-Small-Instruct-2409")
 engine = MistralToolCallParser(model)
-
-# ---- Command R (Hugging Face) ----
-from kani.engines.huggingface.cohere import CommandREngine
-engine = CommandREngine(model_id="CohereForAI/c4ai-command-r-08-2024")
 
 # --------- older models ----------
 # ---- LLaMA v2 (Hugging Face) ----
