@@ -8,7 +8,7 @@ from concurrent.futures import Future
 from threading import Thread
 from typing import AsyncIterable, overload
 
-from kani import _optional
+from kani import _optional, model_specific
 from kani.kani import Kani
 from kani.models import ChatRole
 from kani.streaming import StreamManager
@@ -305,7 +305,11 @@ def chat_google(model_id: str):
 def chat_huggingface(model_id: str):
     from kani.engines.huggingface import HuggingEngine
 
-    return HuggingEngine(model_id=model_id)
+    engine = HuggingEngine(model_id=model_id)
+    # HF: wrap in model-specific parser if available
+    if parser := model_specific.parser_for_hf_model(engine.model_id):
+        return parser(engine)
+    return engine
 
 
 CLI_PROVIDER_MAP = {
