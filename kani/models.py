@@ -141,14 +141,20 @@ class MessagePart(BaseModel, abc.ABC):
             )
         cls._messagepart_registry[fqn] = cls
 
+    def _get_typekey_dict(self):
+        """
+        Get the additional key(s) needed for serialization.
+        Used if a ModelPart implements special serialization logic.
+        """
+        cls = type(self)
+        fqn = cls.__module__ + "." + cls.__qualname__
+        return {MESSAGEPART_TYPE_KEY: fqn}
+
     @model_serializer(mode="wrap")
     def _serialize(self, nxt):
         """Extend the default serialization dict with a key recording what type it is."""
         retval = nxt(self)
-        cls = type(self)
-        fqn = cls.__module__ + "." + cls.__qualname__
-        retval[MESSAGEPART_TYPE_KEY] = fqn
-        return retval
+        return retval | self._get_typekey_dict()
 
     # noinspection PyNestedDecorators
     @model_validator(mode="wrap")
