@@ -13,12 +13,6 @@ class SavedKani(BaseModel):
     always_included_messages: list[ChatMessage]
     chat_history: list[ChatMessage]
 
-    def model_dump(self, **kwargs) -> dict[str, Any]:
-        return super().model_dump(serialize_as_any=True, **kwargs)
-
-    def model_dump_json(self, **kwargs) -> str:
-        return super().model_dump_json(serialize_as_any=True, **kwargs)
-
 
 def save(fp: PathLike, inst, *, save_format: str, **kwargs):
     # create a Pydantic model for the saved attrs
