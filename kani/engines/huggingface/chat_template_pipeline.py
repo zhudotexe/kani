@@ -19,7 +19,7 @@ from collections import defaultdict
 from functools import cached_property
 from typing import Iterable
 
-from kani import AIFunction, ChatMessage, ChatRole, PromptPipeline
+from kani import AIFunction, ChatMessage, ChatRole, PromptPipeline, ToolCall
 from kani.exceptions import MissingModelDependencies
 from kani.prompts.steps import ConversationDict
 
@@ -291,8 +291,12 @@ def _padding_length_inference_base(role: ChatRole) -> Iterable[list[ChatMessage]
         yield [ChatMessage.system("dummy"), ChatMessage.user("dummy")]
         yield [ChatMessage.user("dummy")]
     elif role == ChatRole.FUNCTION:
-        yield base_with_system
-        yield base_without_system
+        yield [
+            ChatMessage.system("dummy"),
+            ChatMessage.user("dummy"),
+            ChatMessage.assistant("", tool_calls=[ToolCall.from_function("dummy")]),
+        ]
+        yield [ChatMessage.user("dummy"), ChatMessage.assistant("", tool_calls=[ToolCall.from_function("dummy")])]
     # SYSTEM: only empty
     # default, no conversation
     yield []

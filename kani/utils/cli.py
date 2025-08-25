@@ -3,10 +3,12 @@
 import asyncio
 import logging
 import os
-import sys
 import textwrap
+from concurrent.futures import Future
+from threading import Thread
 from typing import AsyncIterable, overload
 
+from kani import _optional, model_specific
 from kani.kani import Kani
 from kani.models import ChatRole
 from kani.streaming import StreamManager
@@ -31,6 +33,10 @@ async def chat_in_terminal_async(
     """
     if os.getenv("KANI_DEBUG") is not None:
         logging.basicConfig(level=logging.DEBUG)
+    elif os.getenv("KANI_DEBUG_LOGGERS") is not None:
+        logging.basicConfig(level=logging.INFO)
+        for logger in os.getenv("KANI_DEBUG_LOGGERS").split(","):
+            logging.getLogger(logger).setLevel(logging.DEBUG)
     if verbose:
         echo = show_function_args = show_function_returns = True
 
@@ -42,11 +48,26 @@ async def chat_in_terminal_async(
             # get user query
             if not ai_first or round_num > 0:
                 query = await ainput("USER: ")
-                query = query.strip()
-                if echo:
-                    print_width(query, width=width, prefix="USER: ")
+                query = query_str = query.strip()
+
+                # multimodal handling
+                if _optional.has_multimodal_core:
+                    # find @path/to/file.png parts and replace them with FileImageParts
+                    query = await _optional.multimodal_cli.parts_from_cli_query(query)
+
+                # stopword
                 if stopword and query == stopword:
                     break
+
+                # echo & multimodal echo
+                if _optional.has_multimodal_core:
+                    # IPython
+                    if _optional.multimodal_cli._is_notebook:
+                        _optional.multimodal_cli.display_media_ipython(query, show_text=echo)
+                    else:
+                        _optional.multimodal_cli.display_media(query, show_text=echo)
+                elif echo:
+                    print_width(query_str, width=width, prefix="USER: ")
             # print completion(s)
             else:
                 query = None
@@ -105,6 +126,10 @@ def chat_in_terminal(kani: Kani, **kwargs):
 
     If the environment variable ``KANI_DEBUG`` is set, debug logging will be enabled.
 
+    If ``kani-multimodal-core`` is installed, you can send multimodal media to a compatible engine with a file path
+    or URL after an ``@`` symbol (e.g. "Describe this image: @image.png").
+    Use quotes (e.g. ``@"path/to/my image.png"``) for paths with spaces in their names.
+
     .. warning::
 
         This function is only a development utility and should not be used in production.
@@ -139,7 +164,10 @@ def chat_in_terminal(kani: Kani, **kwargs):
                 f" should use `await chat_in_terminal_async(...)` instead or install `nest-asyncio`."
             )
             return
-    asyncio.run(chat_in_terminal_async(kani, **kwargs))
+    try:
+        asyncio.run(chat_in_terminal_async(kani, **kwargs))
+    except KeyboardInterrupt:
+        return
 
 
 # ===== format helpers =====
@@ -238,5 +266,72 @@ async def print_stream(stream: StreamManager, width: int = None, prefix: str = "
 
 async def ainput(string: str) -> str:
     """input(), but async."""
-    print(string, end="", flush=True)
-    return (await asyncio.to_thread(sys.stdin.readline)).rstrip("\n")
+    # doing just .to_thread causes problems when we ^C, so we need to launch our own daemon thread to handle reading
+    # input
+    future = Future()
+    future.set_running_or_notify_cancel()
+
+    def daemon():
+        try:
+            result = input(string)
+        except Exception as e:
+            future.set_exception(e)
+        else:
+            future.set_result(result)
+
+    Thread(target=daemon, daemon=True).start()
+    return await asyncio.wrap_future(future)
+
+
+# ==== CLI engine defs ====
+def chat_openai(model_id: str):
+    from kani.engines.openai import OpenAIEngine
+
+    return OpenAIEngine(model=model_id)
+
+
+def chat_anthropic(model_id: str):
+    from kani.engines.anthropic import AnthropicEngine
+
+    return AnthropicEngine(model=model_id)
+
+
+def chat_google(model_id: str):
+    from kani.engines.google import GoogleAIEngine
+
+    return GoogleAIEngine(model=model_id)
+
+
+def chat_huggingface(model_id: str):
+    from kani.engines.huggingface import HuggingEngine
+
+    engine = HuggingEngine(model_id=model_id)
+    # HF: wrap in model-specific parser if available
+    if parser := model_specific.parser_for_hf_model(engine.model_id):
+        return parser(engine)
+    return engine
+
+
+CLI_PROVIDER_MAP = {
+    # openai
+    "openai": chat_openai,
+    "oai": chat_openai,
+    # anthropic
+    "anthropic": chat_anthropic,
+    "ant": chat_anthropic,
+    "claude": chat_anthropic,
+    # google
+    "google": chat_google,
+    "g": chat_google,
+    "gemini": chat_google,
+    # huggingface
+    "huggingface": chat_huggingface,
+    "hf": chat_huggingface,
+}
+
+
+def create_engine_from_cli_arg(arg: str):
+    provider, model_id = arg.split(":", 1)
+    if provider not in CLI_PROVIDER_MAP:
+        raise ValueError(f"Invalid model provider: {provider!r}. Valid options: {list(CLI_PROVIDER_MAP)}")
+    return CLI_PROVIDER_MAP[provider](model_id)

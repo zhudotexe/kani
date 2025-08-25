@@ -142,8 +142,8 @@ def warn_for_uninitialized_parser(model_id: str):
         warnings.warn(
             "You are using a model that requires additional parsing of its outputs but no model-specific parser is"
             f" wrapping it. Consider wrapping your engine with {parser!s} in order"
-            " to correctly parse tool calls and/or reasoning chunks:\n"
+            " to correctly parse tool calls and/or reasoning chunks:\n\n"
             f">>> from {parser.__module__} import {parser.__name__}\n"
-            f">>> engine = {parser.__name__}(<previous engine def>)",
+            f">>> engine = {parser.__name__}(<previous engine def>)\n",
             **_warnings_kwargs,
         )

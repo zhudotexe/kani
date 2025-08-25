@@ -182,7 +182,9 @@ class MessagePart(BaseModel, abc.ABC):
         warnings.warn(
             f"Message part of type {type_name!r} was coerced into a string. Rich data may not be visible to the"
             " user/model.\nDevelopers: If this warning is incorrect, please add support for this message part in your"
-            f" engine or override `{type_name}.__str__()`."
+            f" engine or override `{type_name}.__str__()`.",
+            # usually this points to wherever msg.text is, unless someone manually str()'s a part
+            stacklevel=3,
         )
         return f"<{type_name} {super().__str__()}>"
 
@@ -262,6 +264,13 @@ class ChatMessage(BaseModel):
                 " `.function_call`."
             )
         return self.tool_calls[0].function
+
+    # ==== extra ====
+    extra: dict = {}
+    """
+    Specific engines may store additional extra data in this dictionary. See an engine's documentation for details about
+    any extras it may store or expect.
+    """
 
     # ==== constructors ====
     @classmethod

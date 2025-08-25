@@ -548,6 +548,8 @@ class Kani:
         :param fp: The path to the file to save.
         :param kwargs: Additional arguments to pass to Pydantic's ``model_dump_json``.
         """
+        # TODO save to a .kani file for multimodal attachments
+        # zip w/ manifest file
         data = SavedKani(always_included_messages=self.always_included_messages, chat_history=self.chat_history)
         with open(fp, "w", encoding="utf-8") as f:
             f.write(data.model_dump_json(**kwargs))

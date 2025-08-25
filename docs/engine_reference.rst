@@ -3,6 +3,28 @@ Engine Reference
 
 .. include:: shared/engine_table.rst
 
+OpenAI
+------
+.. autoclass:: kani.engines.openai.OpenAIEngine
+
+Anthropic
+---------
+.. autoclass:: kani.engines.anthropic.AnthropicEngine
+
+Google AI
+---------
+.. autoclass:: kani.engines.google.GoogleAIEngine
+
+Hugging Face
+------------
+.. autoclass:: kani.engines.huggingface.HuggingEngine
+    :members:
+
+llama.cpp
+---------
+.. autoclass:: kani.engines.llamacpp.LlamaCppEngine
+    :members:
+
 Base
 ----
 .. autoclass:: kani.engines.BaseEngine
@@ -19,29 +41,4 @@ Base
     :members:
 
 .. autoclass:: kani.engines.httpclient.BaseClient
-    :members:
-
-OpenAI
-------
-.. autoclass:: kani.engines.openai.OpenAIEngine
-
-Anthropic
----------
-.. autoclass:: kani.engines.anthropic.AnthropicEngine
-
-
-Hugging Face
-------------
-.. autoclass:: kani.engines.huggingface.HuggingEngine
-    :members:
-
-.. autoclass:: kani.engines.huggingface.llama2.LlamaEngine
-    :members:
-
-.. autoclass:: kani.engines.huggingface.cohere.CommandREngine
-    :members:
-
-llama.cpp
----------
-.. autoclass:: kani.engines.llamacpp.LlamaCppEngine
     :members:
