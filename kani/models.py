@@ -8,7 +8,7 @@ import warnings
 from functools import cached_property
 from typing import Any, ClassVar, Sequence, Type, TypeAlias, Union
 
-from pydantic import BaseModel as PydanticBase, field_serializer, model_serializer, model_validator
+from pydantic import BaseModel as PydanticBase, SerializeAsAny, model_serializer, model_validator
 
 from .exceptions import MissingMessagePartType
 
@@ -141,19 +141,25 @@ class MessagePart(BaseModel, abc.ABC):
             )
         cls._messagepart_registry[fqn] = cls
 
+    def _get_typekey_dict(self):
+        """
+        Get the additional key(s) needed for serialization.
+        Used if a ModelPart implements special serialization logic.
+        """
+        cls = type(self)
+        fqn = cls.__module__ + "." + cls.__qualname__
+        return {MESSAGEPART_TYPE_KEY: fqn}
+
     @model_serializer(mode="wrap")
     def _serialize(self, nxt):
         """Extend the default serialization dict with a key recording what type it is."""
         retval = nxt(self)
-        cls = type(self)
-        fqn = cls.__module__ + "." + cls.__qualname__
-        retval[MESSAGEPART_TYPE_KEY] = fqn
-        return retval
+        return retval | self._get_typekey_dict()
 
     # noinspection PyNestedDecorators
     @model_validator(mode="wrap")
     @classmethod
-    def _validate(cls, v, nxt):
+    def _validate(cls, v, nxt, info):
         """If we are deserializing a dict with the special key, switch to the right class' validator."""
         if isinstance(v, dict) and MESSAGEPART_TYPE_KEY in v:
             fqn = v.pop(MESSAGEPART_TYPE_KEY)
@@ -165,7 +171,7 @@ class MessagePart(BaseModel, abc.ABC):
                     f"Found a MessagePart with type {fqn!r}, but the type is not defined. Maybe the type is from an"
                     " extension that has not yet been imported?",
                 )
-            return klass.model_validate(v)
+            return klass.model_validate(v, context=info.context)
         return nxt(v)
 
     # ==== entrypoints ====
@@ -192,19 +198,11 @@ class MessagePart(BaseModel, abc.ABC):
 class ChatMessage(BaseModel):
     """Represents a message in the chat context."""
 
-    def __init__(self, **kwargs):
-        # translate a function_call into tool_calls
-        if "function_call" in kwargs:
-            if "tool_calls" in kwargs:
-                raise ValueError("Only one of `function_call` or `tool_calls` may be provided.")
-            kwargs["tool_calls"] = (ToolCall.from_function_call(kwargs.pop("function_call")),)
-        super().__init__(**kwargs)
-
     role: ChatRole
     """Who said the message?"""
 
     # ==== content ====
-    content: str | list[MessagePart | str] | None
+    content: str | list[SerializeAsAny[MessagePart] | str] | None
     """The data used to create this message. Generally, you should use :attr:`text` or :attr:`parts` instead."""
 
     @property
@@ -324,19 +322,14 @@ class ChatMessage(BaseModel):
         return super().copy_with(**new_values)
 
     # ==== pydantic stuff ====
-    @field_serializer("content", mode="wrap")
-    def _content_serializer(self, content, nxt):
-        """
-        Custom serialization logic for a list of MessageParts due to
-        https://docs.pydantic.dev/latest/concepts/serialization/#subclass-instances-for-fields-of-basemodel-dataclasses-typeddict
-        """
-        if not isinstance(content, list):
-            return nxt(content)
-
-        out = []
-        for item in content:
-            if isinstance(item, MessagePart):
-                out.append(item.model_dump())
-            else:
-                out.append(nxt(item))
-        return out
+    # noinspection PyNestedDecorators
+    @model_validator(mode="wrap")
+    @classmethod
+    def _validate_function_call(cls, v, nxt):
+        if isinstance(v, dict):
+            # translate a function_call into tool_calls if it's passed to __init__
+            if "function_call" in v:
+                if "tool_calls" in v:
+                    raise ValueError("Only one of `function_call` or `tool_calls` may be provided.")
+                v["tool_calls"] = (ToolCall.from_function_call(v.pop("function_call")),)
+        return nxt(v)
