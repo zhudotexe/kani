@@ -8,29 +8,21 @@ Compared to other LM frameworks, kani is less opinionated and offers more fine-g
 over the parts of the control flow that matter, making it the perfect choice for NLP researchers, hobbyists, and
 developers alike.
 
-kani comes with support for OpenAI models and LLaMA v2 out of the box, with a model-agnostic framework to add support
-for many more.
+kani comes with support for the following models out of the box, with a **model-agnostic** framework to add support for
+many more:
 
-Features
---------
+* OpenAI Models (``pip install "kani[openai]"``)
+* Anthropic Models (``pip install "kani[anthropic]"``)
+* Google AI Models (``pip install "kani[google]"``)
+* and _every_ chat model available on Hugging Face through ``transformers`` or ``llama.cpp``!
+  (``pip install "kani[huggingface]"``)
 
-- **Lightweight and high-level** - kani implements common boilerplate to interface with language models without forcing
-  you to use opinionated prompt frameworks or complex library-specific tooling.
-- **Model agnostic** - kani provides a simple interface to implement: token counting and completion generation.
-  kani lets developers switch which language model runs on the backend without major code refactors.
-- **Automatic chat memory management** - Allow chat sessions to flow without worrying about managing the number of
-  tokens in the history - kani takes care of it.
-- **Function calling with model feedback and retry** - Give models access to functions in just one line of code.
-  kani elegantly provides feedback about hallucinated parameters and errors and allows the model to retry calls.
-- **You control the prompts** - There are no hidden prompt hacks. We will never decide for you how to format your own
-  data, unlike other popular language model libraries.
-- **Fast to iterate and intuitive to learn** - With kani, you only write Python - we handle the rest.
-- **Asynchronous design from the start** - kani can scale to run multiple chat sessions in parallel easily, without
-  having to manage multiple processes or programs.
 
 Quickstart
 ----------
-kani requires Python 3.10 or above.
+kani requires Python 3.10 or above. To install model-specific dependencies, kani uses various extras (brackets after
+the library name in ``pip install``). To determine which extra(s) to install, see the
+`model table <https://kani.readthedocs.io/en/latest/engines.html>`_, or use the ``[all]`` extra to install everything.
 
 First, install the library. In this quickstart, we'll use the OpenAI engine, though kani is model-agnostic.
 
@@ -52,7 +44,7 @@ Then, let's use kani to create a simple chatbot using ChatGPT as a backend.
 
     # kani uses an Engine to interact with the language model. You can specify other model
     # parameters here, like temperature=0.7.
-    engine = OpenAIEngine(api_key, model="gpt-4o-mini")
+    engine = OpenAIEngine(api_key, model="gpt-5-nano")
 
     # The kani manages the chat state, prompting, and function calling. Here, we only give
     # it the engine to call ChatGPT, but you can specify other parameters like

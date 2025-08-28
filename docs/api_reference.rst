@@ -139,3 +139,11 @@ a :class:`.HuggingEngine`) like so:
 .. autoclass:: kani.model_specific.mistral.MistralToolCallParser
 
 .. autoclass:: kani.model_specific.deepseek.DeepSeekR1ToolCallParser
+
+Saving/Loading
+^^^^^^^^^^^^^^
+
+.. autofunction:: kani.utils.saveload.get_ctx
+
+.. autoclass:: kani.utils.saveload.KaniZipSaveContext
+    :members:

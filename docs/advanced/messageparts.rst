@@ -15,11 +15,17 @@ chain of thought to be visible in its output. In the example below, we'll define
 this data, and have our engine use this when building the prompt. This may be a little bit contrived, but hopefully
 it demonstrates how to use the MessagePart interface.
 
-.. note::
+.. tip::
 
     MessageParts are commonly used for multimodal inputs: for example, both the :class:`.OpenAIEngine` and
     :class:`.AnthropicEngine` support image inputs using ``kani-multimodal-core``\ 's
     :class:`~kani.ext.multimodal_core.ImagePart`.
+
+.. warning::
+
+    Don't confuse Message Parts with :doc:`message_extras`. Message Parts are used for engine-agnostic inputs
+    that require richer representation than a string, whereas Message Extras are used for engine-specific metadata
+    about a certain message (e.g., an internal ID or detailed engine-specific usage data).
 
 Defining a MessagePart
 ----------------------
@@ -155,3 +161,59 @@ the default stringification behaviour is to return the empty string. This means 
 behaviour that won't interfere with other engines.
 
 Now you can use any message part you can think of - and you can create user messages with parts too.
+
+Saving & Loading MessageParts
+-----------------------------
+By default, kani will register a serializer and deserializer for each MessagePart you define, which will recursively
+save every public attribute in your MessagePart in JSON format. If all of your data is JSON-serializable, great!
+You don't need to do anything extra.
+
+Certain MessageParts, however, may store non-JSON-serializable data, like a large binary file for a multimodal model.
+In order to correctly save the state of these MessageParts, you must implement a custom
+`serializer <https://docs.pydantic.dev/latest/concepts/serialization/#custom-serializers>`_ and
+`validator <https://docs.pydantic.dev/latest/concepts/validators/#model-validators>`_.
+
+You might, for example, save raw binary in Base64 format. When saving large binary objects, you should check for the
+presence of ``kani.utils.saveload.SAVELOAD_CONTEXT_KEY`` in the serialization/validation context. If it is present,
+you may use the :class:`.KaniZipSaveContext` to save large blobs to a separate location in the save archive.
+This has the benefit of keeping the main chat log human-readable and the file size small.
+
+See :doc:`saveload` for more information.
+
+Example
+^^^^^^^
+
+An example of a custom serializer and validator for a messagepart containing large binary data
+
+.. code-block:: python
+
+    @model_serializer()
+    def _serialize_binary_file_part(self, info) -> dict[str, str]:
+        """
+        When we serialize, save the data as:
+        - B64 of compressed data when not in zipfile mode
+        - a file when in zipfile mode
+        """
+        if ctx := saveload.get_ctx(info):
+            suffix = mimetypes.guess_extension(self.mime) or ""
+            fp = ctx.save_bytes(self.as_bytes(), suffix=suffix)
+            return {"_archive_path": fp, "mime": self.mime, **self._get_typekey_dict()}
+        else:
+            compressed_b64 = base64.b64encode(zlib.compress(self.as_bytes())).decode()
+            return {"mime": self.mime, "compression": "gzip", "data": compressed_b64, **self._get_typekey_dict()}
+
+    @model_validator(mode="wrap")
+    @classmethod
+    def _validate_binary_file_part(cls, v, nxt, info):
+        """If the value is the URI we saved, try loading it that way."""
+        assert isinstance(v, dict)
+        if "_archive_path" in v:
+            ctx = saveload.get_ctx(info)
+            data = ctx.load_bytes(v["_archive_path"])
+            return cls.from_bytes(data, mime=v["mime"])
+        elif "data" in v:
+            if v.get("compression") == "gzip":
+                decompressed = zlib.decompress(base64.b64decode(v["data"]))
+                return cls.from_bytes(mime=v["mime"], data=decompressed)
+            return cls.from_b64(mime=v["mime"], data=v["data"])
+        return nxt(v)
