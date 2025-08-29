@@ -11,6 +11,9 @@ CONTEXT_SIZES_BY_PREFIX = [
     # gpt-4o
     ("gpt-4o", 128000),
     ("chatgpt-4o", 128000),
+    # multimodal models
+    ("gpt-audio", 128000),
+    # ======
     # gpt-4-turbo models aren't prefixed differently...
     ("gpt-4-1106", 128000),
     ("gpt-4-0125", 128000),

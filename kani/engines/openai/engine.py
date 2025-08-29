@@ -99,8 +99,11 @@ class OpenAIEngine(TokenCached, BaseEngine):
         try:
             self.tokenizer = tiktoken.encoding_for_model(self.model)
         except KeyError:
-            warnings.warn(f"Could not find a tokenizer for the {self.model} model. You may need to update tiktoken.")
-            self.tokenizer = tiktoken.get_encoding("cl100k_base")
+            warnings.warn(
+                f"Could not find a tokenizer for the {self.model} model. You may need to update tiktoken. Using"
+                " o200k_base tokenizer as default."
+            )
+            self.tokenizer = tiktoken.get_encoding("o200k_base")
 
     def message_len(self, message: ChatMessage) -> int:
         if (cached_len := self.get_cached_message_len(message)) is not None:
