@@ -44,6 +44,3 @@ Base
 
 .. autoclass:: kani.engines.base.BaseCompletion
     :members:
-
-.. autoclass:: kani.engines.httpclient.BaseClient
-    :members:
