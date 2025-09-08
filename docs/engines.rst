@@ -16,6 +16,5 @@ In this section, we'll discuss how to implement your own engine to use any langu
     :maxdepth: 2
 
     engines/implementing
-    engines/http
     engines/huggingface
     engines/llamacpp
