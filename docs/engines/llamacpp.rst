@@ -1,7 +1,16 @@
-llama.cpp
-=========
+LlamaCppEngine
+==============
 If your language model backend is available with GGUF, kani includes a base engine that implements
 a prediction pipeline.
+
+**TL;DR**
+
+.. code-block:: python
+
+    from kani.engines.huggingface import ChatTemplatePromptPipeline
+    from kani.engines.llamacpp import LlamaCppEngine
+    pipeline = ChatTemplatePromptPipeline.from_pretrained("org-id/base-model-id")
+    engine = LlamaCppEngine(repo_id="org-id/quant-model-id", filename="*.your-quant-type.gguf", prompt_pipeline=pipeline)
 
 .. important::
 

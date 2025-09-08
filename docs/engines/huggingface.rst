@@ -1,7 +1,14 @@
-HuggingFace
-===========
+HuggingEngine
+=============
 If your language model backend is available on HuggingFace or is compatible with ``transformers``'
 ``AutoModelForCausalLM`` interface, kani includes a base engine that implements a prediction pipeline.
+
+**TL;DR**
+
+.. code-block:: python
+
+    from kani.engines.huggingface import HuggingEngine
+    engine = HuggingEngine(model_id="org-id/model-id")
 
 .. important::
 
@@ -24,19 +31,10 @@ If your language model backend is available on HuggingFace or is compatible with
 If you do create a new engine, instead of having to implement the prediction logic, all you have to do is subclass
 :class:`.HuggingEngine` and implement :meth:`~.HuggingEngine.build_prompt` and :meth:`~.BaseEngine.message_len`.
 
-.. autoclass:: kani.engines.huggingface.base.HuggingEngine
-    :noindex:
-
-    .. automethod:: kani.engines.huggingface.base.HuggingEngine.build_prompt
-        :noindex:
-
-    .. automethod:: kani.engines.huggingface.base.HuggingEngine.message_len
-        :noindex:
-
 .. _4b_quant:
 
-4-bit Quantization (|:hugging:|)
---------------------------------
+Quantization With BitsAndBytes
+------------------------------
 If you're running your model locally, you might run into issues because large language models are, well, *large*!
 Unless you pay for a massive compute cluster (|:money_with_wings:|) or have access to one at your institution, you
 might not be able to fit models with billions of params on your GPU. That's where model quantization comes into play.
@@ -85,3 +83,15 @@ Then, you'll need to set the ``model_load_kwargs`` when initializing your model,
             "quantization_config": quantization_config,
         },
     )
+
+Reference
+---------
+
+.. autoclass:: kani.engines.huggingface.HuggingEngine
+    :noindex:
+
+    .. automethod:: kani.engines.huggingface.HuggingEngine.build_prompt
+        :noindex:
+
+    .. automethod:: kani.engines.huggingface.HuggingEngine.message_len
+        :noindex:

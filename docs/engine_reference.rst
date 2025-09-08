@@ -11,6 +11,11 @@ Anthropic
 ---------
 .. autoclass:: kani.engines.anthropic.AnthropicEngine
 
+.. autoclass:: kani.engines.anthropic.AnthropicUnknownPart
+    :class-doc-from: class
+    :members:
+    :exclude-members: model_config, model_fields, model_computed_fields
+
 Google AI
 ---------
 .. autoclass:: kani.engines.google.GoogleAIEngine
