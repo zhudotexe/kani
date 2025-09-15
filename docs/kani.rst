@@ -104,6 +104,9 @@ When you are finished with an engine, release its resources with :meth:`.BaseEng
 
 Concept: Chat Messages
 ----------------------
+At a high level, a :class:`.Kani` is responsible for managing a list of :class:`.ChatMessage`: the chat session
+associated with it. You can access the chat messages through the :attr:`.Kani.chat_history` attribute.
+
 Each message contains the ``role`` (a :class:`.ChatRole`: system, assistant, user, or function) that sent the message
 and the ``content`` of the message. Optionally, a user message can also contain a ``name`` (for multi-user
 conversations), and an assistant message can contain a ``function_call`` (discussed in :doc:`function_calling`).
@@ -114,14 +117,11 @@ conversations), and an assistant message can contain a ``function_call`` (discus
     :class-doc-from: class
     :noindex:
 
-At a high level, a :class:`.Kani` is responsible for managing a list of :class:`.ChatMessage`: the chat session
-associated with it. You can access the chat messages through the :attr:`.Kani.chat_history` attribute.
-
 You may even modify the chat history (e.g. append or delete ChatMessages or edit a message's content) to change the
 prompt at any time.
 
 .. warning::
-    In some advanced use cases, :attr:`.ChatMessage.content` may be a tuple of :class:`.MessagePart` or ``str`` rather
+    In some advanced use cases, :attr:`.ChatMessage.content` may be a list of :class:`.MessagePart` or ``str`` rather
     than a string. ChatMessage exposes :attr:`.ChatMessage.text` (always a string or None) and
     :attr:`.ChatMessage.parts` (always a list of message parts), which we recommend using instead of
     :attr:`.ChatMessage.content`. See :doc:`advanced/messageparts` for more information.
@@ -153,6 +153,56 @@ prompt at any time.
         ChatMessage(role=ChatRole.ASSISTANT, content="Hello! How can I assist you today?"),
     ]
 
+Function Calling
+----------------
+
+Function calling gives language models the ability to choose when to call a function you provide based off its
+documentation.
+
+With kani, you can write functions in Python and expose them to the model with just one line of code: the
+``@ai_function`` decorator.
+
+.. code-block:: python
+
+    # import the library
+    import asyncio
+    from typing import Annotated
+    from kani import AIParam, Kani, ai_function, chat_in_terminal, ChatRole
+    from kani.engines.openai import OpenAIEngine
+
+    # set up the engine as above
+    api_key = "sk-..."
+    engine = OpenAIEngine(api_key, model="gpt-4o-mini")
+
+    # subclass Kani to add AI functions
+    class MyKani(Kani):
+        # Adding the annotation to a method exposes it to the AI
+        @ai_function()
+        def get_weather(
+            self,
+            # and you can provide extra documentation about specific parameters
+            location: Annotated[str, AIParam(desc="The city and state, e.g. San Francisco, CA")],
+        ):
+            """Get the current weather in a given location."""
+            # In this example, we mock the return, but you could call a real weather API
+            return f"Weather in {location}: Sunny, 72 degrees fahrenheit."
+
+    ai = MyKani(engine)
+
+    # the terminal utility allows you to test function calls...
+    chat_in_terminal(ai)
+
+    # and you can track multiple rounds programmatically.
+    async def main():
+        async for msg in ai.full_round("What's the weather in Tokyo?"):
+            print(msg.role, msg.text)
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+
+kani guarantees that function calls are valid by the time they reach your methods while allowing you to focus on
+writing code. For more information, check out :doc:`the function calling docs <function_calling>`.
+
 Streaming
 ---------
 kani supports streaming to print tokens from the engine as they are received. Streaming is designed to be a drop-in
@@ -167,13 +217,13 @@ The simplest way to consume the stream is to iterate over it with ``async for``,
 
 .. code-block:: python
 
-    # CHAT ROUND:
+    # CHAT ROUND (no function calling):
     stream = ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
     async for token in stream:
         print(token, end="")
     msg = await stream.message()
 
-    # FULL ROUND:
+    # FULL ROUND (with function calling):
     async for stream in ai.full_round_stream("What is the airspeed velocity of an unladen swallow?"):
         async for token in stream:
             print(token, end="")
@@ -212,6 +262,61 @@ stream.
 
         - msg = await ai.chat_round("What is the airspeed velocity of an unladen swallow?")
         + msg = await ai.chat_round_stream("What is the airspeed velocity of an unladen swallow?")
+
+Multimodal Inputs
+-----------------
+
+kani optionally supports multimodal inputs (images, audio, video) for various language models. To use multimodal inputs,
+install the ``kani-multimodal-core`` extension package or use ``pip install "kani[multimodal]"``. See the
+kani-multimodal-core documentation for more info.
+
+`Read the kani-multimodal-core docs! <https://kani-multimodal-core.readthedocs.io>`_
+
+.. code-block:: python
+
+    from kani import Kani
+    from kani.engines.openai import OpenAIEngine
+    from kani.ext.multimodal_core import ImagePart
+
+    engine = OpenAIEngine(model="gpt-4.1-nano")
+    ai = Kani(engine)
+
+    # notice how the arg is a list of parts rather than a single str!
+    msg = await ai.chat_round_str([
+        "Please describe these images:",
+        ImagePart.from_file("path/to/image.png"),
+        await ImagePart.from_url(
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Whitehead%27s_Trogon_0A2A6014.jpg/1024px-Whitehead%27s_Trogon_0A2A6014.jpg"
+        ),
+    ])
+    print(msg)
+
+Multimodal handling is deeply integrated with the rest of the kani ecosystem, so you get all the benefits of kani's
+fluent tool usage and automatic context management with minimal development cost!
+
+kani CLI
+--------
+
+kani comes with a CLI for you to chat with a model in your terminal with zero setup.
+
+The ``kani`` CLI takes the form of ``$ kani <provider>:<model-id>``. Use ``kani --help`` for more information.
+
+Examples:
+
+.. code-block:: shell
+
+    $ kani openai:gpt-4.1-nano
+    $ kani huggingface:meta-llama/Meta-Llama-3-8B-Instruct
+    $ kani anthropic:claude-sonnet-4-0
+    $ kani google:gemini-2.5-flash
+
+This CLI helper automatically creates a Engine and Kani instance, and calls ``chat_in_terminal()`` so you can test LLMs
+faster. When ``kani-multimodal-core`` is installed, you can provide multimodal media on your disk or on the internet
+to the model by prepending a path or URL with an @ symbol:
+
+.. code-block:: text
+
+    USER: Please describe this image: @path/to/image.png and also this one: @https://example.com/image.png
 
 Few-Shot Prompting
 ------------------
