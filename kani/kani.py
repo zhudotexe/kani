@@ -64,7 +64,7 @@ class Kani:
         engine: BaseEngine,
         system_prompt: str = None,
         always_included_messages: list[ChatMessage] = None,
-        desired_response_tokens: int = 450,
+        desired_response_tokens: int = None,
         chat_history: list[ChatMessage] = None,
         functions: list[AIFunction] = None,
         retry_attempts: int = 1,
@@ -78,7 +78,8 @@ class Kani:
             :attr:`chat_history`.
         :param desired_response_tokens: The minimum amount of space to leave in ``max context size - tokens in prompt``.
             To control the maximum number of tokens generated more precisely, you may be able to configure the engine
-            (e.g. ``OpenAIEngine(..., max_tokens=250)``).
+            (e.g. ``OpenAIEngine(..., max_tokens=250)``). Defaults to 10% of the engine's context length or 8192 tokens,
+            whichever is smaller.
         :param chat_history: The chat history to start with (not including system prompt or always included messages),
             for advanced use cases. By default, each kani starts with a new conversation session.
 
@@ -91,8 +92,8 @@ class Kani:
         """
         self.engine = engine
         self.system_prompt = system_prompt.strip() if system_prompt else None
-        self.desired_response_tokens = desired_response_tokens
         self.max_context_size = engine.max_context_size
+        self.desired_response_tokens = desired_response_tokens or min(engine.max_context_size // 10, 8192)
 
         self.always_included_messages: list[ChatMessage] = (
             [ChatMessage.system(self.system_prompt)] if system_prompt else []
