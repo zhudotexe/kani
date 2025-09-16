@@ -12,7 +12,7 @@ from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
 from . import mm_tokens, model_constants
-from .parts import AnthropicUnknownPart
+from .parts import AnthropicThinkingPart, AnthropicUnknownPart
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
 
@@ -81,6 +81,10 @@ def content_transform(msg: ChatMessage):
             # }
             data = part.as_b64()
             content.append({"type": "document", "source": {"type": "base64", "media_type": part.mime, "data": data}})
+        # --- AnthropicThinkingPart ----
+        elif isinstance(part, AnthropicThinkingPart):
+            # unnecessary parts are filtered out by the API so we'll just pass them all back
+            content.append({"type": "thinking", "thinking": part.content, "signature": part.signature})
         # --- AnthropicUnknownPart ----
         elif isinstance(part, AnthropicUnknownPart):
             # e.g. web search results, computer use, other server tools
@@ -191,7 +195,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
             You must specify exactly one of (api_key, client). If this is passed the ``retry``, ``api_base``,
             and ``headers`` params will be ignored.
         :param hyperparams: Any additional parameters to pass to the underlying API call (see
-            https://docs.anthropic.com/claude/reference/complete_post).
+            https://docs.claude.com/en/api/messages).
         """
         if api_key and client:
             raise ValueError("You must supply no more than one of (api_key, client).")
@@ -260,9 +264,18 @@ class AnthropicEngine(TokenCached, BaseEngine):
         n = sum(len(f.name) + len(f.desc) + len(json.dumps(f.json_schema)) for f in functions)
         return int(n / 3.2)
 
-    # ==== requests ====
+    # ==== hackable stuff for requests ====
+    @property
+    def _messages_api(self):
+        """Return the messages API resource object. Useful to override to use the beta API instead."""
+        return self.client.messages
+
     @staticmethod
-    def _prepare_request(messages, functions):
+    def _prepare_request(messages, functions) -> tuple[dict, list]:
+        """
+        Prepare the API request to the Anthropic API. Returns a tuple (kwargs, messages) to be passed to the
+        AnthropicClient's messages.create() method.
+        """
         kwargs = {}
 
         # --- messages ---
@@ -306,6 +319,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
         return kwargs, prompt_msgs
 
     def _translate_anthropic_message(self, message: Message):
+        """Translate an Anthropic message to a Kani completion."""
         tool_calls = []
         parts = []
         for part in message.content:
@@ -315,6 +329,8 @@ class AnthropicEngine(TokenCached, BaseEngine):
                 fc = FunctionCall(name=part.name, arguments=json.dumps(part.input))
                 tc = ToolCall(id=part.id, type="function", function=fc)
                 tool_calls.append(tc)
+            elif part.type == "thinking":
+                parts.append(AnthropicThinkingPart(content=part.thinking, signature=part.signature))
             else:
                 parts.append(AnthropicUnknownPart(type=part.type, data=part.model_dump()))
                 warnings.warn(
@@ -342,7 +358,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
 
         # --- completion ---
         assert len(prompt_msgs) > 0
-        message = await self.client.messages.create(
+        message = await self._messages_api.create(
             model=self.model,
             max_tokens=self.max_tokens,
             messages=prompt_msgs,
@@ -361,7 +377,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
         kwargs, prompt_msgs = self._prepare_request(messages, functions)
 
         assert len(prompt_msgs) > 0
-        async with self.client.messages.stream(
+        async with self._messages_api.stream(
             model=self.model,
             max_tokens=self.max_tokens,
             messages=prompt_msgs,

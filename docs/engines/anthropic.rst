@@ -25,6 +25,31 @@ Reference
 Recipes
 -------
 
+Server-Side Tools
+^^^^^^^^^^^^^^^^^
+To enable server-side tools, you pass them as additional arguments to the ``tools`` API argument.
+You can do this by overriding ``AnthropicEngine._prepare_request``.
+
+.. code-block:: python
+
+    class AnthropicServersideToolsEngine(AnthropicEngine):
+        def __init__(self, *args, additional_tools: list = None, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.additional_tools = additional_tools or []
+
+        # override prepare_request to inject serverside tool configs
+        def _prepare_request(self, messages, functions):
+            kwargs, prompt_msgs = super()._prepare_request(messages, functions)
+            if self.additional_tools:
+                kwargs.setdefault("tools", [])
+                kwargs["tools"].append(self.web_search_tool)
+            return kwargs, prompt_msgs
+
+    web_search_engine = AnthropicServersideToolsEngine(..., additional_tools=[
+        {"name": "web_search", "type": "web_search_20250305"}
+    ])
+
+
 PDF File Inputs
 ^^^^^^^^^^^^^^^
 
