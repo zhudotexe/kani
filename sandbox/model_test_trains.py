@@ -29,7 +29,7 @@ class WikipediaRetrievalKani(Kani):
         self.wikipedia_client = httpx.AsyncClient(base_url="https://en.wikipedia.org/w/api.php", follow_redirects=True)
 
     @ai_function()
-    async def wikipedia(
+    async def get_article(
         self,
         title: Annotated[str, AIParam(desc='The article title on Wikipedia, e.g. "Train_station".')],
     ):
@@ -53,7 +53,7 @@ class WikipediaRetrievalKani(Kani):
         return f"The page {title!r} does not exist on Wikipedia."
 
     @ai_function()
-    async def search(self, query: str):
+    async def search_wikipedia(self, query: str):
         """Find titles of Wikipedia articles similar to the given query."""
         # https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=Train
         resp = await self.wikipedia_client.get("/", params={"action": "opensearch", "format": "json", "search": query})

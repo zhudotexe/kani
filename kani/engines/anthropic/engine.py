@@ -89,8 +89,8 @@ def content_transform(msg: ChatMessage):
         elif isinstance(part, AnthropicUnknownPart):
             # e.g. web search results, computer use, other server tools
             content.append(part.data)
-        # default
-        else:
+        # default (function messages can't have multimodal parts, so we handle it in the branch below)
+        elif msg.role != ChatRole.FUNCTION:
             content.append({"type": "text", "text": str(part)})
 
     # FUNCTION messages should look like:
@@ -287,11 +287,11 @@ class AnthropicEngine(TokenCached, BaseEngine):
 
         # enforce ordering and function call bindings
         # and translate to dict spec
-        messages = CLAUDE_PIPELINE(messages)
+        claude_fmt_messages = CLAUDE_PIPELINE(messages)
 
         # merge FUNCTION (which get translated to user), USER consecutives into one with multiple parts
         prompt_msgs = []
-        for role, group_msgs in itertools.groupby(messages, key=lambda m: m["role"]):
+        for role, group_msgs in itertools.groupby(claude_fmt_messages, key=lambda m: m["role"]):
             group_msgs = list(group_msgs)
             # >1 consecutive user messages get merged
             if role == "user" and len(group_msgs) > 1:
