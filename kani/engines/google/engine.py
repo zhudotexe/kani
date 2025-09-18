@@ -365,7 +365,7 @@ class GoogleAIEngine(TokenCached, BaseEngine):
             else:
                 warnings.warn(
                     f"The engine returned an unknown part: {part}. This will not be returned in the ChatMessage. To"
-                    f' access this part, use `message.extra[{RAW_RESPONSE_EXTRA_KEY!r}].candidates[0].content.parts`.'
+                    f" access this part, use `message.extra[{RAW_RESPONSE_EXTRA_KEY!r}].candidates[0].content.parts`."
                 )
 
         if len(parts) == 1 and isinstance(parts[0], str):
