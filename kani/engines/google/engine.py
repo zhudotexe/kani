@@ -174,6 +174,10 @@ class GoogleAIEngine(TokenCached, BaseEngine):
     async def _prepare_request(
         self, messages, functions, hyperparams
     ) -> tuple[genai_types.GenerateContentConfigDict, list[genai_types.Content]]:
+        """
+        Prepare the API request to the Google AI API. Returns a tuple (GenerateContentConfigDict, Content[]) to be
+        passed to the genai Client's ``generate_content()`` method.
+        """
         kwargs = {}
 
         # --- messages ---

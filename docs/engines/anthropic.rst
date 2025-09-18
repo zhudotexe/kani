@@ -32,6 +32,8 @@ You can do this by overriding ``AnthropicEngine._prepare_request``.
 
 .. code-block:: python
 
+    from kani.engines.anthropic import AnthropicEngine
+
     class AnthropicServersideToolsEngine(AnthropicEngine):
         def __init__(self, *args, additional_tools: list = None, **kwargs):
             super().__init__(*args, **kwargs)
@@ -42,7 +44,7 @@ You can do this by overriding ``AnthropicEngine._prepare_request``.
             kwargs, prompt_msgs = super()._prepare_request(messages, functions)
             if self.additional_tools:
                 kwargs.setdefault("tools", [])
-                kwargs["tools"].append(self.web_search_tool)
+                kwargs["tools"].extend(self.additional_tools)
             return kwargs, prompt_msgs
 
     web_search_engine = AnthropicServersideToolsEngine(..., additional_tools=[
