@@ -12,6 +12,7 @@ from kani import _optional
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
+from kani.parts import ReasoningPart
 from kani.prompts.pipeline import PromptPipeline
 from . import mm_tokens, model_constants
 from ..base import BaseCompletion, BaseEngine, Completion
@@ -38,6 +39,7 @@ ROLE_TRANSFORMS = {
     ChatRole.ASSISTANT: "model",
     ChatRole.FUNCTION: "tool",
 }
+RAW_RESPONSE_EXTRA_KEY = "google_response"
 
 
 class GoogleAIEngine(TokenCached, BaseEngine):
@@ -225,6 +227,11 @@ class GoogleAIEngine(TokenCached, BaseEngine):
         automatically upload and save references to large multimodal objects using Files API (max 2GB per file,
         20GB total, autodeletes after 48h).
         """
+        # if we already have the translated content from google, just use that
+        # this is useful for thought signatures, mainly
+        if RAW_RESPONSE_EXTRA_KEY in msg.extra:
+            return msg.extra[RAW_RESPONSE_EXTRA_KEY].candidates[0].content
+
         role = ROLE_TRANSFORMS.get(msg.role, msg.role.value)
         content = []
 
@@ -260,6 +267,9 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                     ),
                 ):
                     content.append(await self._translate_multimodal_part(part))
+                # reasoning
+                elif isinstance(part, ReasoningPart):
+                    content.append(genai_types.Part(text=part.content, thought=True))
                 # default
                 else:
                     content.append(genai_types.Part(text=str(part)))
@@ -344,7 +354,9 @@ class GoogleAIEngine(TokenCached, BaseEngine):
         tool_calls = []
         parts = []
         for part in resp.candidates[0].content.parts:
-            if part.text:
+            if part.thought:
+                parts.append(ReasoningPart(content=part.text))
+            elif part.text:
                 parts.append(part.text)
             elif part.function_call:
                 fc = FunctionCall(name=part.function_call.name, arguments=json.dumps(part.function_call.args))
@@ -353,10 +365,10 @@ class GoogleAIEngine(TokenCached, BaseEngine):
             else:
                 warnings.warn(
                     f"The engine returned an unknown part: {part}. This will not be returned in the ChatMessage. To"
-                    ' access this part, use `message.extra["google_response"].candidates[0].content.parts`.'
+                    f' access this part, use `message.extra[{RAW_RESPONSE_EXTRA_KEY!r}].candidates[0].content.parts`.'
                 )
 
-        if len(parts) == 1:
+        if len(parts) == 1 and isinstance(parts[0], str):
             content = parts[0]
         elif not parts:
             content = None
@@ -369,7 +381,7 @@ class GoogleAIEngine(TokenCached, BaseEngine):
         self.set_cached_message_len(kani_msg, resp.usage_metadata.candidates_token_count)
 
         # set the extra
-        kani_msg.extra["google_response"] = resp
+        kani_msg.extra[RAW_RESPONSE_EXTRA_KEY] = resp
         return Completion(
             message=kani_msg,
             prompt_tokens=resp.usage_metadata.prompt_token_count,
@@ -407,7 +419,7 @@ class GoogleAIEngine(TokenCached, BaseEngine):
             config=request_config,
         ):
             for part in chunk.candidates[0].content.parts:
-                if part.text:
+                if part.text and not part.thought:
                     yield part.text
             last_chunk = chunk
             content_parts.extend(chunk.candidates[0].content.parts)
