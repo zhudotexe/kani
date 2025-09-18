@@ -170,7 +170,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
         self,
         api_key: str = None,
         model: str = "claude-sonnet-4-0",
-        max_tokens: int = 512,
+        max_tokens: int = 2048,
         max_context_size: int = None,
         *,
         retry: int = 2,
@@ -184,7 +184,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
             environment variable.
         :param model: The id of the model to use (e.g. "claude-opus-4-0"). See
             https://docs.anthropic.com/en/docs/about-claude/models/overview for a list of models.
-        :param max_tokens: The maximum number of tokens to sample at each generation (defaults to 512).
+        :param max_tokens: The maximum number of tokens to sample at each generation (defaults to 2048).
             Generally, you should set this to the same number as your Kani's ``desired_response_tokens``.
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
