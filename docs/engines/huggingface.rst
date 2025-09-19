@@ -29,7 +29,7 @@ If your language model backend is available on HuggingFace or is compatible with
     the :class:`.HuggingEngine`.
 
 If you do create a new engine, instead of having to implement the prediction logic, all you have to do is subclass
-:class:`.HuggingEngine` and implement :meth:`~.HuggingEngine.build_prompt` and :meth:`~.BaseEngine.message_len`.
+:class:`.HuggingEngine` and implement :meth:`~.HuggingEngine.build_prompt`.
 
 .. _4b_quant:
 
@@ -91,7 +91,4 @@ Reference
     :noindex:
 
     .. automethod:: kani.engines.huggingface.HuggingEngine.build_prompt
-        :noindex:
-
-    .. automethod:: kani.engines.huggingface.HuggingEngine.message_len
         :noindex:

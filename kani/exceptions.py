@@ -2,12 +2,12 @@ class KaniException(Exception):
     """Base class for all Kani exceptions/errors."""
 
 
+class PromptTooLong(KaniException):
+    """A given prompt was too long to tokenize or generate a completion for."""
+
+
 class MessageTooLong(KaniException):
     """This chat message will never fit in the context window."""
-
-
-
-
 
 
 # ==== function calling ====

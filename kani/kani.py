@@ -8,13 +8,14 @@ from typing import Callable, Literal
 
 from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
-from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, WrappedCallException
+from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, PromptTooLong, WrappedCallException
 from .internal import ExceptionHandleResult, FunctionCallResult
 from .models import ChatMessage, ChatRole, FunctionCall, QueryType, ToolCall
 from .streaming import DummyStream, StreamManager
 from .utils import saveload
 from .utils.message_formatters import assistant_message_contents
 from .utils.typing import PathLike
+from .utils.warnings import deprecated
 
 log = logging.getLogger("kani")
 message_log = logging.getLogger("kani.messages")
@@ -336,39 +337,16 @@ class Kani:
             yield elem
 
     # ==== helpers ====
-    @property
-    def always_len(self) -> int:
-        """Returns the number of tokens that will always be reserved.
-
-        (e.g. for system prompts, always included messages, the engine, and the response).
-        """
-        return (
-            sum(self.message_token_len(m) for m in self.always_included_messages)
-            + self.engine.token_reserve
-            + self.engine.function_token_reserve(list(self.functions.values()))
-            + self.desired_response_tokens
-        )
-
     async def prompt_token_len(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **kwargs):
         """
         Returns the number of tokens used by the given prompt (i.e., list of messages and functions).
 
         In general, this is preferred over :meth:`message_token_len`.
         """
-        if inspect.iscoroutinefunction(self.engine.prompt_len):
-            return await self.engine.prompt_len(messages, functions, **kwargs)
-        return self.engine.prompt_len(messages, functions, **kwargs)
-
-    def message_token_len(self, message: ChatMessage):
-        """
-        Returns the estimated number of tokens used by a single given message.
-
-        .. note::
-            The token count returned by this may not exactly reflect the actual token count (e.g., due to prompt
-            formatting or not having access to the tokenizer). It should, however, be a safe overestimate to use as
-            an upper bound.
-        """
-        return self.engine.message_len(message)
+        ret = self.engine.prompt_len(messages, functions, **kwargs)
+        if inspect.isawaitable(ret):
+            return await ret
+        return ret
 
     async def get_model_completion(self, include_functions: bool = True, **kwargs) -> BaseCompletion:
         """Get the model's completion with the current chat state.
@@ -431,33 +409,68 @@ class Kani:
         You may override this to get more fine-grained control over what is exposed in the model's memory at any given
         call.
         """
-        always_len = self.always_len
-        remaining = max_size = self.max_context_size - always_len
+        max_size = self.max_context_size - self.desired_response_tokens
+
+        low = 0
+        high = len(self.chat_history)
+        to_keep = 0
         total_tokens = 0
-        to_keep = 0  # messages to keep from the end of chat history
-        for message in reversed(self.chat_history):
-            # get and check the message's length
-            message_len = self.message_token_len(message)
-            if message_len > max_size:
-                func_help = (
-                    ""
-                    if message.role != ChatRole.FUNCTION
-                    else "You may set `auto_truncate` in the @ai_function to automatically truncate long responses.\n"
-                )
-                raise MessageTooLong(
-                    "The chat message's size is longer than the allowed context window (after including system"
-                    " messages, always included messages, and desired response tokens).\n"
-                    f"{func_help}Content: {message.text[:100]}..."
-                )
-            # see if we can include it
-            remaining -= message_len
-            if remaining >= 0:
-                total_tokens += message_len
-                to_keep += 1
+
+        # binary search for the first index that does not cause an exception or be too long
+        while low <= high:
+            mid = (low + high) // 2
+            if mid:
+                prompt = self.always_included_messages + self.chat_history[-mid:]
             else:
-                break
+                prompt = self.always_included_messages
+
+            try:
+                total_tokens = await self.prompt_token_len(messages=prompt, functions=list(self.functions.values()))
+            except PromptTooLong:
+                total_tokens = float("inf")
+            except Exception as e:
+                log.warning("Exception while getting prompt size:", exc_info=e)
+                total_tokens = float("inf")
+
+            if total_tokens > max_size:
+                high = mid - 1
+            else:
+                to_keep = mid
+                low = mid + 1
+
+        # raise an error if we can't keep anything
+        if not to_keep:
+            if self.chat_history:
+                try:
+                    latest_msg_size = await self.prompt_token_len(messages=[self.chat_history[-1]])
+                except PromptTooLong:
+                    latest_msg_size = float("inf")
+
+                if latest_msg_size > max_size:
+                    raise MessageTooLong(
+                        "The chat message's size is longer than the allowed context window (after including"
+                        " system messages, always included messages, and desired response tokens).\nContent:"
+                        f" {self.chat_history[-1].text[:100]}..."
+                    )
+                elif total_tokens > max_size:
+                    raise PromptTooLong(
+                        "The number of reserved tokens is too high to include any chat messages, or the engine rejected"
+                        " all possible prompts. Consider shortening your system_prompt, always_included_messages, or"
+                        " number of functions."
+                    )
+                raise ValueError(
+                    "Could not find a set of chat messages that could be sent to the engine. This could be a malformed"
+                    " few-shot prompt that the engine is rejecting. See warnings printed above."
+                )
+            if total_tokens > max_size:
+                raise PromptTooLong(
+                    "The number of reserved tokens is too high to include any chat messages, or the engine rejected all"
+                    " possible prompts. Consider shortening your system_prompt, always_included_messages, or number of"
+                    " functions."
+                )
+
         log.debug(
-            f"get_prompt() returned {always_len + total_tokens} tokens ({always_len} always) in"
+            f"get_prompt() returned {total_tokens} tokens in"
             f" {len(self.always_included_messages) + to_keep} messages"
             f" ({len(self.always_included_messages)} always)"
         )
@@ -619,3 +632,38 @@ class Kani:
             f" {max_len} characters."
         )
         return msg.copy_with(text=full_text[: max_len - 3] + "...")
+
+    # ==== deprecated ====
+    @property
+    @deprecated("Use prompt_token_len with the always_included_messages and functions given instead")
+    def always_len(self) -> int:
+        """Returns the number of tokens that will always be reserved.
+
+        (e.g. for system prompts, always included messages, the engine, and the response).
+        """
+        return (
+            sum(self.message_token_len(m) for m in self.always_included_messages)
+            + self.engine.token_reserve
+            + self.engine.function_token_reserve(list(self.functions.values()))
+            + self.desired_response_tokens
+        )
+
+    @deprecated("Use prompt_token_len instead")
+    def message_token_len(self, message: ChatMessage):
+        """
+        Returns the estimated number of tokens used by a single given message.
+
+        .. deprecated:: 1.7.0
+            Use :meth:`prompt_token_len` instead.
+
+        .. note::
+            The token count returned by this may not exactly reflect the actual token count (e.g., due to prompt
+            formatting or not having access to the tokenizer). It should, however, be a safe overestimate to use as
+            an upper bound.
+
+        .. warning::
+            This method may not be available for all models (e.g., models which do not expose a local tokenization
+            method and require API calls to count tokens, or models enforcing strict constraints on prompt formats).
+            Use :meth:`prompt_token_len` instead.
+        """
+        return self.engine.message_len(message)

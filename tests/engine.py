@@ -10,10 +10,11 @@ class TestEngine(BaseEngine):
     Each message has a token length equal to its str length, and predict always returns a one-token message.
     """
 
-    max_context_size = 10
+    def __init__(self, max_context_size: int = 10):
+        self.max_context_size = max_context_size
 
-    def message_len(self, message: ChatMessage) -> int:
-        return len(message.text)
+    def prompt_len(self, messages, functions=None, **kwargs):
+        return sum(len(m.text) for m in messages)
 
     async def predict(self, messages, functions=None, test_echo=False, **hyperparams) -> Completion:
         """

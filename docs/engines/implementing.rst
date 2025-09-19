@@ -19,7 +19,8 @@ To create your own engine, all you have to do is subclass :class:`.BaseEngine`:
 
 A new engine must implement at least the two abstract methods and set the abstract attribute:
 
-- :meth:`.BaseEngine.message_len` takes a single :class:`.ChatMessage` and returns the length of that message,
+- :meth:`.BaseEngine.prompt_len` takes a list of :class:`.ChatMessage` and :class:`.AIFunction` and returns the length
+  of that prompt, in tokens.
   in tokens.
 - :meth:`.BaseEngine.predict` takes a list of :class:`.ChatMessage` and :class:`.AIFunction` and returns a
   new :class:`.BaseCompletion`.

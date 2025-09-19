@@ -219,7 +219,7 @@ class LlamaCppEngine(BaseEngine):
         """
         Given the current context of messages and available functions, get the next predicted chat message from the LM.
 
-        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+        :param messages: The messages in the current chat context. ``prompt_len(messages, functions)`` is
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
         :param hyperparams: Any additional parameters to pass to ``Llama.create_completion()``. (See
@@ -243,7 +243,7 @@ class LlamaCppEngine(BaseEngine):
         """
         Given the current context of messages and available functions, get the next predicted chat message from the LM.
 
-        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+        :param messages: The messages in the current chat context. ``prompt_len(messages, functions)`` is
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
         :param hyperparams: Any additional parameters to pass to ``Llama.create_completion()``. (See

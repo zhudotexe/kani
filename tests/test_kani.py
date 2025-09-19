@@ -1,6 +1,10 @@
+import math
+
+import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, ChatRole, Kani
+from kani.exceptions import MessageTooLong, PromptTooLong
 from tests.engine import TestEngine
 from tests.utils import flatten_chatmessages
 
@@ -44,6 +48,44 @@ async def test_always_include():
     assert flatten_chatmessages(prompt) == "12a"
 
 
+@given(st.data())
+async def test_get_prompt_optimal(data):
+    # make sure get_prompt always returns the maximum number of tokens it can
+    ctx_size = data.draw(st.integers(min_value=4, max_value=100))
+    print("ctx size:", ctx_size)
+    engine = TestEngine(max_context_size=ctx_size)
+    ai = Kani(
+        engine,
+        desired_response_tokens=1,
+        system_prompt=data.draw(st.text(min_size=0, max_size=1)),
+        always_included_messages=[ChatMessage.user(data.draw(st.text(min_size=0, max_size=1)))],
+        chat_history=[ChatMessage.user("a")]
+        * (engine.max_context_size + data.draw(st.integers(min_value=1, max_value=100))),
+    )
+    print("optimal n_iters:", math.ceil(math.log2(len(ai.chat_history))))
+    prompt = await ai.get_prompt()
+    prompt_len = sum(ai.message_token_len(m) for m in prompt)
+    print("prompt len:", prompt_len)
+    print()
+    assert prompt_len == (ai.max_context_size - ai.desired_response_tokens)
+
+
+async def test_message_too_long():
+    ai = Kani(engine, desired_response_tokens=9, chat_history=[ChatMessage.user("aaa")])
+    with pytest.raises(MessageTooLong):
+        await ai.get_prompt()
+    with pytest.raises(MessageTooLong):
+        await ai.chat_round_str("aaa")
+
+
+async def test_prompt_too_long():
+    ai = Kani(engine, desired_response_tokens=9, system_prompt="aaa", chat_history=[ChatMessage.user("a")])
+    with pytest.raises(PromptTooLong):
+        await ai.get_prompt()
+    with pytest.raises(PromptTooLong):
+        await ai.chat_round_str("a")
+
+
 @settings(suppress_health_check=(HealthCheck.too_slow,), deadline=None)
 @given(st.data())
 async def test_spam(data):
@@ -61,4 +103,4 @@ async def test_spam(data):
         assert resp == query
 
         prompt = await ai.get_prompt()
-        assert sum(ai.message_token_len(m) for m in prompt) <= ai.max_context_size
+        assert sum(ai.message_token_len(m) for m in prompt) <= (ai.max_context_size - ai.desired_response_tokens)

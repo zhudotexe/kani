@@ -78,7 +78,7 @@ engine (e.g. LlamaEngine) to consume.
 
 Here's the implementation for our chain-of-thought example. Note how we translate the parts by building a new message
 with a string content composed of parts in ``translate_message``, then use that method in our implementations of
-``message_len`` and ``predict``.
+``prompt_len`` and ``predict``.
 
 .. code-block:: python
 

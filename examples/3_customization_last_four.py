@@ -18,16 +18,16 @@ class LastFourKani(Kani):
         Only include the most recent 4 messages (omitting earlier ones to fit in the token length if necessary)
         and any always included messages.
         """
-        # calculate how many tokens we have for the prompt, accounting for the system prompt, always_included_messages,
-        # any tokens reserved by the engine, and the response
-        remaining = self.max_context_size - self.always_len
+        # calculate how many tokens we have for the prompt, accounting for the response
+        max_len = self.max_context_size - self.desired_response_tokens
         # working backwards through history...
         messages = []
         for message in reversed(self.chat_history[-4:]):
             # if the message fits in the space we have remaining...
-            message_len = self.message_token_len(message)
-            remaining -= message_len
-            if remaining > 0:
+            token_len = await self.prompt_token_len(
+                messages=self.always_included_messages + [message] + messages, functions=list(self.functions.values())
+            )
+            if token_len <= max_len:
                 # add it to the returned prompt!
                 messages.insert(0, message)
             else:
