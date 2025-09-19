@@ -5,7 +5,10 @@ included:
 
 .. include:: shared/engine_table.rst
 
-In this section, we'll discuss how to implement your own engine to use any language model or API you can think of.
+In this section, we'll cover engine-specific details and features you might want to be aware of when using certain
+engines.
+
+We'll also discuss how to implement your own engine to use any language model or API you can think of.
 
 .. tip::
 
@@ -16,6 +19,8 @@ In this section, we'll discuss how to implement your own engine to use any langu
     :maxdepth: 2
 
     engines/implementing
-    engines/http
+    engines/anthropic
+    engines/google
     engines/huggingface
     engines/llamacpp
+    engines/openai

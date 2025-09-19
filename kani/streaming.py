@@ -155,7 +155,8 @@ class DummyStream(StreamManager):
     def __init__(self, message: ChatMessage):
         # init a dummy iterable
         async def _iter():
-            yield message.text
+            if message.content is not None:
+                yield message.text
             yield Completion(message)
 
         super().__init__(_iter(), role=message.role)

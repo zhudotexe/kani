@@ -4,8 +4,11 @@ import asyncio
 import logging
 import os
 import textwrap
-from typing import overload
+from concurrent.futures import Future
+from threading import Thread
+from typing import AsyncIterable, overload
 
+from kani import _optional, model_specific
 from kani.kani import Kani
 from kani.models import ChatRole
 from kani.streaming import StreamManager
@@ -30,6 +33,10 @@ async def chat_in_terminal_async(
     """
     if os.getenv("KANI_DEBUG") is not None:
         logging.basicConfig(level=logging.DEBUG)
+    elif os.getenv("KANI_DEBUG_LOGGERS") is not None:
+        logging.basicConfig(level=logging.INFO)
+        for logger in os.getenv("KANI_DEBUG_LOGGERS").split(","):
+            logging.getLogger(logger).setLevel(logging.DEBUG)
     if verbose:
         echo = show_function_args = show_function_returns = True
 
@@ -40,11 +47,27 @@ async def chat_in_terminal_async(
 
             # get user query
             if not ai_first or round_num > 0:
-                query = input("USER: ").strip()
-                if echo:
-                    print_width(query, width=width, prefix="USER: ")
+                query = await ainput("USER: ")
+                query = query_str = query.strip()
+
+                # multimodal handling
+                if _optional.has_multimodal_core:
+                    # find @path/to/file.png parts and replace them with FileImageParts
+                    query = await _optional.multimodal_cli.parts_from_cli_query(query)
+
+                # stopword
                 if stopword and query == stopword:
                     break
+
+                # echo & multimodal echo
+                if _optional.has_multimodal_core:
+                    # IPython
+                    if _optional.multimodal_cli._is_notebook:
+                        _optional.multimodal_cli.display_media_ipython(query, show_text=echo)
+                    else:
+                        _optional.multimodal_cli.display_media(query, show_text=echo)
+                elif echo:
+                    print_width(query_str, width=width, prefix="USER: ")
             # print completion(s)
             else:
                 query = None
@@ -73,8 +96,11 @@ async def chat_in_terminal_async(
                     # function
                     elif msg.role == ChatRole.FUNCTION and show_function_returns:
                         print_width(msg.text, width=width, prefix="FUNC: ")
-    except KeyboardInterrupt:
-        await kani.engine.close()
+    except (KeyboardInterrupt, asyncio.CancelledError):
+        # we won't close the engine here since it's common enough that people close the session in colab
+        # and if the process is closing then this will clean itself up anyway
+        # await kani.engine.close()
+        return
 
 
 @overload
@@ -99,6 +125,10 @@ def chat_in_terminal(kani: Kani, **kwargs):
     Useful for playing with kani, quick prompt engineering, or demoing the library.
 
     If the environment variable ``KANI_DEBUG`` is set, debug logging will be enabled.
+
+    If ``kani-multimodal-core`` is installed, you can send multimodal media to a compatible engine with a file path
+    or URL after an ``@`` symbol (e.g. "Describe this image: @image.png").
+    Use quotes (e.g. ``@"path/to/my image.png"``) for paths with spaces in their names.
 
     .. warning::
 
@@ -134,7 +164,71 @@ def chat_in_terminal(kani: Kani, **kwargs):
                 f" should use `await chat_in_terminal_async(...)` instead or install `nest-asyncio`."
             )
             return
-    asyncio.run(chat_in_terminal_async(kani, **kwargs))
+    try:
+        asyncio.run(chat_in_terminal_async(kani, **kwargs))
+    except KeyboardInterrupt:
+        return
+
+
+# ===== format helpers =====
+def format_width(msg: str, width: int = None, prefix: str = "") -> str:
+    """
+    Format the given message such that the width of each line is less than *width*.
+    If *prefix* is provided, indents each line after the first by the length of the prefix.
+
+    .. code-block: pycon
+        >>> format_width("Hello world I am a potato", width=15, prefix="USER: ")
+        '''\
+        USER: Hello
+              world I
+              am a
+              potato\
+        '''
+    """
+    if not width:
+        return prefix + msg
+    out = []
+    wrapper = textwrap.TextWrapper(width=width, initial_indent=prefix, subsequent_indent=" " * len(prefix))
+    lines = msg.splitlines()
+    for line in lines:
+        out.append(wrapper.fill(line))
+        wrapper.initial_indent = wrapper.subsequent_indent
+    return "\n".join(out)
+
+
+async def format_stream(stream: StreamManager, width: int = None, prefix: str = "") -> AsyncIterable[str]:
+    """
+    Yield formatted tokens from a stream such that if concatenated, the width of each line is less than *width*.
+    If *prefix* is provided, indents each line after the first by the length of the prefix.
+    """
+    prefix_len = len(prefix)
+    line_indent = " " * prefix_len
+    prefix_printed = False
+
+    # print tokens until they overflow width then newline and indent
+    line_len = prefix_len
+    async for token in stream:
+        # only print the prefix if the model actually yields anything
+        if not prefix_printed:
+            yield prefix
+            prefix_printed = True
+
+        # split by newlines
+        for part in token.splitlines(keepends=True):
+            # then do bookkeeping
+            part_len = len(part)
+            if width and line_len + part_len > width:
+                yield f"\n{line_indent}"
+                line_len = prefix_len
+
+            # print the token
+            yield part.rstrip("\r\n")
+            line_len += part_len
+
+            # print a newline if the token had one
+            if part.endswith("\n"):
+                yield f"\n{line_indent}"
+                line_len = prefix_len
 
 
 def print_width(msg: str, width: int = None, prefix: str = ""):
@@ -149,16 +243,7 @@ def print_width(msg: str, width: int = None, prefix: str = ""):
               am a
               potato
     """
-    if not width:
-        print(prefix + msg)
-        return
-    out = []
-    wrapper = textwrap.TextWrapper(width=width, initial_indent=prefix, subsequent_indent=" " * len(prefix))
-    lines = msg.splitlines()
-    for line in lines:
-        out.append(wrapper.fill(line))
-        wrapper.initial_indent = wrapper.subsequent_indent
-    print("\n".join(out))
+    print(format_width(msg, width, prefix))
 
 
 async def print_stream(stream: StreamManager, width: int = None, prefix: str = ""):
@@ -169,34 +254,84 @@ async def print_stream(stream: StreamManager, width: int = None, prefix: str = "
     This is a helper function intended to be used with :meth:`.Kani.chat_round_stream` or
     :meth:`.Kani.full_round_stream`.
     """
-    prefix_len = len(prefix)
-    line_indent = " " * prefix_len
-    prefix_printed = False
-
-    # print tokens until they overflow width then newline and indent
-    line_len = prefix_len
-    async for token in stream:
-        # only print the prefix if the model actually yields anything
-        if not prefix_printed:
-            print(prefix, end="")
-            prefix_printed = True
-
-        # split by newlines
-        for part in token.splitlines(keepends=True):
-            # then do bookkeeping
-            line_len += len(part)
-            if width and line_len > width:
-                print(f"\n{line_indent}", end="")
-                line_len = prefix_len
-
-            # print the token
-            print(part.rstrip("\r\n"), end="", flush=True)
-
-            # print a newline if the token had one
-            if part.endswith("\n"):
-                print(f"\n{line_indent}", end="")
-                line_len = prefix_len
+    has_printed = False
+    async for part in format_stream(stream, width, prefix):
+        print(part, end="", flush=True)
+        has_printed = True
 
     # newline at the end to flush if we printed anything
-    if prefix_printed:
+    if has_printed:
         print()
+
+
+async def ainput(string: str) -> str:
+    """input(), but async."""
+    # doing just .to_thread causes problems when we ^C, so we need to launch our own daemon thread to handle reading
+    # input
+    future = Future()
+    future.set_running_or_notify_cancel()
+
+    def daemon():
+        try:
+            result = input(string)
+        except Exception as e:
+            future.set_exception(e)
+        else:
+            future.set_result(result)
+
+    Thread(target=daemon, daemon=True).start()
+    return await asyncio.wrap_future(future)
+
+
+# ==== CLI engine defs ====
+def chat_openai(model_id: str):
+    from kani.engines.openai import OpenAIEngine
+
+    return OpenAIEngine(model=model_id)
+
+
+def chat_anthropic(model_id: str):
+    from kani.engines.anthropic import AnthropicEngine
+
+    return AnthropicEngine(model=model_id)
+
+
+def chat_google(model_id: str):
+    from kani.engines.google import GoogleAIEngine
+
+    return GoogleAIEngine(model=model_id)
+
+
+def chat_huggingface(model_id: str):
+    from kani.engines.huggingface import HuggingEngine
+
+    engine = HuggingEngine(model_id=model_id)
+    # HF: wrap in model-specific parser if available
+    if parser := model_specific.parser_for_hf_model(engine.model_id):
+        return parser(engine)
+    return engine
+
+
+CLI_PROVIDER_MAP = {
+    # openai
+    "openai": chat_openai,
+    "oai": chat_openai,
+    # anthropic
+    "anthropic": chat_anthropic,
+    "ant": chat_anthropic,
+    "claude": chat_anthropic,
+    # google
+    "google": chat_google,
+    "g": chat_google,
+    "gemini": chat_google,
+    # huggingface
+    "huggingface": chat_huggingface,
+    "hf": chat_huggingface,
+}
+
+
+def create_engine_from_cli_arg(arg: str):
+    provider, model_id = arg.split(":", 1)
+    if provider not in CLI_PROVIDER_MAP:
+        raise ValueError(f"Invalid model provider: {provider!r}. Valid options: {list(CLI_PROVIDER_MAP)}")
+    return CLI_PROVIDER_MAP[provider](model_id)

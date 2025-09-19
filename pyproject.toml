@@ -29,15 +29,23 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "kani[huggingface,llama,cpp,openai,anthropic]",
+    "kani[multimodal,huggingface,llama,cpp,openai,anthropic,google]",
 ]
 
+# extensions
+multimodal = [
+    "kani-multimodal-core<2.0.0",
+]
+
+# providers
 huggingface = [
     "transformers>=4.28.0,<5.0.0",
+    "huggingface-hub",
 ]
 
 llama = [
-    "sentencepiece~=0.1.99",
+    "protobuf",
+    "sentencepiece>=0.1.99,<1.0.0",
 ]
 
 cpp = [
@@ -51,12 +59,19 @@ openai = [
 ]
 
 anthropic = [
-    "anthropic>=0.23.0,<1.0.0",
+    "anthropic>=0.27.0,<1.0.0",
+]
+
+google = [
+    "google-genai>=1.0.0,<2.0.0",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/zhudotexe/kani"
 "Bug Tracker" = "https://github.com/zhudotexe/kani/issues"
+
+[project.scripts]
+kani = "kani._cli:main"
 
 [tool.hatch]
 version.path = "kani/_version.py"
@@ -64,10 +79,11 @@ version.path = "kani/_version.py"
 [tool.black]
 line-length = 120
 preview = true
+unstable = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-markers = ["llama: these tests use a real LLaMA v2 model."]
+markers = ["local: these tests use a local language model."]
 
 [tool.isort]
 profile = "black"

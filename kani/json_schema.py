@@ -38,6 +38,10 @@ class AIParamSchema:
     def description(self):
         return self.aiparam.desc if self.aiparam is not None else None
 
+    @property
+    def title(self):
+        return self.aiparam.title if self.aiparam is not None else None
+
     def __str__(self):
         default = ""
         if not self.required:
@@ -49,13 +53,9 @@ class AIParamSchema:
 class JSONSchemaBuilder(pydantic.json_schema.GenerateJsonSchema):
     """Subclass of the Pydantic JSON schema builder to provide more fine-grained control over titles and refs."""
 
-    def field_title_should_be_set(self, _) -> bool:
-        # We never want titles to be set.
-        return False
-
-    def _update_class_schema(self, json_schema, title, *args, **kwargs):
-        # don't set title, transform it to None
-        return super()._update_class_schema(json_schema, None, *args, **kwargs)
+    def field_title_should_be_set(self, schema) -> bool:
+        # We only want titles to be set if the field explicitly set it
+        return super().field_title_should_be_set(schema) and schema.get("title") is not None
 
     def _build_definitions_remapping(self):
         # we need to remember what remappings Pydantic did so we can flatten them later
@@ -94,42 +94,6 @@ class JSONSchemaBuilder(pydantic.json_schema.GenerateJsonSchema):
             json_schema.pop("$defs")
         return json_schema
 
-    def flatten_singleton_allof(self, json_schema, flatten_refs=False):
-        """Bring any allOf that only have a single child up to the sibling level."""
-
-        def _flatten(obj):
-            if not isinstance(obj, dict):
-                return obj
-
-            for k, v in obj.items():
-                if isinstance(v, list):
-                    obj[k] = [_flatten(x) for x in v]
-                elif isinstance(v, dict):
-                    if "allOf" in v and len(v["allOf"]) == 1:
-                        entry = v["allOf"][0]
-                        if "$ref" not in entry or flatten_refs:
-                            v.pop("allOf")
-                            v.update(entry)
-                    obj[k] = _flatten(v)
-            return obj
-
-        return _flatten(json_schema)
-
-    def remove_titles(self, json_schema):
-        """Recursively remove title tags from the schema in place."""
-        if not isinstance(json_schema, dict):
-            return
-        # only kill the title key if it's a str; a prop could be named "title"
-        if "title" in json_schema and isinstance(json_schema["title"], str):
-            json_schema.pop("title")
-        # then recurse
-        for k, v in json_schema.items():
-            if isinstance(v, list):
-                for x in v:
-                    self.remove_titles(x)
-            elif isinstance(v, dict):
-                self.remove_titles(v)
-
     def generate(self, *args, **kwargs):
         json_schema = super().generate(*args, **kwargs)
         # take the remappings and make it canonical
@@ -142,26 +106,23 @@ class JSONSchemaBuilder(pydantic.json_schema.GenerateJsonSchema):
         self.definitions = new_definitions
         # flatten any singleton def/refs
         json_schema = self.flatten_singleton_refs(json_schema, 2)
-        # flatten singleton allOf
-        json_schema = self.flatten_singleton_allof(json_schema)
-        # recursively remove title tags
-        self.remove_titles(json_schema)
         return json_schema
 
 
-def create_json_schema(params: list[AIParamSchema]) -> dict:
+def create_json_schema(params: list[AIParamSchema], name: str = "_FunctionSpec", desc: str = None) -> dict:
     """Create a JSON schema from a list of parameters to an AIFunction.
 
-    There are some subtle differences compared to how Pydantic creates JSON schemas by default; most notably,
-    some titles are omitted to minimize the token count, and defaults are not exposed.
+    There are some subtle differences compared to how Pydantic creates JSON schemas by default; most notably:
+    - singleton refs to sub-models are inserted in-place rather than requiring a ref to another key
+    - the titles of parameters are omitted unless an AIParam explicitly sets its ``title``
     """
     # create pydantic fields for each AIParam
     fields = {}
     for param in params:
-        field_kwargs = dict(description=param.description)
+        field_kwargs = dict(description=param.description, title=param.title)
         if not param.required:
             field_kwargs["default"] = param.default
         fields[param.name] = (param.type, pydantic.Field(**field_kwargs))
     # create a temp model for generating json schemas
-    pydantic_model = pydantic.create_model("_FunctionSpec", **fields)
+    pydantic_model = pydantic.create_model(name, __doc__=desc, **fields)
     return pydantic_model.model_json_schema(schema_generator=JSONSchemaBuilder, ref_template=REF_TEMPLATE)

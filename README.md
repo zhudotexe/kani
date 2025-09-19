@@ -29,61 +29,29 @@
 
 # kani (カニ)
 
-kani (カニ) is a lightweight and highly hackable framework for chat-based language models with tool usage/function
-calling.
+kani (カニ) is a lightweight and highly hackable framework for chat-based language models with **tool usage/function
+calling**.
 
 Compared to other LM frameworks, kani is less opinionated and offers more fine-grained customizability
 over the parts of the control flow that matter, making it the perfect choice for NLP researchers, hobbyists, and
 developers alike.
 
-kani comes with support for the following models out of the box, with a model-agnostic framework to add support for many
-more:
+kani comes with support for the following models out of the box, with a **model-agnostic** framework to add support for
+many more:
 
-**Hosted Models**
+- OpenAI Models (`pip install "kani[openai]"`)
+- Anthropic Models (`pip install "kani[anthropic]"`)
+- Google AI Models (`pip install "kani[google]"`)
+- and _every_ chat model available on Hugging Face through `transformers` or `llama.cpp`! 
+  (`pip install "kani[huggingface]"`)
 
-- OpenAI Models (GPT-3.5-turbo, GPT-4, GPT-4-turbo, GPT-4o)
-- Anthropic Models (Claude, Claude Instant)
+**Check out the [Model Zoo](examples/4_engines_zoo.py) for code examples of loading popular models in Kani!**
 
-**Open Source Models**
-
-kani supports every chat model available on Hugging Face through `transformers` or `llama.cpp`!
-
-In particular, we have reference implementations for the following base models, and their fine-tunes:
-
-- [LLaMA 3](https://huggingface.co/collections/meta-llama/meta-llama-3-66214712577ca38149ebb2b6) (all sizes)
-- [Mistral-7B](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2),
-  [Mixtral-8x7B](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1),
-  and [Mixtral-8x22B](https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1)
-- [Command R](https://huggingface.co/CohereForAI/c4ai-command-r-v01)
-  and [Command R+](https://huggingface.co/CohereForAI/c4ai-command-r-plus)
-- [Gemma](https://huggingface.co/collections/google/gemma-release-65d5efbccdbb8c4202ec078b) (all sizes)
-- [LLaMA 2](https://huggingface.co/meta-llama) (all sizes)
-- [Vicuna v1.3](https://huggingface.co/lmsys/vicuna-7b-v1.3)
-
-Check out the [Model Zoo](examples/4_engines_zoo.py) to see how to use each of these models in your application!
-
-**Interested in contributing? Check out our
-[guide](https://kani.readthedocs.io/en/latest/community/contributing.html).**
+Interested in contributing? Check out our [guide](https://kani.readthedocs.io/en/latest/community/contributing.html).
 
 [Read the docs on ReadTheDocs!](http://kani.readthedocs.io/)
 
 [Read our paper on arXiv!](https://arxiv.org/abs/2309.05542)
-
-## Features
-
-- **Lightweight and high-level** - kani implements common boilerplate to interface with language models without forcing
-  you to use opinionated prompt frameworks or complex library-specific tooling.
-- **Model agnostic** - kani provides a simple interface to implement: token counting and completion generation.
-  kani lets developers switch which language model runs on the backend without major code refactors.
-- **Automatic chat memory management** - Allow chat sessions to flow without worrying about managing the number of
-  tokens in the history - kani takes care of it.
-- **Function calling with model feedback and retry** - Give models access to functions in just one line of code.
-  kani elegantly provides feedback about hallucinated parameters and errors and allows the model to retry calls.
-- **You control the prompts** - There are no hidden prompt hacks. We will never decide for you how to format your own
-  data, unlike other popular language model libraries.
-- **Fast to iterate and intuitive to learn** - With kani, you only write Python - we handle the rest.
-- **Asynchronous design from the start** - kani can scale to run multiple chat sessions in parallel easily, without
-  having to manage multiple processes or programs.
 
 ## Installation
 
@@ -96,6 +64,8 @@ the [model table](https://kani.readthedocs.io/en/latest/engines.html), or use th
 $ pip install "kani[openai]"
 # for Hugging Face models
 $ pip install "kani[huggingface]" torch
+# for multimodal inputs
+$ pip install "kani[multimodal]"
 # or install everything:
 $ pip install "kani[all]"
 ```
@@ -134,7 +104,7 @@ api_key = "sk-..."
 
 # kani uses an Engine to interact with the language model. You can specify other model 
 # parameters here, like temperature=0.7.
-engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key, model="gpt-5-nano")
 
 # The kani manages the chat state, prompting, and function calling. Here, we only give 
 # it the engine to call ChatGPT, but you can specify other parameters like 
@@ -174,7 +144,7 @@ from kani.engines.openai import OpenAIEngine
 
 # set up the engine as above
 api_key = "sk-..."
-engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
 
 # subclass Kani to add AI functions
@@ -233,7 +203,74 @@ async def stream_with_function_calling():
         msg = await stream.message()
 ```
 
+## Multimodal Inputs
+
+kani optionally supports multimodal inputs (images, audio, video) for various language models. To use multimodal inputs,
+install the `kani-multimodal-core` extension package or use `pip install "kani[multimodal]"`. See the
+kani-multimodal-core documentation for more info. 
+
+[Read the kani-multimodal-core docs!](https://kani-multimodal-core.readthedocs.io)
+
+```python
+from kani import Kani
+from kani.engines.openai import OpenAIEngine
+from kani.ext.multimodal_core import ImagePart
+
+engine = OpenAIEngine(model="gpt-4.1-nano")
+ai = Kani(engine)
+
+# notice how the arg is a list of parts rather than a single str!
+msg = await ai.chat_round_str([
+    "Please describe these images:",
+    ImagePart.from_file("path/to/image.png"),
+    await ImagePart.from_url(
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Whitehead%27s_Trogon_0A2A6014.jpg/1024px-Whitehead%27s_Trogon_0A2A6014.jpg"
+    ),
+])
+print(msg)
+
+```
+
+Multimodal handling is deeply integrated with the rest of the kani ecosystem, so you get all the benefits of kani's
+fluent tool usage and automatic context management with minimal development cost!
+
+## `kani` CLI
+
+kani comes with a CLI for you to chat with a model in your terminal with zero setup.
+
+The `kani` CLI takes the form of `$ kani <provider>:<model-id>`. Use `kani --help` for more information.
+
+Examples:
+```shell
+$ kani openai:gpt-4.1-nano
+$ kani huggingface:meta-llama/Meta-Llama-3-8B-Instruct
+$ kani anthropic:claude-sonnet-4-0
+$ kani google:gemini-2.5-flash
+```
+
+This CLI helper automatically creates a Engine and Kani instance, and calls `chat_in_terminal()` so you can test LLMs
+faster. When `kani-multimodal-core` is installed, you can provide multimodal media on your disk or on the internet 
+to the model by prepending a path or URL with an @ symbol:
+
+```
+USER: Please describe this image: @path/to/image.png and also this one: @https://example.com/image.png
+```
+
 ## Why kani?
+
+- **Lightweight and high-level** - kani implements common boilerplate to interface with language models without forcing
+  you to use opinionated prompt frameworks or complex library-specific tooling.
+- **Model agnostic** - kani provides a simple interface to implement: token counting and completion generation.
+  kani lets developers switch which language model runs on the backend without major code refactors.
+- **Automatic chat memory management** - Allow chat sessions to flow without worrying about managing the number of
+  tokens in the history - kani takes care of it.
+- **Function calling with model feedback and retry** - Give models access to functions in just one line of code.
+  kani elegantly provides feedback about hallucinated parameters and errors and allows the model to retry calls.
+- **You control the prompts** - There are no hidden prompt hacks. We will never decide for you how to format your own
+  data, unlike other popular language model libraries.
+- **Fast to iterate and intuitive to learn** - With kani, you only write Python - we handle the rest.
+- **Asynchronous design from the start** - kani can scale to run multiple chat sessions in parallel easily, without
+  having to manage multiple processes or programs.
 
 Existing frameworks for language models like LangChain and simpleaichat are opinionated and/or heavyweight - they edit
 developers' prompts under the hood, are challenging to learn, and are difficult to customize without adding a lot of
@@ -260,12 +297,12 @@ Or take a look at the hands-on examples [in this repo](https://github.com/zhudot
 
 ## Demo
 
-Want to see kani in action? Using 4-bit quantization to shrink the model, we run LLaMA v2 as part of our test suite
+Want to see kani in action? We run a small language model as part of our test suite
 right on GitHub Actions:
 
 https://github.com/zhudotexe/kani/actions/workflows/pytest.yml?query=branch%3Amain+is%3Asuccess
 
-Simply click on the latest build to see LLaMA's output!
+Simply click on the latest build to see the model's output!
 
 ## Who we are
 

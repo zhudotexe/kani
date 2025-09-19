@@ -18,7 +18,7 @@ from kani.engines.openai import OpenAIEngine
 
 # initialize kani
 api_key = os.getenv("OPENAI_API_KEY")
-engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
 # initialize FastAPI
 app = FastAPI()

@@ -3,7 +3,8 @@ import inspect
 import logging
 import warnings
 from collections.abc import AsyncIterable
-from typing import Callable
+from pathlib import Path
+from typing import Callable, Literal
 
 from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
@@ -11,8 +12,9 @@ from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, W
 from .internal import ExceptionHandleResult, FunctionCallResult
 from .models import ChatMessage, ChatRole, FunctionCall, QueryType, ToolCall
 from .streaming import DummyStream, StreamManager
+from .utils import saveload
 from .utils.message_formatters import assistant_message_contents
-from .utils.typing import PathLike, SavedKani
+from .utils.typing import PathLike
 
 log = logging.getLogger("kani")
 message_log = logging.getLogger("kani.messages")
@@ -62,7 +64,7 @@ class Kani:
         engine: BaseEngine,
         system_prompt: str = None,
         always_included_messages: list[ChatMessage] = None,
-        desired_response_tokens: int = 450,
+        desired_response_tokens: int = None,
         chat_history: list[ChatMessage] = None,
         functions: list[AIFunction] = None,
         retry_attempts: int = 1,
@@ -76,7 +78,8 @@ class Kani:
             :attr:`chat_history`.
         :param desired_response_tokens: The minimum amount of space to leave in ``max context size - tokens in prompt``.
             To control the maximum number of tokens generated more precisely, you may be able to configure the engine
-            (e.g. ``OpenAIEngine(..., max_tokens=250)``).
+            (e.g. ``OpenAIEngine(..., max_tokens=250)``). Defaults to 10% of the engine's context length or 8192 tokens,
+            whichever is smaller.
         :param chat_history: The chat history to start with (not including system prompt or always included messages),
             for advanced use cases. By default, each kani starts with a new conversation session.
 
@@ -89,8 +92,8 @@ class Kani:
         """
         self.engine = engine
         self.system_prompt = system_prompt.strip() if system_prompt else None
-        self.desired_response_tokens = desired_response_tokens
         self.max_context_size = engine.max_context_size
+        self.desired_response_tokens = desired_response_tokens or min(engine.max_context_size // 10, 8192)
 
         self.always_included_messages: list[ChatMessage] = (
             [ChatMessage.system(self.system_prompt)] if system_prompt else []
@@ -559,25 +562,28 @@ class Kani:
         self.chat_history.append(message)
 
     # ==== utility methods ====
-    def save(self, fp: PathLike, **kwargs):
-        """Save the chat state of this kani to a JSON file. This will overwrite the file if it exists!
+    def save(self, fp: PathLike, *, save_format: Literal["json", "kani"] | None = None, **kwargs):
+        """
+        Save the chat state of this kani to a ``.kani`` file or JSON. This will overwrite the file if it exists!
 
         :param fp: The path to the file to save.
+        :param save_format: Whether to save the chat state as a ``.kani`` file or JSON. If not set, determines format
+            by file path extension (defaulting to ``.kani`` if uncertain).
         :param kwargs: Additional arguments to pass to Pydantic's ``model_dump_json``.
         """
-        data = SavedKani(always_included_messages=self.always_included_messages, chat_history=self.chat_history)
-        with open(fp, "w", encoding="utf-8") as f:
-            f.write(data.model_dump_json(**kwargs))
+        if save_format is None:
+            save_format = "json" if Path(fp).suffix == ".json" else "kani"
+        return saveload.save(fp, inst=self, save_format=save_format, **kwargs)
 
     def load(self, fp: PathLike, **kwargs):
-        """Load chat state from a JSON file into this kani. This will overwrite any existing chat state!
+        """
+        Load a chat state from a ``.kani`` file or JSON file into this instance.
+        This will overwrite any existing chat state!
 
         :param fp: The path to the file containing the chat state.
         :param kwargs: Additional arguments to pass to Pydantic's ``model_validate_json``.
         """
-        with open(fp, encoding="utf-8") as f:
-            data = f.read()
-        state = SavedKani.model_validate_json(data, **kwargs)
+        state = saveload.load(fp, **kwargs)
         self.always_included_messages = state.always_included_messages
         self.chat_history = state.chat_history
 

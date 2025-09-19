@@ -14,7 +14,7 @@ from kani import Kani
 from kani.engines.openai import OpenAIEngine
 
 api_key = "sk-..."
-engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 ai = Kani(engine, system_prompt="You are a helpful assistant.")
 
 

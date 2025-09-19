@@ -1,32 +1,40 @@
-HuggingFace
-===========
+HuggingEngine
+=============
 If your language model backend is available on HuggingFace or is compatible with ``transformers``'
 ``AutoModelForCausalLM`` interface, kani includes a base engine that implements a prediction pipeline.
 
+**TL;DR**
+
+.. code-block:: python
+
+    from kani.engines.huggingface import HuggingEngine
+    engine = HuggingEngine(model_id="org-id/model-id")
+
+.. important::
+
+    .. versionadded:: 1.2.0
+        For most models that use a chat template, you won't need to create a new engine class - kani will automatically
+        use a `Chat Template <https://huggingface.co/docs/transformers/main/en/chat_templating>`_ if a model has one
+        included.
+
+        This means you can safely ignore this section of the documentation for most use cases! Just use:
+
+        .. code-block:: python
+
+            from kani.engines.huggingface import HuggingEngine
+            engine = HuggingEngine(model_id="your-org/your-model-id")
+
 .. versionadded:: 1.0.0
-    For most models that use a chat format, you won't even need to create a new engine class - instead, you can pass
-    a :class:`.PromptPipeline` to the :class:`.HuggingEngine`.
+    For more control over the prompting of a chat model, you can pass a :class:`.PromptPipeline` to
+    the :class:`.HuggingEngine`.
 
 If you do create a new engine, instead of having to implement the prediction logic, all you have to do is subclass
 :class:`.HuggingEngine` and implement :meth:`~.HuggingEngine.build_prompt` and :meth:`~.BaseEngine.message_len`.
 
-.. seealso::
-
-    The source code of the :class:`.LlamaEngine`, which uses the HuggingEngine.
-
-.. autoclass:: kani.engines.huggingface.base.HuggingEngine
-    :noindex:
-
-    .. automethod:: kani.engines.huggingface.base.HuggingEngine.build_prompt
-        :noindex:
-
-    .. automethod:: kani.engines.huggingface.base.HuggingEngine.message_len
-        :noindex:
-
 .. _4b_quant:
 
-4-bit Quantization (|:hugging:|)
---------------------------------
+Quantization With BitsAndBytes
+------------------------------
 If you're running your model locally, you might run into issues because large language models are, well, *large*!
 Unless you pay for a massive compute cluster (|:money_with_wings:|) or have access to one at your institution, you
 might not be able to fit models with billions of params on your GPU. That's where model quantization comes into play.
@@ -60,21 +68,30 @@ After that, you'll need to install ``bitsandbytes`` and ``accelerate``:
 
 **Set Load Arguments**
 
-Then, you'll need to set the ``model_load_kwargs`` when initializing your model, and use the engine as normal! This
-example shows the :class:`.LlamaEngine`, but the same arguments should apply to any subclass of the
-:class:`.HuggingEngine`.
+Then, you'll need to set the ``model_load_kwargs`` when initializing your model, and use the engine as normal!
 
 .. code-block:: python
 
     from transformers import BitsAndBytesConfig
-    from kani.engines.huggingface.llama2 import LlamaEngine
+    from kani.engines.huggingface import HuggingEngine
 
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
 
-    engine = LlamaEngine(
-        use_auth_token=True,
+    engine = HuggingEngine(
+        model_id="meta-llama/Llama-2-7b-chat-hf",
         model_load_kwargs={
-            "device_map": "auto",
             "quantization_config": quantization_config,
         },
     )
+
+Reference
+---------
+
+.. autoclass:: kani.engines.huggingface.HuggingEngine
+    :noindex:
+
+    .. automethod:: kani.engines.huggingface.HuggingEngine.build_prompt
+        :noindex:
+
+    .. automethod:: kani.engines.huggingface.HuggingEngine.message_len
+        :noindex:

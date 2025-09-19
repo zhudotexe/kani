@@ -1,7 +1,7 @@
 """LLaMA v2 (https://ai.meta.com/llama/) is a language model released by Meta that has variants fine-tuned for chat.
 
-This example shows how you can use kani to run a language model on your own machine! See the source code of
-:class:`.LlamaEngine` for implementation details.
+This example shows how you can use kani to run a language model on your own machine! See the source code of the
+``LlamaEngine`` for implementation details.
 """
 
 from kani import Kani, chat_in_terminal

@@ -1,5 +1,5 @@
-Sub-kanis (Agents)
-==================
+Sub-kanis (Multi-Agent Systems)
+===============================
 When used in conjunction with :doc:`../function_calling`, kani can choose when to spawn "sub-kani" - self-contained
 "agents" capable of performing their own tasks, then reporting to the parent with their results.
 

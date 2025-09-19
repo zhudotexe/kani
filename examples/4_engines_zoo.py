@@ -7,89 +7,109 @@ This example showcases all the different engines available and how you can switc
 import os
 
 from kani import Kani, chat_in_terminal
-
 # ==== OpenAI (GPT) ====
+# see https://platform.openai.com/docs/models for a list of model IDs
 from kani.engines.openai import OpenAIEngine
-engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4")
+engine = OpenAIEngine(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-5-nano")
 
 # ==== Anthropic (Claude) ====
 # see https://docs.anthropic.com/claude/docs/models-overview for a list of model IDs
 from kani.engines.anthropic import AnthropicEngine
-engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-3-opus-20240229")
+engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-sonnet-4-0")
+
+# ==== Google (Gemini) ====
+# see https://ai.google.dev/gemini-api/docs/models for a list of model IDs
+from kani.engines.google import GoogleAIEngine
+engine = GoogleAIEngine(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-2.5-flash")
 
 # ========== Hugging Face ==========
-# ---- LLaMA v3 (Hugging Face) ----
+# ---- Any Model (Chat Templates) ----
+from kani.engines.huggingface import HuggingEngine
+engine = HuggingEngine(model_id="org-id/model-id")
+
+# ---- GPT-OSS (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.model_specific.gpt_oss import GPTOSSParser
+# this method is the same for the 20B and 120B variants - simply replace the model ID!
+model = HuggingEngine(
+    model_id="openai/gpt-oss-20b",
+    chat_template_kwargs=dict(reasoning_effort="low"),  # set this to "low", "medium", or "high"
+    temperature=1.0,                                    # suggested decoding parameter
+    top_k=None,                                         # ensure we do not use top_k (transformers default =50)
+)
+engine = GPTOSSParser(model, show_reasoning_in_stream=True)
+# show_reasoning_in_stream is useful for debugging the model; reasoning is in a ReasoningPart by default
+
+# ---- DeepSeek R1 (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.model_specific.deepseek import DeepSeekR1ToolCallParser
+# this method is the same for all distills of R1 as well - simply replace the model ID!
+model = HuggingEngine(model_id="deepseek-ai/DeepSeek-R1")
+engine = DeepSeekR1ToolCallParser(model)
+
+# ---- LLaMA 3 (Hugging Face) ----
 import torch
 from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl import LLAMA3_PIPELINE
 engine = HuggingEngine(
     model_id="meta-llama/Meta-Llama-3-8B-Instruct",
-    prompt_pipeline=LLAMA3_PIPELINE,
     use_auth_token=True,  # log in with huggingface-cli
     # suggested args from the Llama model card
     model_load_kwargs={"device_map": "auto", "torch_dtype": torch.bfloat16},
 )
 
-# NOTE: If you're running transformers<4.40 and LLaMA 3 continues generating after the <|eot_id|> token,
-# add `eos_token_id=[128001, 128009]` or upgrade transformers
+# ---- Mistral Small/Large (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.model_specific.mistral import MistralToolCallParser
+# small (22B):  mistralai/Mistral-Small-Instruct-2409
+# large (123B): mistralai/Mistral-Large-Instruct-2407
+model = HuggingEngine(model_id="mistralai/Mistral-Small-Instruct-2409")
+engine = MistralToolCallParser(model)
 
+# --------- older models ----------
 # ---- LLaMA v2 (Hugging Face) ----
 from kani.engines.huggingface.llama2 import LlamaEngine
 engine = LlamaEngine(model_id="meta-llama/Llama-2-7b-chat-hf", use_auth_token=True)  # log in with huggingface-cli
 
-# ---- Mixtral-8x22B (Hugging Face) ----
-from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl.mistral import MISTRAL_V3_PIPELINE, MixtralFunctionCallingAdapter
-model = HuggingEngine(
-    model_id="mistralai/Mixtral-8x22B-Instruct-v0.1",
-    prompt_pipeline=MISTRAL_V3_PIPELINE,
-    model_load_kwargs={"device_map": "auto", "torch_dtype": torch.bfloat16},
-)
-
-# to enable function calling:
-# NOTE: as of May 2024, the huggingface implementation of Mixtral-8x22B function calling is broken:
-# https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1/discussions/27
-# this comment will be removed once it is fixed - until then, you should use another backend
-engine = MixtralFunctionCallingAdapter(model)
-
 # ---- Mistral-7B (Hugging Face) ----
 # v0.3 (supports function calling):
 from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl.mistral import MISTRAL_V3_PIPELINE, MistralFunctionCallingAdapter
-model = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.3", prompt_pipeline=MISTRAL_V3_PIPELINE)
-engine = MistralFunctionCallingAdapter(model)
-
-# v0.2:
-from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl import MISTRAL_V1_PIPELINE
-engine = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.2", prompt_pipeline=MISTRAL_V1_PIPELINE)
-
-# Also use the MISTRAL_V1_PIPELINE for Mixtral-8x7B (i.e. mistralai/Mixtral-8x7B-Instruct-v0.1).
-
-# ---- Command R (Hugging Face) ----
-import torch
-from kani.engines.huggingface.cohere import CommandREngine
-engine = CommandREngine(
-    model_id="CohereForAI/c4ai-command-r-v01", model_load_kwargs={"device_map": "auto", "torch_dtype": torch.float16}
-)
-
-# ---- Gemma (Hugging Face) ----
-from kani.engines.huggingface import HuggingEngine
-from kani.prompts.impl import GEMMA_PIPELINE
-engine = HuggingEngine(model_id="google/gemma-1.1-7b-it", prompt_pipeline=GEMMA_PIPELINE, use_auth_token=True)
-
-# ---- Vicuna v1.3 (Hugging Face) ----
-from kani.engines.huggingface.vicuna import VicunaEngine
-engine = VicunaEngine(model_id="lmsys/vicuna-7b-v1.3")
+from kani.model_specific.mistral import MistralToolCallParser
+model = HuggingEngine(model_id="mistralai/Mistral-7B-Instruct-v0.3")
+engine = MistralToolCallParser(model)
 
 # ========== llama.cpp ==========
+# ---- Any Model (Chat Templates) ----
+from kani.engines.huggingface import ChatTemplatePromptPipeline
+from kani.engines.llamacpp import LlamaCppEngine
+pipeline = ChatTemplatePromptPipeline.from_pretrained("org-id/base-model-id")
+engine = LlamaCppEngine(repo_id="org-id/quant-model-id", filename="*.your-quant-type.gguf", prompt_pipeline=pipeline)
+# NOTE: if the quantized model is sharded in multiple files (e.g. *-00001-of-0000X.gguf), pass the full filename of the
+# first shard only.
+
+# ---- DeepSeek R1 (2bit quantized) ----
+from kani.engines.huggingface import ChatTemplatePromptPipeline
+from kani.engines.llamacpp import LlamaCppEngine
+# NOTE: due to an issue in llama-cpp-python you will need to download the files by running the huggingface-cli command
+# manually:
+# $ huggingface-cli download unsloth/DeepSeek-R1-GGUF --include DeepSeek-R1-Q2_K_XS/*.gguf
+pipeline = ChatTemplatePromptPipeline.from_pretrained("deepseek-ai/DeepSeek-R1")
+engine = LlamaCppEngine(
+    repo_id="unsloth/DeepSeek-R1-GGUF",
+    filename="DeepSeek-R1-Q2_K_XS/DeepSeek-R1-Q2_K_XS-00001-of-00005.gguf",
+    prompt_pipeline=pipeline,
+    model_load_kwargs={"n_gpu_layers": -1, "additional_files": []},
+)
+
 # ---- LLaMA v2 (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
-engine = LlamaCppEngine(repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_K_M.gguf")
+from kani.model_specific.llama2 import LLAMA2_PIPELINE
+engine = LlamaCppEngine(
+    repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=LLAMA2_PIPELINE
+)
 
 # ---- Mistral-7B (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
-from kani.prompts.impl import MISTRAL_V1_PIPELINE
+from kani.model_specific.mistral import MISTRAL_V1_PIPELINE
 engine = LlamaCppEngine(
     repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=MISTRAL_V1_PIPELINE
 )

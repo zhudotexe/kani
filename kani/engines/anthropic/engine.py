@@ -6,31 +6,93 @@ import os
 import warnings
 from typing import AsyncIterable
 
+from kani import _optional
 from kani.ai_function import AIFunction
-from kani.exceptions import KaniException, MissingModelDependencies
+from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
+from . import mm_tokens, model_constants
+from .parts import AnthropicThinkingPart, AnthropicUnknownPart
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
 
 try:
-    from anthropic import AI_PROMPT, HUMAN_PROMPT, AsyncAnthropic
+    from anthropic import AsyncAnthropic
+    from anthropic.types import Message
 except ImportError as e:
     raise MissingModelDependencies(
         'The AnthropicEngine requires extra dependencies. Please install kani with "pip install kani[anthropic]".'
     ) from None
 
-CONTEXT_SIZES_BY_PREFIX = [
-    ("claude-3", 200000),
-    ("claude-2.1", 200000),
-    ("", 100000),
-]
 
 log = logging.getLogger(__name__)
 
 
 # ==== pipe ====
 def content_transform(msg: ChatMessage):
+    content = []
+
+    for part in msg.parts:
+        # --- multimodal ---
+        if _optional.has_multimodal_core and isinstance(part, _optional.multimodal_core.ImagePart):
+            # USER messages with images should look like:
+            # {
+            #     "role": "user",
+            #     "content": [
+            #         {
+            #             "type": "image",
+            #             "source": {
+            #                 "type": "base64",
+            #                 "media_type": image1_media_type,
+            #                 "data": image1_data,
+            #             },
+            #         },
+            #         {
+            #             "type": "text",
+            #             "text": "Describe this image."
+            #         }
+            #     ],
+            # }
+            media_type = "image/png"
+            data = part.as_b64(format="png")
+            content.append({"type": "image", "source": {"type": "base64", "media_type": media_type, "data": data}})
+        # --- PDF ---
+        elif (
+            _optional.has_multimodal_core
+            and isinstance(part, _optional.multimodal_core.BinaryFilePart)
+            and part.mime == "application/pdf"
+        ):
+            # {
+            #     "role": "user",
+            #     "content": [
+            #         {
+            #             "type": "document",
+            #             "source": {
+            #                 "type": "base64",
+            #                 "media_type": "application/pdf",
+            #                 "data": pdf_data
+            #             }
+            #         },
+            #         {
+            #             "type": "text",
+            #             "text": "What are the key findings in this document?"
+            #         }
+            #     ]
+            # }
+            data = part.as_b64()
+            content.append({"type": "document", "source": {"type": "base64", "media_type": part.mime, "data": data}})
+        # --- AnthropicThinkingPart ----
+        elif isinstance(part, AnthropicThinkingPart):
+            # unnecessary parts are filtered out by the API so we'll just pass them all back
+            content.append({"type": "thinking", "thinking": part.content, "signature": part.signature})
+        # --- AnthropicUnknownPart ----
+        elif isinstance(part, AnthropicUnknownPart):
+            # e.g. web search results, computer use, other server tools
+            content.append(part.data)
+        # default (function messages can't have multimodal parts, so we handle it in the branch below)
+        elif msg.role != ChatRole.FUNCTION:
+            content.append({"type": "text", "text": str(part)})
+
     # FUNCTION messages should look like:
     # {
     #   "role": "user",
@@ -49,7 +111,7 @@ def content_transform(msg: ChatMessage):
         if msg.is_tool_call_error:
             result["is_error"] = True
 
-        return [result]
+        content.append(result)
 
     # ASSISTANT messages with tool calls should look like:
     # {
@@ -68,12 +130,10 @@ def content_transform(msg: ChatMessage):
     #   ]
     # }
     if msg.role == ChatRole.ASSISTANT and msg.tool_calls:
-        content = [{"type": "text", "text": str(part)} for part in msg.parts]
         for tc in msg.tool_calls:
             content.append({"type": "tool_use", "id": tc.id, "name": tc.function.name, "input": tc.function.kwargs})
-        return content
 
-    return msg.text
+    return content
 
 
 # assumes system messages are plucked before calling
@@ -83,18 +143,24 @@ CLAUDE_PIPELINE = (
     .merge_consecutive(role=ChatRole.USER, sep="\n")
     .merge_consecutive(role=ChatRole.ASSISTANT, sep=" ")
     .ensure_bound_function_calls()
-    .ensure_start(role=ChatRole.USER)
     .conversation_dict(function_role="user", content_transform=content_transform)
 )
 
 
 class AnthropicEngine(TokenCached, BaseEngine):
-    """Engine for using the Anthropic API.
+    """
+    Engine for using the Anthropic API.
 
     This engine supports all Claude models. See https://docs.anthropic.com/claude/docs/getting-access-to-claude for
     information on accessing the Claude API.
 
-    See https://docs.anthropic.com/claude/docs/models-overview for a list of available models.
+    See https://docs.anthropic.com/en/docs/about-claude/models/overview for a list of available models.
+
+    **Multimodal support**: images.
+
+    **Additional capabilities**: PDF document processing. Use :class:`kani.ext.multimodal_core.BinaryFilePart`.
+
+    **Message Extras**: ``"anthropic_message"``: The Message (raw response) returned by the Anthropic servers.
     """
 
     # because we have to estimate tokens wildly and the ctx is so long we'll just reserve a bunch
@@ -103,8 +169,8 @@ class AnthropicEngine(TokenCached, BaseEngine):
     def __init__(
         self,
         api_key: str = None,
-        model: str = "claude-3-haiku-20240307",
-        max_tokens: int = 512,
+        model: str = "claude-sonnet-4-0",
+        max_tokens: int = 2048,
         max_context_size: int = None,
         *,
         retry: int = 2,
@@ -116,8 +182,9 @@ class AnthropicEngine(TokenCached, BaseEngine):
         """
         :param api_key: Your Anthropic API key. By default, the API key will be read from the `ANTHROPIC_API_KEY`
             environment variable.
-        :param model: The id of the model to use (e.g. "claude-2.1", "claude-instant-1.2").
-        :param max_tokens: The maximum number of tokens to sample at each generation (defaults to 512).
+        :param model: The id of the model to use (e.g. "claude-opus-4-0"). See
+            https://docs.anthropic.com/en/docs/about-claude/models/overview for a list of models.
+        :param max_tokens: The maximum number of tokens to sample at each generation (defaults to 2048).
             Generally, you should set this to the same number as your Kani's ``desired_response_tokens``.
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
@@ -128,7 +195,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
             You must specify exactly one of (api_key, client). If this is passed the ``retry``, ``api_base``,
             and ``headers`` params will be ignored.
         :param hyperparams: Any additional parameters to pass to the underlying API call (see
-            https://docs.anthropic.com/claude/reference/complete_post).
+            https://docs.claude.com/en/api/messages).
         """
         if api_key and client:
             raise ValueError("You must supply no more than one of (api_key, client).")
@@ -137,10 +204,17 @@ class AnthropicEngine(TokenCached, BaseEngine):
             if api_key is None:
                 raise ValueError(
                     "You must supply an `api_key`, `client`, or set the `ANTHROPIC_API_KEY` environment variable to use"
-                    " the OpenAIEngine."
+                    " the AnthropicEngine."
                 )
         if max_context_size is None:
-            max_context_size = next(size for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix))
+            matched_prefix, max_context_size = next(
+                (prefix, size) for prefix, size in model_constants.CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix)
+            )
+            if not matched_prefix:
+                warnings.warn(
+                    f"The context length for this model was not found, defaulting to {max_context_size} tokens. Please"
+                    " specify `max_context_size` if this is incorrect."
+                )
 
         super().__init__()
 
@@ -152,47 +226,31 @@ class AnthropicEngine(TokenCached, BaseEngine):
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
 
-        # token counting - claude 3+ does not release tokenizer so we have to do heuristics and cache
-        if model.startswith("claude-2"):
-            # anthropic async client loads a json file using anyio for some reason; hook into the underlying loader
-            # noinspection PyProtectedMember
-            from anthropic._tokenizers import sync_get_tokenizer
-
-            self.tokenizer = sync_get_tokenizer()
-        else:
-            # claude 3 tokenizer just... doesn't exist
-            # https://github.com/anthropics/anthropic-sdk-python/issues/375 pain
-            self.tokenizer = None
-
     # ==== token counting ====
     def message_len(self, message: ChatMessage) -> int:
         if (cached_len := self.get_cached_message_len(message)) is not None:
             return cached_len
 
-        # use tokenizer
-        if self.tokenizer is not None:
-            return self._message_len_tokenizer(message)
+        # TODO with async token counting use the token counting API
+        chars = len(message.role.value)
+        tokens = 0
+        if _optional.has_multimodal_core:
+            for part in message.parts:
+                if isinstance(part, _optional.multimodal_core.ImagePart):
+                    tokens += mm_tokens.tokens_from_image_size(part.size)
+                else:
+                    chars += len(str(part))
+        else:
+            chars += len(message.text)
 
-        # panik - I guess we'll pretend that 4 chars = 1 token...?
-        n = len(message.role.value) + len(message.text)
+        # tools
         if message.tool_calls:
             for tc in message.tool_calls:
-                n += len(tc.function.name) + len(tc.function.arguments)
-        return n // 4
+                chars += len(tc.function.name) + len(tc.function.arguments)
 
-    def _message_len_tokenizer(self, message):
-        # this only applies to claude-2
-        # human messages are prefixed with `\n\nHuman: ` and assistant with `\n\nAssistant:`
-        if message.role == ChatRole.USER:
-            mlen = 5
-        elif message.role == ChatRole.ASSISTANT:
-            mlen = 4
-        else:
-            mlen = 2  # we'll prepend system/function messages with \n\n as a best-effort case
-
-        if message.text:
-            mlen += len(self.tokenizer.encode(message.text).ids)
-        return mlen
+        # token counting - claude 3+ does not release tokenizer so we have to do heuristics and cache
+        # Anthropic documents 3.4 bytes per token, so we do a conservative 3.2 char/tok
+        return int(chars / 3.2) + tokens
 
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
         if not functions:
@@ -204,16 +262,20 @@ class AnthropicEngine(TokenCached, BaseEngine):
     def _function_token_reserve_impl(self, functions):
         # panik, also assume len/4?
         n = sum(len(f.name) + len(f.desc) + len(json.dumps(f.json_schema)) for f in functions)
-        return n // 4
+        return int(n / 3.2)
 
-    # ==== requests ====
-    def _get_client(self, functions):
-        if not functions:
-            return self.client
-        return self.client.beta.tools
+    # ==== hackable stuff for requests ====
+    @property
+    def _messages_api(self):
+        """Return the messages API resource object. Useful to override to use the beta API instead."""
+        return self.client.messages
 
     @staticmethod
-    def _prepare_request(messages, functions):
+    def _prepare_request(messages, functions) -> tuple[dict, list]:
+        """
+        Prepare the API request to the Anthropic API. Returns a tuple (kwargs, messages) to be passed to the
+        AnthropicClient's messages.create() method.
+        """
         kwargs = {}
 
         # --- messages ---
@@ -225,11 +287,11 @@ class AnthropicEngine(TokenCached, BaseEngine):
 
         # enforce ordering and function call bindings
         # and translate to dict spec
-        messages = CLAUDE_PIPELINE(messages)
+        claude_fmt_messages = CLAUDE_PIPELINE(messages)
 
-        # merge FUNCTION, USER consecutives into one with multiple parts
+        # merge FUNCTION (which get translated to user), USER consecutives into one with multiple parts
         prompt_msgs = []
-        for role, group_msgs in itertools.groupby(messages, key=lambda m: m["role"]):
+        for role, group_msgs in itertools.groupby(claude_fmt_messages, key=lambda m: m["role"]):
             group_msgs = list(group_msgs)
             # >1 consecutive user messages get merged
             if role == "user" and len(group_msgs) > 1:
@@ -256,27 +318,33 @@ class AnthropicEngine(TokenCached, BaseEngine):
 
         return kwargs, prompt_msgs
 
-    def _translate_anthropic_message(self, message):
+    def _translate_anthropic_message(self, message: Message):
+        """Translate an Anthropic message to a Kani completion."""
         tool_calls = []
-        text_parts = []
+        parts = []
         for part in message.content:
             if part.type == "text":
-                text_parts.append(part.text)
+                parts.append(part.text)
             elif part.type == "tool_use":
                 fc = FunctionCall(name=part.name, arguments=json.dumps(part.input))
                 tc = ToolCall(id=part.id, type="function", function=fc)
                 tool_calls.append(tc)
+            elif part.type == "thinking":
+                parts.append(AnthropicThinkingPart(content=part.thinking, signature=part.signature))
             else:
-                raise KaniException(
-                    f"The engine returned an unknown part: {part.type}. Please report this as an issue on GitHub with"
-                    " instructions on how to reproduce this issue."
+                parts.append(AnthropicUnknownPart(type=part.type, data=part.model_dump()))
+                warnings.warn(
+                    f"The engine returned an unknown part: {part.type}. This has been saved as an AnthropicUnknownPart,"
+                    " but will not stringify to a natural language prompt for other language models."
                 )
-        content = text_parts[0] if len(text_parts) == 1 else text_parts
+        content = parts[0] if len(parts) == 1 else parts
         kani_msg = ChatMessage.assistant(content, tool_calls=tool_calls or None)
 
         # also cache the message token len
         self.set_cached_message_len(kani_msg, message.usage.output_tokens)
 
+        # set the extra
+        kani_msg.extra["anthropic_message"] = message
         return Completion(
             message=kani_msg,
             prompt_tokens=message.usage.input_tokens,
@@ -287,10 +355,10 @@ class AnthropicEngine(TokenCached, BaseEngine):
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> Completion:
         kwargs, prompt_msgs = self._prepare_request(messages, functions)
-        client = self._get_client(functions)
 
         # --- completion ---
-        message = await client.messages.create(
+        assert len(prompt_msgs) > 0
+        message = await self._messages_api.create(
             model=self.model,
             max_tokens=self.max_tokens,
             messages=prompt_msgs,
@@ -305,27 +373,23 @@ class AnthropicEngine(TokenCached, BaseEngine):
     async def stream(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> AsyncIterable[str | BaseCompletion]:
-        if functions:
-            warnings.warn("Claude 3 does not support streaming with function calling.")
-            async for elem in super().stream(messages, functions, **hyperparams):
-                yield elem
-        else:
-            # do the stream
-            kwargs, prompt_msgs = self._prepare_request(messages, functions)
+        # do the stream
+        kwargs, prompt_msgs = self._prepare_request(messages, functions)
 
-            async with self.client.messages.stream(
-                model=self.model,
-                max_tokens=self.max_tokens,
-                messages=prompt_msgs,
-                **kwargs,
-                **self.hyperparams,
-                **hyperparams,
-            ) as stream:
-                async for text in stream.text_stream:
-                    yield text
+        assert len(prompt_msgs) > 0
+        async with self._messages_api.stream(
+            model=self.model,
+            max_tokens=self.max_tokens,
+            messages=prompt_msgs,
+            **kwargs,
+            **self.hyperparams,
+            **hyperparams,
+        ) as stream:
+            async for text in stream.text_stream:
+                yield text
 
-                message = await stream.get_final_message()
-                yield self._translate_anthropic_message(message)
+            message = await stream.get_final_message()
+            yield self._translate_anthropic_message(message)
 
     async def close(self):
         await self.client.close()

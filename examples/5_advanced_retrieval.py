@@ -15,7 +15,7 @@ from kani.engines.openai import OpenAIEngine
 
 api_key = os.getenv("OPENAI_API_KEY")
 
-engine = OpenAIEngine(api_key, model="gpt-3.5-turbo")
+engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
 
 class WikipediaRetrievalKani(Kani):
@@ -57,4 +57,4 @@ class WikipediaRetrievalKani(Kani):
 
 ai = WikipediaRetrievalKani(engine)
 if __name__ == "__main__":
-    chat_in_terminal(ai)
+    chat_in_terminal(ai, show_function_args=True)

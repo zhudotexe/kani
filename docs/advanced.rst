@@ -6,8 +6,10 @@ Each of these use cases has an example in `the GitHub repo <https://github.com/z
 .. toctree::
     :maxdepth: 2
 
-    advanced/subkani
-    advanced/retrieval
-    advanced/api
     advanced/messageparts
+    advanced/message_extras
+    advanced/retrieval
+    advanced/subkani
+    advanced/api
     advanced/polymorphism
+    advanced/saveload

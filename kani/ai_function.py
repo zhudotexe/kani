@@ -1,5 +1,4 @@
 import asyncio
-import functools
 import inspect
 import typing
 import warnings
@@ -67,9 +66,8 @@ class AIFunction:
     async def __call__(self, *args, **kwargs):
         if self._inner_is_coro:
             return await self.inner(*args, **kwargs)
-        # run synch functions in a threadpool in order to maintain async safety
-        inner_partial = functools.partial(self.inner, *args, **kwargs)
-        return await asyncio.get_event_loop().run_in_executor(None, inner_partial)
+        # run synch functions in a thread in order to maintain async safety as best we can
+        return await asyncio.to_thread(self.inner, *args, **kwargs)
 
     def get_params(self) -> list[AIParamSchema]:
         # get list of params
@@ -104,10 +102,22 @@ class AIFunction:
             )
         return params
 
-    def create_json_schema(self) -> dict:
-        """Create a JSON schema representing this function's parameters as a JSON object."""
-        # create a schema generator and generate
-        return create_json_schema(self.get_params())
+    def create_json_schema(self, include_desc=True) -> dict:
+        """
+        Create a JSON schema representing this function's parameters as a JSON object.
+
+        :param include_desc: Whether to include the AIFunction's description in the generated JSON schema.
+        """
+        kwargs = {}
+        if include_desc:
+            kwargs["desc"] = self.desc
+        return create_json_schema(self.get_params(), name=self.name, **kwargs)
+
+    def __repr__(self):
+        return (
+            f"{type(self).__name__}(name={self.name!r}, desc={self.desc!r}, after={self.after!r},"
+            f" auto_retry={self.auto_retry!r}, auto_truncate={self.auto_truncate!r})"
+        )
 
 
 def ai_function(
@@ -154,8 +164,14 @@ def ai_function(
 class AIParam:
     """Special tag to annotate types with in order to provide parameter-level metadata to kani."""
 
-    def __init__(self, desc: str):
+    def __init__(self, desc: str, *, title: str = None):
+        """
+        :param desc: The description of the parameter.
+        :param title: If set, set the title of this parameter in generated JSON schema to this; otherwise omit the title
+            (as it is already the key of the parameter in the schema).
+        """
         self.desc = desc
+        self.title = title
 
 
 def get_aiparam(annotation: type) -> AIParam | None:

@@ -259,8 +259,8 @@ class EnsureBoundFunctionCalls(PipelineStep):
             # translate the id(s) if needed
             if self.id_translator is not None:
                 if m.tool_calls is not None:
-                    for tc in m.tool_calls:
-                        tc.id = self.id_translator(tc.id)
+                    # copy the tool calls here to prevent unintended mutation
+                    m.tool_calls = [tc.copy_with(id=self.id_translator(tc.id)) for tc in m.tool_calls]
                 if m.tool_call_id is not None:
                     m.tool_call_id = self.id_translator(m.tool_call_id)
 

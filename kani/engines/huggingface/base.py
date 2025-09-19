@@ -3,11 +3,12 @@ import warnings
 from threading import Thread
 from typing import AsyncIterable
 
+from kani import model_specific
 from kani.ai_function import AIFunction
+from kani.engines.base import BaseCompletion, BaseEngine, Completion
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
-from ..base import BaseCompletion, BaseEngine, Completion
 
 try:
     import torch
@@ -18,6 +19,21 @@ except ImportError:
         "You will also need to install PyTorch manually."
     ) from None
 
+has_cuda = torch.backends.cuda.is_built()
+has_mps = torch.backends.mps.is_built()
+
+try:
+    import accelerate
+
+    has_accelerate = True
+except ImportError:
+    if has_cuda:
+        warnings.warn(
+            "A PyTorch install with CUDA was detected on this system, but `accelerate` is not installed. Run `pip"
+            " install accelerate` for automatic GPU mapping of Hugging Face models."
+        )
+    has_accelerate = False
+
 log = logging.getLogger(__name__)
 
 
@@ -27,6 +43,11 @@ class HuggingEngine(BaseEngine):
     This class implements the main decoding logic for any HuggingFace model based on a pretrained
     ``AutoModelForCausalLM``. As most models use model-specific chat templates, this base class accepts a
     :class:`.PromptPipeline` to translate kani ChatMessages into a model-specific string.
+
+    .. versionadded:: 1.2.0
+        By default, the ``HuggingEngine`` uses models' bundled chat template to build the prompt
+        for chat-based models available on Hugging Face. See
+        https://huggingface.co/docs/transformers/main/en/chat_templating for more information.
 
     **GPU Support**
 
@@ -42,45 +63,78 @@ class HuggingEngine(BaseEngine):
         max_context_size: int = None,
         prompt_pipeline: PromptPipeline[str | torch.Tensor] = None,
         *,
+        # hf args
         token=None,
         device: str | None = None,
         tokenizer_kwargs: dict = None,
+        model_cls=AutoModelForCausalLM,
         model_load_kwargs: dict = None,
+        chat_template_kwargs: dict = None,
+        # kani args
+        token_reserve: int = 0,
         **hyperparams,
     ):
         """
         :param model_id: The ID of the model to load from HuggingFace.
         :param max_context_size: The context size of the model. If not given, will be set from the model's config.
         :param prompt_pipeline: The pipeline to translate a list of kani ChatMessages into the model-specific chat
-            format (see :class:`.PromptPipeline`).
+            format (see :class:`.PromptPipeline`). If not passed, uses the Hugging Face chat template if available.
         :param token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
-        :param device: The hardware device to use. If not specified, uses CUDA if available; otherwise uses CPU.
+        :param device: The hardware device to use. If not specified, uses CUDA or MPS if available; otherwise uses CPU.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
+        :param model_cls: Advanced use cases: The HF model class to use. Defaults to ``AutoModelForCausalLM``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
+        :param chat_template_kwargs: The keyword arguments to pass to ``tokenizer.apply_chat_template`` if using a chat
+            template prompt pipeline.
         :param hyperparams: Additional arguments to supply the model during generation.
+        :param token_reserve: The number of tokens to reserve for internal engine mechanisms (e.g. if there is a
+            generation template after the last user message). If not passed, kani will attempt to infer this from a
+            prompt pipeline.
         """
         if tokenizer_kwargs is None:
             tokenizer_kwargs = {}
         if model_load_kwargs is None:
             model_load_kwargs = {}
+        if chat_template_kwargs is None:
+            chat_template_kwargs = {}
 
         tokenizer_kwargs.setdefault("token", hyperparams.get("use_auth_token", token))
         model_load_kwargs.setdefault("token", hyperparams.pop("use_auth_token", token))
+        model_load_kwargs.setdefault("torch_dtype", "auto")
+        if has_cuda and has_accelerate:
+            model_load_kwargs.setdefault("device_map", "auto")
 
         self.model_id = model_id
         self.max_context_size = max_context_size
-        self.pipeline = prompt_pipeline
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
-        self.model = AutoModelForCausalLM.from_pretrained(model_id, **model_load_kwargs)
+        self.model = model_cls.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
+        self.token_reserve = token_reserve
+
+        # load the pipeline
+        if prompt_pipeline is None:
+            # try and load a manual impl, or default to chat template if not available
+            prompt_pipeline = model_specific.prompt_pipeline_for_hf_model(
+                model_id, self.tokenizer, chat_template_kwargs=chat_template_kwargs
+            )
+        self.pipeline = prompt_pipeline
 
         # ensure model is on correct device
         if device is None:
-            device = "cuda" if torch.backends.cuda.is_built() else "cpu"
+            if has_cuda:
+                device = "cuda"
+            elif has_mps:
+                device = "mps"
+            else:
+                device = "cpu"
+            log.info(f"Inferred device for model weights: {device}. Set `device=...` if this is incorrect.")
         self.device = device
         if self.model.device.type != self.device:
             self.model.to(device)
+
+        # ensure model is in eval mode
+        self.model.eval()
 
         # token counting stuff
         # try and infer max context size from the model config if not specified
@@ -100,8 +154,8 @@ class HuggingEngine(BaseEngine):
             elif self.max_context_size > 1e20:
                 warnings.warn(
                     f"The inferred max context size of this model is extremely large ({self.max_context_size}). This"
-                    " may mean that the model has not configured their model_max_len correctly (or you are still using"
-                    " my code in 2050). Please pass the `max_context_size` arg to use the correct model size."
+                    " may mean that the model has not configured their model_max_len correctly. Please pass the"
+                    " `max_context_size` arg to use the correct model size."
                 )
 
         # infer the token reserve from the pipeline
@@ -118,6 +172,11 @@ class HuggingEngine(BaseEngine):
         return len(tokenized)
 
     def message_len(self, message: ChatMessage) -> int:
+        """Return the length, in tokens, of the given chat message.
+
+        The HuggingEngine's default implementation renders the message with ``apply_chat_template`` if no
+        ``prompt_pipeline`` is supplied.
+        """
         # default concrete base behaviour:
         if self.pipeline is None:
             raise NotImplementedError(
@@ -131,6 +190,8 @@ class HuggingEngine(BaseEngine):
         return len(tokenized)
 
     def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
         # default concrete base behaviour:
         if self.pipeline is None:
             raise NotImplementedError(
@@ -145,7 +206,7 @@ class HuggingEngine(BaseEngine):
             toklen = len(tokenized)
 
         # warn if there are functions but no tokens
-        if functions and toklen == 0:
+        if toklen == 0:
             warnings.warn(
                 "Functions were given to the model, but the function prompt returned 0 tokens! This model may not"
                 " support function calling, or you may need to implement"
@@ -172,7 +233,11 @@ class HuggingEngine(BaseEngine):
         return prompt
 
     def _get_generate_args(self, prompt: str | torch.Tensor, **hyperparams):
-        """Internal method to build common params for the generate call"""
+        """
+        Internal method to build common params for the generate call
+        and also do some chores before we generate
+        """
+        # make sure the prompt is tokenized
         if isinstance(prompt, str):
             # prompt str to tokens
             tokenized = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
@@ -183,13 +248,35 @@ class HuggingEngine(BaseEngine):
             input_len = len(input_toks[0])
         else:
             raise TypeError("build_prompt should either return a str or a Tensor.")
+
         # move the input tensor to the right device
         if input_toks.device.type != self.device:
             input_toks = input_toks.to(self.device)
+
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
-        hyperparams.setdefault("max_length", self.max_context_size)  # by default HF sets this to 20, which is too small
+        if "max_new_tokens" not in hyperparams:
+            hyperparams.setdefault("max_length", self.max_context_size)
+
+        # check for a model-specific parser
+        model_specific.warn_for_uninitialized_parser(self.model_id)
+
         return input_toks, input_len, hyperparams
+
+    def _get_eos_tokens(self, *, return_ids=False, **hyperparams) -> list[str] | list[int]:
+        """Get the list of tokens that should end a generation."""
+        if "eos_token_id" in hyperparams:
+            genconfig_eos_token_id = hyperparams["eos_token_id"]
+        else:
+            genconfig_eos_token_id = self.model.generation_config.eos_token_id
+
+        if isinstance(genconfig_eos_token_id, list):
+            eos_token_ids = genconfig_eos_token_id
+        else:
+            eos_token_ids = [genconfig_eos_token_id]
+        if return_ids:
+            return eos_token_ids
+        return [self.tokenizer.decode(t) for t in eos_token_ids]
 
     async def predict(
         self,
@@ -205,25 +292,28 @@ class HuggingEngine(BaseEngine):
         :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
-        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode(). Defaults to
-            ``dict(skip_special_tokens=True)``.
+        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode().
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
         if decode_kwargs is None:
-            decode_kwargs = dict(skip_special_tokens=True)
+            decode_kwargs = {}
 
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
+        eos_tok_ids = self._get_eos_tokens(return_ids=True, **hyperparams)
 
         # run it through the model
-        output = self.model.generate(input_toks, **hyperparams)
+        with torch.no_grad():
+            output = self.model.generate(input_toks, **hyperparams)
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
-        content = self.tokenizer.decode(output[0][input_len:], **decode_kwargs).strip()
-        return Completion(
-            ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=len(output[0]) - (input_len + 1)
-        )
+        if output[0][-1] in eos_tok_ids:
+            content = self.tokenizer.decode(output[0][input_len:-1], **decode_kwargs).strip()
+        else:
+            content = self.tokenizer.decode(output[0][input_len:], **decode_kwargs).strip()
+        output_len = len(output[0]) - (input_len + 1)
+        return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=output_len)
 
     async def stream(
         self,
@@ -241,16 +331,16 @@ class HuggingEngine(BaseEngine):
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
         :param streamer_timeout: The maximum number of seconds to wait for the next token when streaming.
-        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode(). Defaults to
-            ``dict(skip_special_tokens=True)``.
+        :param decode_kwargs: Any arguments to pass to AutoTokenizer.decode().
         :param hyperparams: Any additional parameters to pass to GenerationMixin.generate(). (See
             https://huggingface.co/docs/transformers/main_classes/text_generation)
         """
         if decode_kwargs is None:
-            decode_kwargs = dict(skip_special_tokens=True)
+            decode_kwargs = {}
 
         prompt = self.build_prompt(messages, functions)
         input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
+        eos_toks = self._get_eos_tokens(**hyperparams)
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=streamer_timeout, **decode_kwargs)
 
         # run it through the model in another thread so that we can get the tokens in this thread
@@ -258,7 +348,8 @@ class HuggingEngine(BaseEngine):
 
         def thread_target():
             nonlocal output_toks  # ugly way of sending the results of .generate to the outer scope
-            output_toks = self.model.generate(input_toks, streamer=streamer, **hyperparams)
+            with torch.no_grad():
+                output_toks = self.model.generate(input_toks, streamer=streamer, **hyperparams)
 
         thread = Thread(target=thread_target)
         thread.start()
@@ -266,6 +357,12 @@ class HuggingEngine(BaseEngine):
         # then wait for tokens from the task
         yielded_tokens = []
         for token in streamer:
+            for eos_tok in eos_toks:
+                if token.endswith(eos_tok):
+                    token = token[: -len(eos_tok)]
+                    break
+            if not token:
+                continue
             yield token
             yielded_tokens.append(token)
 

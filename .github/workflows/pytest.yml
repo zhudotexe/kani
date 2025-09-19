@@ -7,12 +7,15 @@ on: [ push, pull_request ]
 #  group: ${{ github.workflow }}-${{ github.ref }}
 #  cancel-in-progress: true
 
+env:
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.10", "3.11", "3.12" ]
+        python-version: [ "3.10", "3.11", "3.12", "3.13" ]
 
     steps:
       - uses: actions/checkout@v3
@@ -21,15 +24,22 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -U -r requirements.txt
+        run: uv pip install -U -r requirements.txt
+        env:
+          UV_SYSTEM_PYTHON: 1
+
+      - name: Print version
+        run: kani --version
 
       - name: Test with pytest
-        run: pytest -m 'not llama'
+        run: pytest -m 'not local'
 
   llama:
     needs: build
@@ -43,18 +53,22 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-          cache: 'pip'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -U -r requirements.txt
+        run: uv pip install -U -r requirements.txt
+        env:
+          UV_SYSTEM_PYTHON: 1
 
-      - name: Cache LLaMA model
+      - name: Cache local model
         uses: actions/cache@v3
         with:
           path: ~/.cache/huggingface
-          key: ${{ runner.os }}-llamav2-cpp
+          key: ${{ runner.os }}-local-llm
 
-      - name: Run LLaMA tests
-        run: pytest -m llama
+      - name: Run local model tests
+        run: pytest -m local

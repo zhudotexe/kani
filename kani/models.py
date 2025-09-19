@@ -8,7 +8,7 @@ import warnings
 from functools import cached_property
 from typing import Any, ClassVar, Sequence, Type, TypeAlias, Union
 
-from pydantic import BaseModel as PydanticBase, model_serializer, model_validator
+from pydantic import BaseModel as PydanticBase, SerializeAsAny, model_serializer, model_validator
 
 from .exceptions import MissingMessagePartType
 
@@ -63,9 +63,9 @@ class FunctionCall(BaseModel):
         return json.loads(self.arguments)
 
     @classmethod
-    def with_args(cls, name: str, **kwargs):
+    def with_args(cls, __name: str, /, **kwargs):
         """Create a function call with the given arguments (e.g. for few-shot prompting)."""
-        inst = cls(name=name, arguments=json.dumps(kwargs))
+        inst = cls(name=__name, arguments=json.dumps(kwargs))
         inst.__dict__["kwargs"] = kwargs  # set the cached property here as a minor optimization
         return inst
 
@@ -89,13 +89,13 @@ class ToolCall(BaseModel):
     """The requested function call."""
 
     @classmethod
-    def from_function(cls, name: str, *, call_id_: str = None, **kwargs):
+    def from_function(cls, __name: str, /, *, call_id_: str = None, **kwargs):
         """Create a tool call request for a function with the given name and arguments.
 
         :param call_id_: The ID to assign to the request. If not passed, generates a random ID.
         """
         call_id = call_id_ or str(uuid.uuid4())
-        return cls(id=call_id, type="function", function=FunctionCall.with_args(name, **kwargs))
+        return cls(id=call_id, type="function", function=FunctionCall.with_args(__name, **kwargs))
 
     @classmethod
     def from_function_call(cls, call: FunctionCall, call_id_: str = None):
@@ -108,16 +108,25 @@ class ToolCall(BaseModel):
 
 
 class MessagePart(BaseModel, abc.ABC):
-    """Base class for a part of a message.
+    """
+    Base class for a part of a message.
+
     Engines should inherit from this class to tag substrings with metadata or provide multimodality to an engine.
     By default, if coerced to a string, will raise a warning noting that rich message part data was lost.
     For more information see :doc:`advanced/messageparts`.
+    """
+
+    extra: dict = {}
+    """
+    Specific engines may store additional extra data in this dictionary. See an engine's documentation for details about
+    any extras it may store or expect.
     """
 
     # ==== serdes ====
     # used for saving/loading - map qualname to messagepart type
     _messagepart_registry: ClassVar[dict[str, Type["MessagePart"]]] = {}
 
+    # noinspection PyMethodOverriding
     def __init_subclass__(cls, **kwargs):
         """
         When a new MessagePart is defined, we need to save its type so that we can load saved JSON into the right type
@@ -132,19 +141,25 @@ class MessagePart(BaseModel, abc.ABC):
             )
         cls._messagepart_registry[fqn] = cls
 
+    def _get_typekey_dict(self):
+        """
+        Get the additional key(s) needed for serialization.
+        Used if a ModelPart implements special serialization logic.
+        """
+        cls = type(self)
+        fqn = cls.__module__ + "." + cls.__qualname__
+        return {MESSAGEPART_TYPE_KEY: fqn}
+
     @model_serializer(mode="wrap")
     def _serialize(self, nxt):
         """Extend the default serialization dict with a key recording what type it is."""
         retval = nxt(self)
-        cls = type(self)
-        fqn = cls.__module__ + "." + cls.__qualname__
-        retval[MESSAGEPART_TYPE_KEY] = fqn
-        return retval
+        return retval | self._get_typekey_dict()
 
     # noinspection PyNestedDecorators
     @model_validator(mode="wrap")
     @classmethod
-    def _validate(cls, v, nxt):
+    def _validate(cls, v, nxt, info):
         """If we are deserializing a dict with the special key, switch to the right class' validator."""
         if isinstance(v, dict) and MESSAGEPART_TYPE_KEY in v:
             fqn = v.pop(MESSAGEPART_TYPE_KEY)
@@ -156,7 +171,7 @@ class MessagePart(BaseModel, abc.ABC):
                     f"Found a MessagePart with type {fqn!r}, but the type is not defined. Maybe the type is from an"
                     " extension that has not yet been imported?",
                 )
-            return klass.model_validate(v)
+            return klass.model_validate(v, context=info.context)
         return nxt(v)
 
     # ==== entrypoints ====
@@ -173,7 +188,9 @@ class MessagePart(BaseModel, abc.ABC):
         warnings.warn(
             f"Message part of type {type_name!r} was coerced into a string. Rich data may not be visible to the"
             " user/model.\nDevelopers: If this warning is incorrect, please add support for this message part in your"
-            f" engine or override `{type_name}.__str__()`."
+            f" engine or override `{type_name}.__str__()`.",
+            # usually this points to wherever msg.text is, unless someone manually str()'s a part
+            stacklevel=3,
         )
         return f"<{type_name} {super().__str__()}>"
 
@@ -181,19 +198,11 @@ class MessagePart(BaseModel, abc.ABC):
 class ChatMessage(BaseModel):
     """Represents a message in the chat context."""
 
-    def __init__(self, **kwargs):
-        # translate a function_call into tool_calls
-        if "function_call" in kwargs:
-            if "tool_calls" in kwargs:
-                raise ValueError("Only one of `function_call` or `tool_calls` may be provided.")
-            kwargs["tool_calls"] = (ToolCall.from_function_call(kwargs.pop("function_call")),)
-        super().__init__(**kwargs)
-
     role: ChatRole
     """Who said the message?"""
 
     # ==== content ====
-    content: str | list[MessagePart | str] | None
+    content: str | list[SerializeAsAny[MessagePart] | str] | None
     """The data used to create this message. Generally, you should use :attr:`text` or :attr:`parts` instead."""
 
     @property
@@ -254,6 +263,13 @@ class ChatMessage(BaseModel):
             )
         return self.tool_calls[0].function
 
+    # ==== extra ====
+    extra: dict = {}
+    """
+    Specific engines may store additional extra data in this dictionary. See an engine's documentation for details about
+    any extras it may store or expect.
+    """
+
     # ==== constructors ====
     @classmethod
     def system(cls, content: str | Sequence[MessagePart | str], **kwargs):
@@ -304,3 +320,16 @@ class ChatMessage(BaseModel):
             new_values["tool_calls"] = (ToolCall.from_function_call(new_values.pop("function_call")),)
 
         return super().copy_with(**new_values)
+
+    # ==== pydantic stuff ====
+    # noinspection PyNestedDecorators
+    @model_validator(mode="wrap")
+    @classmethod
+    def _validate_function_call(cls, v, nxt):
+        if isinstance(v, dict):
+            # translate a function_call into tool_calls if it's passed to __init__
+            if "function_call" in v:
+                if "tool_calls" in v:
+                    raise ValueError("Only one of `function_call` or `tool_calls` may be provided.")
+                v["tool_calls"] = (ToolCall.from_function_call(v.pop("function_call")),)
+        return nxt(v)

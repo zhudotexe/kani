@@ -1,5 +1,6 @@
 """Save -> load should be an identity transformation."""
 
+import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, FunctionCall, Kani, MessagePart
@@ -10,7 +11,8 @@ engine = TestEngine()
 
 @settings(suppress_health_check=(HealthCheck.function_scoped_fixture, HealthCheck.too_slow), deadline=None)
 @given(st.data())
-async def test_saveload_str(tmp_path, data):
+@pytest.mark.parametrize("save_format", ("json", "kani"))
+async def test_saveload_str(save_format, tmp_path, data):
     """Test that basic string content messages are saved."""
     # randomly initialize a kani state
     ai = Kani(
@@ -24,16 +26,17 @@ async def test_saveload_str(tmp_path, data):
         await ai.chat_round_str(query, test_echo=True)
 
     # save and load
-    ai.save(tmp_path / "pytest.json")
+    ai.save(tmp_path / f"pytest.{save_format}", save_format=save_format)
     loaded = Kani(engine)
-    loaded.load(tmp_path / "pytest.json")
+    loaded.load(tmp_path / f"pytest.{save_format}")
 
     # assert equality
     assert ai.always_included_messages == loaded.always_included_messages
     assert ai.chat_history == loaded.chat_history
 
 
-async def test_saveload_tool_calls(tmp_path):
+@pytest.mark.parametrize("save_format", ("json", "kani"))
+async def test_saveload_tool_calls(save_format, tmp_path):
     """Test that tool calls are saved."""
     fewshot = [
         ChatMessage.user("What's the weather in Philadelphia?"),
@@ -52,9 +55,9 @@ async def test_saveload_tool_calls(tmp_path):
     ai = Kani(engine, chat_history=fewshot)
 
     # save and load
-    ai.save(tmp_path / "pytest.json")
+    ai.save(tmp_path / f"pytest.{save_format}", save_format=save_format)
     loaded = Kani(engine)
-    loaded.load(tmp_path / "pytest.json")
+    loaded.load(tmp_path / f"pytest.{save_format}")
 
     # assert equality
     assert ai.always_included_messages == loaded.always_included_messages
@@ -69,7 +72,8 @@ class _TestMessagePart2(MessagePart):
     data: str
 
 
-async def test_saveload_messageparts(tmp_path):
+@pytest.mark.parametrize("save_format", ("json", "kani"))
+async def test_saveload_messageparts(save_format, tmp_path):
     """Test that message parts are serialized and deserialized into the right classes."""
     apart1 = _TestMessagePart1(data="apart1")
     apart2 = _TestMessagePart2(data="apart2")
@@ -95,10 +99,12 @@ async def test_saveload_messageparts(tmp_path):
     )
 
     # save and load
-    ai.save(tmp_path / "pytest.json")
+    ai.save(tmp_path / f"pytest.{save_format}", save_format=save_format)
     loaded = Kani(engine)
-    loaded.load(tmp_path / "pytest.json")
+    loaded.load(tmp_path / f"pytest.{save_format}")
 
     # assert equality
     assert ai.always_included_messages == loaded.always_included_messages
     assert ai.chat_history == loaded.chat_history
+    assert isinstance(loaded.chat_history[0].parts[1], _TestMessagePart1)
+    assert isinstance(loaded.chat_history[1].parts[0], _TestMessagePart2)
