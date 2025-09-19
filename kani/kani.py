@@ -508,14 +508,14 @@ class Kani:
         msg = ChatMessage.function(f.name, result_str, tool_call_id=tool_call_id)
         # if we are auto truncating, check and see if we need to
         if f.auto_truncate is not None:
-            message_len = self.message_token_len(msg)
+            message_len = len(msg.text)
             if message_len > f.auto_truncate:
                 log.warning(
-                    f"The content returned by {f.name} is too long ({message_len} > {f.auto_truncate} tokens), auto"
+                    f"The content returned by {f.name} is too long ({message_len} > {f.auto_truncate} characters), auto"
                     " truncating..."
                 )
                 msg = self._auto_truncate_message(msg, max_len=f.auto_truncate)
-                log.debug(f"Auto truncate returned {self.message_token_len(msg)} tokens.")
+                log.debug(f"Auto truncate returned {len(msg.text)} characters.")
         return FunctionCallResult(is_model_turn=f.after == ChatRole.ASSISTANT, message=msg)
 
     async def handle_function_call_exception(
@@ -602,7 +602,7 @@ class Kani:
 
     # ==== internals ====
     def _auto_truncate_message(self, msg: ChatMessage, max_len: int) -> ChatMessage:
-        """Mutate the provided message until it is less than *max_len* tokens long."""
+        """Mutate the provided message until it is less than *max_len* characters long."""
         full_text = msg.text
         if not full_text:
             return msg  # idk how this could happen
@@ -618,7 +618,7 @@ class Kani:
                 text += chunk
                 # when it's too long...
                 msg = msg.copy_with(text=text + "...")
-                if self.message_token_len(msg) > max_len:
+                if len(msg.text) > max_len:
                     # if we have some text, return it
                     if last_msg:
                         return last_msg
