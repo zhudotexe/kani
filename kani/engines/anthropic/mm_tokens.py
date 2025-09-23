@@ -2,6 +2,7 @@
 import math
 
 
+# deprecated, use prompt_len
 def tokens_from_image_size(size: tuple[int, int]) -> int:
     """
     Estimate the number of tokens used after providing this image.

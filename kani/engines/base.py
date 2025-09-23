@@ -72,7 +72,7 @@ class BaseEngine(abc.ABC):
     def prompt_len(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **kwargs) -> int: ...
 
     @abc.abstractmethod
-    def prompt_len(self, messages, functions=None, **kwargs):
+    def prompt_len(self, messages, functions=None, **kwargs) -> int:
         """
         Returns the number of tokens used by the given prompt (i.e., list of messages and functions), or a best estimate
         if the exact count is unavailable.

@@ -317,7 +317,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
         )
 
     # ==== kani impls ====
-    async def prompt_len(self, messages, functions=None, **kwargs):
+    async def prompt_len(self, messages, functions=None, **kwargs) -> int:
         if (cached_len := self.get_cached_prompt_len(messages, functions, **kwargs)) is not None:
             return cached_len
 
