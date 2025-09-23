@@ -418,11 +418,15 @@ class GoogleAIEngine(TokenCached, BaseEngine):
             contents=prompt_msgs,
             config=request_config,
         ):
-            for part in chunk.candidates[0].content.parts:
+            parts = chunk.candidates[0].content.parts
+            if parts is None:
+                continue
+
+            for part in parts:
                 if part.text and not part.thought:
                     yield part.text
             last_chunk = chunk
-            content_parts.extend(chunk.candidates[0].content.parts)
+            content_parts.extend(parts)
 
         if last_chunk:
             last_chunk.candidates[0].content.parts = content_parts
