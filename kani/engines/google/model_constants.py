@@ -1,11 +1,10 @@
 CONTEXT_SIZES_BY_PREFIX = [
     ("gemini-2.0-flash-preview-image-generation", 32768),
     ("learnlm-2.0-flash-experimental", 1048576),
-    ("gemini-1.0-pro-vision-latest", 12288),
+    ("gemini-2.5-flash-image-preview", 32768),
     ("gemini-2.5-flash-preview-tts", 8192),
     ("gemini-2.5-pro-preview-tts", 8192),
     ("gemini-2.0-pro-exp", 1048576),
-    ("gemini-pro-vision", 12288),
     ("gemini-1.5-flash", 1000000),
     ("gemini-2.5-flash", 1048576),
     ("gemini-2.0-flash", 1048576),

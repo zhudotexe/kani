@@ -14,6 +14,7 @@ from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.parts import ReasoningPart
 from kani.prompts.pipeline import PromptPipeline
+from kani.utils.warnings import deprecated
 from . import mm_tokens, model_constants
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
@@ -131,54 +132,18 @@ class GoogleAIEngine(TokenCached, BaseEngine):
         self.multimodal_upload_bytes_threshold = multimodal_upload_bytes_threshold
         self._multimodal_file_cache: dict[bytes, genai.types.File] = {}  # multimodal part sha256 -> google file
 
-    # ==== token counting ====
-    def message_len(self, message: ChatMessage) -> int:
-        if (cached_len := self.get_cached_message_len(message)) is not None:
-            return cached_len
-
-        # TODO with async token counting use the token counting API
-        chars = len(message.role.value)
-        tokens = 0
-        if _optional.has_multimodal_core:
-            for part in message.parts:
-                if isinstance(part, _optional.multimodal_core.ImagePart):
-                    tokens += mm_tokens.tokens_from_image_size(part.size, self.model)
-                elif isinstance(part, _optional.multimodal_core.AudioPart):
-                    tokens += mm_tokens.tokens_from_audio_duration(part.duration, self.model)
-                elif isinstance(part, _optional.multimodal_core.VideoPart):
-                    tokens += mm_tokens.tokens_from_video_duration(part.duration, self.model)
-                else:
-                    chars += len(str(part))
-        else:
-            chars += len(message.text)
-
-        # tools
-        if message.tool_calls:
-            for tc in message.tool_calls:
-                chars += len(tc.function.name) + len(tc.function.arguments)
-
-        # Google documents 4 bytes per token, so we do a conservative 3.8 char/tok
-        return int(chars / 3.8) + tokens
-
-    def function_token_reserve(self, functions: list[AIFunction]) -> int:
-        if not functions:
-            return 0
-        # wrap an inner impl to use lru_cache with frozensets
-        return self._function_token_reserve_impl(frozenset(functions))
-
-    @functools.lru_cache(maxsize=256)
-    def _function_token_reserve_impl(self, functions):
-        # panik, also assume len/4?
-        n = sum(len(f.name) + len(f.desc) + len(json.dumps(f.json_schema)) for f in functions)
-        return int(n / 3.8)
-
     # ==== requests ====
     async def _prepare_request(
-        self, messages, functions, hyperparams
+        self, messages, functions, hyperparams, intent: str = "generate_content"
     ) -> tuple[genai_types.GenerateContentConfigDict, list[genai_types.Content]]:
         """
         Prepare the API request to the Google AI API. Returns a tuple (GenerateContentConfigDict, Content[]) to be
         passed to the genai Client's ``generate_content()`` method.
+
+        :param messages: The Kani ChatMessages to translate into Google-format messages.
+        :param functions: The Kani AIFunctions to translate into Google-format tools.
+        :param intent: one of ("generate_content", "generate_content_stream", or "count_tokens") -- the underlying
+            Google AI SDK call the returned keyword arguments will be passed to.
         """
         kwargs = {}
 
@@ -214,7 +179,9 @@ class GoogleAIEngine(TokenCached, BaseEngine):
             )
 
         # --- kwargs ---
-        kwargs.update(self.hyperparams)
+        if intent != "count_tokens":
+            # not useful to add these for token counting
+            kwargs.update(self.hyperparams)
         kwargs.update(hyperparams)
 
         log.debug(f"translated prompt: {translated_messages}")
@@ -388,10 +355,24 @@ class GoogleAIEngine(TokenCached, BaseEngine):
             completion_tokens=resp.usage_metadata.candidates_token_count,
         )
 
+    # ==== kani impl ====
+    async def prompt_len(self, messages, functions=None, **kwargs) -> int:
+        if (cached_len := self.get_cached_prompt_len(messages, functions, **kwargs)) is not None:
+            return cached_len
+
+        request_config, prompt_msgs = self._prepare_request(messages, functions, kwargs, intent="count_tokens")
+        result = await self.client.aio.models.count_tokens(
+            model=self.model, contents=prompt_msgs, config=request_config
+        )
+        self.set_cached_prompt_len(messages, functions, length=result.total_tokens, **kwargs)
+        return result.total_tokens
+
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> Completion:
-        request_config, prompt_msgs = await self._prepare_request(messages, functions, hyperparams)
+        request_config, prompt_msgs = await self._prepare_request(
+            messages, functions, hyperparams, intent="generate_content"
+        )
 
         # --- completion ---
         assert len(prompt_msgs) > 0
@@ -408,7 +389,9 @@ class GoogleAIEngine(TokenCached, BaseEngine):
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> AsyncIterable[str | BaseCompletion]:
         # do the stream
-        request_config, prompt_msgs = await self._prepare_request(messages, functions, hyperparams)
+        request_config, prompt_msgs = await self._prepare_request(
+            messages, functions, hyperparams, intent="generate_content_stream"
+        )
 
         assert len(prompt_msgs) > 0
         last_chunk = None
@@ -431,3 +414,46 @@ class GoogleAIEngine(TokenCached, BaseEngine):
         if last_chunk:
             last_chunk.candidates[0].content.parts = content_parts
             yield self._translate_google_response(last_chunk)
+
+    # ==== deprecated ====
+    @deprecated("Use prompt_len instead")
+    def message_len(self, message: ChatMessage) -> int:
+        if (cached_len := self.get_cached_message_len(message)) is not None:
+            return cached_len
+
+        # TODO with async token counting use the token counting API
+        chars = len(message.role.value)
+        tokens = 0
+        if _optional.has_multimodal_core:
+            for part in message.parts:
+                if isinstance(part, _optional.multimodal_core.ImagePart):
+                    tokens += mm_tokens.tokens_from_image_size(part.size, self.model)
+                elif isinstance(part, _optional.multimodal_core.AudioPart):
+                    tokens += mm_tokens.tokens_from_audio_duration(part.duration, self.model)
+                elif isinstance(part, _optional.multimodal_core.VideoPart):
+                    tokens += mm_tokens.tokens_from_video_duration(part.duration, self.model)
+                else:
+                    chars += len(str(part))
+        else:
+            chars += len(message.text)
+
+        # tools
+        if message.tool_calls:
+            for tc in message.tool_calls:
+                chars += len(tc.function.name) + len(tc.function.arguments)
+
+        # Google documents 4 bytes per token, so we do a conservative 3.8 char/tok
+        return int(chars / 3.8) + tokens
+
+    @deprecated("Use prompt_len instead")
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
+        # wrap an inner impl to use lru_cache with frozensets
+        return self._function_token_reserve_impl(frozenset(functions))
+
+    @functools.lru_cache(maxsize=256)
+    def _function_token_reserve_impl(self, functions):
+        # panik, also assume len/4?
+        n = sum(len(f.name) + len(f.desc) + len(json.dumps(f.json_schema)) for f in functions)
+        return int(n / 3.8)

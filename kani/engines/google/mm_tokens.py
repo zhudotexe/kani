@@ -2,6 +2,7 @@ import math
 
 
 # ==== images ====
+# deprecated, use prompt_len
 def tokens_from_image_size(size: tuple[int, int], model_id: str) -> int:
     """
     Estimate the number of tokens used after providing this image.
@@ -20,6 +21,7 @@ def tokens_from_image_size(size: tuple[int, int], model_id: str) -> int:
 
 
 # ==== audio ====
+# deprecated, use prompt_len
 def tokens_from_audio_duration(seconds: float, model_id: str) -> int:
     """
     Estimate the number of tokens used after providing this audio.
@@ -30,6 +32,7 @@ def tokens_from_audio_duration(seconds: float, model_id: str) -> int:
 
 
 # ==== video ====
+# deprecated, use prompt_len
 def tokens_from_video_duration(seconds: float, model_id: str, fps: float = 1, low_res: bool = False) -> int:
     """
     Estimate the number of tokens used after providing this video.
