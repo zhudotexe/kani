@@ -11,6 +11,7 @@ from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
+from kani.utils.warnings import deprecated, warn_in_userspace
 from . import mm_tokens, model_constants
 from .parts import AnthropicThinkingPart, AnthropicUnknownPart
 from ..base import BaseCompletion, BaseEngine, Completion
@@ -163,9 +164,6 @@ class AnthropicEngine(TokenCached, BaseEngine):
     **Message Extras**: ``"anthropic_message"``: The Message (raw response) returned by the Anthropic servers.
     """
 
-    # because we have to estimate tokens wildly and the ctx is so long we'll just reserve a bunch
-    token_reserve = 500
-
     def __init__(
         self,
         api_key: str = None,
@@ -226,44 +224,6 @@ class AnthropicEngine(TokenCached, BaseEngine):
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
 
-    # ==== token counting ====
-    def message_len(self, message: ChatMessage) -> int:
-        if (cached_len := self.get_cached_message_len(message)) is not None:
-            return cached_len
-
-        # TODO with async token counting use the token counting API
-        chars = len(message.role.value)
-        tokens = 0
-        if _optional.has_multimodal_core:
-            for part in message.parts:
-                if isinstance(part, _optional.multimodal_core.ImagePart):
-                    tokens += mm_tokens.tokens_from_image_size(part.size)
-                else:
-                    chars += len(str(part))
-        else:
-            chars += len(message.text)
-
-        # tools
-        if message.tool_calls:
-            for tc in message.tool_calls:
-                chars += len(tc.function.name) + len(tc.function.arguments)
-
-        # token counting - claude 3+ does not release tokenizer so we have to do heuristics and cache
-        # Anthropic documents 3.4 bytes per token, so we do a conservative 3.2 char/tok
-        return int(chars / 3.2) + tokens
-
-    def function_token_reserve(self, functions: list[AIFunction]) -> int:
-        if not functions:
-            return 0
-        # wrap an inner impl to use lru_cache with frozensets
-        return self._function_token_reserve_impl(frozenset(functions))
-
-    @functools.lru_cache(maxsize=256)
-    def _function_token_reserve_impl(self, functions):
-        # panik, also assume len/4?
-        n = sum(len(f.name) + len(f.desc) + len(json.dumps(f.json_schema)) for f in functions)
-        return int(n / 3.2)
-
     # ==== hackable stuff for requests ====
     @property
     def _messages_api(self):
@@ -271,10 +231,15 @@ class AnthropicEngine(TokenCached, BaseEngine):
         return self.client.messages
 
     @staticmethod
-    def _prepare_request(messages, functions) -> tuple[dict, list]:
+    def _prepare_request(messages, functions, *, intent: str = "create") -> tuple[dict, list]:
         """
         Prepare the API request to the Anthropic API. Returns a tuple (kwargs, messages) to be passed to the
         AnthropicClient's messages.create() method.
+
+        :param messages: The Kani ChatMessages to translate into Anthropic-format messages.
+        :param functions: The Kani AIFunctions to translate into Anthropic-format tools.
+        :param intent: one of ("create", "stream", or "count_tokens") -- the underlying Anthropic SDK call the returned
+            keyword arguments will be passed to.
         """
         kwargs = {}
 
@@ -351,20 +316,33 @@ class AnthropicEngine(TokenCached, BaseEngine):
             completion_tokens=message.usage.output_tokens,
         )
 
+    # ==== kani impls ====
+    async def prompt_len(self, messages, functions=None, **kwargs):
+        if (cached_len := self.get_cached_prompt_len(messages, functions, **kwargs)) is not None:
+            return cached_len
+
+        predict_kwargs, prompt_msgs = self._prepare_request(messages, functions, intent="count_tokens")
+        result = await self.client.messages.count_tokens(
+            model=self.model,
+            messages=prompt_msgs,
+            **(predict_kwargs | kwargs),
+        )
+        self.set_cached_prompt_len(messages, functions, length=result.input_tokens, **kwargs)
+        return result.input_tokens
+
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> Completion:
-        kwargs, prompt_msgs = self._prepare_request(messages, functions)
+        kwargs, prompt_msgs = self._prepare_request(messages, functions, intent="create")
+        assert len(prompt_msgs) > 0
 
         # --- completion ---
-        assert len(prompt_msgs) > 0
         message = await self._messages_api.create(
             model=self.model,
             max_tokens=self.max_tokens,
             messages=prompt_msgs,
-            **kwargs,
-            **self.hyperparams,
-            **hyperparams,
+            # to prevent toe-stepping, hyperparams > self.hyperparams > kwargs
+            **(kwargs | self.hyperparams | hyperparams),
         )
 
         # translate to kani
@@ -374,16 +352,15 @@ class AnthropicEngine(TokenCached, BaseEngine):
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> AsyncIterable[str | BaseCompletion]:
         # do the stream
-        kwargs, prompt_msgs = self._prepare_request(messages, functions)
-
+        kwargs, prompt_msgs = self._prepare_request(messages, functions, intent="stream")
         assert len(prompt_msgs) > 0
+
         async with self._messages_api.stream(
             model=self.model,
             max_tokens=self.max_tokens,
             messages=prompt_msgs,
-            **kwargs,
-            **self.hyperparams,
-            **hyperparams,
+            # to prevent toe-stepping, hyperparams > self.hyperparams > kwargs
+            **(kwargs | self.hyperparams | hyperparams),
         ) as stream:
             async for text in stream.text_stream:
                 yield text
@@ -393,3 +370,56 @@ class AnthropicEngine(TokenCached, BaseEngine):
 
     async def close(self):
         await self.client.close()
+
+    # ==== deprecated ====
+    # because we have to estimate tokens wildly and the ctx is so long we'll just reserve a bunch
+    token_reserve = 500
+
+    @deprecated("Use prompt_len instead")
+    def message_len(self, message: ChatMessage) -> int:
+        if (cached_len := self.get_cached_message_len(message)) is not None:
+            return cached_len
+
+        # TODO with async token counting use the token counting API
+        chars = len(message.role.value)
+        tokens = 0
+        if _optional.has_multimodal_core:
+            for part in message.parts:
+                if isinstance(part, _optional.multimodal_core.ImagePart):
+                    tokens += mm_tokens.tokens_from_image_size(part.size)
+                else:
+                    chars += len(str(part))
+        else:
+            chars += len(message.text)
+
+        # tools
+        if message.tool_calls:
+            for tc in message.tool_calls:
+                chars += len(tc.function.name) + len(tc.function.arguments)
+
+        # token counting - claude 3+ does not release tokenizer so we have to do heuristics and cache
+        # Anthropic documents 3.4 bytes per token, so we do a conservative 3.2 char/tok
+        warn_in_userspace(
+            f"This Claude model ({self.model}) does not have a public tokenizer, so local token counting will only"
+            " return an estimate (3.2 characters/token). Use `await engine.prompt_len(messages, functions)` instead"
+            " for an exact count."
+        )
+        return int(chars / 3.2) + tokens
+
+    @deprecated("Use prompt_len instead")
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
+        warn_in_userspace(
+            f"This Claude model ({self.model}) does not have a public tokenizer, so local token counting will only"
+            " return an estimate (3.2 characters/token). Use `await engine.prompt_len(messages, functions)` instead"
+            " for an exact count."
+        )
+        # wrap an inner impl to use lru_cache with frozensets
+        return self._function_token_reserve_impl(frozenset(functions))
+
+    @functools.lru_cache(maxsize=256)
+    def _function_token_reserve_impl(self, functions):
+        # panik, also assume len/4?
+        n = sum(len(f.name) + len(f.desc) + len(json.dumps(f.json_schema)) for f in functions)
+        return int(n / 3.2)
