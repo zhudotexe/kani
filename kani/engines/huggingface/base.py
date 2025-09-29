@@ -9,6 +9,7 @@ from kani.engines.base import BaseCompletion, BaseEngine, Completion
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
+from kani.utils.warnings import deprecated
 
 try:
     import torch
@@ -110,7 +111,6 @@ class HuggingEngine(BaseEngine):
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
         self.model = model_cls.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
-        self.token_reserve = token_reserve
 
         # load the pipeline
         if prompt_pipeline is None:
@@ -158,62 +158,8 @@ class HuggingEngine(BaseEngine):
                     " `max_context_size` arg to use the correct model size."
                 )
 
-        # infer the token reserve from the pipeline
-        if self.token_reserve == 0 and self.pipeline:
-            self.token_reserve = self._infer_token_reserve()
-
-    def _infer_token_reserve(self):
-        """If token_reserve is not set and we have a pipeline, infer it."""
-        prompt = self.pipeline.execute([], for_measurement=True)
-        if isinstance(prompt, torch.Tensor):
-            return len(prompt[0])
-        # prompt str to tokens
-        tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
-        return len(tokenized)
-
-    def message_len(self, message: ChatMessage) -> int:
-        """Return the length, in tokens, of the given chat message.
-
-        The HuggingEngine's default implementation renders the message with ``apply_chat_template`` if no
-        ``prompt_pipeline`` is supplied.
-        """
-        # default concrete base behaviour:
-        if self.pipeline is None:
-            raise NotImplementedError(
-                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
-            )
-        prompt = self.pipeline.execute([message], for_measurement=True)
-        if isinstance(prompt, torch.Tensor):
-            return len(prompt[0])
-        # prompt str to tokens
-        tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
-        return len(tokenized)
-
-    def function_token_reserve(self, functions: list[AIFunction]) -> int:
-        if not functions:
-            return 0
-        # default concrete base behaviour:
-        if self.pipeline is None:
-            raise NotImplementedError(
-                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
-            )
-        prompt = self.pipeline.execute([], functions, for_measurement=True)
-        if isinstance(prompt, torch.Tensor):
-            toklen = len(prompt[0])
-        else:
-            # prompt str to tokens
-            tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
-            toklen = len(tokenized)
-
-        # warn if there are functions but no tokens
-        if toklen == 0:
-            warnings.warn(
-                "Functions were given to the model, but the function prompt returned 0 tokens! This model may not"
-                " support function calling, or you may need to implement"
-                f" `{type(self).__name__}.function_token_reserve()`."
-            )
-
-        return toklen
+        # deprecated
+        self._token_reserve = token_reserve
 
     def build_prompt(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
@@ -278,6 +224,12 @@ class HuggingEngine(BaseEngine):
             return eos_token_ids
         return [self.tokenizer.decode(t) for t in eos_token_ids]
 
+    # ==== kani impl ====
+    async def prompt_len(self, messages, functions=None, **kwargs) -> int:
+        prompt = self.build_prompt(messages, functions)
+        input_toks, input_len, _ = self._get_generate_args(prompt, **kwargs)
+        return input_len
+
     async def predict(
         self,
         messages: list[ChatMessage],
@@ -310,9 +262,10 @@ class HuggingEngine(BaseEngine):
         # the completion shouldn't include the prompt or stop token
         if output[0][-1] in eos_tok_ids:
             content = self.tokenizer.decode(output[0][input_len:-1], **decode_kwargs).strip()
+            output_len = len(output[0]) - (input_len + 1)
         else:
             content = self.tokenizer.decode(output[0][input_len:], **decode_kwargs).strip()
-        output_len = len(output[0]) - (input_len + 1)
+            output_len = len(output[0]) - input_len
         return Completion(ChatMessage.assistant(content), prompt_tokens=input_len, completion_tokens=output_len)
 
     async def stream(
@@ -376,3 +329,67 @@ class HuggingEngine(BaseEngine):
             prompt_tokens=input_len,
             completion_tokens=len(output_toks[0]) - (input_len + 1),
         )
+
+    # ===== deprecated =====
+    @property
+    @deprecated("Use prompt_len instead")
+    def token_reserve(self):
+        # infer the token reserve from the pipeline
+        if self._token_reserve == 0 and self.pipeline:
+            self._token_reserve = self._infer_token_reserve()
+        return self._token_reserve
+
+    def _infer_token_reserve(self):
+        """If token_reserve is not set and we have a pipeline, infer it."""
+        prompt = self.pipeline.execute([], for_measurement=True)
+        if isinstance(prompt, torch.Tensor):
+            return len(prompt[0])
+        # prompt str to tokens
+        tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
+        return len(tokenized)
+
+    @deprecated("Use prompt_len instead")
+    def message_len(self, message: ChatMessage) -> int:
+        """Return the length, in tokens, of the given chat message.
+
+        The HuggingEngine's default implementation renders the message with ``apply_chat_template`` if no
+        ``prompt_pipeline`` is supplied.
+        """
+        # default concrete base behaviour:
+        if self.pipeline is None:
+            raise NotImplementedError(
+                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
+            )
+        prompt = self.pipeline.execute([message], for_measurement=True)
+        if isinstance(prompt, torch.Tensor):
+            return len(prompt[0])
+        # prompt str to tokens
+        tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
+        return len(tokenized)
+
+    @deprecated("Use prompt_len instead")
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
+        # default concrete base behaviour:
+        if self.pipeline is None:
+            raise NotImplementedError(
+                "You must pass a prompt_pipeline to the HuggingEngine to use it as a non-abstract class."
+            )
+        prompt = self.pipeline.execute([], functions, for_measurement=True)
+        if isinstance(prompt, torch.Tensor):
+            toklen = len(prompt[0])
+        else:
+            # prompt str to tokens
+            tokenized = self.tokenizer.encode(prompt, add_special_tokens=False)
+            toklen = len(tokenized)
+
+        # warn if there are functions but no tokens
+        if toklen == 0:
+            warnings.warn(
+                "Functions were given to the model, but the function prompt returned 0 tokens! This model may not"
+                " support function calling, or you may need to implement"
+                f" `{type(self).__name__}.function_token_reserve()`."
+            )
+
+        return toklen
