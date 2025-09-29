@@ -58,9 +58,6 @@ class GoogleAIEngine(TokenCached, BaseEngine):
     `raw response <https://ai.google.dev/api/generate-content#generatecontentresponse>`_ returned by the Google AI API.
     """
 
-    # because we have to estimate tokens wildly and the ctx is so long we'll just reserve a bunch
-    token_reserve = 500
-
     def __init__(
         self,
         api_key: str = None,
@@ -425,6 +422,9 @@ class GoogleAIEngine(TokenCached, BaseEngine):
             yield self._translate_google_response(last_chunk)
 
     # ==== deprecated ====
+    # because we have to estimate tokens wildly and the ctx is so long we'll just reserve a bunch
+    token_reserve = 500
+
     @deprecated("Use prompt_len instead")
     def message_len(self, message: ChatMessage) -> int:
         if (cached_len := self.get_cached_message_len(message)) is not None:
