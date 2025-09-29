@@ -14,7 +14,7 @@ from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, ToolCall
 from kani.parts import ReasoningPart
 from kani.prompts.pipeline import PromptPipeline
-from kani.utils.warnings import deprecated
+from kani.utils.warnings import deprecated, warn_in_userspace
 from . import mm_tokens, model_constants
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
@@ -320,7 +320,16 @@ class GoogleAIEngine(TokenCached, BaseEngine):
     def _translate_google_response(self, resp: genai_types.GenerateContentResponse) -> Completion:
         tool_calls = []
         parts = []
-        for part in resp.candidates[0].content.parts:
+        resp_parts = resp.candidates[0].content.parts
+        if resp_parts is None:
+            resp_parts = []
+            warn_in_userspace(
+                "The engine did not return any content. Consider increasing `max_output_tokens` if set.\nResponse:"
+                f" {resp}",
+                stacklevel=3,
+            )
+
+        for part in resp_parts:
             if part.thought:
                 parts.append(ReasoningPart(content=part.text))
             elif part.text:
