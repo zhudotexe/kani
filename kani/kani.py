@@ -413,8 +413,7 @@ class Kani:
 
         async def _prompt_len_or_inf(messages, functions):
             try:
-                ret =  await self.prompt_token_len(messages=messages, functions=functions)
-                print(ret)
+                ret = await self.prompt_token_len(messages=messages, functions=functions)
                 return ret
             except PromptTooLong:
                 return float("inf")
