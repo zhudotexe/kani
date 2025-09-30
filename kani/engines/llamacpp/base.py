@@ -1,6 +1,7 @@
 import logging
 import re
 import warnings
+from functools import cached_property
 from typing import AsyncIterable
 
 from kani import model_specific
@@ -9,6 +10,7 @@ from kani.engines.base import BaseCompletion, BaseEngine, Completion
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage
 from kani.prompts.pipeline import PromptPipeline
+from kani.utils.warnings import deprecated
 
 try:
     import torch
@@ -106,69 +108,6 @@ class LlamaCppEngine(BaseEngine):
 
         self.max_context_size = max_context_size or self.model.n_ctx()
 
-        if self.token_reserve == 0 and self.pipeline:
-            self.token_reserve = self._infer_token_reserve()
-
-    def _infer_token_reserve(self):
-        """If token_reserve is not set and we have a pipeline, infer it."""
-        prompt = self.pipeline.execute([], for_measurement=True)
-        if isinstance(prompt, list):
-            return len(prompt)
-        tokenized = self.model.tokenize(prompt.encode(), add_bos=False, special=True)
-        return len(tokenized)
-
-    def message_len(self, message: ChatMessage) -> int:
-        # default concrete base behaviour:
-        if self.pipeline is None:
-            raise NotImplementedError(
-                "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
-                " uses a chat template (or is a quantization of a model with a chat template), you can use the"
-                " following:\n"
-                "from kani.engines.huggingface import ChatTemplatePromptPipeline\n"
-                "pipeline = ChatTemplatePromptPipeline.from_pretrained(base_model_id)\n"
-                "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
-            )
-        prompt = self.pipeline.execute([message], for_measurement=True)
-        if isinstance(prompt, list):
-            return len(prompt)
-        elif isinstance(prompt, torch.Tensor):
-            return len(prompt[0])
-        tokenized = self.model.tokenize(prompt.encode(), add_bos=False, special=True)
-        return len(tokenized)
-
-    def function_token_reserve(self, functions: list[AIFunction]) -> int:
-        if not functions:
-            return 0
-        # default concrete base behaviour:
-        if self.pipeline is None:
-            raise NotImplementedError(
-                "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
-                " uses a chat template (or is a quantization of a model with a chat template), you can use the"
-                " following:\n"
-                "from kani.model_specific import prompt_pipeline_for_hf_model\n"
-                "pipeline = prompt_pipeline_for_hf_model(base_model_id)\n"
-                "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
-            )
-        prompt = self.pipeline.execute([], functions, for_measurement=True)
-        if isinstance(prompt, list):
-            return len(prompt)
-        elif isinstance(prompt, torch.Tensor):
-            toklen = len(prompt[0])
-        else:
-            # prompt str to tokens
-            tokenized = self.model.tokenize(prompt.encode(), add_bos=False, special=False)
-            toklen = len(tokenized)
-
-        # warn if there are functions but no tokens
-        if toklen == 0:
-            warnings.warn(
-                "Functions were given to the model, but the function prompt returned 0 tokens! This model may not"
-                " support function calling, or you may need to implement"
-                f" `{type(self).__name__}.function_token_reserve()`."
-            )
-
-        return toklen
-
     def build_prompt(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None) -> str | list[int]:
         """
         Given the list of messages from kani, build either a single string representing the prompt for the model,
@@ -212,6 +151,11 @@ class LlamaCppEngine(BaseEngine):
         # check for a model-specific parser
         model_specific.warn_for_uninitialized_parser(self.repo_id)
         return input_toks, input_len, hyperparams
+
+    # ==== kani impl ====
+    async def prompt_len(self, messages, functions=None, **kwargs) -> int:
+        input_toks, input_len, hyperparams = self._get_generate_args(messages, functions, **kwargs)
+        return input_len
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
@@ -267,3 +211,74 @@ class LlamaCppEngine(BaseEngine):
         # https://github.com/abetlen/llama-cpp-python/issues/1498 blocks token counting impl
         content = None if not content_chunks else "".join(content_chunks)
         yield Completion(message=ChatMessage.assistant(content))
+
+    # ==== deprecated ====
+    @cached_property
+    @deprecated("Use prompt_len instead")
+    def token_reserve(self):
+        # infer the token reserve from the pipeline
+        if self.pipeline:
+            return self._infer_token_reserve()
+        return 0
+
+    def _infer_token_reserve(self):
+        """If token_reserve is not set and we have a pipeline, infer it."""
+        prompt = self.pipeline.execute([], for_measurement=True)
+        if isinstance(prompt, list):
+            return len(prompt)
+        tokenized = self.model.tokenize(prompt.encode(), add_bos=False, special=True)
+        return len(tokenized)
+
+    @deprecated("Use prompt_len instead")
+    def message_len(self, message: ChatMessage) -> int:
+        # default concrete base behaviour:
+        if self.pipeline is None:
+            raise NotImplementedError(
+                "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
+                " uses a chat template (or is a quantization of a model with a chat template), you can use the"
+                " following:\n"
+                "from kani.engines.huggingface import ChatTemplatePromptPipeline\n"
+                "pipeline = ChatTemplatePromptPipeline.from_pretrained(base_model_id)\n"
+                "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
+            )
+        prompt = self.pipeline.execute([message], for_measurement=True)
+        if isinstance(prompt, list):
+            return len(prompt)
+        elif isinstance(prompt, torch.Tensor):
+            return len(prompt[0])
+        tokenized = self.model.tokenize(prompt.encode(), add_bos=False, special=True)
+        return len(tokenized)
+
+    @deprecated("Use prompt_len instead")
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
+        # default concrete base behaviour:
+        if self.pipeline is None:
+            raise NotImplementedError(
+                "You must pass a prompt_pipeline to the LlamaCppEngine to use it as a non-abstract class. If your model"
+                " uses a chat template (or is a quantization of a model with a chat template), you can use the"
+                " following:\n"
+                "from kani.model_specific import prompt_pipeline_for_hf_model\n"
+                "pipeline = prompt_pipeline_for_hf_model(base_model_id)\n"
+                "engine = LlamaCppEngine(..., prompt_pipeline=pipeline)"
+            )
+        prompt = self.pipeline.execute([], functions, for_measurement=True)
+        if isinstance(prompt, list):
+            return len(prompt)
+        elif isinstance(prompt, torch.Tensor):
+            toklen = len(prompt[0])
+        else:
+            # prompt str to tokens
+            tokenized = self.model.tokenize(prompt.encode(), add_bos=False, special=False)
+            toklen = len(tokenized)
+
+        # warn if there are functions but no tokens
+        if toklen == 0:
+            warnings.warn(
+                "Functions were given to the model, but the function prompt returned 0 tokens! This model may not"
+                " support function calling, or you may need to implement"
+                f" `{type(self).__name__}.function_token_reserve()`."
+            )
+
+        return toklen
