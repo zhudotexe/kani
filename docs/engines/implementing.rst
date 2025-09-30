@@ -21,7 +21,6 @@ A new engine must implement at least the two abstract methods and set the abstra
 
 - :meth:`.BaseEngine.prompt_len` takes a list of :class:`.ChatMessage` and :class:`.AIFunction` and returns the length
   of that prompt, in tokens.
-  in tokens.
 - :meth:`.BaseEngine.predict` takes a list of :class:`.ChatMessage` and :class:`.AIFunction` and returns a
   new :class:`.BaseCompletion`.
 - :attr:`.BaseEngine.max_context_size` specifies the model's token context size.

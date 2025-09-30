@@ -93,6 +93,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
         self.tokenizer = tokenizer  # tiktoken caches a tokenizer globally in module, so we can unconditionally load it
         self._load_tokenizer()
 
+    # ==== token counting ====
     def _load_tokenizer(self):
         if self.tokenizer:
             return
@@ -141,6 +142,25 @@ class OpenAIEngine(TokenCached, BaseEngine):
         self.set_cached_message_len(message, mlen)
         return mlen
 
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
+        # wrap an inner impl to use lru_cache with tuple
+        return self._function_token_reserve_impl(tuple(functions))
+
+    @functools.lru_cache(maxsize=256)
+    def _function_token_reserve_impl(self, functions):
+        prompt = function_calling.prompt(translate_functions(functions))
+        return len(self.tokenizer.encode(prompt))
+
+    # ==== main kani impl ====
+    async def prompt_len(self, messages, functions=None, **kwargs) -> int:
+        # optimization: since chat-based appends messages 1 at a time, see if the messages - 1 is in prompt cache
+        if messages and (cached := self.get_cached_prompt_len(messages[:-1], functions, **kwargs)) is not None:
+            return cached + self.message_len(messages[-1])
+        # OpenAI does not use an API for token counting, so we'll use the old-style message-wise counting
+        return sum(self.message_len(m) for m in messages) + self.function_token_reserve(functions)
+
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> ChatCompletion:
@@ -156,6 +176,10 @@ class OpenAIEngine(TokenCached, BaseEngine):
         )
         # translate into Kani spec and return
         kani_cmpl = ChatCompletion(openai_completion=completion)
+        self.set_cached_prompt_len(messages, functions, completion.usage.prompt_tokens)
+        self.set_cached_prompt_len(
+            messages + [kani_cmpl.message], functions, completion.usage.prompt_tokens + kani_cmpl.completion_tokens
+        )
         self.set_cached_message_len(kani_cmpl.message, kani_cmpl.completion_tokens)
         return kani_cmpl
 
@@ -218,6 +242,8 @@ class OpenAIEngine(TokenCached, BaseEngine):
 
         # token counting
         if usage:
+            self.set_cached_prompt_len(messages, functions, usage.prompt_tokens)
+            self.set_cached_prompt_len(messages + [msg], functions, usage.prompt_tokens + usage.completion_tokens)
             self.set_cached_message_len(msg, usage.completion_tokens)
             prompt_tokens = usage.prompt_tokens
             completion_tokens = usage.completion_tokens
@@ -225,17 +251,6 @@ class OpenAIEngine(TokenCached, BaseEngine):
         else:
             prompt_tokens = completion_tokens = None
         yield Completion(message=msg, prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
-
-    def function_token_reserve(self, functions: list[AIFunction]) -> int:
-        if not functions:
-            return 0
-        # wrap an inner impl to use lru_cache with tuple
-        return self._function_token_reserve_impl(tuple(functions))
-
-    @functools.lru_cache(maxsize=256)
-    def _function_token_reserve_impl(self, functions):
-        prompt = function_calling.prompt(translate_functions(functions))
-        return len(self.tokenizer.encode(prompt))
 
     async def close(self):
         await self.client.close()
