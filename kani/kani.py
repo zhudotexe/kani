@@ -411,32 +411,43 @@ class Kani:
         """
         max_size = self.max_context_size - self.desired_response_tokens
 
-        low = 0
-        high = len(self.chat_history)
-        to_keep = 0
-        total_tokens = 0
-
-        # binary search for the first index that does not cause an exception or be too long
-        while low <= high:
-            mid = (low + high) // 2
-            if mid:
-                prompt = self.always_included_messages + self.chat_history[-mid:]
-            else:
-                prompt = self.always_included_messages
-
+        async def _prompt_len_or_inf(messages, functions):
             try:
-                total_tokens = await self.prompt_token_len(messages=prompt, functions=list(self.functions.values()))
+                ret =  await self.prompt_token_len(messages=messages, functions=functions)
+                print(ret)
+                return ret
             except PromptTooLong:
-                total_tokens = float("inf")
+                return float("inf")
             except Exception as e:
                 log.warning("Exception while getting prompt size:", exc_info=e)
-                total_tokens = float("inf")
+                return float("inf")
 
-            if total_tokens > max_size:
-                high = mid - 1
-            else:
-                to_keep = mid
-                low = mid + 1
+        # optimization: check the full prompt first
+        total_tokens = await _prompt_len_or_inf(
+            self.always_included_messages + self.chat_history, list(self.functions.values())
+        )
+        if total_tokens <= max_size:
+            to_keep = len(self.chat_history)
+        else:
+            # otherwise binary search for the first index that does not cause an exception or be too long
+            low = 0
+            high = len(self.chat_history) - 1
+            to_keep = 0
+
+            while low <= high:
+                mid = (low + high) // 2
+                if mid:
+                    prompt = self.always_included_messages + self.chat_history[-mid:]
+                else:
+                    prompt = self.always_included_messages
+
+                total_tokens = await _prompt_len_or_inf(prompt, list(self.functions.values()))
+
+                if total_tokens > max_size:
+                    high = mid - 1
+                else:
+                    to_keep = mid
+                    low = mid + 1
 
         # raise an error if we can't keep anything
         if not to_keep:
