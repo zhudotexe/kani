@@ -153,6 +153,34 @@ class OpenAIEngine(TokenCached, BaseEngine):
         prompt = function_calling.prompt(translate_functions(functions))
         return len(self.tokenizer.encode(prompt))
 
+    # ==== hackable stuff for requests ====
+    @staticmethod
+    def _prepare_request(
+        messages, functions, *, intent: str = "chat_completions.create"
+    ) -> tuple[dict, list, dict | None]:
+        """
+        Prepare the API request to the OpenAI API. Returns a tuple (kwargs, messages, tools) to be passed to the
+        OpenAIClient's chat.completions.create() method.
+
+        :param messages: The Kani ChatMessages to translate into OpenAI-format messages.
+        :param functions: The Kani AIFunctions to translate into OpenAI-format tools.
+        :param intent: one of ("chat_completions.create", "chat_completions.stream") -- the underlying OpenAI SDK call
+            the returned keyword arguments will be passed to.
+        """
+        if functions:
+            tool_specs = translate_functions(functions)
+        else:
+            tool_specs = None
+        # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
+        translated_messages = translate_messages(messages)
+
+        return {}, translated_messages, tool_specs
+
+    @staticmethod
+    def _translate_openai_completion(completion) -> ChatCompletion:
+        """Translate an OpenAI completion to a Kani completion. Only called for non-streaming requests by default."""
+        return ChatCompletion(openai_completion=completion)
+
     # ==== main kani impl ====
     async def prompt_len(self, messages, functions=None, **kwargs) -> int:
         # optimization: since chat-based appends messages 1 at a time, see if the messages - 1 is in prompt cache
@@ -164,18 +192,18 @@ class OpenAIEngine(TokenCached, BaseEngine):
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> ChatCompletion:
-        if functions:
-            tool_specs = translate_functions(functions)
-        else:
-            tool_specs = None
-        # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
-        translated_messages = translate_messages(messages)
+        local_kwargs, translated_messages, tool_specs = self._prepare_request(
+            messages, functions, intent="chat_completions.create"
+        )
         # make API call
         completion = await self.client.chat.completions.create(
-            model=self.model, messages=translated_messages, tools=tool_specs, **self.hyperparams, **hyperparams
+            model=self.model,
+            messages=translated_messages,
+            tools=tool_specs,
+            **(local_kwargs | self.hyperparams | hyperparams),
         )
         # translate into Kani spec and return
-        kani_cmpl = ChatCompletion(openai_completion=completion)
+        kani_cmpl = self._translate_openai_completion(completion)
         self.set_cached_prompt_len(messages, functions, completion.usage.prompt_tokens)
         self.set_cached_prompt_len(
             messages + [kani_cmpl.message], functions, completion.usage.prompt_tokens + kani_cmpl.completion_tokens
@@ -186,12 +214,9 @@ class OpenAIEngine(TokenCached, BaseEngine):
     async def stream(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> AsyncIterable[str | BaseCompletion]:
-        if functions:
-            tool_specs = translate_functions(functions)
-        else:
-            tool_specs = None
-        # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
-        translated_messages = translate_messages(messages)
+        local_kwargs, translated_messages, tool_specs = self._prepare_request(
+            messages, functions, intent="chat_completions.stream"
+        )
         # make API call
         stream = await self.client.chat.completions.create(
             model=self.model,
@@ -199,8 +224,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
             tools=tool_specs,
             stream=True,
             stream_options={"include_usage": True},
-            **self.hyperparams,
-            **hyperparams,
+            **(local_kwargs | self.hyperparams | hyperparams),
         )
 
         # save requested tool calls and content as streamed

@@ -283,7 +283,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
 
         return kwargs, prompt_msgs
 
-    def _translate_anthropic_message(self, message: Message):
+    def _translate_anthropic_message(self, message: Message) -> Completion:
         """Translate an Anthropic message to a Kani completion."""
         tool_calls = []
         parts = []
