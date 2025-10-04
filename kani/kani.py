@@ -115,8 +115,20 @@ class Kani:
         if functions is None:
             functions = []
         self.functions: dict[str, AIFunction] = {f.name: f for f in functions}
-        for name, member in inspect.getmembers(self, predicate=inspect.ismethod):
-            if not hasattr(member, "__ai_function__"):
+        # adapted from inspect.getmembers, to not trigger the getters of properties
+        for name in dir(self):
+            # skip any properties
+            try:
+                if isinstance(getattr(self.__class__, name), property):
+                    continue
+            except AttributeError:
+                pass
+            # get the value
+            try:
+                member = getattr(self, name)
+            except AttributeError:
+                continue
+            if not (inspect.ismethod(member) and hasattr(member, "__ai_function__")):
                 continue
             f: AIFunction = AIFunction(member, **member.__ai_function__)
             if f.name in self.functions:
