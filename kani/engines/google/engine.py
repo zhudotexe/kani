@@ -317,7 +317,8 @@ class GoogleAIEngine(TokenCached, BaseEngine):
     def _translate_google_response(self, resp: genai_types.GenerateContentResponse) -> Completion:
         tool_calls = []
         parts = []
-        resp_parts = resp.candidates[0].content.parts
+        resp_content = resp.candidates[0].content
+        resp_parts = resp_content.parts if resp_content is not None else None
         if resp_parts is None:
             resp_parts = []
             warn_in_userspace(
@@ -366,12 +367,27 @@ class GoogleAIEngine(TokenCached, BaseEngine):
         if (cached_len := self.get_cached_prompt_len(messages, functions, **kwargs)) is not None:
             return cached_len
 
-        request_config, prompt_msgs = self._prepare_request(messages, functions, kwargs, intent="count_tokens")
+        request_config, prompt_msgs = await self._prepare_request(messages, functions, kwargs, intent="count_tokens")
+
+        # HACK: we have to run estimation for system instructions or tools if we're not using Vertex
+        # since the AI Studio token counting endpoint is broken >:c
+        # https://github.com/googleapis/python-genai/issues/432
+        token_counting_machine_broke_count = 0
+        if not self.client.vertexai:
+            # Google documents 4 bytes per token, so we do a conservative 3.8 char/tok
+            chars = 0
+            if "system_instruction" in request_config:
+                chars += len(request_config.pop("system_instruction"))
+            if "tools" in request_config:
+                chars += len(json.dumps([t.model_dump(mode="json") for t in request_config.pop("tools")]))
+            token_counting_machine_broke_count = int(chars / 3.8)
+
         result = await self.client.aio.models.count_tokens(
             model=self.model, contents=prompt_msgs, config=request_config
         )
-        self.set_cached_prompt_len(messages, functions, length=result.total_tokens, **kwargs)
-        return result.total_tokens
+        count = result.total_tokens + token_counting_machine_broke_count
+        self.set_cached_prompt_len(messages, functions, length=count, **kwargs)
+        return count
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
