@@ -206,7 +206,11 @@ class GoogleAIEngine(TokenCached, BaseEngine):
                 content.append(
                     genai_types.Part(
                         function_response=genai_types.FunctionResponse(
-                            id=msg.tool_call_id, name=msg.name, response={"error": msg.text}
+                            # we do name=None when model tries to call a function that doesn't exist
+                            # but Gemini doesn't allow name=None for inputs, so we just set it to "error"
+                            id=msg.tool_call_id,
+                            name=msg.name or "error",
+                            response={"error": msg.text},
                         )
                     )
                 )
