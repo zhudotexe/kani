@@ -232,7 +232,7 @@ class Kani:
 
         :param query: The contents of the user's chat message. Can be None to generate a completion without a user
             prompt.
-        :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
+        :param kwargs: Additional arguments to pass to the model engine (e.g. decoding arguments).
         :returns: The model's reply.
         """
         async with self.lock:
@@ -293,7 +293,7 @@ class Kani:
         :param max_function_rounds: The maximum number of function calling rounds to perform in this round. If this
             number is reached, the model is allowed to generate a final response without any functions defined.
             Default unlimited (continues until model's response does not contain a function call).
-        :param kwargs: Additional arguments to pass to the model engine (e.g. hyperparameters).
+        :param kwargs: Additional arguments to pass to the model engine (e.g. decoding arguments).
         """
         async for elem in self._full_round(
             query, max_function_rounds=max_function_rounds, _kani_is_stream=False, **kwargs
@@ -371,7 +371,7 @@ class Kani:
         :param kwargs: Arguments to pass to the model engine.
         """
         # get the current chat state
-        messages = await self.get_prompt()
+        messages = await self.get_prompt(**kwargs)
         # log it (message_log includes the number of messages sent and the last message)
         n_messages = len(messages)
         if n_messages == 0:
@@ -392,7 +392,7 @@ class Kani:
         """Get the model's completion with the current chat state as a stream.
         This is a low-level method like :meth:`get_model_completion` but for streams.
         """
-        messages = await self.get_prompt()
+        messages = await self.get_prompt(**kwargs)
         n_messages = len(messages)
         if n_messages == 0:
             message_log.debug("[0]>>> [requested completion with no prompt]")
@@ -410,7 +410,7 @@ class Kani:
             yield elem
 
     # ==== overridable methods ====
-    async def get_prompt(self) -> list[ChatMessage]:
+    async def get_prompt(self, **kwargs) -> list[ChatMessage]:
         """
         Called each time before asking the LM engine for a completion to generate the chat prompt.
         Returns a list of messages such that the total token count in the messages is less than
@@ -420,12 +420,15 @@ class Kani:
 
         You may override this to get more fine-grained control over what is exposed in the model's memory at any given
         call.
+
+        :param kwargs: Additional arguments that were passed to the model engine from :meth:`chat_round` or
+            :meth:`full_round` (e.g. decoding arguments).
         """
         max_size = self.max_context_size - self.desired_response_tokens
 
         async def _prompt_len_or_inf(messages, functions):
             try:
-                ret = await self.prompt_token_len(messages=messages, functions=functions)
+                ret = await self.prompt_token_len(messages=messages, functions=functions, **kwargs)
                 return ret
             except PromptTooLong:
                 return float("inf")
@@ -464,7 +467,9 @@ class Kani:
         if not to_keep:
             if self.chat_history:
                 try:
-                    latest_msg_size = await self.prompt_token_len(messages=[self.chat_history[-1]])
+                    latest_msg_size = await self.prompt_token_len(
+                        messages=[self.chat_history[-1]], functions=list(self.functions.values()), **kwargs
+                    )
                 except PromptTooLong:
                     latest_msg_size = float("inf")
 

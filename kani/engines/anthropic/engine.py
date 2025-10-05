@@ -325,7 +325,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
         result = await self.client.messages.count_tokens(
             model=self.model,
             messages=prompt_msgs,
-            **(predict_kwargs | kwargs),
+            **(predict_kwargs | self.hyperparams | kwargs),
         )
         self.set_cached_prompt_len(messages, functions, length=result.input_tokens, **kwargs)
         return result.input_tokens
