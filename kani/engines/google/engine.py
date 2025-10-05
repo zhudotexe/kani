@@ -176,8 +176,9 @@ class GoogleAIEngine(TokenCached, BaseEngine):
             )
 
         # --- kwargs ---
-        kwargs.update(self.hyperparams)
-        kwargs.update(hyperparams)
+        if intent != "count_tokens":
+            kwargs.update(self.hyperparams)
+            kwargs.update(hyperparams)
 
         log.debug(f"translated prompt: {translated_messages}")
 

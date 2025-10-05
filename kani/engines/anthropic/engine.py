@@ -1,4 +1,5 @@
 import functools
+import inspect
 import itertools
 import json
 import logging
@@ -316,16 +317,43 @@ class AnthropicEngine(TokenCached, BaseEngine):
             completion_tokens=message.usage.output_tokens,
         )
 
+    @functools.cached_property
+    def _count_tokens_arg_names(self):
+        """A list of valid kwarg names that can be passed to self._messages_api.count_tokens"""
+        try:
+            inspected_params = set(inspect.signature(self._messages_api.count_tokens).parameters)
+            return inspected_params
+        except Exception as e:
+            log.warning("Could not introspect count_tokens for parameter names, returning default:", exc_info=e)
+            # default
+            return {
+                "messages",
+                "model",
+                "system",
+                "thinking",
+                "tool_choice",
+                "tools",
+                "extra_headers",
+                "extra_query",
+                "extra_body",
+                "timeout",
+            }
+
     # ==== kani impls ====
     async def prompt_len(self, messages, functions=None, **kwargs) -> int:
         if (cached_len := self.get_cached_prompt_len(messages, functions, **kwargs)) is not None:
             return cached_len
 
         predict_kwargs, prompt_msgs = self._prepare_request(messages, functions, intent="count_tokens")
-        result = await self.client.messages.count_tokens(
+        # only include valid kwargs from inspecting self._messages_api.count_tokens
+        valid_count_token_kwargs = {
+            k: v for k, v in (predict_kwargs | self.hyperparams | kwargs).items() if k in self._count_tokens_arg_names
+        }
+
+        result = await self._messages_api.count_tokens(
             model=self.model,
             messages=prompt_msgs,
-            **(predict_kwargs | self.hyperparams | kwargs),
+            **valid_count_token_kwargs,
         )
         self.set_cached_prompt_len(messages, functions, length=result.input_tokens, **kwargs)
         return result.input_tokens
