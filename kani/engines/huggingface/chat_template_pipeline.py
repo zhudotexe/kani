@@ -19,7 +19,7 @@ from collections import defaultdict
 from functools import cached_property
 from typing import Iterable
 
-from kani import AIFunction, ChatMessage, ChatRole, PromptPipeline, ToolCall
+from kani import AIFunction, ChatMessage, ChatRole, PromptPipeline, ToolCall, _optional
 from kani.exceptions import MissingModelDependencies
 from kani.prompts.steps import ConversationDict
 
@@ -110,15 +110,9 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
                 warnings.warn(debug_msg)
             else:
                 log.debug(debug_msg)
-            self.conversation_dict(additional_keys=hf_tool_use_keys)
+            self.conversation_dict(additional_keys=hf_tool_use_keys, content_transform=hf_content_transform)
 
         conversation = super().execute(msgs, functions, deepcopy=deepcopy, for_measurement=for_measurement)
-
-        # make any None contents an empty string to prevent some chat templates from exploding
-        # (looking at you, GPT-OSS)
-        for msg in conversation:
-            if msg["content"] is None:
-                msg["content"] = ""
 
         # apply the chat template
         try:
@@ -267,6 +261,7 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
         return torch.zeros((1, full_len - self._chat_template_dummy_len))
 
 
+# ==== tools ====
 def hf_tool_use_keys(message: ChatMessage) -> dict:
     """
     Given an ASSISTANT or FUNCTION message, return extra keys for tool calling models.
@@ -304,6 +299,36 @@ def _hf_tools_schema(functions: list[AIFunction]) -> list[dict] | None:
         if functions
         else None
     )
+
+
+# ==== multimodal ====
+def hf_content_transform(message: ChatMessage) -> str | list[dict]:
+    # if multimodal is not installed, just return .text
+    if not _optional.has_multimodal_core:
+        content = message.text
+    # otherwise, if we have a multimodal part, translate them; otherwise return .text
+    else:
+        if any(isinstance(p, _optional.multimodal_core.BaseMultimodalPart) for p in message.parts):
+            content = []
+            for part in message.parts:
+                # multimodal parts' contents tend to get handled by the processor, so we don't actually need to pass
+                # anything to the chat template here
+                if isinstance(part, _optional.multimodal_core.AudioPart):
+                    content.append({"type": "audio", "audio": ...})
+                elif isinstance(part, _optional.multimodal_core.ImagePart):
+                    content.append({"type": "image", "image": ...})
+                elif isinstance(part, _optional.multimodal_core.VideoPart):
+                    content.append({"type": "video", "video": ...})
+                else:
+                    content.append({"type": "text", "text": str(part)})
+        else:
+            content = message.text
+
+    # make any None contents an empty string to prevent some chat templates from exploding
+    # (looking at you, GPT-OSS)
+    if content is None:
+        return ""
+    return content
 
 
 # ==== deprecated ====

@@ -13,7 +13,7 @@ from kani.utils.warnings import deprecated
 
 try:
     import torch
-    from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
+    from transformers import AutoModelForCausalLM, AutoTokenizer, BatchFeature, TextIteratorStreamer
 except ImportError:
     raise MissingModelDependencies(
         'The HuggingEngine requires extra dependencies. Please install kani with "pip install kani[huggingface]". '
@@ -67,6 +67,7 @@ class HuggingEngine(BaseEngine):
         # hf args
         token=None,
         device: str | None = None,
+        tokenizer_cls=AutoTokenizer,
         tokenizer_kwargs: dict = None,
         model_cls=AutoModelForCausalLM,
         model_load_kwargs: dict = None,
@@ -82,6 +83,7 @@ class HuggingEngine(BaseEngine):
             format (see :class:`.PromptPipeline`). If not passed, uses the Hugging Face chat template if available.
         :param token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
         :param device: The hardware device to use. If not specified, uses CUDA or MPS if available; otherwise uses CPU.
+        :param tokenizer_cls: Advanced use cases: The HF tokenizer class to use. Defaults to ``AutoTokenizer``.
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoTokenizer.from_pretrained()``.
         :param model_cls: Advanced use cases: The HF model class to use. Defaults to ``AutoModelForCausalLM``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
@@ -108,7 +110,7 @@ class HuggingEngine(BaseEngine):
         self.model_id = model_id
         self.max_context_size = max_context_size
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
+        self.tokenizer = tokenizer_cls.from_pretrained(model_id, **tokenizer_kwargs)
         self.model = model_cls.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
 
@@ -163,7 +165,7 @@ class HuggingEngine(BaseEngine):
 
     def build_prompt(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None
-    ) -> str | torch.Tensor:
+    ) -> str | torch.Tensor | BatchFeature:
         """
         Given the list of messages from kani, build either a single string representing the prompt for the model,
         or build the token tensor.
@@ -178,7 +180,7 @@ class HuggingEngine(BaseEngine):
         log.debug(f"BUILT PROMPT: {prompt}")
         return prompt
 
-    def _get_generate_args(self, prompt: str | torch.Tensor, **hyperparams):
+    def _get_generate_args(self, prompt: str | torch.Tensor | BatchFeature, **hyperparams):
         """
         Internal method to build common params for the generate call
         and also do some chores before we generate
@@ -186,18 +188,19 @@ class HuggingEngine(BaseEngine):
         # make sure the prompt is tokenized
         if isinstance(prompt, str):
             # prompt str to tokens
-            tokenized = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
-            input_toks = tokenized
-            input_len = len(tokenized[0])
+            input_kwargs = self.tokenizer(prompt, add_special_tokens=False, return_tensors="pt")
+            input_len = input_kwargs["input_ids"].shape[1]
         elif isinstance(prompt, torch.Tensor):
-            input_toks = prompt
-            input_len = len(input_toks[0])
+            input_kwargs = BatchFeature({"input_ids": prompt})
+            input_len = len(prompt[0])
+        elif isinstance(prompt, BatchFeature):
+            input_kwargs = prompt
+            input_len = input_kwargs["input_ids"].shape[1]
         else:
-            raise TypeError("build_prompt should either return a str or a Tensor.")
+            raise TypeError("build_prompt should either return a str, Tensor, or BatchFeature.")
 
         # move the input tensor to the right device
-        if input_toks.device.type != self.device:
-            input_toks = input_toks.to(self.device)
+        input_kwargs.to(self.device)
 
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
@@ -207,7 +210,7 @@ class HuggingEngine(BaseEngine):
         # check for a model-specific parser
         model_specific.warn_for_uninitialized_parser(self.model_id)
 
-        return input_toks, input_len, hyperparams
+        return input_kwargs, input_len, hyperparams
 
     def _get_eos_tokens(self, *, return_ids=False, **hyperparams) -> list[str] | list[int]:
         """Get the list of tokens that should end a generation."""
@@ -227,7 +230,7 @@ class HuggingEngine(BaseEngine):
     # ==== kani impl ====
     async def prompt_len(self, messages, functions=None, **kwargs) -> int:
         prompt = self.build_prompt(messages, functions)
-        input_toks, input_len, _ = self._get_generate_args(prompt, **kwargs)
+        input_kwargs, input_len, _ = self._get_generate_args(prompt, **kwargs)
         return input_len
 
     async def predict(
@@ -252,12 +255,12 @@ class HuggingEngine(BaseEngine):
             decode_kwargs = {}
 
         prompt = self.build_prompt(messages, functions)
-        input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
+        input_kwargs, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
         eos_tok_ids = self._get_eos_tokens(return_ids=True, **hyperparams)
 
         # run it through the model
         with torch.no_grad():
-            output = self.model.generate(input_toks, **hyperparams)
+            output = self.model.generate(**input_kwargs, **hyperparams)
         # decode to tokens
         # the completion shouldn't include the prompt or stop token
         if output[0][-1] in eos_tok_ids:
@@ -292,7 +295,7 @@ class HuggingEngine(BaseEngine):
             decode_kwargs = {}
 
         prompt = self.build_prompt(messages, functions)
-        input_toks, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
+        input_kwargs, input_len, hyperparams = self._get_generate_args(prompt, **hyperparams)
         eos_toks = self._get_eos_tokens(**hyperparams)
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=streamer_timeout, **decode_kwargs)
 
@@ -302,7 +305,7 @@ class HuggingEngine(BaseEngine):
         def thread_target():
             nonlocal output_toks  # ugly way of sending the results of .generate to the outer scope
             with torch.no_grad():
-                output_toks = self.model.generate(input_toks, streamer=streamer, **hyperparams)
+                output_toks = self.model.generate(**input_kwargs, streamer=streamer, **hyperparams)
 
         thread = Thread(target=thread_target)
         thread.start()
