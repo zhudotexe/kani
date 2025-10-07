@@ -199,8 +199,8 @@ class HuggingEngine(BaseEngine):
         else:
             raise TypeError("build_prompt should either return a str, Tensor, or BatchFeature.")
 
-        # move the input tensor to the right device
-        input_kwargs.to(self.device)
+        # move the input tensor to the right device and make sure any multimodal features are in the right dtype
+        input_kwargs.to(self.device).to(self.model.dtype)
 
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
@@ -221,8 +221,14 @@ class HuggingEngine(BaseEngine):
 
         if isinstance(genconfig_eos_token_id, list):
             eos_token_ids = genconfig_eos_token_id
-        else:
+        elif genconfig_eos_token_id is not None:
             eos_token_ids = [genconfig_eos_token_id]
+        else:
+            warnings.warn(
+                f"No EOS token was found for the {self.model_id} model. Generation may continue forever. Please pass"
+                " `eos_token_id=[...]` in the engine constructor."
+            )
+            eos_token_ids = []
         if return_ids:
             return eos_token_ids
         return [self.tokenizer.decode(t) for t in eos_token_ids]
