@@ -157,6 +157,9 @@ class BaseEngine(abc.ABC):
             The token count returned by this may not exactly reflect the actual token count (e.g., due to prompt
             formatting or not having access to the tokenizer). It should, however, be a safe overestimate to use as
             an upper bound.
+
+        .. deprecated:: 1.7.0
+            Use :meth:`.BaseEngine.prompt_len` instead.
         """
         if inspect.iscoroutinefunction(self.prompt_len):
             raise KaniException(
@@ -171,7 +174,7 @@ class BaseEngine(abc.ABC):
     model's reply with a delimiting token). Default: 0
 
     .. deprecated:: 1.7.0
-        Use :meth:`prompt_len` instead.
+        Use :meth:`.BaseEngine.prompt_len` instead.
     """
 
     @deprecated("Use Kani.prompt_token_len instead")
@@ -182,8 +185,8 @@ class BaseEngine(abc.ABC):
         Default: If this is not implemented and the user passes in functions, log a warning that the engine does not
         support function calling.
 
-        .. deprecated:: 1.1.0
-            Use :meth:`prompt_len` instead.
+        .. deprecated:: 1.7.0
+            Use :meth:`.BaseEngine.prompt_len` instead.
         """
         if functions:
             warnings.warn(
