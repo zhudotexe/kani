@@ -35,6 +35,7 @@ all = [
 # extensions
 multimodal = [
     "kani-multimodal-core<2.0.0",
+    "transformers>=4.56.1,<5.0.0",  # v4.56.1: ProcessorMixin.__call__ update
 ]
 
 # providers
