@@ -17,6 +17,7 @@ try:
     from transformers import (
         AutoModelForCausalLM,
         AutoProcessor,
+        AutoTokenizer,
         BatchEncoding,
         BatchFeature,
         PreTrainedTokenizerBase,
@@ -78,7 +79,7 @@ class HuggingEngine(BaseEngine):
         # hf args
         token=None,
         device: str | None = None,
-        tokenizer_cls=AutoProcessor,
+        tokenizer_cls=None,
         tokenizer_kwargs: dict = None,
         model_cls=AutoModelForCausalLM,
         model_load_kwargs: dict = None,
@@ -98,7 +99,7 @@ class HuggingEngine(BaseEngine):
         :param token: The Hugging Face access token (for gated models). Pass True to load from huggingface-cli.
         :param device: The hardware device to use. If not specified, uses CUDA or MPS if available; otherwise uses CPU.
         :param tokenizer_cls: Advanced use cases: The HF tokenizer class to use. Defaults to ``AutoProcessor`` (if no
-            processing config is available for a model, this will load the tokenizer).
+            processing config is available or this raises an error, this will fall back to ``AutoTokenizer``).
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoProcessor.from_pretrained()``.
         :param model_cls: Advanced use cases: The HF model class to use. Defaults to ``AutoModelForCausalLM``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
@@ -128,9 +129,20 @@ class HuggingEngine(BaseEngine):
         self.model_id = model_id
         self.max_context_size = max_context_size
 
-        self._processor_or_tokenizer: ProcessorMixin | PreTrainedTokenizerBase = tokenizer_cls.from_pretrained(
-            model_id, **tokenizer_kwargs
-        )
+        # load the correct processor or tokenizer, EAFP
+        if tokenizer_cls is None:
+            try:
+                _processor_or_tokenizer = AutoProcessor.from_pretrained(model_id, **tokenizer_kwargs)
+            except Exception as e:
+                log.warning(
+                    f"Could not load the AutoProcessor for {model_id}, falling back to AutoTokenizer. Multimodal"
+                    " inputs will not be available.",
+                    exc_info=e,
+                )
+                _processor_or_tokenizer = AutoTokenizer.from_pretrained(model_id, **tokenizer_kwargs)
+        else:
+            _processor_or_tokenizer = tokenizer_cls.from_pretrained(model_id, **tokenizer_kwargs)
+        self._processor_or_tokenizer: ProcessorMixin | PreTrainedTokenizerBase = _processor_or_tokenizer
         self.model = model_cls.from_pretrained(model_id, **model_load_kwargs)
         self.hyperparams = hyperparams
 
