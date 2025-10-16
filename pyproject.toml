@@ -35,7 +35,7 @@ all = [
 # extensions
 multimodal = [
     "kani-multimodal-core<2.0.0",
-    "transformers>=4.56.1,<5.0.0",  # v4.56.1: ProcessorMixin.__call__ update
+    "transformers>=4.56.1,<5.0.0", # v4.56.1: ProcessorMixin.__call__ update
 ]
 
 # providers
@@ -84,7 +84,12 @@ unstable = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-markers = ["local: these tests use a local language model."]
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"  # to allow sharing async engine fixtures correctly
+markers = [
+    "local: these tests use a local language model.",
+    "e2e: these tests run end-to-end, use KANI_E2E_HYDRATE to hydrate cache."
+]
 
 [tool.isort]
 profile = "black"
@@ -95,3 +100,10 @@ known_first_party = ["kani"]
 no_lines_before = "LOCALFOLDER"
 reverse_relative = true
 combine_as_imports = true
+
+[tool.coverage.run]
+omit = [
+    "sandbox/*",
+    "examples/*",
+    "docs/*",
+]

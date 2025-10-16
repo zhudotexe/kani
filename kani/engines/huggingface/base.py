@@ -277,7 +277,10 @@ class HuggingEngine(BaseEngine):
             )
 
         # move the input tensor to the right device and make sure any multimodal features are in the right dtype
-        input_kwargs.to(self.device).to(self.model.dtype)
+        # (if BatchFeature)
+        input_kwargs.to(self.device)
+        if isinstance(input_kwargs, BatchFeature):
+            input_kwargs.to(self.model.dtype)
 
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}

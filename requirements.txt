@@ -8,11 +8,13 @@ torch
 # dev
 black
 build
+coverage
 isort
 hatch
 hypothesis
 pytest
 pytest-asyncio
+pytest-lazy-fixtures
 twine
 
 # docs
