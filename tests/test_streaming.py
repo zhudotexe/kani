@@ -3,11 +3,11 @@ from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, ChatRole, Kani
 from kani.engines.base import WrapperEngine
-from tests.engine import TestEngine, TestStreamingEngine
+from tests.engine import EngineForTests, StreamingEngineForTests
 from tests.utils import flatten_chatmessages
 
-engine = TestEngine()
-streaming_engine = TestStreamingEngine()
+engine = EngineForTests()
+streaming_engine = StreamingEngineForTests()
 wrapped_engine = WrapperEngine(engine)
 wrapped_streaming_engine = WrapperEngine(streaming_engine)
 

@@ -4,7 +4,7 @@ from kani import AIFunction, ChatMessage
 from kani.engines.base import BaseCompletion, BaseEngine, Completion
 
 
-class TestEngine(BaseEngine):
+class EngineForTests(BaseEngine):
     """A mock engine used for testing.
 
     Each message has a token length equal to its str length, and predict always returns a one-token message.
@@ -27,7 +27,7 @@ class TestEngine(BaseEngine):
         return Completion(ChatMessage.assistant("a"))
 
 
-class TestStreamingEngine(TestEngine):
+class StreamingEngineForTests(EngineForTests):
     """A mock engine used for testing but with streaming (yields one character at a time)."""
 
     async def stream(

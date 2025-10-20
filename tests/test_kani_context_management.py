@@ -5,10 +5,10 @@ from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, ChatRole, Kani
 from kani.exceptions import MessageTooLong, PromptTooLong
-from tests.engine import TestEngine
+from tests.engine import EngineForTests
 from tests.utils import flatten_chatmessages
 
-engine = TestEngine()
+engine = EngineForTests()
 
 
 async def test_chat_round():
@@ -53,7 +53,7 @@ async def test_get_prompt_optimal(data):
     # make sure get_prompt always returns the maximum number of tokens it can
     ctx_size = data.draw(st.integers(min_value=4, max_value=100))
     print("ctx size:", ctx_size)
-    engine = TestEngine(max_context_size=ctx_size)
+    engine = EngineForTests(max_context_size=ctx_size)
     ai = Kani(
         engine,
         desired_response_tokens=1,

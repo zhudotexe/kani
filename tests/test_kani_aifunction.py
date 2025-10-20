@@ -1,7 +1,7 @@
 from kani import Kani, ai_function
-from tests.engine import TestEngine
+from tests.engine import EngineForTests
 
-engine = TestEngine()
+engine = EngineForTests()
 
 
 # define a dummy kani class to test

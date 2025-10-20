@@ -4,9 +4,9 @@ import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, FunctionCall, Kani, MessagePart
-from tests.engine import TestEngine
+from tests.engine import EngineForTests
 
-engine = TestEngine()
+engine = EngineForTests()
 
 
 @settings(suppress_health_check=(HealthCheck.function_scoped_fixture, HealthCheck.too_slow), deadline=None)
