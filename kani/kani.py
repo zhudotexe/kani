@@ -371,7 +371,7 @@ class Kani:
         :param kwargs: Arguments to pass to the model engine.
         """
         # get the current chat state
-        messages = await self.get_prompt(**kwargs)
+        messages = await self.get_prompt(include_functions=include_functions, **kwargs)
         # log it (message_log includes the number of messages sent and the last message)
         n_messages = len(messages)
         if n_messages == 0:
@@ -410,7 +410,7 @@ class Kani:
             yield elem
 
     # ==== overridable methods ====
-    async def get_prompt(self, **kwargs) -> list[ChatMessage]:
+    async def get_prompt(self, include_functions=True, **kwargs) -> list[ChatMessage]:
         """
         Called each time before asking the LM engine for a completion to generate the chat prompt.
         Returns a list of messages such that the total token count in the messages is less than
@@ -421,14 +421,17 @@ class Kani:
         You may override this to get more fine-grained control over what is exposed in the model's memory at any given
         call.
 
+        :param include_functions: Whether to account for the tokens that will be used for function definitions in the
+            context length.
         :param kwargs: Additional arguments that were passed to the model engine from :meth:`chat_round` or
             :meth:`full_round` (e.g. decoding arguments).
         """
         max_size = self.max_context_size - self.desired_response_tokens
+        functions = list(self.functions.values()) if include_functions else None
 
-        async def _prompt_len_or_inf(messages, functions):
+        async def _prompt_len_or_inf(messages, functions_):
             try:
-                ret = await self.prompt_token_len(messages=messages, functions=functions, **kwargs)
+                ret = await self.prompt_token_len(messages=messages, functions=functions_, **kwargs)
                 return ret
             except PromptTooLong:
                 return float("inf")
@@ -437,9 +440,7 @@ class Kani:
                 return float("inf")
 
         # optimization: check the full prompt first
-        total_tokens = await _prompt_len_or_inf(
-            self.always_included_messages + self.chat_history, list(self.functions.values())
-        )
+        total_tokens = await _prompt_len_or_inf(self.always_included_messages + self.chat_history, functions)
         if total_tokens <= max_size:
             to_keep = len(self.chat_history)
         else:
@@ -455,7 +456,7 @@ class Kani:
                 else:
                     prompt = self.always_included_messages
 
-                total_tokens = await _prompt_len_or_inf(prompt, list(self.functions.values()))
+                total_tokens = await _prompt_len_or_inf(prompt, functions)
 
                 if total_tokens > max_size:
                     high = mid - 1
@@ -466,13 +467,7 @@ class Kani:
         # raise an error if we can't keep anything
         if not to_keep:
             if self.chat_history:
-                try:
-                    latest_msg_size = await self.prompt_token_len(
-                        messages=[self.chat_history[-1]], functions=list(self.functions.values()), **kwargs
-                    )
-                except PromptTooLong:
-                    latest_msg_size = float("inf")
-
+                latest_msg_size = await _prompt_len_or_inf([self.chat_history[-1]], functions)
                 if latest_msg_size > max_size:
                     raise MessageTooLong(
                         "The chat message's size is longer than the allowed context window (after including"
