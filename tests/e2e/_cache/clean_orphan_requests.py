@@ -19,3 +19,9 @@ for fp in cache_root.glob("*/*/prompt.txt"):
         fp.unlink()
         fp.parent.rmdir()
         print(fp.parent)
+
+# clean up empty dirs
+for fp in cache_root.glob("*/*"):
+    if fp.is_dir() and len(list(fp.iterdir())) == 0:
+        fp.rmdir()
+        print(fp)

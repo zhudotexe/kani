@@ -1,0 +1,2 @@
+data: {"candidates": [{"content": {"parts": [{"text": "Hello Mizzenmast! What a unique and memorable name – like the mast on a ship!\n\nIt's a pleasure to meet you. How can I help you today?"}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 10,"candidatesTokenCount": 36,"totalTokenCount": 584,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 10}],"thoughtsTokenCount": 538},"modelVersion": "gemini-2.5-flash","responseId": "MKv2aLWSJLPf_uMPvfjiuAc"}
+

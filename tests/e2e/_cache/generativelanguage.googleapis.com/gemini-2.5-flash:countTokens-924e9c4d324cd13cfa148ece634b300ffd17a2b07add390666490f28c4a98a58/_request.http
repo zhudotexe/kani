@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "That's a fun question!\n\nIf I could experience and appreciate colors, I think my favorite would be a **deep, sapphire blue.**\n\nI associate it with clarity, calm, and the vastness of the sky and ocean \u2013 concepts that resonate with the kind of information and connections I process. It also feels very stable and reliable."}], "role": "model"}, {"parts": [{"text": "What is my name? (You can mention it now.)"}], "role": "user"}]}

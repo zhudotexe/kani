@@ -5,7 +5,7 @@ Basic chats with no function calling.
 import pytest
 from pytest_lazy_fixtures import lf
 
-from kani import ChatMessage, Kani, print_stream
+from kani import ChatMessage, Kani, print_stream, print_width
 
 pytestmark = pytest.mark.e2e
 
@@ -23,13 +23,14 @@ pytestmark = pytest.mark.e2e
 @pytest.mark.parametrize("stream", [False, True])
 class TestE2EChat:
     async def _do_inference(self, ai, query, stream):
+        print_width(query, prefix="USER: ")
         if stream:
             stream = ai.chat_round_stream(query)
-            await print_stream(stream)
+            await print_stream(stream, prefix="AI: ")
             msg = await stream.message()
         else:
             msg = await ai.chat_round(query)
-            print(msg.text)
+            print_width(msg.text, prefix="AI: ")
         return msg
 
     async def test_hello(self, engine, stream):
@@ -63,3 +64,34 @@ class TestE2EChat:
         )
         msg = await self._do_inference(ai, "crab", stream)
         assert "kani" in msg.text.lower()
+
+    async def test_last2(self, engine, stream):
+        # from examples/3_customization_last_four.py
+        # noinspection DuplicatedCode
+        class LastTwoKani(Kani):
+            async def get_prompt(self, include_functions=True, **kwargs):
+                """
+                Only include the most recent 4 messages (omitting earlier ones to fit in the token length if necessary)
+                and any always included messages.
+                """
+                # calculate how many tokens we have for the prompt, accounting for the response
+                max_len = self.max_context_size - self.desired_response_tokens
+                # try to keep up to the last 2 messages...
+                for to_keep in range(2, 0, -1):
+                    # if the messages fit in the space we have remaining...
+                    token_len = await self.prompt_token_len(
+                        messages=self.always_included_messages + self.chat_history[-to_keep:],
+                        functions=list(self.functions.values()) if include_functions else None,
+                        **kwargs,
+                    )
+                    if token_len <= max_len:
+                        return self.always_included_messages + self.chat_history[-to_keep:]
+                raise ValueError("Could not find a valid prompt including at least 1 message")
+
+        ai = LastTwoKani(engine)
+        await self._do_inference(ai, "Hi! My name is Mizzenmast.", stream)
+        await self._do_inference(
+            ai, "If you had one, what would be your favorite color? (Please don't mention my name.)", stream
+        )
+        msg = await self._do_inference(ai, "What is my name? (You can mention it now.)", stream)
+        assert "mizzenmast" not in msg.text.lower()

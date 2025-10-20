@@ -1,0 +1,30 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "As an AI, I don't have memory of past conversations or access to any personal information about you. I don't know your name.\n\nIf you'd like to tell me what it is for this conversation, feel free! Otherwise, I'm happy to chat with you without knowing it."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 83,
+    "candidatesTokenCount": 63,
+    "totalTokenCount": 363,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 83
+      }
+    ],
+    "thoughtsTokenCount": 217
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "nav2aM-8K_TT_uMP_7eE-Ac"
+}

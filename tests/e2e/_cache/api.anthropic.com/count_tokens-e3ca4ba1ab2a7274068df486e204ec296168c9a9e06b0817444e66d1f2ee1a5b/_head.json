@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "headers": {
+    "date": "Mon, 20 Oct 2025 21:35:20 GMT",
+    "content-type": "application/json",
+    "content-length": "20",
+    "connection": "keep-alive",
+    "cf-ray": "991ba4f5ba904cac-PHL",
+    "request-id": "req_011CUKAnNpjahCkV9BiTHRD3",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "anthropic-organization-id": "cb409f94-8c93-4ff3-b5de-502af8eca0eb",
+    "x-envoy-upstream-service-time": "39",
+    "via": "1.1 google",
+    "cf-cache-status": "DYNAMIC",
+    "x-robots-tag": "none",
+    "server": "cloudflare"
+  },
+  "body_path": "body.json"
+}

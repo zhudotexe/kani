@@ -1,0 +1,6 @@
+POST https://api.anthropic.com/v1/messages
+accept: application/json
+content-type: application/json
+x-api-key: *** REDACTED ***
+
+{"max_tokens":2048,"messages":[{"role":"assistant","content":[{"type":"text","text":"# Hi Mizzenmast!\n\nNice to meet you! That's a great name – I'm guessing it has nautical roots? The mizzenmast is the rear mast on a ship, so you've got some seafaring spirit in your name.\n\nWhat can I help you with today?"}]},{"role":"user","content":[{"type":"text","text":"If you had one, what would be your favorite color? (Please don't mention my name.)"}]}],"model":"claude-haiku-4-5"}

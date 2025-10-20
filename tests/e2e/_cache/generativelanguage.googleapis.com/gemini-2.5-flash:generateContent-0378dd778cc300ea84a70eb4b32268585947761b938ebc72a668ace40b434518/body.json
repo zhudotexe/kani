@@ -1,0 +1,30 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "As an AI, I don't know your name. I don't have access to personal information about you.\n\nIf you'd like me to call you something, you can tell me!"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 76,
+    "candidatesTokenCount": 41,
+    "totalTokenCount": 294,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 76
+      }
+    ],
+    "thoughtsTokenCount": 177
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "IKv2aOnKKI7P_uMP646p0Q0"
+}

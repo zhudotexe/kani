@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-CSrpObhhZuFPFCBolN7vjghEnyTf7",
+  "object": "chat.completion",
+  "created": 1760996134,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "I don't know your name \u2014 you haven't told me and I don't have access to your account or personal data. If you want me to use a name, tell me what you'd like me to call you (full name, nickname, or initials). If you'd rather stay anonymous, say so and I'll respect that.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 53,
+    "completion_tokens": 199,
+    "total_tokens": 252,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 128,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}
