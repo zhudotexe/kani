@@ -11,6 +11,8 @@ make a request to the upstream, and save it for future caching. Remove ``api`` o
 import hashlib
 import io
 import json
+import logging
+import mimetypes
 import os
 import pprint
 from pathlib import Path
@@ -24,9 +26,11 @@ from google import genai
 from openai import AsyncOpenAI
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 
+from kani import model_specific
 from kani.engines.anthropic import AnthropicEngine
 from kani.engines.google import GoogleAIEngine
 from kani.engines.huggingface import HuggingEngine
+from kani.engines.llamacpp import LlamaCppEngine
 from kani.engines.openai import OpenAIEngine
 
 # the directory where mock calls & returns are saved; should be committed to Git
@@ -34,20 +38,16 @@ MOCK_CACHE_BASE = Path(__file__).parent / "_cache"
 DO_REAL_API_REQUESTS = "api" in os.getenv("KANI_E2E_HYDRATE", "")
 DO_REAL_LOCAL_GENERATE = "local" in os.getenv("KANI_E2E_HYDRATE", "")
 
+log = logging.getLogger("tests.e2e")
 
 # ==== caching utils ====
 # --- http ---
-# headers whose values should be saved
-KEPT_HEADERS = {"content-type", "accept"}
-# headers whose presence should be saved but value redacted
+# headers whose values should be saved in the request
+REQUEST_KEPT_HEADERS = {"content-type", "accept"}
+# headers whose presence should be saved in the request but value redacted
 REDACTED_HEADERS = {"authorization", "x-api-key", "x-goog-api-key"}
-
-
-def cache_dir_for_http_request(url: httpx.URL) -> Path:
-    """Get a cache dir per hostname. E.g. _cache/openai.com/"""
-    cache_dir = MOCK_CACHE_BASE / url.host
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    return cache_dir
+# headers which should be removed from the response
+RESPONSE_REMOVED_HEADERS = {"content-encoding", "set-cookie"}
 
 
 def cache_key_for_http_request(request: httpx.Request) -> str:
@@ -55,6 +55,14 @@ def cache_key_for_http_request(request: httpx.Request) -> str:
     the_hash = hashlib.sha256(fmt_http_request(request).encode())
     *_, last_path_segment = request.url.path.split("/")
     return f"{last_path_segment}-{the_hash.hexdigest()}"
+
+
+def cache_dir_for_http_request(request: httpx.Request) -> Path:
+    """Get a cache dir per hostname. I.e. _cache/<host>/<endpoint>_<hash>/"""
+    cache_key = cache_key_for_http_request(request)
+    cache_dir = MOCK_CACHE_BASE / request.url.host / cache_key
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir
 
 
 def fmt_http_request(request: httpx.Request) -> str:
@@ -68,10 +76,10 @@ def fmt_http_request(request: httpx.Request) -> str:
     for k, v in request.headers.items():
         if k.lower() in REDACTED_HEADERS:
             parts.append(f"{k}: *** REDACTED ***")
-        elif k.lower() in KEPT_HEADERS:
+        elif k.lower() in REQUEST_KEPT_HEADERS:
             parts.append(f"{k}: {v}")
         else:
-            print(f"Discarding header: {k}: {v}")
+            log.debug(f"Discarding header: {k}: {v}")
     # content
     content = request.read()
     if content:
@@ -81,34 +89,71 @@ def fmt_http_request(request: httpx.Request) -> str:
 
 
 class AsyncCachingTransport(httpx.AsyncHTTPTransport):
+    """
+    A transport layer that hashes the request and returns a response if present, otherwise looks at the KANI_E2E_HYDRATE
+    env var to determine whether to forward it upstream or err.
+
+    This handles streaming too since streaming is just a long-lived bytestream in the response.
+    """
+
     async def handle_async_request(self, request: httpx.Request):
         # find the cache file for the request
-        cache_key = cache_key_for_http_request(request)
-        cache_dir = cache_dir_for_http_request(request.url)
-        req_path = cache_dir / f"{cache_key}.request.http"
-        resp_meta_path = cache_dir / f"{cache_key}.response.meta.json"
-        resp_body_path = cache_dir / f"{cache_key}.response.body.bin"
+        cache_dir = cache_dir_for_http_request(request)
+        req_path = cache_dir / "_request.http"
+        resp_head_path = cache_dir / f"_head.json"
 
         # save the request to the cache dir
         req_path.write_text(fmt_http_request(request))
 
         # return the cached resp
-        if resp_meta_path.exists() and resp_body_path.exists():
-            with open(resp_meta_path) as f:
-                meta = json.load(f)
-            return httpx.Response(
-                status_code=meta["status"], headers=meta["headers"], content=resp_body_path.read_bytes()
-            )
+        if resp_head_path.exists():
+            try:
+                with open(resp_head_path) as f:
+                    meta = json.load(f)
+                resp_body_path = resp_head_path.with_name(meta["body_path"])
+                return httpx.Response(
+                    status_code=meta["status"],
+                    headers=httpx.Headers(meta["headers"]),
+                    content=resp_body_path.read_bytes(),
+                )
+            except Exception as e:
+                log.warning(
+                    f"Could not load cached response from {resp_head_path}, falling back to make new request!",
+                    exc_info=e,
+                )
 
         # either pass it on or explode
         if DO_REAL_API_REQUESTS:
             resp = await super().handle_async_request(request)
-            # save to cache
-            with open(resp_meta_path, "w") as f:
-                json.dump({"status": resp.status_code, "headers": resp.headers}, f, indent=2)
-            with open(resp_body_path, "wb") as f:
-                async for chunk in resp.aiter_bytes(4096):
-                    f.write(chunk)
+            headers = {k: v for k, v in resp.headers.items() if k.lower() not in RESPONSE_REMOVED_HEADERS}
+            content_type, *_ = resp.headers["content-type"].split(";")
+
+            # save the body to a filetype with the right extension for human readability
+            ext = mimetypes.guess_extension(content_type)
+            if ext:
+                resp_body_path = cache_dir / f"body{ext}"
+            else:
+                resp_body_path = cache_dir / "body.bin"
+
+            # save head to cache
+            with open(resp_head_path, "w") as f:
+                json.dump(
+                    {"status": resp.status_code, "headers": headers, "body_path": resp_body_path.name},
+                    f,
+                    indent=2,
+                )
+
+            # save body to cache
+            # we'll special-case JSON with indent=2 for human readability
+            if ext == ".json":
+                with open(resp_body_path, "w") as f:
+                    await resp.aread()
+                    json.dump(resp.json(), f, indent=2)
+            else:
+                # we can't stream it here since that reasonably consumes the stream without saving to ._content
+                # so hopefully the model providers aren't returning GB+ responses
+                resp_body_path.write_bytes(await resp.aread())
+
             return resp
         raise ValueError(
             f"Request was not cached: {req_path}. This may mean the request has changed, or you need to hydrate the"
@@ -117,9 +162,9 @@ class AsyncCachingTransport(httpx.AsyncHTTPTransport):
 
 
 # --- tokenwise ---
-def cache_dir_for_local_generate(model_id: str) -> Path:
+def cache_dir_for_local_generate(model_id: str, cache_key: str) -> Path:
     """Get a cache dir per model name. E.g. _cache/openai__gpt-oss-20b/"""
-    cache_dir = MOCK_CACHE_BASE / model_id.replace("/", "__")
+    cache_dir = MOCK_CACHE_BASE / model_id.replace("/", "__") / cache_key
     cache_dir.mkdir(parents=True, exist_ok=True)
     return cache_dir
 
@@ -202,10 +247,10 @@ class CachingAutoModel:
     def generate(self, **kwargs):
         # find the cache file for the request
         cache_key = cache_key_for_local_generate(kwargs["input_ids"], kwargs.get("input_features"))
-        cache_dir = cache_dir_for_local_generate(self._model_id)
-        prompt_path = cache_dir / f"{cache_key}.prompt.txt"
-        response_tokens_path = cache_dir / f"{cache_key}.response.tokens.json"
-        response_text_path = cache_dir / f"{cache_key}.response.content.txt"  # for human readability
+        cache_dir = cache_dir_for_local_generate(self._model_id, cache_key)
+        prompt_path = cache_dir / "prompt.txt"
+        response_tokens_path = cache_dir / "response.tokens.json"
+        response_text_path = cache_dir / "response.content.txt"  # for human readability
 
         # save the prompt to the cache dir
         input_ids = kwargs["input_ids"]
@@ -278,29 +323,34 @@ async def e2e_openai_engine():
 
 
 # --- local ---
-@pytest.fixture(scope="session")
-async def e2e_huggingface_engine_factory():
-    """A sync function (model_id) -> HuggingEngine"""
-    engine_cache = {}
+# https://docs.pytest.org/en/stable/how-to/fixtures.html#automatic-grouping-of-tests-by-fixture-instances
+@pytest.fixture(scope="session", params=["google/gemma-3-1b-it"])
+async def e2e_huggingface_engine(request):
+    """Parameterized to test multiple different HF engines."""
+    model_id = request.param
 
-    def f(model_id):
-        if model_id in engine_cache:
-            return engine_cache[model_id]
-        the_engine = HuggingEngine(model_id=model_id, model_cls=CachingAutoModel)
-        engine_cache[model_id] = the_engine
-        return the_engine
-
-    yield f
-    for _, engine in engine_cache.items():
-        await engine.close()
+    engine = HuggingEngine(model_id=model_id, model_cls=CachingAutoModel)
+    if wrapper := model_specific.parser_for_hf_model(model_id):
+        engine = wrapper(engine)
+    yield engine
+    await engine.close()
 
 
-@pytest.fixture(scope="session")
-async def e2e_huggingface_engine(e2e_huggingface_engine_factory):
-    # yield e2e_huggingface_engine_factory("openai/gpt-oss-20b")
-    yield e2e_huggingface_engine_factory("google/gemma-3-1b-it")
-
-
-@pytest.fixture(scope="session")
-async def e2e_llamacpp_engine():
-    pass
+@pytest.fixture(scope="session", params=["unsloth/gpt-oss-20b-GGUF"])
+async def e2e_llamacpp_engine(request):
+    """
+    llama.cpp doesn't support monkey-patching to return cached responses like we want, so we skip if we aren't
+    hydrating real results
+    """
+    if not DO_REAL_LOCAL_GENERATE:
+        pytest.skip("llama.cpp cannot be mocked, set KANI_E2E_HYDRATE=local to run local llamacpp tests")
+    model_id = request.param
+    engine = LlamaCppEngine(
+        repo_id=model_id,
+        filename="*Q4_K_M*",
+        model_load_kwargs={"n_gpu_layers": 0},
+    )
+    if wrapper := model_specific.parser_for_hf_model(model_id):
+        engine = wrapper(engine)
+    yield engine
+    await engine.close()

@@ -1,0 +1,25 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01NEW49V7DzAEfQk4ZKqMhBU",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "ABRACADABRA\n\nHere's a Python function to calculate a factorial:\n\n```python\ndef factorial(n):\n    \"\"\"\n    Calculate the factorial of n.\n    \n    Args:\n        n: A non-negative integer\n        \n    Returns:\n        The factorial of n\n        \n    Raises:\n        ValueError: If n is negative\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers\")\n    \n    if n == 0 or n == 1:\n        return 1\n    \n    result = 1\n    for i in range(2, n + 1):\n        result *= i\n    \n    return result\n\n\n# Example usage\nprint(factorial(5))   # Output: 120\nprint(factorial(0))   # Output: 1\nprint(factorial(10))  # Output: 3628800\n```\n\n**Alternative recursive approach:**\n\n```python\ndef factorial_recursive(n):\n    \"\"\"Calculate factorial using recursion.\"\"\"\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers\")\n    \n    if n == 0 or n == 1:\n        return 1\n    \n    return n * factorial_recursive(n - 1)\n```\n\n**Using Python's built-in math module:**\n\n```python\nimport math\n\nresult = math.factorial(5)  # Output: 120\n```\n\nThe iterative approach is generally preferred for larger numbers as it avoids potential stack overflow issues with recursion."
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 41,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 352,
+    "service_tier": "standard"
+  }
+}

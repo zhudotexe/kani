@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "thank you"}], "role": "user"}, {"parts": [{"text": "arigato"}], "role": "model"}, {"parts": [{"text": "good morning"}], "role": "user"}, {"parts": [{"text": "ohayo"}], "role": "model"}, {"parts": [{"text": "crab"}], "role": "user"}], "systemInstruction": {"parts": [{"text": "You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only."}], "role": "user"}, "generationConfig": {}}

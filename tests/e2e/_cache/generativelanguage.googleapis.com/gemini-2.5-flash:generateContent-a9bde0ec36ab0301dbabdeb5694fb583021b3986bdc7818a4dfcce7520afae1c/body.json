@@ -1,0 +1,30 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "ABRACADABRA\n```python\ndef calculate_factorial(n):\n    \"\"\"\n    Calculates the factorial of a non-negative integer.\n\n    The factorial of a non-negative integer 'n', denoted by n!,\n    is the product of all positive integers less than or equal to n.\n    For example, 5! = 5 * 4 * 3 * 2 * 1 = 120.\n    The factorial of 0 is defined as 1 (0! = 1).\n\n    Args:\n        n (int): A non-negative integer.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an integer.\n        ValueError: If n is a negative integer.\n    \"\"\"\n    # --- Input Validation ---\n    if not isinstance(n, int):\n        raise TypeError(\"Input must be an integer.\")\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers.\")\n\n    # --- Base Case ---\n    if n == 0:\n        return 1\n\n    # --- Iterative Calculation ---\n    factorial_result = 1\n    for i in range(1, n + 1):\n        factorial_result *= i\n    return factorial_result\n\n# --- Example Usage ---\nif __name__ == \"__main__\":\n    print(\"--- Factorial Calculations ---\")\n\n    # Valid cases\n    print(f\"Factorial of 0: {calculate_factorial(0)}\")    # Expected: 1\n    print(f\"Factorial of 1: {calculate_factorial(1)}\")    # Expected: 1\n    print(f\"Factorial of 5: {calculate_factorial(5)}\")    # Expected: 120 (5*4*3*2*1)\n    print(f\"Factorial of 7: {calculate_factorial(7)}\")    # Expected: 5040\n\n    # Error handling examples\n    print(\"\\n--- Error Handling Examples ---\")\n    try:\n        print(f\"Factorial of -3: {calculate_factorial(-3)}\")\n    except ValueError as e:\n        print(f\"Error: {e}\")\n\n    try:\n        print(f\"Factorial of 3.5: {calculate_factorial(3.5)}\")\n    except TypeError as e:\n        print(f\"Error: {e}\")\n\n    try:\n        print(f\"Factorial of 'abc': {calculate_factorial('abc')}\")\n    except TypeError as e:\n        print(f\"Error: {e}\")\n\n    # You can also implement a recursive version, like this (optional):\n    def calculate_factorial_recursive(n):\n        if not isinstance(n, int):\n            raise TypeError(\"Input must be an integer.\")\n        if n < 0:\n            raise ValueError(\"Factorial is not defined for negative numbers.\")\n        if n == 0:\n            return 1\n        else:\n            return n * calculate_factorial_recursive(n - 1)\n\n    print(\"\\n--- Recursive Factorial (Optional) ---\")\n    print(f\"Factorial of 5 (recursive): {calculate_factorial_recursive(5)}\")\n```\n\n**Explanation:**\n\n1.  **Function Definition (`calculate_factorial(n)`):**\n    *   It takes one argument `n`, which is the number for which we want to calculate the factorial.\n\n2.  **Docstring:**\n    *   Explains what the function does, its arguments (`Args`), what it returns (`Returns`), and what errors it might raise (`Raises`). This is good practice for code readability and documentation.\n\n3.  **Input Validation:**\n    *   `if not isinstance(n, int):`: Checks if `n` is an integer. If not, it raises a `TypeError`.\n    *   `if n < 0:`: Checks if `n` is a negative number. Factorials are not defined for negative numbers, so it raises a `ValueError`.\n\n4.  **Base Case (`if n == 0:`):**\n    *   The factorial of 0 is defined as 1. This is the stopping condition for the calculation.\n\n5.  **Iterative Calculation:**\n    *   `factorial_result = 1`: We initialize a variable to store the result. We start with 1 because multiplying by 1 doesn't change the product.\n    *   `for i in range(1, n + 1):`: This loop iterates from `1` up to `n` (inclusive).\n    *   `factorial_result *= i`: In each iteration, `factorial_result` is multiplied by the current value of `i`.\n    *   `return factorial_result`: After the loop completes, the final calculated factorial is returned.\n\n6.  **Example Usage (`if __name__ == \"__main__\":`)**\n    *   This block demonstrates how to use the function with various inputs, including valid cases and examples that trigger the error handling.\n    *   The `try...except` blocks are used to catch the `ValueError` and `TypeError` that the function might raise, allowing the program to continue running and print informative messages.\n\n7.  **Recursive Version (Optional):**\n    *   I've included an optional `calculate_factorial_recursive` function. This is a common way to implement factorial, leveraging the definition `n! = n * (n-1)!`. While elegant, for very large `n`, it can hit Python's recursion depth limit. The iterative version is generally preferred for performance and avoiding such limits."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 33,
+    "candidatesTokenCount": 1231,
+    "totalTokenCount": 1437,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 33
+      }
+    ],
+    "thoughtsTokenCount": 173
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "hKT2aIG0EsGCjMcPsYHjoQw"
+}

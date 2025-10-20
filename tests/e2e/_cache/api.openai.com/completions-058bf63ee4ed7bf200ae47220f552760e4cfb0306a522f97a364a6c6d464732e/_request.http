@@ -1,0 +1,6 @@
+POST https://api.openai.com/v1/chat/completions
+accept: application/json
+content-type: application/json
+authorization: *** REDACTED ***
+
+{"messages":[{"role":"system","content":"Before replying to the user, output the word 'ABRACADABRA' on its own line."},{"role":"user","content":"Write me a Python function to calculate a factorial."}],"model":"gpt-5-mini","stream":true,"stream_options":{"include_usage":true},"tools":null}

@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-CSrO0R3czPJbcnoUzhz7naKGy7RqZ",
+  "object": "chat.completion",
+  "created": 1760994436,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "ABRACADABRA\n\nHere's a simple, safe Python function to compute a factorial (iterative to avoid recursion-depth issues):\n\ndef factorial(n: int) -> int:\n    \"\"\"Return n! for a non-negative integer n.\n    Raises:\n        TypeError: if n is not an int.\n        ValueError: if n is negative.\n    \"\"\"\n    if not isinstance(n, int):\n        raise TypeError(\"n must be an integer\")\n    if n < 0:\n        raise ValueError(\"n must be non-negative\")\n    result = 1\n    for i in range(2, n + 1):\n        result *= i\n    return result\n\nExample:\nprint(factorial(5))  # prints 120\n\nIf you want a recursive version or support for non-integer inputs (e.g., gamma function), tell me and I can provide that.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 42,
+    "completion_tokens": 830,
+    "total_tokens": 872,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 640,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}
