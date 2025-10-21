@@ -1,0 +1,10 @@
+<bos><start_of_turn>user
+What is my name? (You can mention it now.)<end_of_turn>
+<start_of_turn>model
+
+==========
+{'input_ids': tensor([[     2,    105,   2364,    107,   3689,    563,   1041,   1463, 236881,    568,   3048,    740,   4928,    625,   1492,   2907,    106,    107,    105,   4368,    107]], device='mps:0'),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], device='mps:0'),
+ 'token_type_ids': tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], device='mps:0'),
+ 'streamer': <transformers.generation.streamers.TextIteratorStreamer object at 0x320a58250>,
+ 'max_length': 128000}

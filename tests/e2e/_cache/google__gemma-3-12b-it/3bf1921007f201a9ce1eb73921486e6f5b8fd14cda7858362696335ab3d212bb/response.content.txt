@@ -1,0 +1,14 @@
+<bos><start_of_turn>user
+You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only.
+
+thank you<end_of_turn>
+<start_of_turn>model
+arigato<end_of_turn>
+<start_of_turn>user
+good morning<end_of_turn>
+<start_of_turn>model
+ohayo<end_of_turn>
+<start_of_turn>user
+crab<end_of_turn>
+<start_of_turn>model
+kani<end_of_turn>

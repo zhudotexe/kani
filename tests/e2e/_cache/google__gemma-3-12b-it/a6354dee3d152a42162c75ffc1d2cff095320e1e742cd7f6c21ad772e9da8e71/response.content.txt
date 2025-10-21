@@ -1,0 +1,6 @@
+<bos><start_of_turn>user
+What is my name? (You can mention it now.)<end_of_turn>
+<start_of_turn>model
+As an AI, I don't know your name! You haven't told me. 😊 
+
+You can tell me your name if you'd like!<end_of_turn>

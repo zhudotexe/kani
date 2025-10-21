@@ -344,7 +344,7 @@ class LocalEngineManager:
 def kwargs_for_local_model(model_id) -> dict:
     # some models need additional args
     # this is not part of the param for test name stringification
-    if model_id == "google/gemma-3-4b-it":
+    if model_id == "google/gemma-3-12b-it":
         return {"max_context_size": 128000}
     return {}
 
@@ -360,9 +360,8 @@ def kwargs_for_local_model(model_id) -> dict:
         "mistralai/Mistral-Small-Instruct-2409",
         # 2025 thinking models, function calling
         "openai/gpt-oss-20b",
-        "zai-org/GLM-4.5-Air-FP8",
         # 2025 multimodal models
-        "google/gemma-3-4b-it",
+        "google/gemma-3-12b-it",
     ],
 )
 async def e2e_huggingface_engine(request):

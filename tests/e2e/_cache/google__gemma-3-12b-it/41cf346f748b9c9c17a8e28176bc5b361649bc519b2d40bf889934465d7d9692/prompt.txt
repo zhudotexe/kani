@@ -1,0 +1,10 @@
+<bos><start_of_turn>user
+If you had one, what would be your favorite color? (Please don't mention my name.)<end_of_turn>
+<start_of_turn>model
+
+==========
+{'input_ids': tensor([[     2,    105,   2364,    107,   2859,    611,   1053,    886, 236764,   1144,   1093,    577,    822,   8126,   2258, 236881,    568,   9366,   1537, 236789, 236745,   4928,   1041,   1463,   2907,    106,    107,    105,   4368,    107]], device='mps:0'),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], device='mps:0'),
+ 'token_type_ids': tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], device='mps:0'),
+ 'streamer': <transformers.generation.streamers.TextIteratorStreamer object at 0x320a59240>,
+ 'max_length': 128000}

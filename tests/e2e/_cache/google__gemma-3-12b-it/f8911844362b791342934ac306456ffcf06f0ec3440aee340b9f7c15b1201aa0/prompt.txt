@@ -1,0 +1,10 @@
+<bos><start_of_turn>user
+Hello!<end_of_turn>
+<start_of_turn>model
+
+==========
+{'input_ids': tensor([[     2,    105,   2364,    107,   9259, 236888,    106,    107,    105,   4368,    107]], device='mps:0'),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], device='mps:0'),
+ 'token_type_ids': tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], device='mps:0'),
+ 'streamer': <transformers.generation.streamers.TextIteratorStreamer object at 0x320a59000>,
+ 'max_length': 128000}
