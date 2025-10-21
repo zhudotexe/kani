@@ -79,13 +79,17 @@ class TestE2EChat:
                 # try to keep up to the last 2 messages...
                 for to_keep in range(2, 0, -1):
                     # if the messages fit in the space we have remaining...
-                    token_len = await self.prompt_token_len(
-                        messages=self.always_included_messages + self.chat_history[-to_keep:],
-                        functions=list(self.functions.values()) if include_functions else None,
-                        **kwargs,
-                    )
-                    if token_len <= max_len:
-                        return self.always_included_messages + self.chat_history[-to_keep:]
+                    try:
+                        token_len = await self.prompt_token_len(
+                            messages=self.always_included_messages + self.chat_history[-to_keep:],
+                            functions=list(self.functions.values()) if include_functions else None,
+                            **kwargs,
+                        )
+                        if token_len <= max_len:
+                            return self.always_included_messages + self.chat_history[-to_keep:]
+                    except Exception as e:
+                        print(f"Invalid prompt: {e}")
+                        continue
                 raise ValueError("Could not find a valid prompt including at least 1 message")
 
         ai = LastTwoKani(engine)

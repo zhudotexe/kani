@@ -8,6 +8,7 @@ If the ``KANI_E2E_HYDRATE=api,local`` env var is set, any missing cache entries 
 make a request to the upstream, and save it for future caching. Remove ``api`` or ``local`` to run a subset.
 """
 
+import asyncio
 import hashlib
 import io
 import json
@@ -199,7 +200,6 @@ class CachingAutoModel:
         self._model_id = model_id
         self._model = None
         self._model_init_kwargs = model_kwargs
-        self._model_desired_device = None
 
         # human helpers
         self._tokenizer = tokenizer
@@ -228,20 +228,15 @@ class CachingAutoModel:
     # ducktyping methods
     dummy = lambda *_, **__: None
 
-    eval = dummy
-
-    def to(self, device):
-        if self._model:
-            self._model.to(device)
-        self._model_desired_device = device
+    eval = dummy  # we do this explicitly below
+    to = dummy  # we already do device_map=auto by default so we don't need this
 
     # lazy load the model on generate request
     def _ensure_real_model_loaded(self):
         if self._model is not None:
             return
+        print(f"##### LOADING MODEL #####\n{self._model_id}")
         self._model = AutoModelForCausalLM.from_pretrained(self._model_id, **self._model_init_kwargs)
-        if self._model_desired_device:
-            self._model.to(self._model_desired_device)
         self._model.eval()
 
     def generate(self, **kwargs):
@@ -266,7 +261,7 @@ class CachingAutoModel:
             # if we have streamer, put it 1 token at a time, then return
             if streamer:
                 for token in tokens:
-                    streamer.put(token)
+                    streamer.put(torch.Tensor([token]))
             return [tokens]
 
         # either pass it on or explode
@@ -323,17 +318,49 @@ async def e2e_openai_engine():
 
 
 # --- local ---
+class LocalEngineManager:
+    """helper to ensure only one local model is loaded on GPU at a time"""
+
+    last_loaded_engine = None
+    _lock = asyncio.Lock()
+
+    @classmethod
+    async def ensure_closed(cls):
+        async with cls._lock:
+            if cls.last_loaded_engine is not None:
+                await cls.last_loaded_engine.close()
+                cls.last_loaded_engine = None
+
+
 # https://docs.pytest.org/en/stable/how-to/fixtures.html#automatic-grouping-of-tests-by-fixture-instances
-@pytest.fixture(scope="session", params=["google/gemma-3-1b-it"])
+@pytest.fixture(
+    scope="session",
+    params=[
+        # 2023-2024 chat models
+        "meta-llama/Llama-2-7b-chat-hf",
+        "meta-llama/Llama-3.1-8B-Instruct",
+        "mistralai/Mistral-7B-Instruct-v0.3",
+        "mistralai/Mistral-Small-Instruct-2409",
+        # 2025 thinking models, function calling
+        "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+        "openai/gpt-oss-20b",
+        "zai-org/GLM-4.5-Air-FP8",
+        # 2025 multimodal models
+        "google/gemma-3-4b-it",
+        "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    ],
+)
 async def e2e_huggingface_engine(request):
     """Parameterized to test multiple different HF engines."""
     model_id = request.param
+    await LocalEngineManager.ensure_closed()
 
     engine = HuggingEngine(model_id=model_id, model_cls=CachingAutoModel)
     if wrapper := model_specific.parser_for_hf_model(model_id):
         engine = wrapper(engine)
+    LocalEngineManager.last_loaded_engine = engine
     yield engine
-    await engine.close()
+    await LocalEngineManager.ensure_closed()
 
 
 @pytest.fixture(scope="session", params=["unsloth/gpt-oss-20b-GGUF"])
@@ -345,6 +372,7 @@ async def e2e_llamacpp_engine(request):
     if not DO_REAL_LOCAL_GENERATE:
         pytest.skip("llama.cpp cannot be mocked, set KANI_E2E_HYDRATE=local to run local llamacpp tests")
     model_id = request.param
+    await LocalEngineManager.ensure_closed()
     engine = LlamaCppEngine(
         repo_id=model_id,
         filename="*Q4_K_M*",
@@ -352,5 +380,6 @@ async def e2e_llamacpp_engine(request):
     )
     if wrapper := model_specific.parser_for_hf_model(model_id):
         engine = wrapper(engine)
+    LocalEngineManager.last_loaded_engine = engine
     yield engine
-    await engine.close()
+    await LocalEngineManager.ensure_closed()
