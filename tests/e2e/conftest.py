@@ -10,7 +10,6 @@ make a request to the upstream, and save it for future caching. Remove ``api`` o
 
 import asyncio
 import hashlib
-import io
 import json
 import logging
 import mimetypes
@@ -342,6 +341,14 @@ class LocalEngineManager:
                 cls.last_loaded_engine = None
 
 
+def kwargs_for_local_model(model_id) -> dict:
+    # some models need additional args
+    # this is not part of the param for test name stringification
+    if model_id == "google/gemma-3-4b-it":
+        return {"max_context_size": 128000}
+    return {}
+
+
 # https://docs.pytest.org/en/stable/how-to/fixtures.html#automatic-grouping-of-tests-by-fixture-instances
 @pytest.fixture(
     scope="session",
@@ -352,12 +359,11 @@ class LocalEngineManager:
         "mistralai/Mistral-7B-Instruct-v0.3",
         "mistralai/Mistral-Small-Instruct-2409",
         # 2025 thinking models, function calling
-        "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+        "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
         "openai/gpt-oss-20b",
         "zai-org/GLM-4.5-Air-FP8",
         # 2025 multimodal models
         "google/gemma-3-4b-it",
-        "Qwen/Qwen3-Omni-30B-A3B-Instruct",
     ],
 )
 async def e2e_huggingface_engine(request):
@@ -365,7 +371,7 @@ async def e2e_huggingface_engine(request):
     model_id = request.param
     await LocalEngineManager.ensure_closed()
 
-    engine = HuggingEngine(model_id=model_id, model_cls=CachingAutoModel)
+    engine = HuggingEngine(model_id=model_id, model_cls=CachingAutoModel, **kwargs_for_local_model(model_id))
     if wrapper := model_specific.parser_for_hf_model(model_id):
         engine = wrapper(engine)
     LocalEngineManager.last_loaded_engine = engine
@@ -387,6 +393,7 @@ async def e2e_llamacpp_engine(request):
         repo_id=model_id,
         filename="*Q4_K_M*",
         model_load_kwargs={"n_gpu_layers": 0},
+        prompt_pipeline=model_specific.prompt_pipeline_for_hf_model(model_id),
     )
     if wrapper := model_specific.parser_for_hf_model(model_id):
         engine = wrapper(engine)

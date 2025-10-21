@@ -6,6 +6,7 @@ import pytest
 from pytest_lazy_fixtures import lf
 
 from kani import ChatMessage, Kani, print_stream, print_width
+from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
 pytestmark = pytest.mark.e2e
 
@@ -26,11 +27,15 @@ class TestE2EChat:
         print_width(query, prefix="USER: ")
         if stream:
             stream = ai.chat_round_stream(query)
-            await print_stream(stream, prefix="AI: ")
+            await print_stream(stream, prefix="AI: ")  # todo how to handle reasoning here
             msg = await stream.message()
+            text = assistant_message_thinking(msg, show_args=True)
+            if text:
+                print_width(text, prefix="AI: ")
         else:
             msg = await ai.chat_round(query)
-            print_width(msg.text, prefix="AI: ")
+            text = assistant_message_contents_thinking(msg, show_args=True, show_reasoning=True)
+            print_width(text, prefix="AI: ")
         return msg
 
     async def test_hello(self, engine, stream):
