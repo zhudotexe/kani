@@ -1,0 +1,6 @@
+<s> Hello Mizzenmast! It's nice to meet you. How can I assist you today? Let's have a great conversation!</s>[INST] If you had one, what would be your favorite color? (Please don't mention my name.)[/INST]
+==========
+{'input_ids': tensor([[    1, 23325,  1119,  1231,  3807, 29487,  1297, 29576,  1429, 29510, 29481,  5939,  1066,  3415,  1136, 29491,  2370,  1309,  1083,  6799,  1136,  3922, 29572,  3937, 29510, 29481,  1274,  1032,  2366,  7882, 29576,     2,     3,  1815,  1136,  1321,  1392, 29493,  1535,  1450,  1115,  1342,  7424,  3949, 29572,  1093, 12837,  1717, 29510, 29475,  5157,  1354,  1909,  3742,     4]], device='cuda:0'),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], device='cuda:0'),
+ 'streamer': <transformers.generation.streamers.TextIteratorStreamer object at 0x7fe7458e2210>,
+ 'max_length': 32768}

@@ -1,0 +1,10 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Hi! My name is Mizzenmast.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+Nice to meet you, Mizzenmast. That's an... interesting name. I'm guessing you might be a fan of sailing or nautical history, given the reference to the mizzen mast, which is a type of mast on a sailboat. Am I right?<|eot_id|>

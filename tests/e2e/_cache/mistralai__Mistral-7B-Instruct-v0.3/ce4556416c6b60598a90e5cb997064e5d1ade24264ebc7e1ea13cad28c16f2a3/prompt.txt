@@ -1,0 +1,6 @@
+<s>[INST] Hi! My name is Mizzenmast.[/INST]
+==========
+{'input_ids': tensor([[    1,     3, 16127, 29576,  2752,  1909,  1117,  1119,  1231,  3807, 29487,  1297, 29491,     4]], device='cuda:0'),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], device='cuda:0'),
+ 'streamer': <transformers.generation.streamers.TextIteratorStreamer object at 0x7fe7458396d0>,
+ 'max_length': 32768}

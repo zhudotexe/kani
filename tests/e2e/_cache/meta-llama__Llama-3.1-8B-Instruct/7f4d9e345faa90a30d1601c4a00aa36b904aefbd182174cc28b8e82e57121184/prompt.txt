@@ -1,0 +1,15 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Hi! My name is Mizzenmast.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+==========
+{'input_ids': tensor([[128000, 128006,   9125, 128007,    271,  38766,   1303,  33025,   2696,     25,   6790,    220,   2366,     18,    198,  15724,   2696,     25,    220,   1627,  10263,    220,   2366,     19,    271, 128009, 128006,    882, 128007,    271,  13347,      0,   3092,    836,    374,  72695,   5797,  97613,     13, 128009, 128006,  78191, 128007,    271]], device='cuda:0'),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], device='cuda:0'),
+ 'streamer': <transformers.generation.streamers.TextIteratorStreamer object at 0x7fe7458c6910>,
+ 'max_length': 131072}

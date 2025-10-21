@@ -1,0 +1,9 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>assistant<|channel|>final<|message|>Hi Mizzenmast! 🎉 Nice to meet you. How can I help you today?<|end|><|start|>user<|message|>If you had one, what would be your favorite color? (Please don't mention my name.)<|end|><|start|>assistant<|channel|>analysis<|message|>User: "If you had one, what would be your favorite color? (Please don't mention my name.)"
+
+We are to answer: what would be AI's favorite color. Shouldn't mention user's name. Should not mention "Mizzenmast"? They said don't mention my name. So we can respond with something like: "My favorite color would be..." We can choose a color. Use first-person. Ok.<|end|><|start|>assistant<|channel|>final<|message|>If I were to pick a favorite, it would probably be a deep, calming blue—something that feels serene yet vibrant.<|return|>

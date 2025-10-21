@@ -1,0 +1,17 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+Nice to meet you, Mizzenmast. That's an... interesting name. I'm guessing you might be a fan of sailing or nautical history, given the reference to the mizzen mast, which is a type of mast on a sailboat. Am I right?<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+If you had one, what would be your favorite color? (Please don't mention my name.)<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+==========
+{'input_ids': tensor([[128000, 128006,   9125, 128007,    271,  38766,   1303,  33025,   2696,     25,   6790,    220,   2366,     18,    198,  15724,   2696,     25,    220,   1627,  10263,    220,   2366,     19,    271, 128009, 128006,  78191, 128007,    271,  46078,    311,   3449,    499,     11,  72695,   5797,  97613,     13,   3011,    596,    459,   1131,   7185,    836,     13,    358,   2846,  47576,    499,   2643,    387,    264,   8571,    315,  51129,    477,    308,  68267,   3925,     11,   2728,    279,   5905,    311,    279,    296,    450,   5797,  19218,     11,    902,    374,    264,    955,    315,  19218,    389,    264,  30503,  38865,     13,   3383,    358,   1314,     30, 128009, 128006,    882, 128007,    271,   2746,    499,   1047,    832,     11,   1148,   1053,    387,    701,   7075,   1933,     30,    320,   5618,   1541,    956,   6420,    856,    836,   6266, 128009, 128006,  78191, 128007,    271]], device='cuda:0'),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], device='cuda:0'),
+ 'streamer': <transformers.generation.streamers.TextIteratorStreamer object at 0x7fe7458c7690>,
+ 'max_length': 131072}

@@ -1,0 +1,18 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+thank you<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+arigato<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+good morning<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+ohayo<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+crab<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+kani<|eot_id|>

@@ -1,0 +1,3 @@
+<s>[INST] You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only.
+
+thank you[/INST] arigato</s>[INST] good morning[/INST] ohayo</s>[INST] crab[/INST] kani</s>

@@ -1,0 +1,6 @@
+<s>[INST] Hello![/INST]
+==========
+{'input_ids': tensor([[    1,     3, 23325, 29576,     4]], device='cuda:0'),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1]], device='cuda:0'),
+ 'streamer': <transformers.generation.streamers.TextIteratorStreamer object at 0x7fe7458e3e90>,
+ 'max_length': 32768}

@@ -41,29 +41,31 @@ class DeepSeekR1ToolCallParser(BaseToolCallParser):
             content,
             re.IGNORECASE | re.DOTALL,
         )
-        if tool_content_match is None:
-            return content, []
-        log.debug(f"Found tool content while parsing: {tool_content_match.group(1)}")
+        if tool_content_match:
+            content = content[: tool_content_match.start()]
+            log.debug(f"Found tool content while parsing: {tool_content_match.group(1)}")
 
-        # translate to kani spec
-        tool_calls = []
-        for tc_match in re.finditer(
-            r"<｜tool▁call▁begin｜>(?P<type>.+?)<｜tool▁sep｜>(?P<name>.+?)\n```json\n(?P<args>.+?)\n```<｜tool▁call▁end｜>",
-            tool_content_match.group(1),
-            re.IGNORECASE | re.DOTALL,
-        ):
-            tool_name = tc_match["name"].strip()
-            tool_args = tc_match["args"].strip()
-            try:
-                json.loads(tool_args)
-            except json.JSONDecodeError:
-                log.error(f"Could not decode tool content! Skipping this tool call:\n{tc_match[0]!r}!", exc_info=True)
-                continue
-            tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
-            tool_calls.append(tool_call)
+            # translate to kani spec
+            tool_calls = []
+            for tc_match in re.finditer(
+                r"<｜tool▁call▁begin｜>(?P<type>.+?)<｜tool▁sep｜>(?P<name>.+?)\n"
+                r"```json\n(?P<args>.+?)\n```<｜tool▁call▁end｜>",
+                tool_content_match.group(1),
+                re.IGNORECASE | re.DOTALL,
+            ):
+                tool_name = tc_match["name"].strip()
+                tool_args = tc_match["args"].strip()
+                try:
+                    json.loads(tool_args)
+                except json.JSONDecodeError:
+                    log.error(
+                        f"Could not decode tool content! Skipping this tool call:\n{tc_match[0]!r}!", exc_info=True
+                    )
+                    continue
+                tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
+                tool_calls.append(tool_call)
 
         # parse thinking
-        content = content[: tool_content_match.start()]
         if "</think>" in content:
             thinking, content = content.split("</think>", 1)
             thinking.removeprefix("<think>")  # sometimes not output for whatever reason

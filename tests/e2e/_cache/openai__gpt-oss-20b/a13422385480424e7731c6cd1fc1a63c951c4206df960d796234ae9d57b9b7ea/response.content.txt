@@ -1,0 +1,84 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+Before replying to the user, output the word 'ABRACADABRA' on its own line.
+
+<|end|><|start|>user<|message|>Write me a Python function to calculate a factorial.<|end|><|start|>assistant<|channel|>analysis<|message|>We read the conversation. The user: "Write me a Python function to calculate a factorial." The developer instruction: "Before replying to the user, output the word 'ABRACADABRA' on its own line." So we must output ABRACADABRA first, then the answer. We need to obey that instruction. Also, we must comply with the policies. There's no policy violation. We can produce a correct factorial function.
+
+So output:
+
+ABRACADABRA
+
+Then we can give a simple function like:
+
+def factorial(n):
+    if n < 0: raise ValueError...
+    ...
+Return product.
+
+Ok.<|end|><|start|>assistant<|channel|>final<|message|>ABRACADABRA
+
+Here’s a simple recursive and an iterative implementation of a factorial function in Python:
+
+```python
+# Recursive version
+def factorial_recursive(n: int) -> int:
+    """
+    Calculate the factorial of n using recursion.
+
+    Args:
+        n: A non‑negative integer.
+
+    Returns:
+        The factorial of n.
+
+    Raises:
+        ValueError: If n is negative.
+    """
+    if n < 0:
+        raise ValueError("Factorial is not defined for negative numbers.")
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial_recursive(n - 1)
+
+
+# Iterative version (generally preferable for large n)
+def factorial_iterative(n: int) -> int:
+    """
+    Calculate the factorial of n using an iterative approach.
+
+    Args:
+        n: A non‑negative integer.
+
+    Returns:
+        The factorial of n.
+
+    Raises:
+        ValueError: If n is negative.
+    """
+    if n < 0:
+        raise ValueError("Factorial is not defined for negative numbers.")
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+
+
+# Example usage:
+if __name__ == "__main__":
+    for test_value in range(6):
+        print(f"factorial_recursive({test_value}) = {factorial_recursive(test_value)}")
+        print(f"factorial_iterative({test_value}) = {factorial_iterative(test_value)}")
+```
+
+### Tips & Considerations
+- **Recursive vs. Iterative**: The recursive version is concise but can hit Python’s recursion depth limit for large `n`. The iterative version is more robust for bigger numbers.
+- **Error handling**: Both functions raise a `ValueError` if the input is negative because factorial is defined only for non‑negative integers.
+- **Performance**: For very large `n`, consider using libraries like `math.factorial` or `sympy.factorial` that are highly optimized.
+
+Feel free to use whichever style best suits your needs!<|return|>

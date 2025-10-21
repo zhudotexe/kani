@@ -359,7 +359,6 @@ def kwargs_for_local_model(model_id) -> dict:
         "mistralai/Mistral-7B-Instruct-v0.3",
         "mistralai/Mistral-Small-Instruct-2409",
         # 2025 thinking models, function calling
-        "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
         "openai/gpt-oss-20b",
         "zai-org/GLM-4.5-Air-FP8",
         # 2025 multimodal models

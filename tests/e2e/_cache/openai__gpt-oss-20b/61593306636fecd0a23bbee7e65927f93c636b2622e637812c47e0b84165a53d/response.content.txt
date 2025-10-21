@@ -1,0 +1,7 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>user<|message|>Hi! My name is Mizzenmast.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to respond appropriately as ChatGPT. User says "Hi! My name is Mizzenmast." Likely they want a greeting. We should respond with friendly greeting, perhaps ask how can I help. It's not a question but a self-introduction. Could ask what they need. We'll respond in friendly tone.<|end|><|start|>assistant<|channel|>final<|message|>Hi Mizzenmast! 🎉 Nice to meet you. How can I help you today?<|return|>

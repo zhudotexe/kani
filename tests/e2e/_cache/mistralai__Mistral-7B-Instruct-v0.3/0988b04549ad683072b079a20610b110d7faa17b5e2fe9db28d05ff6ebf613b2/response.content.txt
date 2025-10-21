@@ -1,0 +1,21 @@
+<s>[INST] Before replying to the user, output the word 'ABRACADABRA' on its own line.
+
+Write me a Python function to calculate a factorial.[/INST] ABRACADABRA
+
+Here's a Python function to calculate a factorial:
+
+```python
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+```
+
+You can use this function like this:
+
+```python
+print(factorial(5))  # Output: 120
+```
+
+This function uses recursion to calculate the factorial of a number. It multiplies the number by the factorial of the number minus one, until it reaches zero, at which point it returns 1 (since the factorial of 0 is 1).</s>
