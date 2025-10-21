@@ -112,6 +112,7 @@ class AsyncCachingTransport(httpx.AsyncHTTPTransport):
                 with open(resp_head_path) as f:
                     meta = json.load(f)
                 resp_body_path = resp_head_path.with_name(meta["body_path"])
+                print(f"Returning cached response from: {cache_dir}")
                 return httpx.Response(
                     status_code=meta["status"],
                     headers=httpx.Headers(meta["headers"]),
@@ -125,6 +126,7 @@ class AsyncCachingTransport(httpx.AsyncHTTPTransport):
 
         # either pass it on or explode
         if DO_REAL_API_REQUESTS:
+            print("Generating new response!")
             resp = await super().handle_async_request(request)
             headers = {k: v for k, v in resp.headers.items() if k.lower() not in RESPONSE_REMOVED_HEADERS}
             content_type, *_ = resp.headers["content-type"].split(";")
@@ -154,6 +156,7 @@ class AsyncCachingTransport(httpx.AsyncHTTPTransport):
                 # we can't stream it here since that reasonably consumes the stream without saving to ._content
                 # so hopefully the model providers aren't returning GB+ responses
                 resp_body_path.write_bytes(await resp.aread())
+            print(f"New response saved to cache at: {cache_dir}")
 
             return resp
         raise ValueError(
@@ -173,12 +176,12 @@ def cache_dir_for_local_generate(model_id: str, cache_key: str) -> Path:
 def cache_key_for_local_generate(input_ids: torch.Tensor, input_features: torch.Tensor = None) -> str:
     """Get the cache key (filename) for a given generate request."""
     the_hash = hashlib.sha256()
-    input_ids_bytes = io.BytesIO()
-    torch.save(input_ids, input_ids_bytes)
+    # torch.save saves a pickle, so we want to hash the contents of the tensor ourselves
+    # we do this lazily by just hashing the repr of the tensor
+    the_hash.update(str(input_ids.tolist()).encode())
     if input_features:
-        torch.save(input_features, input_ids_bytes)
-    input_ids_bytes.seek(0)
-    the_hash.update(input_ids_bytes.getvalue())
+        # TODO is this stable?
+        the_hash.update(str(input_ids.tolist()).encode())
     return the_hash.hexdigest()
 
 
@@ -258,15 +261,20 @@ class CachingAutoModel:
         if response_tokens_path.exists():
             with open(response_tokens_path) as f:
                 tokens = json.load(f)
+            print(f"Returning cached response from: {cache_dir}")
             # if we have streamer, put it 1 token at a time, then return
             if streamer:
-                for token in tokens:
+                # put the prompt as one big batch first
+                prompt_len = len(input_ids[0])
+                streamer.put(torch.tensor(tokens[:prompt_len]))
+                for token in tokens[prompt_len:]:
                     streamer.put(torch.tensor([token]))
                 streamer.end()
             return [tokens]
 
         # either pass it on or explode
         elif DO_REAL_LOCAL_GENERATE:
+            print("Generating new response!")
             self._ensure_real_model_loaded()
             tokens = self._model.generate(**kwargs)
             # save to cache
@@ -274,6 +282,7 @@ class CachingAutoModel:
                 json.dump(tokens[0].tolist(), f)
             response_text = self._tokenizer.decode(tokens[0])  # includes the prompt
             response_text_path.write_text(response_text)
+            print(f"New response saved to cache at: {cache_dir}")
             return tokens
         raise ValueError(
             f"Prompt was not cached: {prompt_path}. This may mean the prompt has changed, or you need to hydrate the"
