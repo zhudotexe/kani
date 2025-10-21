@@ -261,7 +261,8 @@ class CachingAutoModel:
             # if we have streamer, put it 1 token at a time, then return
             if streamer:
                 for token in tokens:
-                    streamer.put(torch.Tensor([token]))
+                    streamer.put(torch.tensor([token]))
+                streamer.end()
             return [tokens]
 
         # either pass it on or explode
