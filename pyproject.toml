@@ -89,7 +89,8 @@ asyncio_default_fixture_loop_scope = "session"
 asyncio_default_test_loop_scope = "session"  # to allow sharing async engine fixtures correctly
 markers = [
     "local: these tests use a local language model.",
-    "e2e: these tests run end-to-end, use KANI_E2E_HYDRATE to hydrate cache."
+    "e2e: these tests run end-to-end, use KANI_E2E_HYDRATE to hydrate cache.",
+    "request_model_capabilities",
 ]
 
 [tool.isort]

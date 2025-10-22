@@ -359,40 +359,60 @@ class LocalEngineManager:
                 cls.last_loaded_engine = None
 
 
-def kwargs_for_local_model(model_id) -> dict:
-    # some models need additional args
-    # this is not part of the param for test name stringification
-    if model_id == "google/gemma-3-12b-it":
-        return {"max_context_size": 128000}
-    return {}
+# list of tags: reasoning, function_calling, mm_image, mm_audio, mm_video
+# for a test to request a model with a certain tag, use @pytest.mark.request_model_capabilities([tags...])
+HF_MODELS_TO_TEST = {
+    # 2023-2024 chat models
+    "meta-llama/Llama-2-7b-chat-hf": {},
+    "meta-llama/Llama-3.1-8B-Instruct": {"capabilities": ["function_calling"]},
+    "mistralai/Mistral-7B-Instruct-v0.3": {},
+    "mistralai/Mistral-Small-Instruct-2409": {"capabilities": ["function_calling"]},
+    # 2025 thinking models, function calling
+    "openai/gpt-oss-20b": {"capabilities": ["reasoning", "function_calling"]},
+    # 2025 multimodal models
+    "google/gemma-3-12b-it": {"capabilities": ["mm_image"], "kwargs": {"max_context_size": 128000}},
+}
 
 
 # https://docs.pytest.org/en/stable/how-to/fixtures.html#automatic-grouping-of-tests-by-fixture-instances
-@pytest.fixture(
-    scope="session",
-    params=[
-        # 2023-2024 chat models
-        "meta-llama/Llama-2-7b-chat-hf",
-        "meta-llama/Llama-3.1-8B-Instruct",
-        "mistralai/Mistral-7B-Instruct-v0.3",
-        "mistralai/Mistral-Small-Instruct-2409",
-        # 2025 thinking models, function calling
-        "openai/gpt-oss-20b",
-        # 2025 multimodal models
-        "google/gemma-3-12b-it",
-    ],
-)
-async def e2e_huggingface_engine(request):
-    """Parameterized to test multiple different HF engines."""
+@pytest.fixture(scope="session", params=list(HF_MODELS_TO_TEST.keys()))
+async def _hf_engine(request):
     model_id = request.param
-    await LocalEngineManager.ensure_closed()
+    model_info = HF_MODELS_TO_TEST[model_id]
+    load_kwargs = model_info.get("kwargs", {})
 
-    engine = HuggingEngine(model_id=model_id, model_cls=CachingAutoModel, **kwargs_for_local_model(model_id))
+    # load the model
+    await LocalEngineManager.ensure_closed()
+    engine = HuggingEngine(model_id=model_id, model_cls=CachingAutoModel, **load_kwargs)
     if wrapper := model_specific.parser_for_hf_model(model_id):
         engine = wrapper(engine)
     LocalEngineManager.last_loaded_engine = engine
     yield engine
     await LocalEngineManager.ensure_closed()
+
+
+@pytest.fixture(scope="function")
+async def e2e_huggingface_engine(request, _hf_engine):
+    """
+    Parameterized to test multiple different HF engines.
+
+    This is a function-scoped fixture that requests the session-scoped fixture to correctly skip tests based on model
+    capabilities.
+    """
+    model_id = _hf_engine.model_id
+    model_info = HF_MODELS_TO_TEST[model_id]
+    capabilities = model_info.get("capabilities", [])
+
+    # skip if the model does not have the requested capabilities
+    marker = request.node.get_closest_marker("request_model_capabilities")
+    if marker:
+        requested_capabilities = marker.args[0]
+        missing_capabilities = set(requested_capabilities).difference(capabilities)
+        if missing_capabilities:
+            pytest.skip(f"{model_id} model is missing the following capabilities: {missing_capabilities}")
+
+    # load the model
+    yield _hf_engine
 
 
 @pytest.fixture(scope="session", params=["unsloth/gpt-oss-20b-GGUF"])
