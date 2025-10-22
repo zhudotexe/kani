@@ -9,12 +9,14 @@ make a request to the upstream, and save it for future caching. Remove ``api`` o
 """
 
 import asyncio
+import datetime
 import hashlib
 import json
 import logging
 import mimetypes
 import os
 import pprint
+import re
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -22,6 +24,7 @@ import httpx
 import pytest
 import torch
 from anthropic import AsyncAnthropic
+from freezegun import freeze_time
 from google import genai
 from openai import AsyncOpenAI
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, GenerationConfig
@@ -40,7 +43,17 @@ DO_REAL_LOCAL_GENERATE = "local" in os.getenv("KANI_E2E_HYDRATE", "")
 
 log = logging.getLogger("tests.e2e")
 
+
 # ==== caching utils ====
+# --- datetime ---
+# certain prompt templates include the current date and time, we'll set it to an arbitrary fixed time
+# (the day I wrote these tests)
+@pytest.fixture(autouse=True, scope="module")
+def mock_date():
+    with freeze_time(datetime.datetime(2025, 10, 21, 12, 55, 37), real_asyncio=True):
+        yield
+
+
 # --- http ---
 # headers whose values should be saved in the request
 REQUEST_KEPT_HEADERS = {"content-type", "accept"}
@@ -253,8 +266,13 @@ class CachingAutoModel:
         input_ids = kwargs["input_ids"]
         streamer = kwargs.get("streamer")
         prompt_text = self._tokenizer.decode(input_ids[0])
+
+        printable_kwargs = kwargs.copy()
+        printable_kwargs.pop("streamer", None)  # streamer repr has a pointer which changes per run
         torch.set_printoptions(linewidth=999, profile="full")
-        prompt_path.write_text(f"{prompt_text}\n==========\n{pprint.pformat(kwargs, sort_dicts=False, width=120)}")
+        printed_kwargs = pprint.pformat(printable_kwargs, sort_dicts=False, width=120)
+        printed_kwargs = re.sub(r", device='.+?'", "", printed_kwargs)  # tensor can be on cpu, mps, or cuda
+        prompt_path.write_text(f"{prompt_text}\n==========\n{printed_kwargs}")
 
         # return the cached resp
         if response_tokens_path.exists():

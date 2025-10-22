@@ -1,6 +1,5 @@
 <s> [INST] Hi! My name is Mizzenmast. [/INST]
 ==========
-{'input_ids': tensor([[    1,   518, 25580, 29962,  6324, 29991,  1619,  1024,   338,   341,   466,  2256, 29885,   579, 29889,   518, 29914, 25580, 29962]], device='cuda:0'),
- 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], device='cuda:0'),
- 'streamer': <transformers.generation.streamers.TextIteratorStreamer object at 0x7fe747198910>,
+{'input_ids': tensor([[    1,   518, 25580, 29962,  6324, 29991,  1619,  1024,   338,   341,   466,  2256, 29885,   579, 29889,   518, 29914, 25580, 29962]]),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
  'max_length': 4096}

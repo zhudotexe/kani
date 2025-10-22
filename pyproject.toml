@@ -52,6 +52,7 @@ llama = [
 cpp = [
     "llama-cpp-python>=0.2.0,<1.0.0",
     "huggingface-hub",
+    "sentencepiece>=0.1.99,<1.0.0",
 ]
 
 openai = [

@@ -11,11 +11,14 @@ build
 coverage
 isort
 hatch
+twine
+
+# test
+freezegun
 hypothesis
 pytest
 pytest-asyncio
 pytest-lazy-fixtures
-twine
 
 # docs
 furo~=2023.9.10

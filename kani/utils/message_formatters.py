@@ -31,7 +31,7 @@ def assistant_message_contents(msg: ChatMessage, show_reasoning=True, color=True
         for t, grp in itertools.groupby(msg.parts, lambda p: type(p)):
             if issubclass(t, ReasoningPart):
                 content = "".join(p.content for p in grp)
-                text_parts.append(f"\033[0;38m{content}\033[0m" if color else content)
+                text_parts.append(f"\033[0;37m{content}\033[0m" if color else content)
             else:
                 text_parts.append("".join(map(str, grp)))
         return "\n".join(text_parts)
