@@ -165,6 +165,8 @@ class AnthropicEngine(TokenCached, BaseEngine):
     **Message Extras**: ``"anthropic_message"``: The Message (raw response) returned by the Anthropic servers.
     """
 
+    disable_function_calling_kwargs = {"tool_choice": {"type": "none"}}
+
     def __init__(
         self,
         api_key: str = None,

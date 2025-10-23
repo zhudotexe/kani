@@ -172,8 +172,15 @@ class Kani:
                     message = await self.add_completion_to_history(completion)
                     yield message
 
-                # if function call, do it and attempt retry if it's wrong
+                # if no function calls or we're out of calls, return
                 if not message.tool_calls:
+                    return
+                if max_function_rounds is not None and function_rounds >= max_function_rounds:
+                    warnings.warn(
+                        "The model requested tool calls but the maximum number of function rounds has been reached,"
+                        f" returning now...\nTool calls: {message.tool_calls}",
+                        stacklevel=3,
+                    )
                     return
 
                 # run each tool call in parallel
@@ -217,14 +224,14 @@ class Kani:
                     retry += 1
                     if not should_retry_call:
                         # disable function calling on the next go
-                        kwargs["include_functions"] = False
+                        kwargs.update(self.engine.disable_function_calling_kwargs)
                 else:
                     retry = 0
 
                 # if we're at the max number of function rounds, don't include functions on the next go
                 function_rounds += 1
                 if max_function_rounds is not None and function_rounds >= max_function_rounds:
-                    kwargs["include_functions"] = False
+                    kwargs.update(self.engine.disable_function_calling_kwargs)
 
     # === main entrypoints ===
     async def chat_round(self, query: QueryType, **kwargs) -> ChatMessage:

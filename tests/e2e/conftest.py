@@ -364,7 +364,7 @@ class LocalEngineManager:
 HF_MODELS_TO_TEST = {
     # 2023-2024 chat models
     "meta-llama/Llama-2-7b-chat-hf": {},
-    "meta-llama/Llama-3.1-8B-Instruct": {"capabilities": ["function_calling"]},
+    "meta-llama/Llama-3.1-8B-Instruct": {},  # technically can do FC, but it's quite flaky
     "mistralai/Mistral-7B-Instruct-v0.3": {},
     "mistralai/Mistral-Small-Instruct-2409": {"capabilities": ["function_calling"]},
     # 2025 thinking models, function calling

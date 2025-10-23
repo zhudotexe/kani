@@ -36,6 +36,8 @@ class OpenAIEngine(TokenCached, BaseEngine):
     * ``"openai_usage"``: The usage data (raw response) returned by the OpenAI servers.
     """
 
+    disable_function_calling_kwargs = {"tool_choice": "none"}
+
     def __init__(
         self,
         api_key: str = None,

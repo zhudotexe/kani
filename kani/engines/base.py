@@ -135,8 +135,14 @@ class BaseEngine(abc.ABC):
         """Optional: Clean up any resources the engine might need."""
         pass
 
+    disable_function_calling_kwargs = {"include_functions": False}
+    """
+    Kwargs to set in the Kani._full_round loop when the model should disable function calling. Mostly this is useful for
+    API models, where we want to still define functions in the prompt but disallow calling them.
+    """
+
     # ==== internal ====
-    __ignored_repr_attrs__ = ("token_cache",)
+    __ignored_repr_attrs__ = ("disable_function_calling_kwargs", "token_reserve")
 
     def __repr__(self):
         """Default: generate a repr based on the instance's __dict__."""

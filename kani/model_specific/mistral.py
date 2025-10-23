@@ -136,7 +136,7 @@ class MistralToolCallParser(BaseToolCallParser):
         tool_calls = []
         for action in actions:
             tool_name = action["name"]
-            tool_args = json.dumps(action["arguments"])
+            tool_args = json.dumps(action.get("arguments", {}))
             tool_id = action.get("id")
             tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args), call_id_=tool_id)
             tool_calls.append(tool_call)
