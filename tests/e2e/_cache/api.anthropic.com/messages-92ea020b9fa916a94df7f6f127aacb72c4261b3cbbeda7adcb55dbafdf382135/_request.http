@@ -1,0 +1,6 @@
+POST https://api.anthropic.com/v1/messages
+accept: application/json
+content-type: application/json
+x-api-key: *** REDACTED ***
+
+{"max_tokens":2048,"messages":[{"role":"user","content":[{"type":"text","text":"Send an email to john@example.com with subject \"Meeting Tomorrow\" and body \"See you at 3pm\""}]}],"model":"claude-haiku-4-5","system":"You are an email assistant. Use the provided functions to help with email tasks.","tools":[{"name":"check_inbox","description":"Check the email inbox.","input_schema":{"description":"Check the email inbox.","properties":{},"title":"check_inbox","type":"object"}},{"name":"send_email","description":"Send an email to a recipient. Control returns to the user after this function.","input_schema":{"description":"Send an email to a recipient. Control returns to the user after this function.","properties":{"recipient":{"type":"string"},"subject":{"type":"string"},"body":{"type":"string"}},"required":["recipient","subject","body"],"title":"send_email","type":"object"}}]}

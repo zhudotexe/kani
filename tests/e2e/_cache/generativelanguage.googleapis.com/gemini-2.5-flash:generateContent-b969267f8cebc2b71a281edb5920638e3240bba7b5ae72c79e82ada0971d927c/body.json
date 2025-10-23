@@ -1,0 +1,47 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "functionCall": {
+              "name": "get_weather",
+              "args": {
+                "location": "San Francisco, CA",
+                "unit": "fahrenheit"
+              }
+            },
+            "thoughtSignature": "CoEDAdHtim88O5DD9Lhe1K6WGBoJDzlnJBs+YPQ4TDWMmQRPlEmAngE5H1BUkc/1EPSM7BWoIH5vJSWO5Dq2RIHGaEmw3zaCkiLij5vKklgxiqzRmp+JVDNqcabU5Qi4H4dcDayWZb/+g7I367PA/IzSlqr8J7KRrxHbD4bLvajnknLuKSCiCwqhFLbGUv6CjT8WC0YfruM5Dv3xAUN/B+2OIxLNokaeuT53K//B2IWLrYx5Gxp1HBOroWT+BoQwGjQHAArnBUTFxFaRHFtTF2SatoeF+h5pxh8n67YU+d0rfrK7+Ws/y25fTiqmXfXU5dNLWVF9KI5sWMmXC/tkPb0vozQFQ9DsnUsSxBMNI9V56E8vqECRUPAi94M66B0IcY6gtuiml4A+HMpa5y/NTcKQcarLHH35H2vHdKYqIRVSotHAhxZb8WRW6tWb2pUH/89A/PBqDJ8igtbeMB63LkS2hov/AhZBWdfPiMO6wthkMdJhf5PVqdqzo7dBEDhUhG1CLg=="
+          },
+          {
+            "functionCall": {
+              "name": "get_weather",
+              "args": {
+                "unit": "fahrenheit",
+                "location": "New York, NY"
+              }
+            }
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "finishMessage": "Model generated function call(s)."
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 159,
+    "candidatesTokenCount": 48,
+    "totalTokenCount": 285,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 159
+      }
+    ],
+    "thoughtsTokenCount": 78
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "QYP6aOKqHObpjMcPgJDY6A0"
+}

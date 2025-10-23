@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Calculate: (2+3) * (4+5) * (6+7). Use functions for each step."}], "role": "user"}], "systemInstruction": {"parts": [{"text": "You are a calculator assistant. Use functions for every calculation."}], "role": "user"}, "tools": [{"functionDeclarations": [{"description": "Add two numbers together.", "name": "add", "parameters": {"description": "Add two numbers together.", "properties": {"a": {"type": "INTEGER"}, "b": {"type": "INTEGER"}}, "required": ["a", "b"], "title": "add", "type": "OBJECT"}}, {"description": "Divide two numbers.", "name": "divide", "parameters": {"description": "Divide two numbers.", "properties": {"a": {"type": "NUMBER"}, "b": {"type": "NUMBER"}}, "required": ["a", "b"], "title": "divide", "type": "OBJECT"}}, {"description": "Multiply two numbers together.", "name": "multiply", "parameters": {"description": "Multiply two numbers together.", "properties": {"a": {"type": "INTEGER"}, "b": {"type": "INTEGER"}}, "required": ["a", "b"], "title": "multiply", "type": "OBJECT"}}]}], "generationConfig": {}}

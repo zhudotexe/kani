@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Find all users in San Francisco and tell me their names and total order amounts."}], "role": "user"}], "systemInstruction": {"parts": [{"text": "You are a database assistant. Use the provided functions to answer questions about users and orders."}], "role": "user"}, "tools": [{"functionDeclarations": [{"description": "Calculate the total amount spent by a user.", "name": "get_order_total", "parameters": {"description": "Calculate the total amount spent by a user.", "properties": {"user_id": {"type": "INTEGER"}}, "required": ["user_id"], "title": "get_order_total", "type": "OBJECT"}}, {"description": "Get all orders for a specific user ID.", "name": "get_user_orders", "parameters": {"description": "Get all orders for a specific user ID.", "properties": {"user_id": {"type": "INTEGER"}}, "required": ["user_id"], "title": "get_user_orders", "type": "OBJECT"}}, {"description": "Search for users by city.", "name": "search_users", "parameters": {"description": "Search for users by city.", "properties": {"city": {"type": "STRING"}}, "required": ["city"], "title": "search_users", "type": "OBJECT"}}]}], "generationConfig": {}}

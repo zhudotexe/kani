@@ -1,0 +1,25 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_015oKjP1m66ekbtVWwiUYRio",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Here's the current weather for both cities:\n\n**San Francisco, CA:** Foggy, 65\u00b0F\n\n**New York, NY:** Sunny, 75\u00b0F\n\nNew York is enjoying warmer and sunnier conditions, while San Francisco is experiencing typical foggy weather with cooler temperatures."
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 987,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 67,
+    "service_tier": "standard"
+  }
+}

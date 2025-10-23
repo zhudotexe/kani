@@ -1,0 +1,6 @@
+POST https://api.anthropic.com/v1/messages/count_tokens
+accept: application/json
+content-type: application/json
+x-api-key: *** REDACTED ***
+
+{"messages":[{"role":"user","content":[{"type":"text","text":"What time is it?"}]}],"model":"claude-haiku-4-5","system":"You are a helpful assistant. Use the provided functions to answer questions.","tools":[{"name":"get_time","description":"Get the current time in the user's time zone.","input_schema":{"description":"Get the current time in the user's time zone.","properties":{},"title":"get_time","type":"object"}},{"name":"working_function","description":"A function that works correctly.","input_schema":{"description":"A function that works correctly.","properties":{},"title":"working_function","type":"object"}}]}

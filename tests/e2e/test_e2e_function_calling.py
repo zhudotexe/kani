@@ -388,9 +388,8 @@ class TestE2EFunctionCallingRetry:
         )
 
         # With max_function_rounds=1, should only have one function calling round
-        # Count the number of function messages
-        func_messages = [m for m in messages if m.role == ChatRole.FUNCTION]
-        assert len(func_messages) <= 1
+        # i.e., only 1 asst message before the last that has functions
+        assert len([m for m in messages[:-1] if m.role == ChatRole.ASSISTANT and m.tool_calls]) <= 1
 
     async def test_retry_on_error(self, engine):
         """Test that errors trigger retry behavior."""

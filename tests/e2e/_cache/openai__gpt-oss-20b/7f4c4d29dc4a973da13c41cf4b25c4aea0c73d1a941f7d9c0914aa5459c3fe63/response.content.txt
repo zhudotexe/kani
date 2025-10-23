@@ -1,0 +1,37 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.
+Calls to these tools must go to the commentary channel: 'functions'.<|end|><|start|>developer<|message|># Instructions
+
+You are a database assistant. Use the provided functions to answer questions about users and orders.
+
+# Tools
+
+## functions
+
+namespace functions {
+
+// Calculate the total amount spent by a user.
+type get_order_total = (_: {
+user_id: number,
+}) => any;
+
+// Get all orders for a specific user ID.
+type get_user_orders = (_: {
+user_id: number,
+}) => any;
+
+// Search for users by city.
+type search_users = (_: {
+city: string,
+}) => any;
+
+} // namespace functions<|end|><|start|>user<|message|>Find all users in San Francisco and tell me their names and total order amounts.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to use functions. First search_users with city San Francisco. Then for each user in result, get total order for that user. Then output names and total amounts.
+
+We need to decide whether we should do multiple function calls. We can call search_users first. Then iterate.
+
+But ChatGPT can't do loops directly; but we can call functions sequentially, each time. But the platform expects a single function call? Usually we do function call for each needed. Let's do search_users first.<|end|><|start|>assistant to=functions.search_users<|channel|>commentary json<|message|>{"city": "San Francisco"}<|call|><|start|>functions.search_users to=assistant<|channel|>commentary<|message|>"[{'id': 1, 'name': 'Alice'}]"<|end|><|start|>assistant<|channel|>analysis<|message|>That's just Alice. We need total order for user 1. Use get_order_total.<|end|><|start|>assistant<|channel|>commentary to=functions.get_order_total<|constrain|>json<|message|>{"user_id": 1}<|call|>

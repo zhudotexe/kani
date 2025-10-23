@@ -1,0 +1,6 @@
+POST https://api.openai.com/v1/chat/completions
+accept: application/json
+content-type: application/json
+authorization: *** REDACTED ***
+
+{"messages":[{"role":"system","content":"You are an email assistant. Use the provided functions to help with email tasks."},{"role":"user","content":"Send an email to john@example.com with subject \"Meeting Tomorrow\" and body \"See you at 3pm\""}],"model":"gpt-5-mini","stream":true,"stream_options":{"include_usage":true},"tools":[{"type":"function","function":{"name":"check_inbox","description":"Check the email inbox.","parameters":{"description":"Check the email inbox.","properties":{},"title":"check_inbox","type":"object"}}},{"type":"function","function":{"name":"send_email","description":"Send an email to a recipient. Control returns to the user after this function.","parameters":{"description":"Send an email to a recipient. Control returns to the user after this function.","properties":{"recipient":{"type":"string"},"subject":{"type":"string"},"body":{"type":"string"}},"required":["recipient","subject","body"],"title":"send_email","type":"object"}}}]}

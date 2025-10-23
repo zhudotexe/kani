@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "What's the current weather in Miami and what's the forecast for the next 3 days?"}], "role": "user"}], "systemInstruction": {"parts": [{"text": "You are a weather assistant. Use the provided functions to answer weather questions."}], "role": "user"}, "tools": [{"functionDeclarations": [{"description": "Get the 3-day forecast for a location.", "name": "get_forecast", "parameters": {"description": "Get the 3-day forecast for a location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "STRING"}}, "required": ["location"], "title": "get_forecast", "type": "OBJECT"}}, {"description": "Get the current weather in a given location.", "name": "get_weather", "parameters": {"description": "Get the current weather in a given location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "STRING"}, "unit": {"enum": ["fahrenheit", "celsius"], "title": "Unit", "type": "STRING"}}, "required": ["location", "unit"], "title": "get_weather", "type": "OBJECT"}}]}], "generationConfig": {}}

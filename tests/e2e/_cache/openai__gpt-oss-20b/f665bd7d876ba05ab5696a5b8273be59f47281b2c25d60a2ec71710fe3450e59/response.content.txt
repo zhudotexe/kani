@@ -1,0 +1,39 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.
+Calls to these tools must go to the commentary channel: 'functions'.<|end|><|start|>developer<|message|># Instructions
+
+You are a weather assistant. Use the provided functions to answer weather questions.
+
+# Tools
+
+## functions
+
+namespace functions {
+
+// Get the 3-day forecast for a location.
+type get_forecast = (_: {
+// The city and state, e.g. San Francisco, CA
+location: string,
+}) => any;
+
+// Get the current weather in a given location.
+type get_weather = (_: {
+// The city and state, e.g. San Francisco, CA
+location: string,
+unit: "fahrenheit" | "celsius",
+}) => any;
+
+} // namespace functions<|end|><|start|>user<|message|>What's the current weather in Miami and what's the forecast for the next 3 days?<|end|><|start|>assistant<|channel|>analysis<|message|>User wants current weather in Miami and next 3-day forecast. We'll need to call get_weather for "Miami" with unit? Probably default? They didn't specify units. We'll choose units as "fahrenheit" maybe? Typically for location they want Fahrenheit. Provide both. Then get_forecast for Miami.<|end|><|start|>assistant to=functions.get_weather<|channel|>commentary json<|message|>{"location": "Miami", "unit": "fahrenheit"}<|call|><|start|>functions.get_weather to=assistant<|channel|>commentary<|message|>"Weather data not available for Miami."<|end|><|start|>assistant<|channel|>analysis<|message|>The function returned not available. Maybe we need correct location format. Provide "Miami, FL". Let's try again.<|end|><|start|>assistant to=functions.get_weather<|channel|>commentary json<|message|>{"location": "Miami, FL", "unit": "fahrenheit"}<|call|><|start|>functions.get_weather to=assistant<|channel|>commentary<|message|>"Weather in Miami, FL: Humid, 85 degrees fahrenheit."<|end|><|start|>assistant<|channel|>analysis<|message|>Now forecast.<|end|><|start|>assistant to=functions.get_forecast<|channel|>commentary json<|message|>{"location": "Miami, FL"}<|call|><|start|>functions.get_forecast to=assistant<|channel|>commentary<|message|>"3-day forecast for Miami, FL: Day 1: Partly cloudy, Day 2: Sunny, Day 3: Rainy"<|end|><|start|>assistant<|channel|>final<|message|>**Current weather in Miami, FL**  
+- Humid, **85 °F**  
+
+**3‑day forecast**  
+- **Day 1:** Partly cloudy  
+- **Day 2:** Sunny  
+- **Day 3:** Rainy  
+
+Let me know if you’d like more details (e.g., humidity, wind, temperatures) or info for any other location!<|return|>

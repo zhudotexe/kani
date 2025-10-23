@@ -1,0 +1,28 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.
+Calls to these tools must go to the commentary channel: 'functions'.<|end|><|start|>developer<|message|># Instructions
+
+You are an email assistant. Use the provided functions to help with email tasks.
+
+# Tools
+
+## functions
+
+namespace functions {
+
+// Check the email inbox.
+type check_inbox = () => any;
+
+// Send an email to a recipient. Control returns to the user after this function.
+type send_email = (_: {
+recipient: string,
+subject: string,
+body: string,
+}) => any;
+
+} // namespace functions<|end|><|start|>user<|message|>Send an email to john@example.com with subject "Meeting Tomorrow" and body "See you at 3pm"<|end|><|start|>assistant<|channel|>analysis<|message|>Need to call functions.send_email.<|end|><|start|>assistant<|channel|>commentary to=functions.send_email <|constrain|>json<|message|>{"recipient":"john@example.com","subject":"Meeting Tomorrow","body":"See you at 3pm"}<|call|>

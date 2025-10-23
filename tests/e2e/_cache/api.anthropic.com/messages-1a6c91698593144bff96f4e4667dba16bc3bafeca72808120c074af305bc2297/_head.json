@@ -1,0 +1,32 @@
+{
+  "status": 200,
+  "headers": {
+    "date": "Thu, 23 Oct 2025 19:34:35 GMT",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "cf-ray": "9933ac36098481ed-IAD",
+    "cache-control": "no-cache",
+    "anthropic-ratelimit-input-tokens-limit": "4000000",
+    "anthropic-ratelimit-input-tokens-remaining": "3999000",
+    "anthropic-ratelimit-input-tokens-reset": "2025-10-23T19:34:35Z",
+    "anthropic-ratelimit-output-tokens-limit": "800000",
+    "anthropic-ratelimit-output-tokens-remaining": "800000",
+    "anthropic-ratelimit-output-tokens-reset": "2025-10-23T19:34:35Z",
+    "anthropic-ratelimit-requests-limit": "4000",
+    "anthropic-ratelimit-requests-remaining": "3999",
+    "anthropic-ratelimit-requests-reset": "2025-10-23T19:34:35Z",
+    "anthropic-ratelimit-tokens-limit": "4800000",
+    "anthropic-ratelimit-tokens-remaining": "4799000",
+    "anthropic-ratelimit-tokens-reset": "2025-10-23T19:34:35Z",
+    "request-id": "req_011CUQh15gyfE8UJw98ALM6L",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "anthropic-organization-id": "cb409f94-8c93-4ff3-b5de-502af8eca0eb",
+    "x-envoy-upstream-service-time": "560",
+    "via": "1.1 google",
+    "cf-cache-status": "DYNAMIC",
+    "x-robots-tag": "none",
+    "server": "cloudflare"
+  },
+  "body_path": "body.bin"
+}

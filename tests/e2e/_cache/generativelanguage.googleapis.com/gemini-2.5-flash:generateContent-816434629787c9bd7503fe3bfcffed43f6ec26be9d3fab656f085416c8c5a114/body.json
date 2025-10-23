@@ -1,0 +1,46 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "functionCall": {
+              "name": "get_weather",
+              "args": {
+                "unit": "fahrenheit",
+                "location": "Miami, FL"
+              }
+            },
+            "thoughtSignature": "CsECAdHtim817sGkYtVGH46NkaHb6EJzoAztKPGUNC1QGvpFOchOS08cOASvrd3TU7/0sTi/TdlHNztB0jWFJw7Pd/5ftfbOg5A+5QhesbC7GOorUuydjuKMVty4IgqsubwFomOM9U2U7y42xRu0Jxgo/GTcPkA5C8VkDGYSfjRLkJI2de0wL2dsM5yBOAFJGsUPPlt9lcuxRV0hRlw3oiu4Ni3R51OIUzXDl/WqsNHgvcj3H24bVltWigV2e+6UK+0VQSt97t1QCL+iE1pC9ZRdC4+yr6yx6IxnCvlEkxEGc5gwwIa7E99kZlSyb8e7Pgp9r6tRHJxMcSA5BBLMDKlF6a8OQf3c56jjYY/Bhp4x8Il/fnp7qAkEAwYH86tmtooY/0PTWSe4WB2WZFWE5T5R0C7ugQJr2jOSGQeZwj0/zgIX"
+          },
+          {
+            "functionCall": {
+              "name": "get_forecast",
+              "args": {
+                "location": "Miami, FL"
+              }
+            }
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "finishMessage": "Model generated function call(s)."
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 164,
+    "candidatesTokenCount": 40,
+    "totalTokenCount": 275,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 164
+      }
+    ],
+    "thoughtsTokenCount": 71
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "hoP6aIXjJ5ePjMcPlpPUqA4"
+}

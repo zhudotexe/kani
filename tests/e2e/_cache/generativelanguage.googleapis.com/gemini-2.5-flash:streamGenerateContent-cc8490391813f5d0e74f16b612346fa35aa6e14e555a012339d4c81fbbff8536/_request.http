@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Send an email to john@example.com with subject \"Meeting Tomorrow\" and body \"See you at 3pm\""}], "role": "user"}], "systemInstruction": {"parts": [{"text": "You are an email assistant. Use the provided functions to help with email tasks."}], "role": "user"}, "tools": [{"functionDeclarations": [{"description": "Check the email inbox.", "name": "check_inbox", "parameters": {"description": "Check the email inbox.", "properties": {}, "title": "check_inbox", "type": "OBJECT"}}, {"description": "Send an email to a recipient. Control returns to the user after this function.", "name": "send_email", "parameters": {"description": "Send an email to a recipient. Control returns to the user after this function.", "properties": {"recipient": {"type": "STRING"}, "subject": {"type": "STRING"}, "body": {"type": "STRING"}}, "required": ["recipient", "subject", "body"], "title": "send_email", "type": "OBJECT"}}]}], "generationConfig": {}}

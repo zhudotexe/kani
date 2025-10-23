@@ -1,0 +1,38 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "functionCall": {
+              "name": "add",
+              "args": {
+                "b": 3,
+                "a": 2
+              }
+            },
+            "thoughtSignature": "Cv4DAdHtim8IxYF2HMiW6jTHP32j5LWVaHDu+JfWWDwWC5KHwegR9/pS76B8BF3RGpA5O8tfpYXru1k7cxOgVKXzy6MpEpbUbOD8XCRRVO3bIXFlNbN+VqYoNj89clh0VuL7jU3ahYGjMw3S8dp0QHKNwOCYXyVcPjPMPzKMkfFXNjA5L3u0L7aSAbPi8DeIhfIlujkXyl2f2uOwoKKAykWSGC6YKRDfEzbqWX5WF1A2kvw8MX1NtYZuPwgeIF2uxERaxKR7qNWQxOkfkmtOLMUuwm2TXSjVfIv8m4MrD/tTbp4ODtd1l/BweQDm/oaEZ2mflWKIcSkP07YcnJqjh0yFQgkjqB5M9r86+vUgBWZU477lJF3+QF1lKGt64WZ5V/NLPR2H3f0l7OzxzE3k7HpCiyuKm4ktRhkuAK9NcrivhZzXOaZcD9Gku6PB0Xeq4ChEJDQlH01NRiuLrqT6TuegSkCePhTF/+x01UUwsYOH2agfHhUoD51Ith0teUU4v9vq3dlq6WaEle7eXAl4+cIf5fbxFW/ZJNtgHtyEMekbR84cij5SCOm+TYy2grOvtQiGLwbjFPKgpEDnrPgoFbl3dT8jTj4gtNKI/HAQ2l6tnmDlCnu1bYsH7uNBowkqnvuW8dnYCC2y/kXaEKaIKWFzl4g33Hr/wSy2HAzfmODu"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "finishMessage": "Model generated function call(s)."
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 176,
+    "candidatesTokenCount": 18,
+    "totalTokenCount": 350,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 176
+      }
+    ],
+    "thoughtsTokenCount": 156
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "qIP6aMjPG9STjMcPrvHrkQ4"
+}

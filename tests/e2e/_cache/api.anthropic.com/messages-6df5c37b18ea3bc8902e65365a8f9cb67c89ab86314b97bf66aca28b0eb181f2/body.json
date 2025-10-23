@@ -1,0 +1,34 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01YYFBTeTwjg3hijyAVYU1Lx",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Now I'll add 10 to that result:"
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01R4cEd9qa8JZQindNMvPa3P",
+      "name": "add",
+      "input": {
+        "a": 40,
+        "b": 10
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 873,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 80,
+    "service_tier": "standard"
+  }
+}

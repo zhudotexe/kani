@@ -1,0 +1,38 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_012uhVFX3FhnBNb4pyJCi31F",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "tool_use",
+      "id": "toolu_01XRVDmpu3KiKdg5nWBveVTd",
+      "name": "get_weather",
+      "input": {
+        "location": "Miami, FL",
+        "unit": "fahrenheit"
+      }
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01MkGzrUjJgUJdQqg7wjPUEY",
+      "name": "get_forecast",
+      "input": {
+        "location": "Miami, FL"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 762,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 112,
+    "service_tier": "standard"
+  }
+}

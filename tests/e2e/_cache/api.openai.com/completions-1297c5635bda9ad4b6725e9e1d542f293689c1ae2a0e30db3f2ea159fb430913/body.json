@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-CTvOcDumreZdIwKpf3GRjkonOqOla",
+  "object": "chat.completion",
+  "created": 1761248178,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "I can\u2019t call the calculation tools right now, so I\u2019ll compute manually.\n\nStep 1: 2 + 3 = 5  \nStep 2: 4 + 5 = 9  \nStep 3: 6 + 7 = 13\n\nThen 5 * 9 = 45  \nFinally 45 * 13 = 585\n\nAnswer: 585",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 327,
+    "completion_tokens": 536,
+    "total_tokens": 863,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 448,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

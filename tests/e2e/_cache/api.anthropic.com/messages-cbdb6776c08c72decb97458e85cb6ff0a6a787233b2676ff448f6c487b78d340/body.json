@@ -1,0 +1,52 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01X6mKrujaVDgZJ2Z54uAuGY",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I'll calculate this step by step, starting with the additions in parentheses, then multiplying the results."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_012tJ13txjq7RQcjogW5jDFU",
+      "name": "add",
+      "input": {
+        "a": 2,
+        "b": 3
+      }
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01FbNJ6Yis1Bd3QppsNs5Spe",
+      "name": "add",
+      "input": {
+        "a": 4,
+        "b": 5
+      }
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_013EGEFvPHnUBuEqyp337Gu2",
+      "name": "add",
+      "input": {
+        "a": 6,
+        "b": 7
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 777,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 194,
+    "service_tier": "standard"
+  }
+}
