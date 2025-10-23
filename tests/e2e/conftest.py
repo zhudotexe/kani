@@ -428,7 +428,7 @@ async def e2e_llamacpp_engine(request):
     engine = LlamaCppEngine(
         repo_id=model_id,
         filename="*Q4_K_M*",
-        model_load_kwargs={"n_gpu_layers": 0},
+        model_load_kwargs={"n_gpu_layers": -1},
         prompt_pipeline=model_specific.prompt_pipeline_for_hf_model(model_id),
     )
     if wrapper := model_specific.parser_for_hf_model(model_id):
