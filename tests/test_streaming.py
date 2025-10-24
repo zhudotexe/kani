@@ -61,4 +61,4 @@ async def test_spam_stream(eng, data):
         assert resp.content == query
 
         prompt = await ai.get_prompt()
-        assert sum(ai.message_token_len(m) for m in prompt) <= ai.max_context_size
+        assert (await ai.prompt_token_len(prompt)) <= ai.max_context_size

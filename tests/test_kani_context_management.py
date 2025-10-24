@@ -36,7 +36,7 @@ async def test_always_include():
     # always include 2 tokens, reserve 3 for response
     ai = Kani(engine, desired_response_tokens=3, system_prompt="1", always_included_messages=[ChatMessage.user("2")])
     assert len(ai.always_included_messages) == 2
-    assert sum(ai.message_token_len(m) for m in ai.always_included_messages) == 2
+    assert (await ai.prompt_token_len(ai.always_included_messages)) == 2
 
     # messages are only included if <= 5 tokens
     resp = await ai.chat_round_str("12345")
@@ -64,7 +64,7 @@ async def test_get_prompt_optimal(data):
     )
     print("optimal n_iters:", math.ceil(math.log2(len(ai.chat_history))))
     prompt = await ai.get_prompt()
-    prompt_len = sum(ai.message_token_len(m) for m in prompt)
+    prompt_len = await ai.prompt_token_len(prompt)
     print("prompt len:", prompt_len)
     print()
     assert prompt_len == (ai.max_context_size - ai.desired_response_tokens)
@@ -103,4 +103,4 @@ async def test_spam(data):
         assert resp == query
 
         prompt = await ai.get_prompt()
-        assert sum(ai.message_token_len(m) for m in prompt) <= (ai.max_context_size - ai.desired_response_tokens)
+        assert (await ai.prompt_token_len(prompt)) <= (ai.max_context_size - ai.desired_response_tokens)
