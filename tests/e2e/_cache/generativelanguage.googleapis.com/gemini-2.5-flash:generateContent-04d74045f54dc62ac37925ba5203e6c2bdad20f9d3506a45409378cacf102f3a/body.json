@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "I am sorry, I cannot tell you the time. The time API is currently offline. Please try again later."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 143,
+    "candidatesTokenCount": 23,
+    "totalTokenCount": 166,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 143
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "zYP6aJq5JJuyjMcPuPu_yA0"
+}

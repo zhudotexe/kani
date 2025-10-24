@@ -1,0 +1,33 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01C3Mx4EPDYndbYbhqQNtzEY",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "As expected, the first call failed. Let me retry:"
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01J1TvBbjgDyySz2ttF9NKdX",
+      "name": "flaky_function",
+      "input": {
+        "x": 42
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 700,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 67,
+    "service_tier": "standard"
+  }
+}

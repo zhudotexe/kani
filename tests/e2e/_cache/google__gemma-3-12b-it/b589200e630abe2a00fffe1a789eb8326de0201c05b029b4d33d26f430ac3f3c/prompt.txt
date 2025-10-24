@@ -1,0 +1,11 @@
+<bos><start_of_turn>user
+Before replying to the user, output the word 'ABRACADABRA' on its own line.
+
+Write me a Python function to calculate a factorial.<end_of_turn>
+<start_of_turn>model
+
+==========
+{'input_ids': tensor([[     2,    105,   2364,    107,  13286, 147217,    531,    506,   2430, 236764,   3938,    506,   3658,    756,   3066, 223208,   2466,   3066,   4428, 236789,    580,   1061,   1852,   1757, 236761,    108,   6974,    786,    496,  17856,   1292,    531,   9279,    496,  82410, 236761,    106,    107,    105,   4368,    107]]),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
+ 'token_type_ids': tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]),
+ 'max_length': 128000}

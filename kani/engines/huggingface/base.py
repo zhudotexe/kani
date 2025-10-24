@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import warnings
 from collections import UserDict
@@ -277,7 +278,10 @@ class HuggingEngine(BaseEngine):
             )
 
         # move the input tensor to the right device and make sure any multimodal features are in the right dtype
-        input_kwargs.to(self.device).to(self.model.dtype)
+        # (if BatchFeature)
+        input_kwargs.to(self.device)
+        if isinstance(input_kwargs, BatchFeature):
+            input_kwargs.to(self.model.dtype)
 
         # set up hyperparams for HF decode
         hyperparams = {**self.hyperparams, **hyperparams}
@@ -385,12 +389,17 @@ class HuggingEngine(BaseEngine):
         )
 
         # run it through the model in another thread so that we can get the tokens in this thread
-        output_toks = None
+        loop = asyncio.get_event_loop()
+        output_toks_fut = loop.create_future()
 
         def thread_target():
-            nonlocal output_toks  # ugly way of sending the results of .generate to the outer scope
-            with torch.no_grad():
-                output_toks = self.model.generate(**input_kwargs, streamer=streamer, **hyperparams)
+            try:
+                with torch.no_grad():
+                    output = self.model.generate(**input_kwargs, streamer=streamer, **hyperparams)
+                loop.call_soon_threadsafe(output_toks_fut.set_result, output)
+            except Exception as e:
+                loop.call_soon_threadsafe(output_toks_fut.set_exception, e)
+                streamer.end()
 
         thread = Thread(target=thread_target)
         thread.start()
@@ -408,6 +417,7 @@ class HuggingEngine(BaseEngine):
             yielded_tokens.append(token)
 
         # clean up the thread
+        output_toks = await output_toks_fut
         thread.join()
 
         # yield a completion with usage stats

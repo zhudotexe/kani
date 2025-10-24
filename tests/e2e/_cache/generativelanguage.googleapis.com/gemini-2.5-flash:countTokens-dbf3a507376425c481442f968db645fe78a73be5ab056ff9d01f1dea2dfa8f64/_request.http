@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Hello Mizzenmast! What a unique and memorable name \u2013 like the mast on a ship!\n\nIt's a pleasure to meet you. How can I help you today?"}], "role": "model"}, {"parts": [{"text": "If you had one, what would be your favorite color? (Please don't mention my name.)"}], "role": "user"}]}

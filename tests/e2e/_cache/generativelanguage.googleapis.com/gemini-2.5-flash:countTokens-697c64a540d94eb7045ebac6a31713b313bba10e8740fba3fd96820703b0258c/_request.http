@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "What is (8 times 5) plus 10?"}], "role": "user"}, {"parts": [{"thoughtSignature": "CiQB0e2Kb-3oN4W-RLJdMPpIlp_hGDOvFpiE_qhKNxG2hLIU8fgKhAEB0e2Kby1xmzsd9_Q-6l_h6xYjnDSio9eDITyCXc_guPhOzeMaEg8nsxHOCCV-FCGm2WXU2AHBXa4tvzmpn0t4hLrz6VYkqxjRCh86f1Hqs3Mh7dsV1V5bTRs-j0Rtvw17AWDVGEr2yujUWwQNuSKMRmO6D43jW1iRyIWIdD2XHeyPZF0K3AEB0e2Kb_qKxftD0mbnBAdOhg88CAmfPjQzMWLnEY_PyjJm4WMxaqnpKHq3uA1MD7UikGsSbGY78VrQ9pmMgyF2UL7SqtTlC4cwEeqdFxcnDOr-8J9hxFQ6uw1ozUDhqebIwOPXiIeRm9ur3DunKNgRs8e_I3FNOZi86dPaRuo63zELf8TO2uKfiFJXOQ_Y8iK4ZJgNSG0dNCC7i4219lA0Iix4Nm8nIbEcjWBAjO-OI02W87KoCEP0DCrfauEVskvaCrE5VAvYaYpSkUiiEaASB0PMDD3ulyPSKl5gCkYB0e2Kb7c3A8F7LA4Ms6orU1pGHSehNtaPef7K9416kR_hLT5x8yT_OZJeAKb6qo6lPP7rkABB67BkjgAdZ6_pJKdbk7UW", "functionCall": {"args": {"a": 8, "b": 5}, "name": "multiply"}}], "role": "model"}, {"parts": [{"functionResponse": {"id": "bdd640fb-0667-4ad1-9c80-317fa3b1799d", "name": "multiply", "response": {"result": "40"}}}], "role": "tool"}]}

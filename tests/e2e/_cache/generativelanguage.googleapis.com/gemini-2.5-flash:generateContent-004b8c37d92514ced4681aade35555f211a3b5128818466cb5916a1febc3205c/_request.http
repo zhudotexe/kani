@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Call the flaky_function with x=42. Retry if it fails, it should eventually work."}], "role": "user"}], "tools": [{"functionDeclarations": [{"description": "A function that fails the first time.", "name": "flaky_function", "parameters": {"description": "A function that fails the first time.", "properties": {"x": {"type": "INTEGER"}}, "required": ["x"], "title": "flaky_function", "type": "OBJECT"}}]}], "generationConfig": {}}

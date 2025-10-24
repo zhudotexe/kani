@@ -1,0 +1,4 @@
+<bos><start_of_turn>user
+If you had one, what would be your favorite color? (Please don't mention my name.)<end_of_turn>
+<start_of_turn>model
+If I could have a favorite color, it would be a deep, shimmering teal. It feels both calming and full of hidden depths – like the ocean at twilight.<end_of_turn>

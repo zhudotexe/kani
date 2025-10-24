@@ -14,12 +14,15 @@ PROMPT_PIPELINE_REGISTRY = [
     ("meta-llama/Llama-3-*", "kani.model_specific.llama3.LLAMA3_PIPELINE"),
     ("mistralai/Mistral-7B*", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
     ("mistralai/Mixtral-8x*", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
+    ("mistralai/*-2407", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
+    ("mistralai/*-2409", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
 ]
 
 # list of (HF model id glob, path to import)
 PARSER_REGISTRY = [
     ("deepseek-ai/DeepSeek-R1*", "kani.model_specific.deepseek.DeepSeekR1ToolCallParser"),
     ("openai/gpt-oss-*", "kani.model_specific.gpt_oss.GPTOSSParser"),
+    ("meta-llama/Llama-3.*", "kani.model_specific.llama3.Llama3XToolCallParser"),
     ("mistralai/*-2404", "kani.model_specific.mistral.MistralToolCallParser"),
     ("mistralai/*-2405", "kani.model_specific.mistral.MistralToolCallParser"),
     ("mistralai/*-2407", "kani.model_specific.mistral.MistralToolCallParser"),

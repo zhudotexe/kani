@@ -1,0 +1,33 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01SpT7kkvw8Bwf2XM8sZ9Jts",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Now let me get the total order amount for this user:"
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01YbCxVcS73TYCqKExGtmqVv",
+      "name": "get_order_total",
+      "input": {
+        "user_id": 1
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 861,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 70,
+    "service_tier": "standard"
+  }
+}

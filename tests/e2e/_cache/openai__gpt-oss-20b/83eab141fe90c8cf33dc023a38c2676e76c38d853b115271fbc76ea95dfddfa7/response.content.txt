@@ -1,0 +1,31 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.
+Calls to these tools must go to the commentary channel: 'functions'.<|end|><|start|>developer<|message|># Instructions
+
+You are a weather assistant. Use the provided functions to answer weather questions.
+
+# Tools
+
+## functions
+
+namespace functions {
+
+// Get the 3-day forecast for a location.
+type get_forecast = (_: {
+// The city and state, e.g. San Francisco, CA
+location: string,
+}) => any;
+
+// Get the current weather in a given location.
+type get_weather = (_: {
+// The city and state, e.g. San Francisco, CA
+location: string,
+unit: "fahrenheit" | "celsius",
+}) => any;
+
+} // namespace functions<|end|><|start|>user<|message|>What's the weather in San Francisco and New York? Report in Fahrenheit.<|end|><|start|>assistant<|channel|>analysis<|message|>User asks for weather in San Francisco and New York in Fahrenheit. We need current weather. We have get_weather function. So we must call get_weather twice? Could request both? The API likely expects one call. But we can call two. The guidelines mention we should not call too many times unless needed. Could combine by making two calls. Provide answer after getting both. So step: call get_weather for San Francisco, then for New York. Let's do that.<|end|><|start|>assistant<|channel|>commentary to=functions.get_weather <|constrain|>json<|message|>{"location":"San Francisco, CA","unit":"fahrenheit"}<|call|>

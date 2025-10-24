@@ -1,0 +1,36 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.
+Calls to these tools must go to the commentary channel: 'functions'.<|end|><|start|>developer<|message|># Instructions
+
+You are a weather assistant. Use the provided functions to answer weather questions.
+
+# Tools
+
+## functions
+
+namespace functions {
+
+// Get the 3-day forecast for a location.
+type get_forecast = (_: {
+// The city and state, e.g. San Francisco, CA
+location: string,
+}) => any;
+
+// Get the current weather in a given location.
+type get_weather = (_: {
+// The city and state, e.g. San Francisco, CA
+location: string,
+unit: "fahrenheit" | "celsius",
+}) => any;
+
+} // namespace functions<|end|><|start|>user<|message|>What's the weather in San Francisco and New York? Report in Fahrenheit.<|end|><|start|>assistant
+==========
+{'input_ids': tensor([[200006,  17360, 200008,   3575,    553,  17554, 162016,     11,    261,   4410,   6439,   2359,  22203,    656,   7788,  17527,    558,  87447, 100594,     25,    220,   1323,     19,     12,   3218,    198,   6576,   3521,     25,    220,   1323,     20,     12,    702,     12,   2040,    279,  30377,    289,     25,  14093,    279,      2,  13888,  18403,     25,   8450,     11,  49159,     11,   1721,     13,  21030,   2804,    413,   7360,    395,   1753,   3176,    558,  63446,    316,   1879,   8437,   2804,    810,    316,    290,  49159,   9334,     25,    461,  44580,   6120, 200007, 200006,  77944, 200008,      2,  68406,    279,   3575,    553,    261,  11122,  29186,     13,   7649,    290,   5181,   9964,    316,   6052,  11122,   5359,    364,      2,  20574,    279,    877,   9964,    279,   4797,   9964,  95359,   2942,    290,    220,     18,  14540,  22888,    395,    261,   5100,    558,   2493,    717,  83380,   5223,    314,  11350,     25,  10168,
+            623,   5030,    326,   2608,     11,    319,   1940,     13,   6610,  18826,     11,  13180,    198,   7693,     25,   1621,    412,   9263,    871,   1062,  20544,   2942,    290,   2208,  11122,    306,    261,   4335,   5100,    558,   2493,    717, 170154,    314,  11350,     25,  10168,    623,   5030,    326,   2608,     11,    319,   1940,     13,   6610,  18826,     11,  13180,    198,   7693,     25,   1621,    412,   5400,     25,    392,  40364,  11732,      1,   1022,    392,     66,  63110,   1150,   9263,    871,   1062,    502,     92,    602,   9819,   9964, 200007, 200006,   1428, 200008,  45350,    290,  11122,    306,   6610,  18826,    326,   2036,   6175,     30,  12208,    306, 120673,     13, 200007, 200006, 173781]]),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
+ 'max_length': 131072}

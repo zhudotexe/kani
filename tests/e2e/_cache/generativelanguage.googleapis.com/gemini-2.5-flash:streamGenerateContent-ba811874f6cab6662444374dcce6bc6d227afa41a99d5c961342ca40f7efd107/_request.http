@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Write me a Python function to calculate a factorial."}], "role": "user"}], "systemInstruction": {"parts": [{"text": "Before replying to the user, output the word 'ABRACADABRA' on its own line."}], "role": "user"}, "generationConfig": {}}

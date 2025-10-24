@@ -1,0 +1,9 @@
+<bos><start_of_turn>user
+Hi! My name is Mizzenmast.<end_of_turn>
+<start_of_turn>model
+
+==========
+{'input_ids': tensor([[     2,    105,   2364,    107,  10979, 236888,   3551,   1463,    563,  66749,   3779,  80516, 236761,    106,    107,    105,   4368,    107]]),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
+ 'token_type_ids': tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]),
+ 'max_length': 128000}

@@ -1,0 +1,14 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+Before replying to the user, output the word 'ABRACADABRA' on its own line.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Write me a Python function to calculate a factorial.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+
+==========
+{'input_ids': tensor([[128000, 128006,   9125, 128007,    271,  38766,   1303,  33025,   2696,     25,   6790,    220,   2366,     18,    198,  15724,   2696,     25,    220,   1627,  10263,    220,   2366,     19,    271,  10438,   2109,   6852,    311,    279,   1217,     11,   2612,    279,   3492,    364,   1905,     49,   1741,   1846,   1905,   5726,      6,    389,   1202,   1866,   1584,     13, 128009, 128006,    882, 128007,    271,   8144,    757,    264,  13325,    734,    311,  11294,    264,  54062,     13, 128009, 128006,  78191, 128007,    271]]),
+ 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
+ 'max_length': 131072}

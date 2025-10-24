@@ -172,8 +172,15 @@ class Kani:
                     message = await self.add_completion_to_history(completion)
                     yield message
 
-                # if function call, do it and attempt retry if it's wrong
+                # if no function calls or we're out of calls, return
                 if not message.tool_calls:
+                    return
+                if max_function_rounds is not None and function_rounds >= max_function_rounds:
+                    warnings.warn(
+                        "The model requested tool calls but the maximum number of function rounds has been reached,"
+                        f" returning now...\nTool calls: {message.tool_calls}",
+                        stacklevel=3,
+                    )
                     return
 
                 # run each tool call in parallel
@@ -217,14 +224,14 @@ class Kani:
                     retry += 1
                     if not should_retry_call:
                         # disable function calling on the next go
-                        kwargs["include_functions"] = False
+                        kwargs.update(self.engine.disable_function_calling_kwargs)
                 else:
                     retry = 0
 
                 # if we're at the max number of function rounds, don't include functions on the next go
                 function_rounds += 1
                 if max_function_rounds is not None and function_rounds >= max_function_rounds:
-                    kwargs["include_functions"] = False
+                    kwargs.update(self.engine.disable_function_calling_kwargs)
 
     # === main entrypoints ===
     async def chat_round(self, query: QueryType, **kwargs) -> ChatMessage:
@@ -371,7 +378,7 @@ class Kani:
         :param kwargs: Arguments to pass to the model engine.
         """
         # get the current chat state
-        messages = await self.get_prompt(**kwargs)
+        messages = await self.get_prompt(include_functions=include_functions, **kwargs)
         # log it (message_log includes the number of messages sent and the last message)
         n_messages = len(messages)
         if n_messages == 0:
@@ -410,7 +417,7 @@ class Kani:
             yield elem
 
     # ==== overridable methods ====
-    async def get_prompt(self, **kwargs) -> list[ChatMessage]:
+    async def get_prompt(self, include_functions=True, **kwargs) -> list[ChatMessage]:
         """
         Called each time before asking the LM engine for a completion to generate the chat prompt.
         Returns a list of messages such that the total token count in the messages is less than
@@ -421,32 +428,33 @@ class Kani:
         You may override this to get more fine-grained control over what is exposed in the model's memory at any given
         call.
 
+        :param include_functions: Whether to account for the tokens that will be used for function definitions in the
+            context length.
         :param kwargs: Additional arguments that were passed to the model engine from :meth:`chat_round` or
             :meth:`full_round` (e.g. decoding arguments).
         """
         max_size = self.max_context_size - self.desired_response_tokens
+        functions = list(self.functions.values()) if include_functions else None
 
-        async def _prompt_len_or_inf(messages, functions):
+        async def _prompt_len_or_inf(messages, functions_):
             try:
-                ret = await self.prompt_token_len(messages=messages, functions=functions, **kwargs)
-                return ret
-            except PromptTooLong:
-                return float("inf")
+                ret = await self.prompt_token_len(messages=messages, functions=functions_, **kwargs)
+                return ret, None
+            except PromptTooLong as e:
+                return float("inf"), e
             except Exception as e:
                 log.warning("Exception while getting prompt size:", exc_info=e)
-                return float("inf")
+                return float("inf"), e
 
         # optimization: check the full prompt first
-        total_tokens = await _prompt_len_or_inf(
-            self.always_included_messages + self.chat_history, list(self.functions.values())
-        )
+        total_tokens, last_exc = await _prompt_len_or_inf(self.always_included_messages + self.chat_history, functions)
         if total_tokens <= max_size:
             to_keep = len(self.chat_history)
         else:
             # otherwise binary search for the first index that does not cause an exception or be too long
             low = 0
             high = len(self.chat_history) - 1
-            to_keep = 0
+            to_keep = None
 
             while low <= high:
                 mid = (low + high) // 2
@@ -455,7 +463,7 @@ class Kani:
                 else:
                     prompt = self.always_included_messages
 
-                total_tokens = await _prompt_len_or_inf(prompt, list(self.functions.values()))
+                total_tokens, last_exc = await _prompt_len_or_inf(prompt, functions)
 
                 if total_tokens > max_size:
                     high = mid - 1
@@ -465,35 +473,34 @@ class Kani:
 
         # raise an error if we can't keep anything
         if not to_keep:
-            if self.chat_history:
-                try:
-                    latest_msg_size = await self.prompt_token_len(
-                        messages=[self.chat_history[-1]], functions=list(self.functions.values()), **kwargs
-                    )
-                except PromptTooLong:
-                    latest_msg_size = float("inf")
+            # if there was an error
+            if last_exc and not isinstance(last_exc, PromptTooLong):
+                raise ValueError(
+                    "Could not find a valid prompt! This is likely a bug in the engine's token counting method. See the"
+                    " above exceptions."
+                ) from last_exc
 
-                if latest_msg_size > max_size:
+            # there were some chat messages but we can't fit them all
+            if self.chat_history:
+                # if to_keep is 0, it must be that the last message is too long (since we must have tried
+                # to_keep=1 and to_keep=0 and 0 was ok)
+                if to_keep == 0:
                     raise MessageTooLong(
-                        "The chat message's size is longer than the allowed context window (after including"
+                        "The last chat message's size is too long to include in the prompt (after including"
                         " system messages, always included messages, and desired response tokens).\nContent:"
                         f" {self.chat_history[-1].text[:100]}..."
                     )
-                elif total_tokens > max_size:
-                    raise PromptTooLong(
-                        "The number of reserved tokens is too high to include any chat messages, or the engine rejected"
-                        " all possible prompts. Consider shortening your system_prompt, always_included_messages, or"
-                        " number of functions."
-                    )
-                raise ValueError(
-                    "Could not find a set of chat messages that could be sent to the engine. This could be a malformed"
-                    " few-shot prompt that the engine is rejecting. See warnings printed above."
-                )
-            if total_tokens > max_size:
+                # otherwise the reserved tokens must be too long
                 raise PromptTooLong(
-                    "The number of reserved tokens is too high to include any chat messages, or the engine rejected all"
-                    " possible prompts. Consider shortening your system_prompt, always_included_messages, or number of"
-                    " functions."
+                    "The number of reserved tokens is too high to include any chat messages. Consider shortening your"
+                    " system_prompt, always_included_messages, desired_response_tokens, or number of functions."
+                )
+
+            # no chat messages, but the reserved is too large
+            if to_keep is None:
+                raise PromptTooLong(
+                    "The number of reserved tokens is too high to include any chat messages. Consider shortening your"
+                    " system_prompt, always_included_messages, desired_response_tokens, or number of functions."
                 )
 
         log.debug(

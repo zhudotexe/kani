@@ -1,0 +1,25 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01ExViRu6p4YAFGYJGW2KXay",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Here's the weather information for Miami:\n\n**Current Weather:**\n- Conditions: Humid\n- Temperature: 85\u00b0F\n\n**3-Day Forecast:**\n- **Day 1:** Partly cloudy\n- **Day 2:** Sunny\n- **Day 3:** Rainy\n\nIt's warm and humid in Miami right now. Tomorrow should be nice with partly cloudy skies, followed by sunny weather the next day. Plan ahead for potential rain on day 3!"
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 984,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 109,
+    "service_tier": "standard"
+  }
+}

@@ -1,0 +1,6 @@
+POST https://api.anthropic.com/v1/messages/count_tokens
+accept: application/json
+content-type: application/json
+x-api-key: *** REDACTED ***
+
+{"messages":[{"role":"assistant","content":[{"type":"text","text":"What a fun question! I think I'd be drawn to deep blue—the color of open water or a clear night sky. There's something about it that feels both calming and vast, like it could hold a lot of possibility. It's the kind of color that makes you want to think about things.\n\nThough I'm honestly curious what draws *you* to a particular color. Do you have a favorite?"}]},{"role":"user","content":[{"type":"text","text":"What is my name? (You can mention it now.)"}]}],"model":"claude-haiku-4-5"}

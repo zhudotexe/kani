@@ -100,18 +100,11 @@ engine = LlamaCppEngine(
     model_load_kwargs={"n_gpu_layers": -1, "additional_files": []},
 )
 
-# ---- LLaMA v2 (llama.cpp) ----
+# ---- LLaMA 2 (llama.cpp) ----
 from kani.engines.llamacpp import LlamaCppEngine
 from kani.model_specific.llama2 import LLAMA2_PIPELINE
 engine = LlamaCppEngine(
     repo_id="TheBloke/Llama-2-7B-Chat-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=LLAMA2_PIPELINE
-)
-
-# ---- Mistral-7B (llama.cpp) ----
-from kani.engines.llamacpp import LlamaCppEngine
-from kani.model_specific.mistral import MISTRAL_V1_PIPELINE
-engine = LlamaCppEngine(
-    repo_id="TheBloke/Mistral-7B-Instruct-v0.2-GGUF", filename="*.Q4_K_M.gguf", prompt_pipeline=MISTRAL_V1_PIPELINE
 )
 
 # take your pick - the kani interface is compatible with all!

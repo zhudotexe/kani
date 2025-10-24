@@ -1,0 +1,45 @@
+{
+  "id": "chatcmpl-CTvNDjzYGJZTO2ZBVlzIkuqyitUwl",
+  "object": "chat.completion",
+  "created": 1761248091,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_DPFtcNWZ8QMSI2mT89L7cHvf",
+            "type": "function",
+            "function": {
+              "name": "search_users",
+              "arguments": "{\"city\":\"San Francisco\"}"
+            }
+          }
+        ],
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "tool_calls"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 252,
+    "completion_tokens": 152,
+    "total_tokens": 404,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 128,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "What time is it?"}], "role": "user"}], "systemInstruction": {"parts": [{"text": "You are a helpful assistant. Use the provided functions to answer questions."}], "role": "user"}, "tools": [{"functionDeclarations": [{"description": "Get the current time in the user's time zone.", "name": "get_time", "parameters": {"description": "Get the current time in the user's time zone.", "properties": {}, "title": "get_time", "type": "OBJECT"}}, {"description": "A function that works correctly.", "name": "working_function", "parameters": {"description": "A function that works correctly.", "properties": {}, "title": "working_function", "type": "OBJECT"}}]}], "generationConfig": {}}

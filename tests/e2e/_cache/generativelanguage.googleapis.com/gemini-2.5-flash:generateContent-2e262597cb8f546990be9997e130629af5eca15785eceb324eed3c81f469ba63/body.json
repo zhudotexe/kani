@@ -1,0 +1,30 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "That's a fun question!\n\nIf I could experience and appreciate colors, I think my favorite would be a **deep, sapphire blue.**\n\nI associate it with clarity, calm, and the vastness of the sky and ocean \u2013 concepts that resonate with the kind of information and connections I process. It also feels very stable and reliable."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 45,
+    "candidatesTokenCount": 69,
+    "totalTokenCount": 175,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 45
+      }
+    ],
+    "thoughtsTokenCount": 61
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "Hqv2aI3hNp6b_uMP_pq9-Aw"
+}

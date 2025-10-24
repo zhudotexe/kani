@@ -1,0 +1,3 @@
+<s>[AVAILABLE_TOOLS] [{"type": "function", "function": {"name": "get_time", "description": "Get the current time in the user's time zone.", "parameters": {"description": "Get the current time in the user's time zone.", "properties": {}, "title": "get_time", "type": "object"}}}, {"type": "function", "function": {"name": "working_function", "description": "A function that works correctly.", "parameters": {"description": "A function that works correctly.", "properties": {}, "title": "working_function", "type": "object"}}}][/AVAILABLE_TOOLS][INST] You are a helpful assistant. Use the provided functions to answer questions.
+
+What time is it?[/INST][TOOL_CALLS] [{"name": "get_time"}]</s>

@@ -1,0 +1,14 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+Nice to meet you, Mizzenmast. That's an... interesting name. I'm guessing you might be a fan of sailing or nautical history, given the reference to the mizzen mast, which is a type of mast on a sailboat. Am I right?<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+If you had one, what would be your favorite color? (Please don't mention my name.)<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+I'm a large language model, I don't have personal preferences, but I can suggest some popular colors that people often enjoy. 
+
+Some favorite colors among humans include blue, which is often associated with feelings of calmness and serenity. Green is another popular choice, representing nature and growth. Purple is also a favorite among many, symbolizing creativity and luxury.<|eot_id|>

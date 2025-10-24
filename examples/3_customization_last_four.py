@@ -13,28 +13,24 @@ engine = OpenAIEngine(api_key, model="gpt-4o-mini")
 
 
 class LastFourKani(Kani):
-    async def get_prompt(self, **kwargs):
+    async def get_prompt(self, include_functions=True, **kwargs):
         """
         Only include the most recent 4 messages (omitting earlier ones to fit in the token length if necessary)
         and any always included messages.
         """
         # calculate how many tokens we have for the prompt, accounting for the response
         max_len = self.max_context_size - self.desired_response_tokens
-        # working backwards through history...
-        messages = []
-        for message in reversed(self.chat_history[-4:]):
-            # if the message fits in the space we have remaining...
+        # try to keep up to the last 4 messages...
+        for to_keep in range(4, 0, -1):
+            # if the messages fit in the space we have remaining...
             token_len = await self.prompt_token_len(
-                messages=self.always_included_messages + [message] + messages,
-                functions=list(self.functions.values()),
+                messages=self.always_included_messages + self.chat_history[-to_keep:],
+                functions=list(self.functions.values()) if include_functions else None,
                 **kwargs,
             )
             if token_len <= max_len:
-                # add it to the returned prompt!
-                messages.insert(0, message)
-            else:
-                break
-        return self.always_included_messages + messages
+                return self.always_included_messages + self.chat_history[-to_keep:]
+        raise ValueError("Could not find a valid prompt including at least 1 message")
 
 
 ai = LastFourKani(engine)

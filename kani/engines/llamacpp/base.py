@@ -149,7 +149,8 @@ class LlamaCppEngine(BaseEngine):
         hyperparams.setdefault("max_tokens", None)  # by default llama.cpp sets this to 16, which is too small
 
         # check for a model-specific parser
-        model_specific.warn_for_uninitialized_parser(self.repo_id)
+        if self.repo_id:
+            model_specific.warn_for_uninitialized_parser(self.repo_id)
         return input_toks, input_len, hyperparams
 
     # ==== kani impl ====
@@ -211,6 +212,9 @@ class LlamaCppEngine(BaseEngine):
         # https://github.com/abetlen/llama-cpp-python/issues/1498 blocks token counting impl
         content = None if not content_chunks else "".join(content_chunks)
         yield Completion(message=ChatMessage.assistant(content))
+
+    async def close(self):
+        self.model.close()
 
     # ==== deprecated ====
     @cached_property

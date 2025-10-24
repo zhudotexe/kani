@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-CTvO0WhE11RosUp6eVIuOH9i0vMYt",
+  "object": "chat.completion",
+  "created": 1761248140,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Current conditions \u2014 Miami, FL:\n- 85\u00b0F and humid.\n\n3-day forecast (Day 1 \u2192 Day 3):\n- Day 1: Partly cloudy\n- Day 2: Sunny\n- Day 3: Rainy\n\nIf you want, I can:\n- convert temperatures to \u00b0C,\n- give expected high/low temps, wind, or hourly details,\n- or show which calendar dates each \u201cDay 1/2/3\u201d corresponds to. Which would you like?",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 374,
+    "completion_tokens": 367,
+    "total_tokens": 741,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 256,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

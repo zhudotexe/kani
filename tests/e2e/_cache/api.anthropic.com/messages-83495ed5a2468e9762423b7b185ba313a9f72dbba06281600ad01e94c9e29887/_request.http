@@ -1,0 +1,6 @@
+POST https://api.anthropic.com/v1/messages
+accept: application/json
+content-type: application/json
+x-api-key: *** REDACTED ***
+
+{"max_tokens":2048,"messages":[{"role":"user","content":[{"type":"text","text":"thank you"}]},{"role":"assistant","content":[{"type":"text","text":"arigato"}]},{"role":"user","content":[{"type":"text","text":"good morning"}]},{"role":"assistant","content":[{"type":"text","text":"ohayo"}]},{"role":"user","content":[{"type":"text","text":"crab"}]}],"model":"claude-haiku-4-5","system":"You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only.","stream":true}

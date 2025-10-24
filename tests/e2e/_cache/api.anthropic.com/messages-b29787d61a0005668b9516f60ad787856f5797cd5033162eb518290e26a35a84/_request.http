@@ -1,0 +1,6 @@
+POST https://api.anthropic.com/v1/messages
+accept: application/json
+content-type: application/json
+x-api-key: *** REDACTED ***
+
+{"max_tokens":2048,"messages":[{"role":"user","content":[{"type":"text","text":"Hi! My name is Mizzenmast."}]}],"model":"claude-haiku-4-5"}

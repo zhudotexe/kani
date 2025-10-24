@@ -1,0 +1,24 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.
+Calls to these tools must go to the commentary channel: 'functions'.<|end|><|start|>developer<|message|># Instructions
+
+You are a helpful assistant. Use the provided functions to answer questions.
+
+# Tools
+
+## functions
+
+namespace functions {
+
+// Get the current time in the user's time zone.
+type get_time = () => any;
+
+// A function that works correctly.
+type working_function = () => any;
+
+} // namespace functions<|end|><|start|>user<|message|>What time is it?<|end|><|start|>assistant<|channel|>analysis<|message|>The user asks "What time is it?" We should use get_time.<|end|><|start|>assistant<|channel|>commentary to=functions.get_time <|constrain|>json<|message|>{}<|call|>

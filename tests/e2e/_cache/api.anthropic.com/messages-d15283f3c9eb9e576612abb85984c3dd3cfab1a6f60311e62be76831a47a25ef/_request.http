@@ -1,0 +1,6 @@
+POST https://api.anthropic.com/v1/messages
+accept: application/json
+content-type: application/json
+x-api-key: *** REDACTED ***
+
+{"max_tokens":2048,"messages":[{"role":"user","content":[{"type":"text","text":"Write me a Python function to calculate a factorial."}]}],"model":"claude-haiku-4-5","system":"Before replying to the user, output the word 'ABRACADABRA' on its own line.","stream":true}

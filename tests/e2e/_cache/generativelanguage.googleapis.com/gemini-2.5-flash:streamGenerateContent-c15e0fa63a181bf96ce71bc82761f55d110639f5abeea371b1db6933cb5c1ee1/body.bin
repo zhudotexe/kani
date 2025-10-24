@@ -1,0 +1,2 @@
+data: {"candidates": [{"content": {"parts": [{"text": "Hello there! How can I help you today?"}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 3,"candidatesTokenCount": 10,"totalTokenCount": 40,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 3}],"thoughtsTokenCount": 27},"modelVersion": "gemini-2.5-flash","responseId": "dqT2aP7XIoCPjMcPsaLT2QY"}
+

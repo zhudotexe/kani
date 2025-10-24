@@ -8,12 +8,18 @@ torch
 # dev
 black
 build
+coverage
 isort
 hatch
+twine
+
+# test
+freezegun
 hypothesis
 pytest
 pytest-asyncio
-twine
+pytest-frozen-uuids
+pytest-lazy-fixtures
 
 # docs
 furo~=2023.9.10

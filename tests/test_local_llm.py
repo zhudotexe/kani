@@ -13,8 +13,10 @@ pytestmark = pytest.mark.local
 
 
 @pytest.fixture(scope="module")
-def model():
-    return HuggingEngine("google/gemma-3-1b-it", device=CI_TORCH_DEVICE)
+async def model():
+    engine = HuggingEngine("google/gemma-3-1b-it", device=CI_TORCH_DEVICE)
+    yield engine
+    await engine.close()
 
 
 @pytest.fixture()

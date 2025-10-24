@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Send an email to john@example.com with subject \"Meeting Tomorrow\" and body \"See you at 3pm\""}], "role": "user"}]}

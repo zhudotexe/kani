@@ -3,13 +3,14 @@ import logging
 import re
 
 from kani.models import FunctionCall, ToolCall
+from kani.parts import ReasoningPart
 from .base import BaseToolCallParser
 
 log = logging.getLogger(__name__)
 
 
 class DeepSeekR1ToolCallParser(BaseToolCallParser):
-    """
+    r"""
     Tool calling adapter for DeepSeek models using the R1 tool call format::
 
         deepseek-ai/DeepSeek-R1
@@ -19,6 +20,8 @@ class DeepSeekR1ToolCallParser(BaseToolCallParser):
         deepseek-ai/DeepSeek-R1-Distill-Qwen-14B
         deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
         deepseek-ai/DeepSeek-R1-Distill-Llama-70B
+
+    Reasoning segments are returned as :class:`.ReasoningPart`\ s.
     """
 
     def __init__(
@@ -38,29 +41,38 @@ class DeepSeekR1ToolCallParser(BaseToolCallParser):
             content,
             re.IGNORECASE | re.DOTALL,
         )
-        if tool_content_match is None:
-            return content, []
-        log.debug(f"Found tool content while parsing: {tool_content_match.group(1)}")
+        if tool_content_match:
+            content = content[: tool_content_match.start()]
+            log.debug(f"Found tool content while parsing: {tool_content_match.group(1)}")
 
-        # translate to kani spec
-        tool_calls = []
-        for tc_match in re.finditer(
-            r"<｜tool▁call▁begin｜>(?P<type>.+?)<｜tool▁sep｜>(?P<name>.+?)\n```json\n(?P<args>.+?)\n```<｜tool▁call▁end｜>",
-            tool_content_match.group(1),
-            re.IGNORECASE | re.DOTALL,
-        ):
-            tool_name = tc_match["name"].strip()
-            tool_args = tc_match["args"].strip()
-            try:
-                json.loads(tool_args)
-            except json.JSONDecodeError:
-                log.error(f"Could not decode tool content! Skipping this tool call:\n{tc_match[0]!r}!", exc_info=True)
-                continue
-            tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
-            tool_calls.append(tool_call)
+            # translate to kani spec
+            tool_calls = []
+            for tc_match in re.finditer(
+                r"<｜tool▁call▁begin｜>(?P<type>.+?)<｜tool▁sep｜>(?P<name>.+?)\n"
+                r"```json\n(?P<args>.+?)\n```<｜tool▁call▁end｜>",
+                tool_content_match.group(1),
+                re.IGNORECASE | re.DOTALL,
+            ):
+                tool_name = tc_match["name"].strip()
+                tool_args = tc_match["args"].strip()
+                try:
+                    json.loads(tool_args)
+                except json.JSONDecodeError:
+                    log.error(
+                        f"Could not decode tool content! Skipping this tool call:\n{tc_match[0]!r}!", exc_info=True
+                    )
+                    continue
+                tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
+                tool_calls.append(tool_call)
+
+        # parse thinking
+        if "</think>" in content:
+            thinking, content = content.split("</think>", 1)
+            thinking.removeprefix("<think>")  # sometimes not output for whatever reason
+            return [ReasoningPart(content=thinking.strip()), content.strip()]
 
         # return trimmed content and tool calls
-        return content[: tool_content_match.start()], tool_calls
+        return content, tool_calls
 
 
 # ===== deepseek-r1 function calling =====

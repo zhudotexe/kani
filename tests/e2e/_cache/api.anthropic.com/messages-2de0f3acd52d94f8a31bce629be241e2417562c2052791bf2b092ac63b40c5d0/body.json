@@ -1,0 +1,25 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01EUL3Tkzi9fDZ6eKEDf3pEb",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I don't have any information about your name. We haven't discussed it in our conversation, and I don't have access to personal information about you beyond what you share with me in our chat.\n\nIf you'd like to tell me your name, I'm happy to know it! But I can't retrieve or infer it from other sources."
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 158,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 74,
+    "service_tier": "standard"
+  }
+}

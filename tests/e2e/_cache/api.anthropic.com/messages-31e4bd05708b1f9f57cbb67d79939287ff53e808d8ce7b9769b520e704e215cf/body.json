@@ -1,0 +1,34 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_013nkj7QzbhU6ZpBxMHbafXa",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I'll calculate that for you by first multiplying 8 times 5, then adding 10."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_015xM37TMGAXA1yovnvXfkLh",
+      "name": "multiply",
+      "input": {
+        "a": 8,
+        "b": 5
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 769,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 91,
+    "service_tier": "standard"
+  }
+}

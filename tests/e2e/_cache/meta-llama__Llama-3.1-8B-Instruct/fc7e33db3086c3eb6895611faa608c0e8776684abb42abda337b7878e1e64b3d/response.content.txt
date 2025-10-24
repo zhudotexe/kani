@@ -1,0 +1,68 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+Before replying to the user, output the word 'ABRACADABRA' on its own line.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Write me a Python function to calculate a factorial.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+ABRACADABRA
+
+```python
+def calculate_factorial(n):
+    """
+    Calculate the factorial of a given integer n.
+
+    Args:
+        n (int): The input number.
+
+    Returns:
+        int: The factorial of n.
+
+    Raises:
+        ValueError: If n is a negative integer.
+    """
+    if not isinstance(n, int):
+        raise TypeError("Input must be an integer.")
+    if n < 0:
+        raise ValueError("Input must be a non-negative integer.")
+    elif n == 0:
+        return 1
+    else:
+        return n * calculate_factorial(n-1)
+
+# Example usage:
+print(calculate_factorial(5))  # Output: 120
+```
+
+However, the above function uses recursion which can be inefficient for large inputs due to the overhead of function calls. A more efficient way to calculate the factorial is to use iteration:
+
+```python
+def calculate_factorial(n):
+    """
+    Calculate the factorial of a given integer n.
+
+    Args:
+        n (int): The input number.
+
+    Returns:
+        int: The factorial of n.
+
+    Raises:
+        ValueError: If n is a negative integer.
+    """
+    if not isinstance(n, int):
+        raise TypeError("Input must be an integer.")
+    if n < 0:
+        raise ValueError("Input must be a non-negative integer.")
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+    return result
+
+# Example usage:
+print(calculate_factorial(5))  # Output: 120
+```
+
+This function has a time complexity of O(n) and a space complexity of O(1), making it more efficient for large inputs.<|eot_id|>

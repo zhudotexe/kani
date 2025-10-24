@@ -3,11 +3,11 @@ from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, ChatRole, Kani
 from kani.engines.base import WrapperEngine
-from tests.engine import TestEngine, TestStreamingEngine
+from tests.engine import EngineForTests, StreamingEngineForTests
 from tests.utils import flatten_chatmessages
 
-engine = TestEngine()
-streaming_engine = TestStreamingEngine()
+engine = EngineForTests()
+streaming_engine = StreamingEngineForTests()
 wrapped_engine = WrapperEngine(engine)
 wrapped_streaming_engine = WrapperEngine(streaming_engine)
 
@@ -61,4 +61,4 @@ async def test_spam_stream(eng, data):
         assert resp.content == query
 
         prompt = await ai.get_prompt()
-        assert sum(ai.message_token_len(m) for m in prompt) <= ai.max_context_size
+        assert (await ai.prompt_token_len(prompt)) <= ai.max_context_size

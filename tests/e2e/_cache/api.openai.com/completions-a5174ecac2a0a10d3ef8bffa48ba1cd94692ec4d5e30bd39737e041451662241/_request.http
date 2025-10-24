@@ -1,0 +1,6 @@
+POST https://api.openai.com/v1/chat/completions
+accept: application/json
+content-type: application/json
+authorization: *** REDACTED ***
+
+{"messages":[{"role":"system","content":"You are a database assistant. Use the provided functions to answer questions about users and orders."},{"role":"user","content":"Find all users in San Francisco and tell me their names and total order amounts."}],"model":"gpt-5-mini","tools":[{"type":"function","function":{"name":"get_order_total","description":"Calculate the total amount spent by a user.","parameters":{"description":"Calculate the total amount spent by a user.","properties":{"user_id":{"type":"integer"}},"required":["user_id"],"title":"get_order_total","type":"object"}}},{"type":"function","function":{"name":"get_user_orders","description":"Get all orders for a specific user ID.","parameters":{"description":"Get all orders for a specific user ID.","properties":{"user_id":{"type":"integer"}},"required":["user_id"],"title":"get_user_orders","type":"object"}}},{"type":"function","function":{"name":"search_users","description":"Search for users by city.","parameters":{"description":"Search for users by city.","properties":{"city":{"type":"string"}},"required":["city"],"title":"search_users","type":"object"}}}]}

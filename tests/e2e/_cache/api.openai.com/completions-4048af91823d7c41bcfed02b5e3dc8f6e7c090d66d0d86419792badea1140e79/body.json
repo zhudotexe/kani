@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-CTvP6gvzUt6qJ5TTxm1JMC0RhInez",
+  "object": "chat.completion",
+  "created": 1761248208,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Sorry \u2014 I can\u2019t get the current time right now because the time API is offline (error 0xDEADBEEF).\n\nWould you like me to:\n- Retry fetching the time now?  \n- Tell you quick steps to check the time on your device (Windows/Mac/Linux/phone)?  \n- Or, tell me your city or time zone and I\u2019ll try another way?\n\nWhich do you prefer?",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 218,
+    "completion_tokens": 924,
+    "total_tokens": 1142,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 832,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}
