@@ -1,42 +1,13 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import aiohttp
-
-
 class KaniException(Exception):
     """Base class for all Kani exceptions/errors."""
 
 
+class PromptTooLong(KaniException):
+    """A given prompt was too long to tokenize or generate a completion for."""
+
+
 class MessageTooLong(KaniException):
     """This chat message will never fit in the context window."""
-
-
-# ==== HTTP ====
-class HTTPException(KaniException):
-    """Base class for all HTTP errors (for HTTP engines).
-
-    .. deprecated:: 1.0.0
-    """
-
-
-class HTTPTimeout(HTTPException):
-    """Timeout occurred connecting to or waiting for a response from an HTTP request.
-
-    .. deprecated:: 1.0.0
-    """
-
-
-class HTTPStatusException(HTTPException):
-    """The HTTP server returned a non-200 status code.
-
-    .. deprecated:: 1.0.0
-    """
-
-    def __init__(self, response: "aiohttp.ClientResponse", msg: str):
-        super().__init__(msg)
-        self.response = response
-        self.status_code = response.status
 
 
 # ==== function calling ====

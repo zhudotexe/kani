@@ -1,7 +1,11 @@
 import logging
 import re
 
-from kani.engines.huggingface.chat_template_pipeline import ChatTemplatePromptPipeline, hf_tool_use_keys
+from kani.engines.huggingface.chat_template_pipeline import (
+    ChatTemplatePromptPipeline,
+    hf_content_transform,
+    hf_tool_use_keys,
+)
 from kani.models import FunctionCall, MessagePart, ToolCall
 from kani.parts import ReasoningPart
 from .base import BaseToolCallParser
@@ -35,7 +39,9 @@ def _gptoss_chat_template_keys(message):
 
 def build_gptoss_prompt_pipeline(tokenizer, **kwargs):
     """We just extend the chat template pipeline with a bit of extra code to make sure the thinking key is set"""
-    return ChatTemplatePromptPipeline(tokenizer, **kwargs).conversation_dict(additional_keys=_gptoss_chat_template_keys)
+    return ChatTemplatePromptPipeline(tokenizer, **kwargs).conversation_dict(
+        additional_keys=_gptoss_chat_template_keys, content_transform=hf_content_transform
+    )
 
 
 # ===== OUTPUT PARSER =====

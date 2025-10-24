@@ -1,0 +1,3 @@
+- deprecated Kani.message_token_len
+- deprecated BaseEngine.message_len, .token_reserve, .function_token_reserve
+- AIFunction.auto_truncate now truncates to a certain number of characters instead of tokens

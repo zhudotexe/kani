@@ -2,9 +2,8 @@ import fnmatch
 import functools
 import importlib
 import logging
-import sys
-import warnings
 
+from kani.utils.warnings import warn_in_userspace
 from .base import BaseToolCallParser
 
 # list of (HF model id glob, path to import)
@@ -134,16 +133,11 @@ def parser_for_hf_model(model_id: str, search_parents=True):
 def warn_for_uninitialized_parser(model_id: str):
     """Log a warning if no model-specific parser is initialized and there is a handwritten parser available."""
     if (not _has_initialized_model_specific_parser) and (parser := parser_for_hf_model(model_id)):
-        if sys.version_info >= (3, 12):
-            _warnings_kwargs = {"skip_file_prefixes": ("kani",)}
-        else:
-            _warnings_kwargs = {"stacklevel": 2}
-
-        warnings.warn(
+        warn_in_userspace(
             "You are using a model that requires additional parsing of its outputs but no model-specific parser is"
             f" wrapping it. Consider wrapping your engine with {parser!s} in order"
             " to correctly parse tool calls and/or reasoning chunks:\n\n"
             f">>> from {parser.__module__} import {parser.__name__}\n"
             f">>> engine = {parser.__name__}(<previous engine def>)\n",
-            **_warnings_kwargs,
+            stacklevel=2,
         )

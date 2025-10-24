@@ -29,7 +29,31 @@ If your language model backend is available on HuggingFace or is compatible with
     the :class:`.HuggingEngine`.
 
 If you do create a new engine, instead of having to implement the prediction logic, all you have to do is subclass
-:class:`.HuggingEngine` and implement :meth:`~.HuggingEngine.build_prompt` and :meth:`~.BaseEngine.message_len`.
+:class:`.HuggingEngine` and implement :meth:`~.HuggingEngine.build_prompt`.
+
+Multimodal Support
+------------------
+The :class:`.HuggingEngine` will attempt to load a multimodal model's ``AutoProcessor`` if available, and format
+any multimodal parts found in the input correctly for the multimodal model.
+
+For audio/video models, you should specify the ``audio_sample_rate`` based on the sampling rate expected by the model.
+
+For certain models, you may need to override ``tokenizer_cls`` or ``model_cls``. For example, to load the
+``Qwen/Qwen3-Omni-30B-A3B-Instruct`` model:
+
+.. code-block:: python
+
+    from kani.engines.huggingface import HuggingEngine
+    from transformers import Qwen3OmniMoeProcessor, Qwen3OmniMoeThinkerForConditionalGeneration
+
+    engine = HuggingEngine(
+        "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+        max_context_size=32000,
+        audio_sr=16000,
+        model_cls=Qwen3OmniMoeThinkerForConditionalGeneration,
+        tokenizer_cls=Qwen3OmniMoeProcessor,
+        eos_token_id=[151645],  # <|im_end|>
+    )
 
 .. _4b_quant:
 
@@ -91,7 +115,4 @@ Reference
     :noindex:
 
     .. automethod:: kani.engines.huggingface.HuggingEngine.build_prompt
-        :noindex:
-
-    .. automethod:: kani.engines.huggingface.HuggingEngine.message_len
         :noindex:

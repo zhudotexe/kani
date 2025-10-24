@@ -34,9 +34,13 @@ class AIFunction:
             (see :ref:`auto_retry`).
         :param json_schema: A JSON Schema document describing the function's parameters. By default, kani will
             automatically generate one, but this can be helpful for overriding it in any tricky cases.
-        :param auto_truncate: If a function response is longer than this many tokens, truncate it until it is at most
-            this many tokens and add "..." to the end. By default, no responses will be truncated. This uses a smart
+        :param auto_truncate: If a function response is longer than this many characters, truncate it until it is at
+            most this many characters and add "..." to the end. By default, no responses will be truncated. This uses a
             paragraph-aware truncation algorithm.
+
+            .. versionchanged:: 1.7.0
+                This parameter now truncates to a certain number of characters, rather than tokens, since it is not
+                possible to reliably determine the token count of a message out of prompt context for all engines.
         """
         # pydantic's wrapper mangles the async signature so we have to store this here
         self._inner_is_coro = inspect.iscoroutinefunction(inner)
@@ -139,9 +143,13 @@ def ai_function(
     :param auto_retry: Whether the model should retry calling the function if it gets it wrong (see :ref:`auto_retry`).
     :param json_schema: A JSON Schema document describing the function's parameters. By default, kani will automatically
         generate one, but this can be helpful for overriding it in any tricky cases.
-    :param auto_truncate: If a function response is longer than this many tokens, truncate it until it is at most
-        this many tokens and add "..." to the end. By default, no responses will be truncated. This uses a smart
-        paragraph-aware truncation algorithm.
+    :param auto_truncate: If a function response is longer than this many characters, truncate it until it is at
+            most this many characters and add "..." to the end. By default, no responses will be truncated. This uses a
+            paragraph-aware truncation algorithm.
+
+            .. versionchanged:: 1.7.0
+                This parameter now truncates to a certain number of characters, rather than tokens, since it is not
+                possible to reliably determine the token count of a message out of prompt context for all engines.
     """
 
     def deco(f):

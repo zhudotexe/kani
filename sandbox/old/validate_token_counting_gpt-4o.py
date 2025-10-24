@@ -24,8 +24,8 @@ class WikipediaRetrievalKani(Kani):
         super().__init__(*args, **kwargs)
         self.wikipedia_client = httpx.AsyncClient(base_url="https://en.wikipedia.org/w/api.php", follow_redirects=True)
 
-    async def get_prompt(self) -> list[ChatMessage]:
-        msgs = await super().get_prompt()
+    async def get_prompt(self, **kwargs) -> list[ChatMessage]:
+        msgs = await super().get_prompt(**kwargs)
         print(
             "expected prompt len:",
             sum(self.message_token_len(m) for m in msgs)

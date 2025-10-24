@@ -93,6 +93,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
         self.tokenizer = tokenizer  # tiktoken caches a tokenizer globally in module, so we can unconditionally load it
         self._load_tokenizer()
 
+    # ==== token counting ====
     def _load_tokenizer(self):
         if self.tokenizer:
             return
@@ -141,33 +142,81 @@ class OpenAIEngine(TokenCached, BaseEngine):
         self.set_cached_message_len(message, mlen)
         return mlen
 
-    async def predict(
-        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
-    ) -> ChatCompletion:
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        if not functions:
+            return 0
+        # wrap an inner impl to use lru_cache with tuple
+        return self._function_token_reserve_impl(tuple(functions))
+
+    @functools.lru_cache(maxsize=256)
+    def _function_token_reserve_impl(self, functions):
+        prompt = function_calling.prompt(translate_functions(functions))
+        return len(self.tokenizer.encode(prompt))
+
+    # ==== hackable stuff for requests ====
+    @staticmethod
+    def _prepare_request(
+        messages, functions, *, intent: str = "chat_completions.create"
+    ) -> tuple[dict, list, dict | None]:
+        """
+        Prepare the API request to the OpenAI API. Returns a tuple (kwargs, messages, tools) to be passed to the
+        OpenAIClient's chat.completions.create() method.
+
+        :param messages: The Kani ChatMessages to translate into OpenAI-format messages.
+        :param functions: The Kani AIFunctions to translate into OpenAI-format tools.
+        :param intent: one of ("chat_completions.create", "chat_completions.stream") -- the underlying OpenAI SDK call
+            the returned keyword arguments will be passed to.
+        """
         if functions:
             tool_specs = translate_functions(functions)
         else:
             tool_specs = None
         # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
         translated_messages = translate_messages(messages)
+
+        return {}, translated_messages, tool_specs
+
+    @staticmethod
+    def _translate_openai_completion(completion) -> ChatCompletion:
+        """Translate an OpenAI completion to a Kani completion. Only called for non-streaming requests by default."""
+        return ChatCompletion(openai_completion=completion)
+
+    # ==== main kani impl ====
+    async def prompt_len(self, messages, functions=None, **kwargs) -> int:
+        # optimization: since chat-based appends messages 1 at a time, see if the messages - 1 is in prompt cache
+        if messages and (cached := self.get_cached_prompt_len(messages[:-1], functions, **kwargs)) is not None:
+            return cached + self.message_len(messages[-1])
+        # OpenAI does not use an API for token counting, so we'll use the old-style message-wise counting
+        return sum(self.message_len(m) for m in messages) + self.function_token_reserve(functions)
+
+    async def predict(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> ChatCompletion:
+        local_kwargs, translated_messages, tool_specs = self._prepare_request(
+            messages, functions, intent="chat_completions.create"
+        )
         # make API call
         completion = await self.client.chat.completions.create(
-            model=self.model, messages=translated_messages, tools=tool_specs, **self.hyperparams, **hyperparams
+            model=self.model,
+            messages=translated_messages,
+            tools=tool_specs,
+            **(local_kwargs | self.hyperparams | hyperparams),
         )
         # translate into Kani spec and return
-        kani_cmpl = ChatCompletion(openai_completion=completion)
+        kani_cmpl = self._translate_openai_completion(completion)
+        self.set_cached_prompt_len(messages, functions, completion.usage.prompt_tokens)
+        self.set_cached_prompt_len(
+            messages + [kani_cmpl.message], functions, completion.usage.prompt_tokens + kani_cmpl.completion_tokens
+        )
         self.set_cached_message_len(kani_cmpl.message, kani_cmpl.completion_tokens)
         return kani_cmpl
 
     async def stream(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> AsyncIterable[str | BaseCompletion]:
-        if functions:
-            tool_specs = translate_functions(functions)
-        else:
-            tool_specs = None
-        # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
-        translated_messages = translate_messages(messages)
+        local_kwargs, translated_messages, tool_specs = self._prepare_request(
+            messages, functions, intent="chat_completions.stream"
+        )
         # make API call
         stream = await self.client.chat.completions.create(
             model=self.model,
@@ -175,8 +224,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
             tools=tool_specs,
             stream=True,
             stream_options={"include_usage": True},
-            **self.hyperparams,
-            **hyperparams,
+            **(local_kwargs | self.hyperparams | hyperparams),
         )
 
         # save requested tool calls and content as streamed
@@ -218,6 +266,8 @@ class OpenAIEngine(TokenCached, BaseEngine):
 
         # token counting
         if usage:
+            self.set_cached_prompt_len(messages, functions, usage.prompt_tokens)
+            self.set_cached_prompt_len(messages + [msg], functions, usage.prompt_tokens + usage.completion_tokens)
             self.set_cached_message_len(msg, usage.completion_tokens)
             prompt_tokens = usage.prompt_tokens
             completion_tokens = usage.completion_tokens
@@ -225,17 +275,6 @@ class OpenAIEngine(TokenCached, BaseEngine):
         else:
             prompt_tokens = completion_tokens = None
         yield Completion(message=msg, prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
-
-    def function_token_reserve(self, functions: list[AIFunction]) -> int:
-        if not functions:
-            return 0
-        # wrap an inner impl to use lru_cache with tuple
-        return self._function_token_reserve_impl(tuple(functions))
-
-    @functools.lru_cache(maxsize=256)
-    def _function_token_reserve_impl(self, functions):
-        prompt = function_calling.prompt(translate_functions(functions))
-        return len(self.tokenizer.encode(prompt))
 
     async def close(self):
         await self.client.close()

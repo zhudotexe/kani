@@ -37,9 +37,9 @@ ai = Kani(
 async def time_completion():
     before = time.monotonic()
     message = await ai.chat_round("What are some interesting things to do in Tokyo?", top_k=1, do_sample=True)
-    print(message.content)
-    print(f"Tokens: {ai.message_token_len(message)}")
     after = time.monotonic()
+    print(message.content)
+    print(f"Tokens: {len(engine.tokenizer.encode(message.text))}")
     print(f"Time: {after - before}")
 
 

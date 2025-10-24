@@ -58,13 +58,14 @@ your engine *wrap* another engine:
     # subclassing WrapperEngine automatically implements passthrough of untouched attributes
     # to the wrapped engine!
     class MyEngineWrapper(WrapperEngine):
-        def message_len(self, message):
-            # wrap the inner message with the prompt framework...
-            prompted_message = ChatMessage(...)
-            return super().message_len(prompted_message)
+        def prompt_len(self, messages, functions=None, **kwargs):
+            # wrap the inner messages with the prompt framework...
+            prompted_messages = [ChatMessage(...) for m in messages]
+            return super().prompt_len(prompted_messages, functions, **kwargs)
 
         async def predict(self, messages, functions=None, **hyperparams):
             # wrap the messages with the prompt framework and pass it to the inner engine
+            prompted_messages = [ChatMessage(...) for m in messages]
             prompted_completion = await super().predict(prompted_messages, ...)
             # unwrap the resulting message (if necessary) and store the metadata separately
             completion = self.unwrap(prompted_completion)

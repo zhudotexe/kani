@@ -19,8 +19,8 @@ To create your own engine, all you have to do is subclass :class:`.BaseEngine`:
 
 A new engine must implement at least the two abstract methods and set the abstract attribute:
 
-- :meth:`.BaseEngine.message_len` takes a single :class:`.ChatMessage` and returns the length of that message,
-  in tokens.
+- :meth:`.BaseEngine.prompt_len` takes a list of :class:`.ChatMessage` and :class:`.AIFunction` and returns the length
+  of that prompt, in tokens.
 - :meth:`.BaseEngine.predict` takes a list of :class:`.ChatMessage` and :class:`.AIFunction` and returns a
   new :class:`.BaseCompletion`.
 - :attr:`.BaseEngine.max_context_size` specifies the model's token context size.
@@ -33,12 +33,8 @@ an available HTTP API.
 Optional Methods
 ----------------
 Engines also come with a set of optional methods/attributes to override that you can use to customize its behaviour
-further. For example, engines often have to add a custom model-specific prompt in order to expose functions to
-the underlying model, and kani needs to know about the extra tokens added by this prompt!
+further.
 
-- :attr:`.BaseEngine.token_reserve`: if your engine needs to reserve tokens (e.g. for a one-time prompt template).
-- :meth:`.BaseEngine.function_token_reserve`: specify how many tokens are needed to expose a set of functions to the
-  model.
 - :meth:`.BaseEngine.close`: if your engine needs to clean up resources during shutdown.
 
 Adding Function Calling
@@ -47,6 +43,9 @@ Adding Function Calling
 .. important::
     Already have a way to build function calling prompts but just need a way to parse the outputs? Check out the list
     of :ref:`tool-parsers`.
+
+    This is commonly the case for Hugging Face models which implement the function calling prompt in their chat
+    template.
 
 If you're writing an engine for a model with function calling, there are a couple additional steps you need to take.
 
@@ -58,10 +57,10 @@ Generally, to use function calling, you need to do the following:
 2. Parse the model's requests to call functions from its text generations
 
 To tell the model what functions it has available, you'll need to somehow prompt the model.
-You'll need to implement two methods: :meth:`.BaseEngine.predict` and :meth:`.BaseEngine.function_token_reserve`.
+You'll just need to edit two methods: :meth:`.BaseEngine.predict` and :meth:`.BaseEngine.prompt_len`.
 
 :meth:`.BaseEngine.predict` takes in a list of available :class:`.AIFunction`\ s as an argument, which you should use to
-build such a prompt. :meth:`.BaseEngine.function_token_reserve` tells kani how many tokens that prompt takes, so the
+build such a prompt. :meth:`.BaseEngine.prompt_len` tells kani how many tokens that prompt takes, so the
 context window management can ensure it never sends too many tokens.
 
 You'll also need to add previous function calls into the prompt (e.g. in the few-shot function calling example).

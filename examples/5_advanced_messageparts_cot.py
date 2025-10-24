@@ -6,8 +6,10 @@ also use MessageParts in user messages, e.g. to provide images to a multimodal m
 You should be familiar with the concept of Engines before trying to understand this code.
 """
 
+from typing import Awaitable
+
 from kani import AIFunction, ChatMessage, Kani, MessagePart, chat_in_terminal
-from kani.engines.base import BaseEngine, Completion
+from kani.engines.base import Completion, WrapperEngine
 from kani.engines.openai import OpenAIEngine
 
 
@@ -22,11 +24,7 @@ class ThoughtPart(MessagePart):
 
 
 # Then, define an engine that can use the part we defined - we'll wrap another engine to provide a translation layer
-class ChainOfThoughtEngine(BaseEngine):
-    def __init__(self, engine: BaseEngine):
-        self.engine = engine
-        self.max_context_size = engine.max_context_size
-
+class ChainOfThoughtEngine(WrapperEngine):
     @staticmethod
     def translate_message(message: ChatMessage) -> ChatMessage:
         """Translate a input message into a simple string-only message to pass to the underlying engine."""
@@ -41,8 +39,12 @@ class ChainOfThoughtEngine(BaseEngine):
         return message.copy_with(content=content.strip())
 
     # === BaseEngine interface ===
-    def message_len(self, message: ChatMessage) -> int:
-        return self.engine.message_len(self.translate_message(message))
+    def prompt_len(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **kwargs
+    ) -> int | Awaitable[int]:
+        # translate the messages
+        translated_messages = [self.translate_message(m) for m in messages]
+        return super().prompt_len(translated_messages, functions, **kwargs)
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
@@ -51,7 +53,7 @@ class ChainOfThoughtEngine(BaseEngine):
         translated_messages = [self.translate_message(m) for m in messages]
 
         # generate a completion using the underlying engine given those messages
-        result = await self.engine.predict(translated_messages, functions, **hyperparams)
+        result = await super().predict(translated_messages, functions, **hyperparams)
 
         # parse the string-completion back into parts - with some checks to make sure the model actually output the
         # right format
@@ -70,13 +72,6 @@ class ChainOfThoughtEngine(BaseEngine):
             prompt_tokens=result.prompt_tokens,
             completion_tokens=result.completion_tokens,
         )
-
-    # additional overrides that pass-through to underlying engine
-    def function_token_reserve(self, functions):
-        return self.engine.function_token_reserve(functions)
-
-    async def close(self):
-        return await self.engine.close()
 
 
 # Initialize our engine as a wrapper around any underlying engine

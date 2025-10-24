@@ -1,9 +1,13 @@
 import abc
+import inspect
 import warnings
 from collections.abc import AsyncIterable
+from typing import Awaitable, overload
 
 from kani.ai_function import AIFunction
+from kani.exceptions import KaniException
 from kani.models import ChatMessage
+from kani.utils.warnings import deprecated
 
 
 # ==== completions ====
@@ -59,9 +63,28 @@ class BaseEngine(abc.ABC):
     max_context_size: int
     """The maximum context size supported by this engine's LM."""
 
+    @overload
+    async def prompt_len(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **kwargs
+    ) -> int: ...
+
+    @overload
+    def prompt_len(self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **kwargs) -> int: ...
+
     @abc.abstractmethod
-    def message_len(self, message: ChatMessage) -> int:
-        """Return the length, in tokens, of the given chat message."""
+    def prompt_len(self, messages, functions=None, **kwargs) -> int:
+        """
+        Returns the number of tokens used by the given prompt (i.e., list of messages and functions), or a best estimate
+        if the exact count is unavailable.
+
+        This method MAY be asynchronous. Use :meth:`.Kani.prompt_token_len` for a higher-level interface that handles
+        asynchrony.
+
+        :param messages: The messages in the prompt.
+        :param functions: The functions included in the prompt.
+        :param kwargs: Any additional parameters to pass to the underlying token counting implementation
+            (engine-specific).
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -71,7 +94,7 @@ class BaseEngine(abc.ABC):
         """
         Given the current context of messages and available functions, get the next predicted chat message from the LM.
 
-        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+        :param messages: The messages in the current chat context. ``prompt_len(messages, functions)`` is
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
         :param hyperparams: Any additional parameters to pass to the engine.
@@ -79,26 +102,6 @@ class BaseEngine(abc.ABC):
         raise NotImplementedError
 
     # ==== optional interface ====
-    token_reserve: int = 0
-    """Optional: The number of tokens to reserve for internal engine mechanisms (e.g. if an engine has to set up the
-    model's reply with a delimiting token).
-    
-    Default: 0
-    """
-
-    def function_token_reserve(self, functions: list[AIFunction]) -> int:
-        """Optional: How many tokens are required to build a prompt to expose the given functions to the model.
-
-        Default: If this is not implemented and the user passes in functions, log a warning that the engine does not
-        support function calling.
-        """
-        if functions:
-            warnings.warn(
-                f"The {type(self).__name__} engine is conversational only and does not support function calling.\n"
-                "Developers: If this warning is incorrect, please implement `function_token_reserve()`."
-            )
-        return 0
-
     async def stream(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> AsyncIterable[str | BaseCompletion]:
@@ -115,7 +118,7 @@ class BaseEngine(abc.ABC):
         If an engine does not implement streaming, this method will yield the entire text of the completion in a single
         chunk by default.
 
-        :param messages: The messages in the current chat context. ``sum(message_len(m) for m in messages)`` is
+        :param messages: The messages in the current chat context. ``prompt_len(messages, functions)`` is
             guaranteed to be less than max_context_size.
         :param functions: The functions the LM is allowed to call.
         :param hyperparams: Any additional parameters to pass to the engine.
@@ -144,6 +147,54 @@ class BaseEngine(abc.ABC):
         )
         return f"{type(self).__name__}({attrs})"
 
+    # ==== deprecated: old-style token counting ====
+    @deprecated("Use Kani.prompt_token_len instead")
+    def message_len(self, message: ChatMessage) -> int:
+        """
+        Returns the estimated number of tokens used by a single given message.
+
+        .. note::
+            The token count returned by this may not exactly reflect the actual token count (e.g., due to prompt
+            formatting or not having access to the tokenizer). It should, however, be a safe overestimate to use as
+            an upper bound.
+
+        .. deprecated:: 1.7.0
+            Use :meth:`.BaseEngine.prompt_len` instead.
+        """
+        if inspect.iscoroutinefunction(self.prompt_len):
+            raise KaniException(
+                "This engine's token counting method is asynchronous only. Please use `await"
+                " Kani.prompt_token_len([message])` instead."
+            )
+        return self.prompt_len([message])
+
+    token_reserve: int = 0
+    """
+    Optional: The number of tokens to reserve for internal engine mechanisms (e.g. if an engine has to set up the
+    model's reply with a delimiting token). Default: 0
+
+    .. deprecated:: 1.7.0
+        Use :meth:`.BaseEngine.prompt_len` instead.
+    """
+
+    @deprecated("Use Kani.prompt_token_len instead")
+    def function_token_reserve(self, functions: list[AIFunction]) -> int:
+        """
+        Optional: How many tokens are required to build a prompt to expose the given functions to the model.
+
+        Default: If this is not implemented and the user passes in functions, log a warning that the engine does not
+        support function calling.
+
+        .. deprecated:: 1.7.0
+            Use :meth:`.BaseEngine.prompt_len` instead.
+        """
+        if functions:
+            warnings.warn(
+                f"The {type(self).__name__} engine is conversational only and does not support function calling.\n"
+                "Developers: If this warning is incorrect, please implement `function_token_reserve()`."
+            )
+        return 0
+
 
 # ==== utils ====
 class WrapperEngine(BaseEngine):
@@ -163,11 +214,12 @@ class WrapperEngine(BaseEngine):
 
         # passthrough attrs
         self.max_context_size = engine.max_context_size
-        self.token_reserve = engine.token_reserve
 
     # passthrough methods
-    def message_len(self, message: ChatMessage) -> int:
-        return self.engine.message_len(message)
+    def prompt_len(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **kwargs
+    ) -> int | Awaitable[int]:
+        return self.engine.prompt_len(messages, functions, **kwargs)
 
     async def predict(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
@@ -179,9 +231,6 @@ class WrapperEngine(BaseEngine):
     ) -> AsyncIterable[str | BaseCompletion]:
         async for elem in self.engine.stream(messages, functions, **hyperparams):
             yield elem
-
-    def function_token_reserve(self, functions: list[AIFunction]) -> int:
-        return self.engine.function_token_reserve(functions)
 
     async def close(self):
         return await self.engine.close()
