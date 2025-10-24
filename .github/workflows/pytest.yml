@@ -8,7 +8,11 @@ on: [ push, pull_request ]
 #  cancel-in-progress: true
 
 env:
+  CI_TORCH_DEVICE: cpu
   HF_TOKEN: ${{ secrets.HF_TOKEN }}
+  ANTHROPIC_API_KEY: dummy
+  GEMINI_API_KEY: dummy
+  OPENAI_API_KEY: dummy
 
 jobs:
   build:

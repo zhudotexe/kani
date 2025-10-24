@@ -40,6 +40,7 @@ from kani.engines.openai import OpenAIEngine
 MOCK_CACHE_BASE = Path(__file__).parent / "_cache"
 DO_REAL_API_REQUESTS = "api" in os.getenv("KANI_E2E_HYDRATE", "")
 DO_REAL_LOCAL_GENERATE = "local" in os.getenv("KANI_E2E_HYDRATE", "")
+CI_TORCH_DEVICE = os.getenv("CI_TORCH_DEVICE")  # we want to force CPU in GHA
 
 log = logging.getLogger("tests.e2e")
 
@@ -383,7 +384,7 @@ async def _hf_engine(request):
 
     # load the model
     await LocalEngineManager.ensure_closed()
-    engine = HuggingEngine(model_id=model_id, model_cls=CachingAutoModel, **load_kwargs)
+    engine = HuggingEngine(model_id=model_id, model_cls=CachingAutoModel, device=CI_TORCH_DEVICE, **load_kwargs)
     if wrapper := model_specific.parser_for_hf_model(model_id):
         engine = wrapper(engine)
     LocalEngineManager.last_loaded_engine = engine
