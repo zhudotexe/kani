@@ -80,6 +80,7 @@ Hands-on examples are available in the `kani repository <https://github.com/zhud
     advanced
     api_reference
     engine_reference
+    changelog.md
     genindex
 
 .. toctree::

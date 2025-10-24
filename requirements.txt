@@ -2,18 +2,17 @@
 -e .[all]
 
 # manual install
-aiohttp
 torch
 
 # dev
 black
 build
-coverage
 isort
 hatch
 twine
 
 # test
+coverage
 freezegun
 hypothesis
 pytest
@@ -30,3 +29,4 @@ sphinx-inline-tabs~=2023.4.21
 sphinx-sitemap~=2.5.1
 sphinxext-opengraph~=0.9.0
 matplotlib>=3.0.0,<4.0.0  # depended on by opengraph
+myst-parser~=4.0.1

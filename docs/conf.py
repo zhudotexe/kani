@@ -30,6 +30,7 @@ extensions = [
     "sphinx_copybutton",  # https://sphinx-copybutton.readthedocs.io/en/latest/
     "sphinxemoji.sphinxemoji",  # https://sphinxemojicodes.readthedocs.io/en/stable/
     "sphinx_sitemap",  # https://sphinx-sitemap.readthedocs.io/en/latest/getting-started.html
+    "myst_parser",  # https://myst-parser.readthedocs.io/en/stable/intro.html
 ]
 
 templates_path = ["_templates"]
