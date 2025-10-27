@@ -1,0 +1,34 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "This is an image of **Tokyo Station**, located in **Tokyo, Japan**."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 275,
+    "candidatesTokenCount": 16,
+    "totalTokenCount": 860,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 17
+      },
+      {
+        "modality": "IMAGE",
+        "tokenCount": 258
+      }
+    ],
+    "thoughtsTokenCount": 569
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "UcP_aOT8A_WzjMcPjKOq4Qs"
+}

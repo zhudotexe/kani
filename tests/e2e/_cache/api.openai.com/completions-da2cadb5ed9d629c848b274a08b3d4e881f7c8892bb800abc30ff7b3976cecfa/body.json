@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-CVMsjAXwzvPrjUevZHj5eIcKoU0Ht",
+  "object": "chat.completion",
+  "created": 1761592161,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "This is Tokyo Station (the Marunouchi red-brick station building), and the photo was taken in Tokyo, Japan.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 743,
+    "completion_tokens": 98,
+    "total_tokens": 841,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 64,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

@@ -1,0 +1,14 @@
+{
+  "file": {
+    "name": "files/q3kghgccd930",
+    "mimeType": "image/png",
+    "sizeBytes": "976741",
+    "createTime": "2025-10-27T19:09:04.210305Z",
+    "updateTime": "2025-10-27T19:09:04.210305Z",
+    "expirationTime": "2025-10-29T19:09:03.837440165Z",
+    "sha256Hash": "NTc4OWIzZWRjYjU4ZDhkMDcwMjE0ZmU3YmI3NjFjYjg1NmIxNzU0MzU1YTMwNTBiMDVkODdiYmIzNjA2ZWRjOQ==",
+    "uri": "https://generativelanguage.googleapis.com/v1beta/files/q3kghgccd930",
+    "state": "ACTIVE",
+    "source": "UPLOADED"
+  }
+}

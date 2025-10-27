@@ -55,7 +55,7 @@ class TestE2EMultimodal:
         msg = await self._do_inference(
             ai,
             [
-                ImagePart.from_file(TEST_DATA_DIR / "tokyo_station.jpg"),
+                ImagePart.from_file(TEST_DATA_DIR / "tokyo_station.png"),
                 "What building is this an image of, and what city was it taken in?",
             ],
             stream,

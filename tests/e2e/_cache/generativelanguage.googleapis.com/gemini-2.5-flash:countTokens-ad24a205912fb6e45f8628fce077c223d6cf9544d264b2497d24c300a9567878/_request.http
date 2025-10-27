@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"fileData": {"fileUri": "https://generativelanguage.googleapis.com/v1beta/files/q3kghgccd930", "mimeType": "image/png"}}, {"text": "What building is this an image of, and what city was it taken in?"}], "role": "user"}]}

@@ -276,7 +276,7 @@ class CachingAutoModel:
         printable_kwargs.pop("streamer", None)  # streamer repr has a pointer which changes per run
         torch.set_printoptions(linewidth=999, profile="full")
         printed_kwargs = pprint.pformat(printable_kwargs, sort_dicts=False, width=120)
-        printed_kwargs = re.sub(r", device='.+?'", "", printed_kwargs)  # tensor can be on cpu, mps, or cuda
+        printed_kwargs = re.sub(r",\s+device='.+?'", "", printed_kwargs)  # tensor can be on cpu, mps, or cuda
         prompt_path.write_text(f"{prompt_text}\n==========\n{printed_kwargs}")
 
         # return the cached resp
@@ -439,7 +439,7 @@ HF_MODELS_TO_TEST = {
     # 2025 thinking models, function calling
     "openai/gpt-oss-20b": {"capabilities": ["reasoning", "function_calling"]},
     # 2025 multimodal models
-    "google/gemma-3-12b-it": {"kwargs": {"max_context_size": 128000}},
+    "google/gemma-3-12b-it": {"capabilities": ["mm_image"], "kwargs": {"max_context_size": 128000}},
 }
 
 
