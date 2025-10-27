@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/upload/v1beta/files
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"file": {"mime_type": "audio/wav", "size_bytes": 1459756}}

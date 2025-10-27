@@ -1,0 +1,34 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "This is a recording from the **Apollo 13** mission.\n\nIt is the moment when astronaut **Jack Swigert** (or Jim Lovell in the more detailed follow-up) first reported a critical problem to Mission Control in Houston. The exact phrase heard is **\"Houston, we've had a problem here.\"** He then elaborates, \"We've had a main B bus undervolt,\" which was a symptom of the catastrophic explosion of one of the spacecraft's oxygen tanks.\n\nIt is notable for several reasons:\n\n1.  **Iconic Phrase:** \"Houston, we've had a problem\" has become one of the most famous and widely quoted phrases in history, representing a sudden and serious unexpected difficulty.\n2.  **Beginning of a Crisis:** This transmission marked the beginning of a severe in-flight emergency that nearly cost the lives of the three astronauts.\n3.  **Triumph of Ingenuity:** The subsequent efforts by both the crew and ground control to safely return the damaged spacecraft and its crew to Earth are considered one of NASA's greatest \"successful failures\" and a testament to human problem-solving and resilience under extreme pressure."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 544,
+    "candidatesTokenCount": 244,
+    "totalTokenCount": 1705,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 14
+      },
+      {
+        "modality": "AUDIO",
+        "tokenCount": 530
+      }
+    ],
+    "thoughtsTokenCount": 917
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "iK7_aIHeK8jEjMcPmNLSqQc"
+}

@@ -1,0 +1,38 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "This video shows a mesmerizing close-up of a soap bubble freezing in a cold, outdoor winter environment.\n\nHere's what's happening:\n*   A clear, spherical bubble rests on a snowy or icy surface.\n*   Intricate ice crystals rapidly form and spread from the bottom of the bubble upwards, gradually filling it with sparkling, crystalline structures.\n*   The low sunlight illuminates the bubble, causing the newly formed ice to shimmer and refract light beautifully, creating iridescent effects.\n*   The background is blurred, showing bare trees and snow, indicating a winter setting.\n*   A calm, contemplative, and somewhat ethereal instrumental music plays throughout the video, enhancing the serene and magical feel of the freezing process."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 7088,
+    "candidatesTokenCount": 148,
+    "totalTokenCount": 7960,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 8
+      },
+      {
+        "modality": "VIDEO",
+        "tokenCount": 6312
+      },
+      {
+        "modality": "AUDIO",
+        "tokenCount": 768
+      }
+    ],
+    "thoughtsTokenCount": 724
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "mq7_aLWfJ-fQjMcPptX4uAs"
+}

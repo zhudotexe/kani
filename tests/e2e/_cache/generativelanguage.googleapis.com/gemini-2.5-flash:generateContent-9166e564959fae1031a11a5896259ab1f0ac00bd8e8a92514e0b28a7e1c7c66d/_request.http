@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"fileData": {"fileUri": "https://generativelanguage.googleapis.com/v1beta/files/mrp3ykbqru9b", "mimeType": "video/webm"}}, {"text": "What is happening in this video?"}], "role": "user"}]}

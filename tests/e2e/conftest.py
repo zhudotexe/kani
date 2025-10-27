@@ -49,9 +49,13 @@ log = logging.getLogger("tests.e2e")
 # --- datetime ---
 # certain prompt templates include the current date and time, we'll set it to an arbitrary fixed time
 # (the day I wrote these tests)
-@pytest.fixture(autouse=True, scope="module")
+@pytest.fixture(autouse=True, scope="session")
 def mock_date():
-    with freeze_time(datetime.datetime(2025, 10, 21, 12, 55, 37), real_asyncio=True):
+    with freeze_time(
+        datetime.datetime(2025, 10, 21, 12, 55, 37),
+        real_asyncio=True,  # for asyncio internals
+        tick=True,  # so pycharm reports correct test timing
+    ):
         yield
 
 
@@ -66,7 +70,7 @@ RESPONSE_REMOVED_HEADERS = {"content-encoding", "set-cookie"}
 
 def cache_key_for_http_request(request: httpx.Request) -> str:
     """Get the cache key (filename) for a given HTTP request."""
-    the_hash = hashlib.sha256(fmt_http_request(request).encode())
+    the_hash = hashlib.sha256(fmt_http_request(request))
     *_, last_path_segment = request.url.path.split("/")
     return f"{last_path_segment}-{the_hash.hexdigest()}"
 
@@ -79,27 +83,27 @@ def cache_dir_for_http_request(request: httpx.Request) -> Path:
     return cache_dir
 
 
-def fmt_http_request(request: httpx.Request) -> str:
+def fmt_http_request(request: httpx.Request) -> bytes:
     """
     Format an HTTP request in human-readable format.
 
     Redact any headers in the REDACTED_HEADERS list. Don't save any headers not in the KEPT_HEADERS list.
+    Returns bytes in case our content is binary/for hashing later.
     """
     # head
-    parts = [f"{request.method} {request.url}"]
+    parts = [request.method.encode() + b" " + str(request.url).encode()]
     for k, v in request.headers.items():
         if k.lower() in REDACTED_HEADERS:
-            parts.append(f"{k}: *** REDACTED ***")
+            parts.append(k.encode() + b": *** REDACTED ***")
         elif k.lower() in REQUEST_KEPT_HEADERS:
-            parts.append(f"{k}: {v}")
+            parts.append(k.encode() + b": " + str(v).encode())
         else:
             log.debug(f"Discarding header: {k}: {v}")
     # content
     content = request.read()
     if content:
-        # hopefully this is text, I think it just explodes if not
-        parts.append(f"\n{content.decode()}")
-    return "\n".join(parts)
+        parts.append(b"\n" + content)
+    return b"\n".join(parts)
 
 
 class AsyncCachingTransport(httpx.AsyncHTTPTransport):
@@ -117,7 +121,7 @@ class AsyncCachingTransport(httpx.AsyncHTTPTransport):
         resp_head_path = cache_dir / f"_head.json"
 
         # save the request to the cache dir
-        req_path.write_text(fmt_http_request(request))
+        req_path.write_bytes(fmt_http_request(request))
 
         # return the cached resp
         if resp_head_path.exists():
@@ -194,7 +198,7 @@ def cache_key_for_local_generate(input_ids: torch.Tensor, input_features: torch.
     the_hash.update(str(input_ids.tolist()).encode())
     if input_features:
         # TODO is this stable?
-        the_hash.update(str(input_ids.tolist()).encode())
+        the_hash.update(str(input_features.tolist()).encode())
     return the_hash.hexdigest()
 
 
@@ -308,12 +312,34 @@ class CachingAutoModel:
         )
 
 
+# --- model capabilities ---
+# list of tags: reasoning, function_calling, mm_image, mm_audio, mm_video
+# for a test to request a model with a certain tag, use @pytest.mark.request_model_capabilities([tags...])
+def _skip_if_missing_capabilities(model_id, model_info, request):
+    capabilities = model_info.get("capabilities", [])
+
+    # skip if the model does not have the requested capabilities
+    marker = request.node.get_closest_marker("request_model_capabilities")
+    if marker:
+        requested_capabilities = marker.args[0]
+        missing_capabilities = set(requested_capabilities).difference(capabilities)
+        if missing_capabilities:
+            pytest.skip(f"{model_id} model is missing the following capabilities: {missing_capabilities}")
+
+
 # ==== define the engine fixtures ====
 # --- API ---
-@pytest.fixture(scope="session")
-async def e2e_anthropic_engine():
+# ANTHROPIC
+ANTHROPIC_MODELS_TO_TEST = {
+    "claude-haiku-4-5": {"capabilities": ["function_calling", "mm_image"]},
+}
+
+
+@pytest.fixture(scope="session", params=list(ANTHROPIC_MODELS_TO_TEST.keys()))
+async def _anthropic_engine(request):
+    model_id = request.param
     engine = AnthropicEngine(
-        model="claude-haiku-4-5",
+        model=model_id,
         client=AsyncAnthropic(
             api_key=os.getenv("ANTHROPIC_API_KEY"), http_client=httpx.AsyncClient(transport=AsyncCachingTransport())
         ),
@@ -322,27 +348,71 @@ async def e2e_anthropic_engine():
     await engine.close()
 
 
-@pytest.fixture(scope="session")
-async def e2e_google_engine():
+@pytest.fixture(scope="function")
+async def e2e_anthropic_engine(request, _anthropic_engine):
+    """
+    Parameterized to test multiple different HF engines.
+
+    This is a function-scoped fixture that requests the session-scoped fixture to correctly skip tests based on model
+    capabilities.
+    """
+    model_id = _anthropic_engine.model
+    model_info = ANTHROPIC_MODELS_TO_TEST[model_id]
+    _skip_if_missing_capabilities(model_id, model_info, request)
+    yield _anthropic_engine
+
+
+# GOOGLE
+GOOGLE_MODELS_TO_TEST = {
+    "gemini-2.5-flash": {"capabilities": ["function_calling", "mm_image", "mm_audio", "mm_video"]},
+}
+
+
+@pytest.fixture(scope="session", params=list(GOOGLE_MODELS_TO_TEST.keys()))
+async def _google_engine(request):
+    model_id = request.param
     client = genai.Client(
         api_key=os.getenv("GEMINI_API_KEY"),
         http_options=genai.types.HttpOptions(async_client_args={"transport": AsyncCachingTransport()}),
     )
-    engine = GoogleAIEngine(model="gemini-2.5-flash", client=client)
+    engine = GoogleAIEngine(model=model_id, client=client)
     yield engine
     await engine.close()
 
 
-@pytest.fixture(scope="session")
-async def e2e_openai_engine():
+@pytest.fixture(scope="function")
+async def e2e_google_engine(request, _google_engine):
+    model_id = _google_engine.model
+    model_info = GOOGLE_MODELS_TO_TEST[model_id]
+    _skip_if_missing_capabilities(model_id, model_info, request)
+    yield _google_engine
+
+
+# OPENAI
+OPENAI_MODELS_TO_TEST = {
+    "gpt-5-mini": {"capabilities": ["function_calling", "mm_image"]},
+}
+
+
+@pytest.fixture(scope="session", params=list(OPENAI_MODELS_TO_TEST.keys()))
+async def _openai_engine(request):
+    model_id = request.param
     engine = OpenAIEngine(
-        model="gpt-5-mini",
+        model=model_id,
         client=AsyncOpenAI(
             api_key=os.getenv("OPENAI_API_KEY"), http_client=httpx.AsyncClient(transport=AsyncCachingTransport())
         ),
     )
     yield engine
     await engine.close()
+
+
+@pytest.fixture(scope="function")
+async def e2e_openai_engine(request, _openai_engine):
+    model_id = _openai_engine.model
+    model_info = OPENAI_MODELS_TO_TEST[model_id]
+    _skip_if_missing_capabilities(model_id, model_info, request)
+    yield _openai_engine
 
 
 # --- local ---
@@ -360,8 +430,6 @@ class LocalEngineManager:
                 cls.last_loaded_engine = None
 
 
-# list of tags: reasoning, function_calling, mm_image, mm_audio, mm_video
-# for a test to request a model with a certain tag, use @pytest.mark.request_model_capabilities([tags...])
 HF_MODELS_TO_TEST = {
     # 2023-2024 chat models
     "meta-llama/Llama-2-7b-chat-hf": {},
@@ -371,7 +439,7 @@ HF_MODELS_TO_TEST = {
     # 2025 thinking models, function calling
     "openai/gpt-oss-20b": {"capabilities": ["reasoning", "function_calling"]},
     # 2025 multimodal models
-    "google/gemma-3-12b-it": {"capabilities": ["mm_image"], "kwargs": {"max_context_size": 128000}},
+    "google/gemma-3-12b-it": {"kwargs": {"max_context_size": 128000}},
 }
 
 
@@ -394,25 +462,9 @@ async def _hf_engine(request):
 
 @pytest.fixture(scope="function")
 async def e2e_huggingface_engine(request, _hf_engine):
-    """
-    Parameterized to test multiple different HF engines.
-
-    This is a function-scoped fixture that requests the session-scoped fixture to correctly skip tests based on model
-    capabilities.
-    """
     model_id = _hf_engine.model_id
     model_info = HF_MODELS_TO_TEST[model_id]
-    capabilities = model_info.get("capabilities", [])
-
-    # skip if the model does not have the requested capabilities
-    marker = request.node.get_closest_marker("request_model_capabilities")
-    if marker:
-        requested_capabilities = marker.args[0]
-        missing_capabilities = set(requested_capabilities).difference(capabilities)
-        if missing_capabilities:
-            pytest.skip(f"{model_id} model is missing the following capabilities: {missing_capabilities}")
-
-    # load the model
+    _skip_if_missing_capabilities(model_id, model_info, request)
     yield _hf_engine
 
 

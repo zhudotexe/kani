@@ -1,0 +1,34 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "This is an image of **Tokyo Station**, located in **Tokyo, Japan**.\n\nThe distinctive red brick architecture, combined with the modern glass skyscrapers in the background and the Japanese flags visible, are all strong indicators pointing to this famous landmark."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 275,
+    "candidatesTokenCount": 48,
+    "totalTokenCount": 850,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 17
+      },
+      {
+        "modality": "IMAGE",
+        "tokenCount": 258
+      }
+    ],
+    "thoughtsTokenCount": 527
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "ca7_aPOgIIa_jMcP0d2BuQg"
+}
