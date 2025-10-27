@@ -1,6 +1,0 @@
-POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse
-accept: */*
-content-type: application/json
-x-goog-api-key: *** REDACTED ***
-
-{"contents": [{"parts": [{"fileData": {"fileUri": "https://generativelanguage.googleapis.com/v1beta/files/2r1juhxwrdoe", "mimeType": "audio/wav"}}, {"text": "What is this a recording of, and why is it notable?"}], "role": "user"}]}

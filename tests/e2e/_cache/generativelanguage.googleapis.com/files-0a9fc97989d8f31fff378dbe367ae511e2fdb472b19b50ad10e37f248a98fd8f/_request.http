@@ -1,6 +1,0 @@
-POST https://generativelanguage.googleapis.com/upload/v1beta/files
-accept: */*
-content-type: application/json
-x-goog-api-key: *** REDACTED ***
-
-{"file": {"mime_type": "video/webm", "size_bytes": 6855736}}

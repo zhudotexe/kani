@@ -1,0 +1,2 @@
+data: {"candidates": [{"content": {"parts": [{"text": "This is an image of **Tokyo Station** (specifically the Marunouchi Building of Tokyo Station).\n\nIt was taken in **Tokyo, Japan**."}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 275,"candidatesTokenCount": 31,"totalTokenCount": 756,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 17},{"modality": "IMAGE","tokenCount": 258}],"thoughtsTokenCount": 450},"modelVersion": "gemini-2.5-flash","responseId": "os__aJ7sFPrUjMcPt5qpqAo"}
+

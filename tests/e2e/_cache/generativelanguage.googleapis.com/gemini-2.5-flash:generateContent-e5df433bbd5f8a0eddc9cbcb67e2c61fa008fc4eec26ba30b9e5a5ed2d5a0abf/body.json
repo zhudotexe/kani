@@ -1,0 +1,34 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "This is a recording of a radio transmission from **Apollo 13** to Mission Control in Houston.\n\nIt is notable because:\n\n1.  **The Famous Quote:** It contains the iconic phrase, first spoken by Jack Swigert (and later clarified by Jim Lovell), **\"Houston, we've had a problem here.\"**\n2.  **Beginning of a Crisis:** This transmission marked the moment the crew reported a critical emergency \u2013 an oxygen tank explosion \u2013 which crippled their spacecraft and turned the mission from a lunar landing into a desperate fight for survival.\n3.  **Human Ingenuity:** The subsequent efforts by both the astronauts and ground control to devise a plan to bring the crew safely back to Earth are considered one of the greatest feats of problem-solving and improvisation in space exploration history."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 544,
+    "candidatesTokenCount": 166,
+    "totalTokenCount": 1361,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 14
+      },
+      {
+        "modality": "AUDIO",
+        "tokenCount": 530
+      }
+    ],
+    "thoughtsTokenCount": 651
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "rc__aJy4GPKPjMcPgpa2-Qc"
+}

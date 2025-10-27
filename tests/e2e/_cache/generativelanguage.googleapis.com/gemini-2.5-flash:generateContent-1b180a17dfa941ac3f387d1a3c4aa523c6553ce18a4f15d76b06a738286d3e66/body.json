@@ -1,0 +1,34 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "This is an image of **Tokyo Station** in **Tokyo, Japan**.\n\nSpecifically, it shows the Marunouchi Building of Tokyo Station, which is known for its distinctive red-brick facade and classical European architecture, set against a backdrop of modern skyscrapers. The large plaza in front is the Marunouchi Plaza."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 275,
+    "candidatesTokenCount": 66,
+    "totalTokenCount": 806,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 17
+      },
+      {
+        "modality": "IMAGE",
+        "tokenCount": 258
+      }
+    ],
+    "thoughtsTokenCount": 465
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "oc__aNLhBP-3_uMP2M_p8Q0"
+}

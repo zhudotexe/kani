@@ -1,0 +1,38 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "In this video, a bubble is freezing and solidifying. It starts clear with internal bubbles, and as the freezing process progresses, more ice crystals form inside, making it opaque and giving it a textured appearance. The scene takes place outdoors in a snowy environment with trees in the background, suggesting cold temperatures are causing the bubble to freeze."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 7360,
+    "candidatesTokenCount": 67,
+    "totalTokenCount": 7466,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 8
+      },
+      {
+        "modality": "VIDEO",
+        "tokenCount": 6575
+      },
+      {
+        "modality": "AUDIO",
+        "tokenCount": 777
+      }
+    ],
+    "thoughtsTokenCount": 39
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "vc__aJ7LM4uo_uMP7rDosQE"
+}

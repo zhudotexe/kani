@@ -70,7 +70,33 @@ RESPONSE_REMOVED_HEADERS = {"content-encoding", "set-cookie"}
 
 def cache_key_for_http_request(request: httpx.Request) -> str:
     """Get the cache key (filename) for a given HTTP request."""
-    the_hash = hashlib.sha256(fmt_http_request(request))
+    body = fmt_http_request(request)
+    if request.headers["content-type"].startswith("application/json"):
+        # HACK: for some reason, the exact binary a multimodal part gets translated to is platform-dependent
+        # maybe some weirdness with PIL png formatting/ffmpeg across platforms
+        # either way we'll just replace known image/audio dicts with a dummy for hashing, recursively
+        head, content = body.split(b"\n\n", 1)
+        # anthropic
+        content = re.sub(
+            r'"media_type":\s?"image/png",\s?"data":\s?"[0-9a-zA-Z/=]+"',
+            '"media_type":"image/png","data":"dummy"',
+            content.decode(),
+        )
+        # google
+        content = re.sub(
+            r'"data":\s?"[0-9a-zA-Z/=]+",\s?"mimeType":\s?"(image/png|audio/wav)"',
+            r'"data": "dummy", "mimeType": "\1"',
+            content,
+        )
+        # openai
+        content = re.sub(
+            r"data:image/png;base64,[0-9a-zA-Z/=]+",
+            "data:image/png;base64,dummy",
+            content,
+        )
+        body = head + b"\n\n" + content.encode()
+
+    the_hash = hashlib.sha256(body)
     *_, last_path_segment = request.url.path.split("/")
     return f"{last_path_segment}-{the_hash.hexdigest()}"
 
@@ -196,9 +222,9 @@ def cache_key_for_local_generate(input_ids: torch.Tensor, input_features: torch.
     # torch.save saves a pickle, so we want to hash the contents of the tensor ourselves
     # we do this lazily by just hashing the repr of the tensor
     the_hash.update(str(input_ids.tolist()).encode())
-    if input_features:
-        # TODO is this stable?
-        the_hash.update(str(input_features.tolist()).encode())
+    # the features don't appear to be perfectly stable, we'll just rely on the presence of the img tokens
+    # if input_features:
+    #     the_hash.update(str(input_features.tolist()).encode())
     return the_hash.hexdigest()
 
 
@@ -375,7 +401,7 @@ async def _google_engine(request):
         api_key=os.getenv("GEMINI_API_KEY"),
         http_options=genai.types.HttpOptions(async_client_args={"transport": AsyncCachingTransport()}),
     )
-    engine = GoogleAIEngine(model=model_id, client=client)
+    engine = GoogleAIEngine(model=model_id, client=client, multimodal_upload_bytes_threshold=1_000_000_000)
     yield engine
     await engine.close()
 
@@ -436,10 +462,11 @@ HF_MODELS_TO_TEST = {
     "meta-llama/Llama-3.1-8B-Instruct": {},  # technically can do FC, but it's quite flaky
     "mistralai/Mistral-7B-Instruct-v0.3": {},
     "mistralai/Mistral-Small-Instruct-2409": {"capabilities": ["function_calling"]},
+    "google/gemma-3-12b-it": {"kwargs": {"max_context_size": 128000}},  # can do mm_image, but something is borked in HF
     # 2025 thinking models, function calling
     "openai/gpt-oss-20b": {"capabilities": ["reasoning", "function_calling"]},
     # 2025 multimodal models
-    "google/gemma-3-12b-it": {"capabilities": ["mm_image"], "kwargs": {"max_context_size": 128000}},
+    # todo
 }
 
 

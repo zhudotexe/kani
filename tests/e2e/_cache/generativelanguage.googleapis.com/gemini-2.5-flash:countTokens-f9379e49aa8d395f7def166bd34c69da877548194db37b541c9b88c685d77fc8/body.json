@@ -1,0 +1,13 @@
+{
+  "totalTokens": 544,
+  "promptTokensDetails": [
+    {
+      "modality": "TEXT",
+      "tokenCount": 14
+    },
+    {
+      "modality": "AUDIO",
+      "tokenCount": 530
+    }
+  ]
+}

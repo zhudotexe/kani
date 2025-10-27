@@ -1,0 +1,17 @@
+{
+  "totalTokens": 7360,
+  "promptTokensDetails": [
+    {
+      "modality": "TEXT",
+      "tokenCount": 8
+    },
+    {
+      "modality": "VIDEO",
+      "tokenCount": 6575
+    },
+    {
+      "modality": "AUDIO",
+      "tokenCount": 777
+    }
+  ]
+}
