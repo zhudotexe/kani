@@ -78,19 +78,19 @@ def cache_key_for_http_request(request: httpx.Request) -> str:
         head, content = body.split(b"\n\n", 1)
         # anthropic
         content = re.sub(
-            r'"media_type":\s?"image/png",\s?"data":\s?"[0-9a-zA-Z/=]+"',
+            r'"media_type":\s?"image/png",\s?"data":\s?"[0-9a-zA-Z/=+]+"',
             '"media_type":"image/png","data":"dummy"',
             content.decode(),
         )
         # google
         content = re.sub(
-            r'"data":\s?"[0-9a-zA-Z/=]+",\s?"mimeType":\s?"(image/png|audio/wav)"',
+            r'"data":\s?"[0-9a-zA-Z=_-]+",\s*"mimeType":\s?"(image/png|audio/wav)',
             r'"data": "dummy", "mimeType": "\1"',
             content,
         )
         # openai
         content = re.sub(
-            r"data:image/png;base64,[0-9a-zA-Z/=]+",
+            r"data:image/png;base64,[0-9a-zA-Z/=+]+",
             "data:image/png;base64,dummy",
             content,
         )

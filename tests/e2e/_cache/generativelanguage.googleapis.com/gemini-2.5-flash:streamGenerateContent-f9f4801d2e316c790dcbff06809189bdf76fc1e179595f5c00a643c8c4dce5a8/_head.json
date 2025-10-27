@@ -5,12 +5,12 @@
     "content-disposition": "attachment",
     "vary": "Origin, X-Origin, Referer",
     "transfer-encoding": "chunked",
-    "date": "Mon, 27 Oct 2025 20:01:42 GMT",
+    "date": "Mon, 27 Oct 2025 20:21:49 GMT",
     "server": "scaffolding on HTTPServer2",
     "x-xss-protection": "0",
     "x-frame-options": "SAMEORIGIN",
     "x-content-type-options": "nosniff",
-    "server-timing": "gfet4t7; dur=4795",
+    "server-timing": "gfet4t7; dur=5982",
     "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
   },
   "body_path": "body.bin"

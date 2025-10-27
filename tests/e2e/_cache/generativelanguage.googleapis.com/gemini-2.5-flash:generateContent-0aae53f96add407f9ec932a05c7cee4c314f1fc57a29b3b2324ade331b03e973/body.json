@@ -1,0 +1,33 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "This is a recording of **Houston Control communicating with Apollo 13** after an explosion occurred on April 13, 1970.\n\nIt is notable because it captures the critical moment when astronaut Jack Swigert reported the famous line, **\"Okay, Houston, we've had a problem here.\"** (or more accurately, \"Houston, we've had a problem.\") The recording then shows Houston trying to ascertain the nature of the problem, initially thinking it might be a minor electrical issue before the full gravity of the situation became clear. This incident led to a heroic effort to bring the damaged spacecraft and its crew safely back to Earth."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 544,
+    "candidatesTokenCount": 135,
+    "totalTokenCount": 679,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 14
+      },
+      {
+        "modality": "AUDIO",
+        "tokenCount": 530
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "V9T_aIOCD57S_uMPqMCAoAo"
+}

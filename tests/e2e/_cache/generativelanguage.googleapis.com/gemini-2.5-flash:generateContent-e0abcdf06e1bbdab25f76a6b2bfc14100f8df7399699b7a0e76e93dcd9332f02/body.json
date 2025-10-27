@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "This is an image of **Tokyo Station** in **Tokyo, Japan**.\n\nSpecifically, it shows the Marunouchi Building of Tokyo Station, which is known for its distinctive red-brick facade and classical European architecture, set against a backdrop of modern skyscrapers. The large plaza in front is the Marunouchi Plaza."
+            "text": "This is an image of the **Tokyo Station Marunouchi Building** in **Tokyo, Japan**.\n\nThe distinctive red brick architecture with white stone trim, the central dome, and the modern glass skyscrapers in the background are all characteristic features of Tokyo Station on its Marunouchi side. The flags visible are also Japanese."
           }
         ],
         "role": "model"
@@ -16,7 +16,7 @@
   "usageMetadata": {
     "promptTokenCount": 275,
     "candidatesTokenCount": 66,
-    "totalTokenCount": 806,
+    "totalTokenCount": 1011,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
@@ -27,8 +27,8 @@
         "tokenCount": 258
       }
     ],
-    "thoughtsTokenCount": 465
+    "thoughtsTokenCount": 670
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "oc__aNLhBP-3_uMP2M_p8Q0"
+  "responseId": "TdT_aKzTLcze_uMP1Z_NoAo"
 }

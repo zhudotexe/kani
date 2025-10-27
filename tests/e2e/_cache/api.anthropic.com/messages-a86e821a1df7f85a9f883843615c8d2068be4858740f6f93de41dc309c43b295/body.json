@@ -1,0 +1,25 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01EXfRFvzbxS64mAS8Jd1gfD",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "# Tokyo Station\n\nThis is **Tokyo Station** (\u6771\u4eac\u99c5), located in **Tokyo, Japan**.\n\nThe distinctive red brick building with its characteristic European-influenced architecture and mansard roof is one of Japan's most iconic railway stations. It was completed in 1914 and has been carefully restored to preserve its historic appearance. The modern skyscrapers visible in the background contrast beautifully with the historic station building, which sits in Marunouchi, Tokyo's central business district."
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 832,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 107,
+    "service_tier": "standard"
+  }
+}

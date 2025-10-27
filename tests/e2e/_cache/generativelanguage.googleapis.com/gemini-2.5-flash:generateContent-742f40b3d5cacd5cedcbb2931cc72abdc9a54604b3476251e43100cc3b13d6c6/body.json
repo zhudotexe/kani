@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "In this video, a bubble is freezing and solidifying. It starts clear with internal bubbles, and as the freezing process progresses, more ice crystals form inside, making it opaque and giving it a textured appearance. The scene takes place outdoors in a snowy environment with trees in the background, suggesting cold temperatures are causing the bubble to freeze."
+            "text": "The video shows a **soap bubble freezing solid** in a cold, snowy outdoor environment.\n\nHere's a breakdown of what happens:\n*   Initially, a transparent, egg-shaped bubble sits on an icy or snowy surface.\n*   Over approximately 10-15 seconds, ice crystals rapidly form and grow throughout the interior of the bubble.\n*   The bubble gradually transforms from clear and translucent to opaque and white as it becomes entirely filled with ice.\n*   The background is blurred, showing trees and snow, indicating a winter setting.\n*   An ambient, atmospheric sound accompanies the visual transformation."
           }
         ],
         "role": "model"
@@ -15,8 +15,8 @@
   ],
   "usageMetadata": {
     "promptTokenCount": 7360,
-    "candidatesTokenCount": 67,
-    "totalTokenCount": 7466,
+    "candidatesTokenCount": 128,
+    "totalTokenCount": 8203,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
@@ -31,8 +31,8 @@
         "tokenCount": 777
       }
     ],
-    "thoughtsTokenCount": 39
+    "thoughtsTokenCount": 715
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "vc__aJ7LM4uo_uMP7rDosQE"
+  "responseId": "btT_aNWZCLLj_uMP6IzRwQo"
 }
