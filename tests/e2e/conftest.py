@@ -40,6 +40,7 @@ from kani.engines.openai import OpenAIEngine
 MOCK_CACHE_BASE = Path(__file__).parent / "_cache"
 DO_REAL_API_REQUESTS = "api" in os.getenv("KANI_E2E_HYDRATE", "")
 DO_REAL_LOCAL_GENERATE = "local" in os.getenv("KANI_E2E_HYDRATE", "")
+DO_REAL_LLAMACPP_GENERATE = "llamacpp" in os.getenv("KANI_E2E_HYDRATE", "")
 CI_TORCH_DEVICE = os.getenv("CI_TORCH_DEVICE")  # we want to force CPU in GHA
 
 log = logging.getLogger("tests.e2e")
@@ -235,14 +236,16 @@ class CachingAutoModel:
     Pass as the model_cls for the HF engine and lazy-load the real engine if we need to.
     """
 
-    def __init__(self, model_id, config, generation_config, tokenizer, **model_kwargs):
+    def __init__(self, model_id, config, generation_config, tokenizer, lazy_model_cls=None, **model_kwargs):
         # ducktyping
         self.config = config
-        self.dtype = self.config.dtype
-        self.device = SimpleNamespace(type="cpu")
+        # set these to reasonable defaults for local tests
+        self.dtype = self.config.dtype or torch.bfloat16
+        self.device = SimpleNamespace(type="cpu" if not torch.cuda.is_available() else "cuda")
         self.generation_config = generation_config
 
         # lazy internals
+        self._lazy_model_cls = lazy_model_cls
         self._model_id = model_id
         self._model = None
         self._model_init_kwargs = model_kwargs
@@ -278,12 +281,21 @@ class CachingAutoModel:
     to = dummy  # we already do device_map=auto by default so we don't need this
 
     # lazy load the model on generate request
+    def _resolve_cls(self):
+        if isinstance(self._lazy_model_cls, str):
+            import transformers
+
+            return getattr(transformers, self._lazy_model_cls)
+        return self._lazy_model_cls or AutoModelForCausalLM
+
     def _ensure_real_model_loaded(self):
         if self._model is not None:
             return
         print(f"##### LOADING MODEL #####\n{self._model_id}")
-        self._model = AutoModelForCausalLM.from_pretrained(self._model_id, **self._model_init_kwargs)
+        self._model = self._resolve_cls().from_pretrained(self._model_id, **self._model_init_kwargs)
         self._model.eval()
+        self.device = self._model.device
+        self.dtype = self._model.dtype
 
     def generate(self, **kwargs):
         # find the cache file for the request
@@ -462,11 +474,18 @@ HF_MODELS_TO_TEST = {
     "meta-llama/Llama-3.1-8B-Instruct": {},  # technically can do FC, but it's quite flaky
     "mistralai/Mistral-7B-Instruct-v0.3": {},
     "mistralai/Mistral-Small-Instruct-2409": {"capabilities": ["function_calling"]},
-    "google/gemma-3-12b-it": {"kwargs": {"max_context_size": 128000}},  # can do mm_image, but something is borked in HF
     # 2025 thinking models, function calling
     "openai/gpt-oss-20b": {"capabilities": ["reasoning", "function_calling"]},
     # 2025 multimodal models
-    # todo
+    # TODO why are these so slow? maybe need to cache the processor too
+    "google/gemma-3-12b-it": {"capabilities": ["mm_image"], "kwargs": {"max_context_size": 128000}},
+    "Qwen/Qwen3-VL-8B-Thinking": {
+        "capabilities": ["reasoning", "function_calling", "mm_image", "mm_video"],
+        "kwargs": {
+            "max_context_size": 32000,
+            "model_load_kwargs": {"lazy_model_cls": "Qwen3VLForConditionalGeneration"},
+        },
+    },
 }
 
 
@@ -501,8 +520,8 @@ async def e2e_llamacpp_engine(request):
     llama.cpp doesn't support monkey-patching to return cached responses like we want, so we skip if we aren't
     hydrating real results
     """
-    if not DO_REAL_LOCAL_GENERATE:
-        pytest.skip("llama.cpp cannot be mocked, set KANI_E2E_HYDRATE=local to run local llamacpp tests")
+    if not DO_REAL_LLAMACPP_GENERATE:
+        pytest.skip("llama.cpp cannot be mocked, set KANI_E2E_HYDRATE=llamacpp to run local llamacpp tests")
     model_id = request.param
     await LocalEngineManager.ensure_closed()
     engine = LlamaCppEngine(
