@@ -6,9 +6,10 @@ from kani.engines.huggingface.chat_template_pipeline import (
     hf_content_transform,
     hf_tool_use_keys,
 )
-from kani.models import FunctionCall, MessagePart, ToolCall
+from kani.models import FunctionCall, ToolCall
 from kani.parts import ReasoningPart
-from .base import BaseToolCallParser
+from .base import BaseParser
+from ..engines.base import BaseCompletion
 
 SPECIAL_TOKEN_REGEX = re.compile(r"<\|(?P<type>\w+)\|>")
 SPECIAL_TOKEN_REGEX_2 = re.compile(r"(<\|\w+\|>)")
@@ -45,7 +46,7 @@ def build_gptoss_prompt_pipeline(tokenizer, **kwargs):
 
 
 # ===== OUTPUT PARSER =====
-class GPTOSSParser(BaseToolCallParser):
+class GPTOSSParser(BaseParser):
     r"""
     Automatically handles the parsing of GPT-OSS reasoning segments and tool calls.
 
@@ -62,12 +63,12 @@ class GPTOSSParser(BaseToolCallParser):
         self.show_reasoning_in_stream = show_reasoning_in_stream
 
     # state machine for stream on special token, regex for parse
-    def parse_tool_calls(self, content: str) -> tuple[list[MessagePart | str], list[ToolCall]]:
-        log.debug(f"PARSING MSG: {content}")
+    def parse_completion(self, completion: BaseCompletion) -> BaseCompletion:
+        log.debug(f"PARSING MSG: {completion.message.text}")
         parts = []
         tcs = []
 
-        for match in ASST_MSG_REGEX.finditer(content):
+        for match in ASST_MSG_REGEX.finditer(completion.message.text):
             log.debug(f"PART: {match[0]}")
             header = match["header"]
             channel = c[1] if (c := CHANNEL_REGEX.search(header)) else None
@@ -83,7 +84,9 @@ class GPTOSSParser(BaseToolCallParser):
             else:
                 parts.append(content)
 
-        return parts, tcs
+        completion.message.content = parts
+        completion.message.tool_calls = tcs
+        return completion
 
     async def stream(self, messages, functions=None, **hyperparams):
         state = _GPTOSSStreamState(show_reasoning=self.show_reasoning_in_stream)
