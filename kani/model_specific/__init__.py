@@ -20,13 +20,15 @@ PROMPT_PIPELINE_REGISTRY = [
 
 # list of (HF model id glob, path to import)
 PARSER_REGISTRY = [
-    ("deepseek-ai/DeepSeek-R1*", "kani.model_specific.deepseek.DeepSeekR1ToolCallParser"),
+    ("deepseek-ai/DeepSeek-R1*", "kani.model_specific.deepseek.DeepSeekR1Parser"),
     ("openai/gpt-oss-*", "kani.model_specific.gpt_oss.GPTOSSParser"),
     ("meta-llama/Llama-3.*", "kani.model_specific.llama3.Llama3XToolCallParser"),
     ("mistralai/*-2404", "kani.model_specific.mistral.MistralToolCallParser"),
     ("mistralai/*-2405", "kani.model_specific.mistral.MistralToolCallParser"),
     ("mistralai/*-2407", "kani.model_specific.mistral.MistralToolCallParser"),
     ("mistralai/*-2409", "kani.model_specific.mistral.MistralToolCallParser"),
+    ("Qwen/Qwen3-*-Thinking", "kani.model_specific.qwen3.Qwen3ThinkingParser"),
+    ("Qwen/Qwen3-*", "kani.model_specific.qwen3.Qwen3Parser"),
 ]
 
 log = logging.getLogger(__name__)

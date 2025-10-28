@@ -3,13 +3,12 @@ import logging
 import re
 
 from kani.models import FunctionCall, ToolCall
-from kani.parts import ReasoningPart
-from .base import BaseToolCallParser
+from .base import BaseParser
 
 log = logging.getLogger(__name__)
 
 
-class DeepSeekR1ToolCallParser(BaseToolCallParser):
+class DeepSeekR1Parser(BaseParser):
     r"""
     Tool calling adapter for DeepSeek models using the R1 tool call format::
 
@@ -29,13 +28,23 @@ class DeepSeekR1ToolCallParser(BaseToolCallParser):
         *args,
         tool_call_start_token: str = "<｜tool▁calls▁begin｜>",
         tool_call_end_token: str = "<｜tool▁outputs▁end｜>",
+        reasoning_start_token: str | None = "<think>",
+        reasoning_end_token: str | None = "</think>",
+        reasoning_always_at_start=True,
         **kwargs,
     ):
         super().__init__(
-            *args, tool_call_start_token=tool_call_start_token, tool_call_end_token=tool_call_end_token, **kwargs
+            *args,
+            tool_call_start_token=tool_call_start_token,
+            tool_call_end_token=tool_call_end_token,
+            reasoning_start_token=reasoning_start_token,
+            reasoning_end_token=reasoning_end_token,
+            reasoning_always_at_start=reasoning_always_at_start,
+            **kwargs,
         )
 
     def parse_tool_calls(self, content: str):
+        tool_calls = []
         tool_content_match = re.search(
             rf"{re.escape(self.tool_call_start_token)}\s*(.+?)\s*({re.escape(self.tool_call_end_token)})",
             content,
@@ -46,7 +55,6 @@ class DeepSeekR1ToolCallParser(BaseToolCallParser):
             log.debug(f"Found tool content while parsing: {tool_content_match.group(1)}")
 
             # translate to kani spec
-            tool_calls = []
             for tc_match in re.finditer(
                 r"<｜tool▁call▁begin｜>(?P<type>.+?)<｜tool▁sep｜>(?P<name>.+?)\n"
                 r"```json\n(?P<args>.+?)\n```<｜tool▁call▁end｜>",
@@ -64,16 +72,11 @@ class DeepSeekR1ToolCallParser(BaseToolCallParser):
                     continue
                 tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
                 tool_calls.append(tool_call)
-
-        # parse thinking
-        if "</think>" in content:
-            thinking, content = content.split("</think>", 1)
-            thinking.removeprefix("<think>")  # sometimes not output for whatever reason
-            return [ReasoningPart(content=thinking.strip()), content.strip()]
-
         # return trimmed content and tool calls
         return content, tool_calls
 
+
+DeepSeekR1ToolCallParser = DeepSeekR1Parser
 
 # ===== deepseek-r1 function calling =====
 # {% if not add_generation_prompt is defined %}
