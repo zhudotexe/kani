@@ -1,0 +1,18 @@
+<|im_start|>user
+Hello!<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user sent "Hello!" which is a very common greeting. They're probably just starting a conversation and want to say hi. I should respond warmly and open-ended to encourage them to share what they need.
+
+First, I need to make sure the response is friendly and welcoming. Using an emoji like a smiley could help set the right tone. Then, I should ask how I can assist them to prompt them to provide more details about what they need.
+
+Wait, maybe they're testing if the AI is working, so a simple "Hello! How can I assist you today?" would be good. But since they used "Hello!", I should match their greeting style. Maybe add a friendly emoji to keep it light.
+
+Also, I should keep it concise but open. Not too long, but enough to show I'm ready to help. Let me check some examples. Previous responses often start with "Hello!" or "Hi!", so using "Hello!" followed by a question makes sense.
+
+I should avoid any markdown and keep it natural. Let me structure it: "Hello! 😊 How can I assist you today?" That's friendly, uses an emoji, and asks a question to engage them.
+
+Yes, that should work. Let me go with that.
+</think>
+
+Hello! 😊 How can I assist you today?<|im_end|>

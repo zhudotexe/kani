@@ -1,0 +1,28 @@
+<|im_start|>system
+You are a helpful calculator assistant. Use the provided functions to answer math questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "add", "description": "Add two numbers together.", "parameters": {"description": "Add two numbers together.", "properties": {"a": {"type": "integer"}, "b": {"type": "integer"}}, "required": ["a", "b"], "title": "add", "type": "object"}}}
+{"type": "function", "function": {"name": "divide", "description": "Divide two numbers.", "parameters": {"description": "Divide two numbers.", "properties": {"a": {"type": "number"}, "b": {"type": "number"}}, "required": ["a", "b"], "title": "divide", "type": "object"}}}
+{"type": "function", "function": {"name": "multiply", "description": "Multiply two numbers together.", "parameters": {"description": "Multiply two numbers together.", "properties": {"a": {"type": "integer"}, "b": {"type": "integer"}}, "required": ["a", "b"], "title": "multiply", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What is 15 plus 27?<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user is asking for 15 plus 27. Let me check the available functions. There's an 'add' function that takes two integers. Both 15 and 27 are integers, so I can use the add function here. No need for multiplication or division. I'll call add with a=15 and b=27.
+</think>
+
+<tool_call>
+{"name": "add", "arguments": {"a": 15, "b": 27}}
+</tool_call><|im_end|>

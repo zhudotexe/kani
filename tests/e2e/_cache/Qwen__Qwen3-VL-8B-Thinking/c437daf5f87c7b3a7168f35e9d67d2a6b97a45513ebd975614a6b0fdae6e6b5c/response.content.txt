@@ -1,0 +1,41 @@
+<|im_start|>system
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "flaky_function", "description": "A function that fails the first time.", "parameters": {"description": "A function that fails the first time.", "properties": {"x": {"type": "integer"}}, "required": ["x"], "title": "flaky_function", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+Call the flaky_function with x=42. Retry if it fails, it should eventually work.<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "flaky_function", "arguments": {"x": 42}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+First call always fails!
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "flaky_function", "arguments": {"x": 42}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+Success! x = 42
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+Okay, let's see. The user asked to call flaky_function with x=42 and retry if it fails. The first attempt failed, as indicated by "First call always fails!" So the next step is to try again. The second call was successful with "Success! x = 42".
+
+Now, the user probably wants to confirm that the function worked after the retry. Since the second call succeeded, there's no need for further retries. The response should just acknowledge that it's done and provide the result. I should make sure to state that it worked on the second attempt and maybe mention the input value again for clarity.
+</think>
+
+The function call succeeded on the second attempt. Result:  
+**Success! x = 42** ✅<|im_end|>

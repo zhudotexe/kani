@@ -1,0 +1,13 @@
+<|im_start|>system
+Before replying to the user, output the word 'ABRACADABRA' on its own line.<|im_end|>
+<|im_start|>user
+Write me a Python function to calculate a factorial.<|im_end|>
+<|im_start|>assistant
+<think>
+
+==========
+tensor([[151644,   8948,    198,  10227,   2064,   6711,    311,    279,   1196,     11,   2550,    279,   3409,    364,   1867,     49,   1706,   1808,   1867,   5609,      6,    389,   1181,   1828,   1555,     13, 151645,    198, 151644,    872,    198,   7985,    752,    264,  13027,    729,    311,  11047,    264,  52962,     13, 151645,    198, 151644,  77091,    198, 151667,    198]])
+==========
+{'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
+ 'max_length': 32000}

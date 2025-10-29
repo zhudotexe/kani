@@ -1,0 +1,78 @@
+<|im_start|>system
+You are a calculator assistant. Use functions for every calculation.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "add", "description": "Add two numbers together.", "parameters": {"description": "Add two numbers together.", "properties": {"a": {"type": "integer"}, "b": {"type": "integer"}}, "required": ["a", "b"], "title": "add", "type": "object"}}}
+{"type": "function", "function": {"name": "divide", "description": "Divide two numbers.", "parameters": {"description": "Divide two numbers.", "properties": {"a": {"type": "number"}, "b": {"type": "number"}}, "required": ["a", "b"], "title": "divide", "type": "object"}}}
+{"type": "function", "function": {"name": "multiply", "description": "Multiply two numbers together.", "parameters": {"description": "Multiply two numbers together.", "properties": {"a": {"type": "integer"}, "b": {"type": "integer"}}, "required": ["a", "b"], "title": "multiply", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+Calculate: (2+3) * (4+5) * (6+7). Use functions for each step.<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, let's see. The user wants me to calculate (2+3) * (4+5) * (6+7) using functions for each step. Hmm, the tools provided are add, divide, and multiply. So I need to break this down into steps where each operation is handled by one of these functions.
+
+First, the expression is a product of three sums. Let me parse it: (2+3), (4+5), and (6+7). So I need to compute each sum first, then multiply them together.
+
+Starting with the first part: (2+3). That's 5. To do this, I should call the add function with a=2 and b=3.
+
+Next, (4+5). Similarly, that's 9. So another add function call with a=4 and b=5.
+
+Then, (6+7). That's 13. Another add for a=6 and b=7.
+
+Once I have those three results, I need to multiply them. So 5 * 9 * 13. But the multiply function takes two numbers at a time. So first multiply 5 and 9 to get 45, then multiply 45 by 13 to get 585.
+
+Wait, but the user said to use functions for each step. So each step should be a separate function call. Let me check the tools again. The multiply function can take two integers, so I need to do two multiply operations.
+
+So the steps are:
+
+1. Add 2 and 3: result is 5.
+2. Add 4 and 5: result is 9.
+3. Add 6 and 7: result is 13.
+4. Multiply 5 and 9: result 45.
+5. Multiply 45 and 13: result 585.
+
+Each of these steps needs to be handled by a tool call. So I need to make five function calls in total: three adds and two multiplies.
+
+Wait, the user specified "use functions for each step". So each operation (addition and multiplication) should be a separate function call. Let's confirm the order.
+
+First, compute the three sums using add. Then multiply the results in sequence using multiply.
+
+So first three tool calls: add for 2+3, add for 4+5, add for 6+7.
+
+Then, first multiply: 5 * 9.
+
+Then, multiply the result by 13: 45 * 13.
+
+Yes, that makes sense. So the assistant should generate five tool calls in order.
+</think>
+
+<tool_call>
+{"name": "add", "arguments": {"a": 2, "b": 3}}
+</tool_call>
+
+<tool_call>
+{"name": "add", "arguments": {"a": 4, "b": 5}}
+</tool_call>
+
+<tool_call>
+{"name": "add", "arguments": {"a": 6, "b": 7}}
+</tool_call>
+
+<tool_call>
+{"name": "multiply", "arguments": {"a": 5, "b": 9}}
+</tool_call>
+
+<tool_call>
+{"name": "multiply", "arguments": {"a": 45, "b": 13}}
+</tool_call><|im_end|>

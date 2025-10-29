@@ -1,0 +1,51 @@
+<|im_start|>system
+You are a weather assistant. Use the provided functions to answer weather questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_forecast", "description": "Get the 3-day forecast for a location.", "parameters": {"description": "Get the 3-day forecast for a location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}}, "required": ["location"], "title": "get_forecast", "type": "object"}}}
+{"type": "function", "function": {"name": "get_weather", "description": "Get the current weather in a given location.", "parameters": {"description": "Get the current weather in a given location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}, "unit": {"title": "Unit", "enum": ["fahrenheit", "celsius"], "type": "string"}}, "required": ["location", "unit"], "title": "get_weather", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What's the current weather in Miami and what's the forecast for the next 3 days?<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "get_weather", "arguments": {"location": "Miami, FL", "unit": "fahrenheit"}}
+</tool_call>
+<tool_call>
+{"name": "get_forecast", "arguments": {"location": "Miami, FL"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+Weather in Miami, FL: Humid, 85 degrees fahrenheit.
+</tool_response>
+<tool_response>
+3-day forecast for Miami, FL: Day 1: Partly cloudy, Day 2: Sunny, Day 3: Rainy
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+Okay, let's see. The user asked for the current weather in Miami and the 3-day forecast. I called both functions: get_weather and get_forecast for Miami, FL. The responses came back. The weather is humid, 85°F, and the forecast is partly cloudy, then sunny, then rainy.
+
+I need to present this information clearly. Start with the current weather, mention the temperature and conditions. Then list the forecast for each day. Make sure to use the right units since the user didn't specify, but the get_weather used Fahrenheit, which is common in the US. Maybe mention if there's anything else they need. Keep it friendly and concise.
+</think>
+
+Here's the weather information for Miami, FL:
+
+**Current Weather**:  
+Humid, 85°F
+
+**3-Day Forecast**:  
+- **Day 1**: Partly cloudy  
+- **Day 2**: Sunny  
+- **Day 3**: Rainy  
+
+Let me know if you'd like additional details! 🌞☔<|im_end|>

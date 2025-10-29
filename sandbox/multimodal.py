@@ -2,7 +2,7 @@ import asyncio
 import time
 from pathlib import Path
 
-from kani.ext.multimodal_core import ImagePart
+from kani.ext.multimodal_core import ImagePart, VideoPart
 from transformers import AutoProcessor
 
 from kani import Kani, print_stream
@@ -33,19 +33,45 @@ async def encode_speed():
         },
     ]
 
-    processor = AutoProcessor.from_pretrained("google/gemma-3-12b-it")
+    processor = AutoProcessor.from_pretrained("Qwen/Qwen3-VL-8B-Thinking")
     text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
 
     audios = []
-    videos = []
+    videos = None
     images = [img.image]
     inputs = processor(
         text=text, audio=audios, images=images, videos=videos, add_special_tokens=False, return_tensors="pt"
     )
+    print(inputs)
+    return inputs
+
+
+async def encode_video():
+    vid = VideoPart.from_file(TEST_DATA_DIR / "bubble.webm")
+    conversation = [
+        {
+            "role": "user",
+            "content": [
+                {"type": "video", "video": ...},
+                {"type": "text", "text": "What is happening in this video?"},
+            ],
+        },
+    ]
+
+    processor = AutoProcessor.from_pretrained("Qwen/Qwen3-VL-8B-Thinking")
+    text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
+
+    audios = []
+    videos = [vid.as_tensor(fps=1)]
+    images = None
+    inputs = processor(
+        text=text, audio=audios, images=images, videos=videos, add_special_tokens=False, return_tensors="pt"
+    )
+    print(inputs)
     return inputs
 
 
 if __name__ == "__main__":
     start = time.monotonic()
-    asyncio.run(main())
+    asyncio.run(encode_video())
     print(time.monotonic() - start)

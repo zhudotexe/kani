@@ -483,7 +483,6 @@ HF_MODELS_TO_TEST = {
     # 2025 thinking models, function calling
     "openai/gpt-oss-20b": {"capabilities": ["reasoning", "function_calling"]},
     # 2025 multimodal models
-    # TODO why are these so slow? maybe need to cache the processor too
     "google/gemma-3-12b-it": {"capabilities": ["mm_image"], "kwargs": {"max_context_size": 128000}},
     "Qwen/Qwen3-VL-8B-Thinking": {
         "capabilities": ["reasoning", "function_calling", "mm_image", "mm_video"],

@@ -3,7 +3,8 @@ Hello!<end_of_turn>
 <start_of_turn>model
 
 ==========
-{'input_ids': tensor([[     2,    105,   2364,    107,   9259, 236888,    106,    107,    105,   4368,    107]]),
- 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
+tensor([[     2,    105,   2364,    107,   9259, 236888,    106,    107,    105,   4368,    107]])
+==========
+{'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
  'token_type_ids': tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]),
  'max_length': 128000}

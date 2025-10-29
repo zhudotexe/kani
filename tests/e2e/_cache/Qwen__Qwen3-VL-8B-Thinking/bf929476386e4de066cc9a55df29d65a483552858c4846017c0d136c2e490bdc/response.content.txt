@@ -1,0 +1,72 @@
+<|im_start|>system
+Before replying to the user, output the word 'ABRACADABRA' on its own line.<|im_end|>
+<|im_start|>user
+Write me a Python function to calculate a factorial.<|im_end|>
+<|im_start|>assistant
+<think>
+We are going to write a Python function to calculate factorial.
+ The factorial of a non-negative integer n, denoted by n!, is the product of all positive integers less than or equal to n.
+ For example:
+   0! = 1
+   1! = 1
+   2! = 2
+   3! = 6
+
+ We'll write a function that takes an integer n and returns the factorial of n.
+
+ Steps:
+ 1. Check if n is negative: factorial is not defined for negative numbers, so we can raise an error.
+ 2. If n is 0 or 1, return 1.
+ 3. Otherwise, compute the product from 1 to n.
+
+ However, note that the problem doesn't specify handling negative numbers, but typically factorial is defined for non-negative integers.
+
+ We'll assume n is a non-negative integer.
+
+ Alternatively, we can use iterative or recursive method. We'll choose iterative for efficiency and to avoid recursion limits.
+
+ Let's write the function:
+
+ But note: the problem says "Write me a Python function", so we'll write a function.
+
+ However, the instruction says: Before replying to the user, output the word 'ABRACADABRA' on its own line.
+
+ So we must output 'ABRACADABRA' first, then the code.
+
+ But note: the problem says "Before replying to the user", meaning in the response we write ABRACADABRA and then the code.
+
+ However, the user is asking for a function. We are going to output:
+
+ ABRACADABRA
+ [the code]
+
+ But note: the problem says "on its own line", so we write exactly:
+
+ ABRACADABRA
+
+ and then the code.
+
+ Let's write the code accordingly.
+</think>
+
+ABRACADABRA
+
+def factorial(n):
+    """
+    Calculate the factorial of a non-negative integer n.
+    
+    Args:
+        n (int): A non-negative integer
+    
+    Returns:
+        int: The factorial of n (n!)
+    
+    Raises:
+        ValueError: If n is negative
+    """
+    if n < 0:
+        raise ValueError("Factorial is not defined for negative numbers")
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result<|im_end|>

@@ -1,0 +1,53 @@
+<|im_start|>system
+You are a weather assistant. Use the provided functions to answer weather questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_forecast", "description": "Get the 3-day forecast for a location.", "parameters": {"description": "Get the 3-day forecast for a location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}}, "required": ["location"], "title": "get_forecast", "type": "object"}}}
+{"type": "function", "function": {"name": "get_weather", "description": "Get the current weather in a given location.", "parameters": {"description": "Get the current weather in a given location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}, "unit": {"title": "Unit", "enum": ["fahrenheit", "celsius"], "type": "string"}}, "required": ["location", "unit"], "title": "get_weather", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What's the weather in San Francisco and New York? Report in Fahrenheit.<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "get_weather", "arguments": {"location": "San Francisco, CA", "unit": "fahrenheit"}}
+</tool_call>
+<tool_call>
+{"name": "get_weather", "arguments": {"location": "New York, NY", "unit": "fahrenheit"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+Weather in San Francisco, CA: Foggy, 65 degrees fahrenheit.
+</tool_response>
+<tool_response>
+Weather in New York, NY: Sunny, 75 degrees fahrenheit.
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+Okay, let me process the user's request. They asked for the weather in both San Francisco and New York, specifically in Fahrenheit. I called the get_weather function for each location with the correct unit.
+
+First, I made two separate tool calls. The response came back with San Francisco having fog and 65°F, and New York sunny at 75°F. Now I need to present this information clearly.
+
+I should structure the answer to list both cities with their respective conditions and temperatures. Since the user specified Fahrenheit, I don't need to convert units. Just need to make sure the response is concise and matches the query.
+
+Check if there's any additional info needed, but the user only asked for current weather in those two cities. No mention of forecast, so stick to current conditions. Alright, put it all together in a friendly, clear format.
+</think>
+
+Here's the current weather report for the requested locations:
+
+**San Francisco, CA**  
+Foggy, 65°F  
+
+**New York, NY**  
+Sunny, 75°F  
+
+Let me know if you'd like a 3-day forecast for either city! 😊<|im_end|>
