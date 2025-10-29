@@ -1,0 +1,37 @@
+<|im_start|>system
+You are a helpful assistant. Use the provided functions to answer questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_time", "description": "Get the current time in the user's time zone.", "parameters": {"description": "Get the current time in the user's time zone.", "properties": {}, "title": "get_time", "type": "object"}}}
+{"type": "function", "function": {"name": "working_function", "description": "A function that works correctly.", "parameters": {"description": "A function that works correctly.", "properties": {}, "title": "working_function", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What time is it?<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "get_time", "arguments": {}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+CUSTOM ERROR HANDLER: The function get_time failed with error: The time API is currently offline (error 0xDEADBEEF).. Please inform the user about this error.
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user asked "What time is it?" so I called the get_time function. But it failed with an error saying the time API is offline. Hmm, I need to let them know it's not working right now. Maybe the API is down, so I can't get the time. I should check if there's another function available. Wait, there's also working_function, but its description says it works correctly. Wait, but the user wants the time, and get_time is the one for that. Since get_time failed, maybe I should tell the user the API is down and suggest trying again later. The other function might not help here. Let me see, the error message says the time API is offline, so the correct response is to inform them it's unavailable and maybe mention the working_function isn't relevant for getting time. But the user might not need the time right now, so just apologize and explain the error.
+</think>
+
+The current time could not be retrieved as the time API is currently offline. Please try again later. 
+
+<function-call>
+{"name": "working_function", "arguments": {}}
+</function-call><|im_end|>

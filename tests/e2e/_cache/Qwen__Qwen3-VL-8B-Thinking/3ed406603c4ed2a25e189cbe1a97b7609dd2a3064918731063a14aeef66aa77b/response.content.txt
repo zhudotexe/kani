@@ -1,0 +1,28 @@
+<|im_start|>system
+You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only.<|im_end|>
+<|im_start|>user
+thank you<|im_end|>
+<|im_start|>assistant
+arigato<|im_end|>
+<|im_start|>user
+good morning<|im_end|>
+<|im_start|>assistant
+ohayo<|im_end|>
+<|im_start|>user
+crab<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user just said "crab". I need to translate this into Japanese and return it in Romaji only.
+
+First, I should recall the correct Japanese word for "crab". The most common term is カニ, which is pronounced "kani". Let me double-check to make sure. Yeah, "kani" is the standard Romaji for カニ. Sometimes people might use other terms, but for a general translation, "kani" is correct.
+
+Wait, is there another way to say "crab" in Japanese? Maybe in a specific context, but the user just said "crab" as a general term. So "kani" is the right choice. Let me confirm by thinking of common phrases. For example, "I ate crab" would be "私はカニを食べた", so "kani" is correct.
+
+No need to worry about nuances here since the user just wants the translation. The instructions say to return only Romaji, so I shouldn't include any Japanese characters. Just "kani".
+
+Wait, the previous examples: "thank you" became "arigato", which is correct. "good morning" became "ohayo", which is the Romaji for おはよう. So yes, following the pattern, "crab" should be "kani".
+
+I think that's it. No other possible Romaji for "crab" in Japanese. Let me check a dictionary quickly. Yes, カニ is kani. So the answer is kani.
+</think>
+
+kani<|im_end|>

@@ -1,0 +1,45 @@
+<|im_start|>system
+You are a weather assistant. Use the provided functions to answer weather questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_forecast", "description": "Get the 3-day forecast for a location.", "parameters": {"description": "Get the 3-day forecast for a location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}}, "required": ["location"], "title": "get_forecast", "type": "object"}}}
+{"type": "function", "function": {"name": "get_weather", "description": "Get the current weather in a given location.", "parameters": {"description": "Get the current weather in a given location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}, "unit": {"title": "Unit", "enum": ["fahrenheit", "celsius"], "type": "string"}}, "required": ["location", "unit"], "title": "get_weather", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What's the current weather in Miami and what's the forecast for the next 3 days?<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user is asking for the current weather in Miami and the 3-day forecast. Let me check the tools available.
+
+First, for the current weather, there's the get_weather function. It requires location and unit. The location is Miami, but I need to specify the state. Wait, the example given in the parameters is "San Francisco, CA", so I should include the state. So Miami, FL.
+
+Then, the unit parameter can be fahrenheit or celsius. Since the user didn't specify, maybe I should default to Fahrenheit, which is common in the US. So unit: "fahrenheit".
+
+Next, the forecast for the next 3 days. The get_forecast function takes location as a parameter, and the description says it's a 3-day forecast. So I need to call that with Miami, FL.
+
+Wait, the get_forecast function's description says "Get the 3-day forecast for a location." So the function is straightforward. The parameters only require location.
+
+So I need two tool calls: one for get_weather with Miami, FL and fahrenheit, and another for get_forecast with Miami, FL.
+
+Let me make sure the parameters are correct. For get_weather, required fields are location and unit. So I have to include both. For get_forecast, only location is needed.
+
+Yes, that's correct. So I'll generate two tool calls.
+</think>
+
+<tool_call>
+{"name": "get_weather", "arguments": {"location": "Miami, FL", "unit": "fahrenheit"}}
+</tool_call>
+
+<tool_call>
+{"name": "get_forecast", "arguments": {"location": "Miami, FL"}}
+</tool_call><|im_end|>

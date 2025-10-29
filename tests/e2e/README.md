@@ -8,6 +8,7 @@ E2E tests need to be hydrated using real API calls/GPUs at least once.
 ```shell
 KANI_E2E_HYDRATE=api pytest -m e2e -s
 KANI_E2E_HYDRATE=local pytest -m e2e -s
+KANI_E2E_HYDRATE=llamacpp pytest -m e2e -s
 ```
 
 ## Writing Tests

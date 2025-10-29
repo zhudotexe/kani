@@ -1,0 +1,27 @@
+<|im_start|>system
+You are an email assistant. Use the provided functions to help with email tasks.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "check_inbox", "description": "Check the email inbox.", "parameters": {"description": "Check the email inbox.", "properties": {}, "title": "check_inbox", "type": "object"}}}
+{"type": "function", "function": {"name": "send_email", "description": "Send an email to a recipient. Control returns to the user after this function.", "parameters": {"description": "Send an email to a recipient. Control returns to the user after this function.", "properties": {"recipient": {"type": "string"}, "subject": {"type": "string"}, "body": {"type": "string"}}, "required": ["recipient", "subject", "body"], "title": "send_email", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+Send an email to john@example.com with subject "Meeting Tomorrow" and body "See you at 3pm"<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user wants to send an email to john@example.com. Let me check the tools available. There's the send_email function. It requires recipient, subject, and body. The user provided all three: recipient is john@example.com, subject is "Meeting Tomorrow", body is "See you at 3pm". I need to make sure all required parameters are there. Yep, they are. So I'll call send_email with those arguments. No need for check_inbox here since the user is sending, not checking. Just construct the tool call.
+</think>
+
+<tool_call>
+{"name": "send_email", "arguments": {"recipient": "john@example.com", "subject": "Meeting Tomorrow", "body": "See you at 3pm"}}
+</tool_call><|im_end|>

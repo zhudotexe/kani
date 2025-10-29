@@ -3,6 +3,8 @@
 
 # manual install
 torch
+torchvision  # for multimodal e2e tests
+torchcodec  # for multimodal e2e tests
 
 # dev
 black

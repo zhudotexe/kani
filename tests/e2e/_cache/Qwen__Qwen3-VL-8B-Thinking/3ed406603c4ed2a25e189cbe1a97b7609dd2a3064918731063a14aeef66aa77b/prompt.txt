@@ -1,0 +1,22 @@
+<|im_start|>system
+You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only.<|im_end|>
+<|im_start|>user
+thank you<|im_end|>
+<|im_start|>assistant
+arigato<|im_end|>
+<|im_start|>user
+good morning<|im_end|>
+<|im_start|>assistant
+ohayo<|im_end|>
+<|im_start|>user
+crab<|im_end|>
+<|im_start|>assistant
+<think>
+
+==========
+tensor([[151644,   8948,    198,   2610,    525,  15358,    438,    264,  10769,  45488,     13,   5209,    470,    279,  10769,  14468,    315,    279,   1196,    594,   1946,    304,  11774,  41788,   1172,     13, 151645,    198, 151644,    872,    198,  57417,    498, 151645,    198, 151644,  77091,    198,    277,    343,   4330, 151645,    198, 151644,    872,    198,  18536,   6556, 151645,    198, 151644,  77091,    198,   2267,  75980, 151645,    198, 151644,    872,    198,   5082,    370, 151645,    198, 151644,  77091,    198, 151667,    198]])
+==========
+{'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
+ 'max_length': 32000}
