@@ -312,10 +312,16 @@ class CachingAutoModel:
 
         printable_kwargs = kwargs.copy()
         printable_kwargs.pop("streamer", None)  # streamer repr has a pointer which changes per run
+
+        # only print input_ids fully, other kwargs can be huge in multimodal case
+        input_ids = printable_kwargs.pop("input_ids")
         torch.set_printoptions(linewidth=999, profile="full")
+        input_ids_str = re.sub(r",\s+device='.+?'", "", repr(input_ids))  # tensor can be on cpu, mps, or cuda
+        torch.set_printoptions(profile="default")
+
         printed_kwargs = pprint.pformat(printable_kwargs, sort_dicts=False, width=120)
         printed_kwargs = re.sub(r",\s+device='.+?'", "", printed_kwargs)  # tensor can be on cpu, mps, or cuda
-        prompt_path.write_text(f"{prompt_text}\n==========\n{printed_kwargs}")
+        prompt_path.write_text(f"{prompt_text}\n==========\n{input_ids_str}\n==========\n{printed_kwargs}")
 
         # return the cached resp
         if response_tokens_path.exists():
