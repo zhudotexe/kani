@@ -129,7 +129,7 @@ a :class:`.HuggingEngine`) like so:
     model = HuggingEngine("openai/gpt-oss-20b")
     engine = GPTOSSParser(model)
 
-.. autoclass:: kani.model_specific.BaseToolCallParser
+.. autoclass:: kani.model_specific.BaseParser
     :members:
 
 .. autoclass:: kani.model_specific.gpt_oss.GPTOSSParser
@@ -138,7 +138,7 @@ a :class:`.HuggingEngine`) like so:
 
 .. autoclass:: kani.model_specific.mistral.MistralToolCallParser
 
-.. autoclass:: kani.model_specific.deepseek.DeepSeekR1ToolCallParser
+.. autoclass:: kani.model_specific.deepseek.DeepSeekR1Parser
 
 Saving/Loading
 ^^^^^^^^^^^^^^

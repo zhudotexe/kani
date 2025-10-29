@@ -2,11 +2,11 @@ import asyncio
 import time
 from pathlib import Path
 
-from kani.ext.multimodal_core import ImagePart, VideoPart
 from transformers import AutoProcessor
 
 from kani import Kani, print_stream
 from kani.engines.huggingface import HuggingEngine
+from kani.ext.multimodal_core import ImagePart, VideoPart
 
 TEST_DATA_DIR = Path(__file__).parents[1] / "tests/e2e/data"
 

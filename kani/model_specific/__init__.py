@@ -4,7 +4,7 @@ import importlib
 import logging
 
 from kani.utils.warnings import warn_in_userspace
-from .base import BaseToolCallParser
+from .base import BaseParser, BaseToolCallParser
 
 # list of (HF model id glob, path to import)
 # the path to import can be either a PromptPipeline instance or a function (tokenizer, **kwargs) => pipeline
