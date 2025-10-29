@@ -140,6 +140,8 @@ a :class:`.HuggingEngine`) like so:
 
 .. autoclass:: kani.model_specific.deepseek.DeepSeekR1Parser
 
+.. autoclass:: kani.model_specific.qwen3.Qwen3Parser
+
 Saving/Loading
 ^^^^^^^^^^^^^^
 
