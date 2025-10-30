@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## v1.7.0 - Token Counting Refactor
+## v1.7.0 - Token Counting Refactor, HF Multimodal Inputs
 
 Under the hood, kani now uses full prompts (i.e., a list of messages + functions) to count tokens, rather than summing
 the token counts of messages individually. This makes token counting more reliable for models which do not expose their
