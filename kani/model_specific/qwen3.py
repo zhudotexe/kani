@@ -55,7 +55,7 @@ class Qwen3Parser(BaseToolCallParser):
                     exc_info=True,
                 )
                 continue
-            tool_name = data["name"]
+            tool_name = data.get("name", "undefined")
             tool_args = data.get("arguments", {})
             tool_call = ToolCall.from_function_call(FunctionCall.with_args(tool_name, **tool_args))
             tool_calls.append(tool_call)

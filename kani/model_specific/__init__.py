@@ -27,7 +27,7 @@ PARSER_REGISTRY = [
     ("mistralai/*-2405", "kani.model_specific.mistral.MistralToolCallParser"),
     ("mistralai/*-2407", "kani.model_specific.mistral.MistralToolCallParser"),
     ("mistralai/*-2409", "kani.model_specific.mistral.MistralToolCallParser"),
-    ("Qwen/Qwen3-*-Thinking", "kani.model_specific.qwen3.Qwen3ThinkingParser"),
+    ("Qwen/Qwen3-*-Thinking*", "kani.model_specific.qwen3.Qwen3ThinkingParser"),
     ("Qwen/Qwen3-*", "kani.model_specific.qwen3.Qwen3Parser"),
 ]
 
