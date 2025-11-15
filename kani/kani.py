@@ -1,4 +1,5 @@
 import asyncio
+import collections
 import inspect
 import logging
 import warnings
@@ -435,6 +436,9 @@ class Kani:
         """
         max_size = self.max_context_size - self.desired_response_tokens
         functions = list(self.functions.values()) if include_functions else None
+        # track what exceptions a given to_keep raised
+        # this is mostly useful for printing unique errors and determining if it is a last message too long issue
+        excs_by_len = {}
 
         async def _prompt_len_or_inf(messages, functions_):
             try:
@@ -447,7 +451,9 @@ class Kani:
                 return float("inf"), e
 
         # optimization: check the full prompt first
-        total_tokens, last_exc = await _prompt_len_or_inf(self.always_included_messages + self.chat_history, functions)
+        total_tokens, excs_by_len[len(self.chat_history)] = await _prompt_len_or_inf(
+            self.always_included_messages + self.chat_history, functions
+        )
         if total_tokens <= max_size:
             to_keep = len(self.chat_history)
         else:
@@ -463,7 +469,7 @@ class Kani:
                 else:
                     prompt = self.always_included_messages
 
-                total_tokens, last_exc = await _prompt_len_or_inf(prompt, functions)
+                total_tokens, excs_by_len[mid] = await _prompt_len_or_inf(prompt, functions)
 
                 if total_tokens > max_size:
                     high = mid - 1
@@ -473,27 +479,34 @@ class Kani:
 
         # raise an error if we can't keep anything
         if not to_keep:
-            # if there was an error
-            if last_exc and not isinstance(last_exc, PromptTooLong):
-                raise ValueError(
-                    "Could not find a valid prompt! This is likely a bug in the engine's token counting method. See the"
-                    " above exceptions."
-                ) from last_exc
-
             # there were some chat messages but we can't fit them all
             if self.chat_history:
-                # if to_keep is 0, it must be that the last message is too long (since we must have tried
-                # to_keep=1 and to_keep=0 and 0 was ok)
-                if to_keep == 0:
+                # if to_keep=0 raised a prompt too long exception
+                if isinstance(excs_by_len.get(0), PromptTooLong):
+                    # the reserved tokens must be too long
+                    raise PromptTooLong(
+                        "The number of reserved tokens is too high to include any chat messages. Consider shortening"
+                        " your system_prompt, always_included_messages, desired_response_tokens, or number of"
+                        " functions."
+                    )
+                # if to_keep=1 raised a prompt too long exception and to_keep=0 was fine or raised some other exception
+                # (usually HF chat templates that don't accept 0 messages)
+                if isinstance(excs_by_len.get(1), PromptTooLong):
                     raise MessageTooLong(
                         "The last chat message's size is too long to include in the prompt (after including"
                         " system messages, always included messages, and desired response tokens).\nContent:"
                         f" {self.chat_history[-1].text[:100]}..."
                     )
-                # otherwise the reserved tokens must be too long
-                raise PromptTooLong(
-                    "The number of reserved tokens is too high to include any chat messages. Consider shortening your"
-                    " system_prompt, always_included_messages, desired_response_tokens, or number of functions."
+                # otherwise it's probably an upstream error, print the unique errors (grouped by message)
+                lens_by_exc = collections.defaultdict(list)
+                for l, exc in excs_by_len.items():
+                    lens_by_exc[str(exc)].append(str(l))
+                unique_exceptions = "\n".join(
+                    f"length {', '.join(lens)}: {exc_str}" for exc_str, lens in lens_by_exc.items()
+                )
+                raise ValueError(
+                    "Could not find a valid prompt! This is likely a bug in the engine's token counting method. See the"
+                    f" warnings logged above.\nUnique exceptions:\n{unique_exceptions}"
                 )
 
             # no chat messages, but the reserved is too large
