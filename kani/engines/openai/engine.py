@@ -9,6 +9,7 @@ from kani.models import ChatMessage, ChatRole
 from . import function_calling, mm_tokens
 from .model_constants import CONTEXT_SIZES_BY_PREFIX
 from .translation import ChatCompletion, openai_tc_to_kani_tc, translate_functions, translate_messages
+from .utils import DottableDict
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
 
@@ -31,9 +32,9 @@ class OpenAIEngine(TokenCached, BaseEngine):
 
     **Message Extras**
 
-    * ``"openai_completion"``: The ChatCompletion (raw response) returned by the OpenAI servers. Non-streaming responses
-      only.
-    * ``"openai_usage"``: The usage data (raw response) returned by the OpenAI servers.
+    * ``"openai_completion"``: The ChatCompletion (raw response) returned by the OpenAI servers, as a dictionary.
+      Non-streaming responses only.
+    * ``"openai_usage"``: The usage data (raw response) returned by the OpenAI servers, as a dictionary.
     """
 
     disable_function_calling_kwargs = {"tool_choice": "none"}
@@ -273,7 +274,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
             self.set_cached_message_len(msg, usage.completion_tokens)
             prompt_tokens = usage.prompt_tokens
             completion_tokens = usage.completion_tokens
-            msg.extra["openai_usage"] = usage
+            msg.extra["openai_usage"] = DottableDict(usage.model_dump(mode="json"))
         else:
             prompt_tokens = completion_tokens = None
         yield Completion(message=msg, prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)

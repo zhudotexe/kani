@@ -8,6 +8,7 @@ from kani.engines.base import BaseCompletion
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, MessagePart, ToolCall
 from kani.prompts.pipeline import PromptPipeline
+from .utils import DottableDict
 
 try:
     from openai.types.chat import (
@@ -147,8 +148,8 @@ class ChatCompletion(BaseCompletion):
         self.openai_completion = openai_completion
         """The underlying OpenAI ChatCompletion."""
         self._message = openai_cm_to_kani_cm(openai_completion.choices[0].message)
-        self._message.extra["openai_completion"] = openai_completion
-        self._message.extra["openai_usage"] = openai_completion.usage
+        self._message.extra["openai_completion"] = DottableDict(openai_completion.model_dump(mode="json"))
+        self._message.extra["openai_usage"] = DottableDict(openai_completion.usage.model_dump(mode="json"))
 
     @property
     def message(self):

@@ -1,7 +1,6 @@
 import dataclasses
 import hashlib
 import zipfile
-from typing import Any
 
 from kani.models import BaseModel, ChatMessage
 from kani.utils.typing import PathLike
@@ -23,14 +22,14 @@ def save(fp: PathLike, inst, *, save_format: str, **kwargs):
         with zipfile.ZipFile(fp, mode="w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
             ctx = KaniZipSaveContext(zf=zf)
             # the model_dump_json should write to zf when SAVELOAD_CONTEXT_KEY is provided
-            index = data.model_dump_json(context={SAVELOAD_CONTEXT_KEY: ctx}, **kwargs)
+            index = data.model_dump_json(context={SAVELOAD_CONTEXT_KEY: ctx}, fallback=repr, **kwargs)
             with zf.open("index.json", mode="w") as f:
                 f.write(index.encode("utf-8"))
 
     elif save_format == "json":
         # save using legacy JSON
         with open(fp, "w", encoding="utf-8") as f:
-            f.write(data.model_dump_json(**kwargs))
+            f.write(data.model_dump_json(fallback=repr, **kwargs))
     else:
         raise ValueError("save_format must be either 'kani' or 'json'.")
 

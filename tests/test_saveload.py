@@ -2,6 +2,7 @@
 
 import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
+from pydantic import BaseModel
 
 from kani import ChatMessage, FunctionCall, Kani, MessagePart
 from tests.engine import EngineForTests
@@ -108,3 +109,35 @@ async def test_saveload_messageparts(save_format, tmp_path):
     assert ai.chat_history == loaded.chat_history
     assert isinstance(loaded.chat_history[0].parts[1], _TestMessagePart1)
     assert isinstance(loaded.chat_history[1].parts[0], _TestMessagePart2)
+
+
+@pytest.mark.parametrize("save_format", ("json", "kani"))
+async def test_saveload_extra_arbitrary_types(save_format, tmp_path):
+    """Test that saving succeeds even when a message or messagepart's extra is set to an arbitrary type."""
+
+    # message with normal extras
+    ai = Kani(engine, chat_history=[ChatMessage.user("hello", extra={"foo": "bar"})])
+    ai.save(tmp_path / f"pytest.{save_format}", save_format=save_format)
+    loaded = Kani(engine)
+    loaded.load(tmp_path / f"pytest.{save_format}")
+
+    assert loaded.chat_history[0].extra == {"foo": "bar"}
+
+    # message with Pydantic model extras
+    class SomePydanticType(BaseModel):
+        foo: int
+
+    ai = Kani(engine, chat_history=[ChatMessage.user("hello", extra={"foo": SomePydanticType(foo=1)})])
+    ai.save(tmp_path / f"pytest.{save_format}", save_format=save_format)
+    loaded = Kani(engine)
+    loaded.load(tmp_path / f"pytest.{save_format}")
+
+    assert loaded.chat_history[0].extra == {"foo": {"foo": 1}}
+
+    # message with non-serializable types
+    ai = Kani(engine, chat_history=[ChatMessage.user("hello", extra={"foo": object()})])
+    ai.save(tmp_path / f"pytest.{save_format}", save_format=save_format)
+    loaded = Kani(engine)
+    loaded.load(tmp_path / f"pytest.{save_format}")
+
+    assert "foo" in loaded.chat_history[0].extra

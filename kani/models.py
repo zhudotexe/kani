@@ -120,6 +120,10 @@ class MessagePart(BaseModel, abc.ABC):
     """
     Specific engines may store additional extra data in this dictionary. See an engine's documentation for details about
     any extras it may store or expect.
+    
+    This key will only be persisted to disk on a best-effort basis -- any value that is not JSON-serializable or a 
+    Pydantic class will be cast to a repr. Upon loading, values may not retain the same type as they were saved as 
+    (Pydantic objects will be loaded as a dict).
     """
 
     # ==== serdes ====
@@ -268,6 +272,10 @@ class ChatMessage(BaseModel):
     """
     Specific engines may store additional extra data in this dictionary. See an engine's documentation for details about
     any extras it may store or expect.
+    
+    This key will only be persisted to disk on a best-effort basis -- any value that is not JSON-serializable or a 
+    Pydantic class will be cast to a repr. Upon loading, values may not retain the same type as they were saved as 
+    (Pydantic objects will be loaded as a dict).
     """
 
     # ==== constructors ====

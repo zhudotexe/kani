@@ -5,7 +5,7 @@ import logging
 import warnings
 from collections.abc import AsyncIterable
 from pathlib import Path
-from typing import Callable, Literal
+from typing import Callable, Literal, Optional
 
 from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
@@ -481,17 +481,17 @@ class Kani:
         if not to_keep:
             # there were some chat messages but we can't fit them all
             if self.chat_history:
-                # if to_keep=0 raised a prompt too long exception
-                if isinstance(excs_by_len.get(0), PromptTooLong):
+                # if to_keep=0 is not an unhandled exception and we can't keep anything
+                if isinstance(excs_by_len.get(0), Optional[PromptTooLong]) and to_keep is None:
                     # the reserved tokens must be too long
                     raise PromptTooLong(
                         "The number of reserved tokens is too high to include any chat messages. Consider shortening"
                         " your system_prompt, always_included_messages, desired_response_tokens, or number of"
                         " functions."
                     )
-                # if to_keep=1 raised a prompt too long exception and to_keep=0 was fine or raised some other exception
+                # if to_keep=1 is not unhandled and to_keep=0 was unhandled or fine
                 # (usually HF chat templates that don't accept 0 messages)
-                if isinstance(excs_by_len.get(1), PromptTooLong):
+                if isinstance(excs_by_len.get(1), Optional[PromptTooLong]):
                     raise MessageTooLong(
                         "The last chat message's size is too long to include in the prompt (after including"
                         " system messages, always included messages, and desired response tokens).\nContent:"
@@ -500,6 +500,8 @@ class Kani:
                 # otherwise it's probably an upstream error, print the unique errors (grouped by message)
                 lens_by_exc = collections.defaultdict(list)
                 for l, exc in excs_by_len.items():
+                    if exc is None:
+                        continue
                     lens_by_exc[str(exc)].append(str(l))
                 unique_exceptions = "\n".join(
                     f"length {', '.join(lens)}: {exc_str}" for exc_str, lens in lens_by_exc.items()

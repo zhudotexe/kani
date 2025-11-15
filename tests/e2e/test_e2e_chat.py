@@ -104,3 +104,10 @@ class TestE2EChat:
         )
         msg = await self._do_inference(ai, "What is my name? (You can mention it now.)", stream)
         assert "mizzenmast" not in msg.text.lower()
+
+    @pytest.mark.parametrize("save_format", ("json", "kani"))
+    async def test_save(self, engine, stream, save_format, tmp_path):
+        """Ensure that a chat session can be saved with engine extras."""
+        ai = Kani(engine)
+        await self._do_inference(ai, "Hello!", stream)
+        ai.save(tmp_path / f"pytest.{save_format}", save_format=save_format)
