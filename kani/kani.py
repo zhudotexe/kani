@@ -1,17 +1,20 @@
 import asyncio
 import collections
 import inspect
+import json
 import logging
 import warnings
 from collections.abc import AsyncIterable
 from pathlib import Path
 from typing import Callable, Literal, Optional
 
+import pydantic
+
 from .ai_function import AIFunction
 from .engines.base import BaseCompletion, BaseEngine
 from .exceptions import FunctionCallException, MessageTooLong, NoSuchFunction, PromptTooLong, WrappedCallException
 from .internal import ExceptionHandleResult, FunctionCallResult
-from .models import ChatMessage, ChatRole, FunctionCall, QueryType, ToolCall
+from .models import ChatMessage, ChatRole, FunctionCall, MessagePart, QueryType, ToolCall
 from .streaming import DummyStream, StreamManager
 from .utils import saveload
 from .utils.message_formatters import assistant_message_contents
@@ -547,14 +550,37 @@ class Kani:
         f = self.functions.get(call.name)
         if not f:
             raise NoSuchFunction(call.name)
+
         # call it
         try:
             result = await f(**call.kwargs)
-            result_str = str(result)
-            log.debug(f"{f.name} responded with data: {result_str!r}")
         except Exception as e:
             raise WrappedCallException(f.auto_retry, e) from e
-        msg = ChatMessage.function(f.name, result_str, tool_call_id=tool_call_id)
+
+        # put it in the right format
+        # * if it is a :class:`.ChatMessage`, do not modify it
+        # * if it is a list of :class:`.MessagePart`, do not modify it
+        # * if it is a Pydantic model, serialize it to JSON
+        # * if it is a JSON-serializable Python dict or list, serialize it to JSON
+        # * otherwise, cast it to a string
+        log.debug(f"{f.name} responded with data: {result!r}")
+        if isinstance(result, ChatMessage):
+            msg = result
+            msg.tool_call_id = tool_call_id
+        elif isinstance(result, list) and any(isinstance(p, MessagePart) for p in result):
+            msg = ChatMessage.function(f.name, result, tool_call_id=tool_call_id)
+        elif isinstance(result, pydantic.BaseModel):
+            msg = ChatMessage.function(f.name, result.model_dump_json(), tool_call_id=tool_call_id)
+        elif isinstance(result, (dict, list)):
+            try:
+                result_str = json.dumps(result)
+            except TypeError:
+                result_str = str(result)
+            msg = ChatMessage.function(f.name, result_str, tool_call_id=tool_call_id)
+        else:
+            result_str = str(result)
+            msg = ChatMessage.function(f.name, result_str, tool_call_id=tool_call_id)
+
         # if we are auto truncating, check and see if we need to
         if f.auto_truncate is not None:
             message_len = len(msg.text)
