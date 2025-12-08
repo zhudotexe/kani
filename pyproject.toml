@@ -29,7 +29,7 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "kani[multimodal,huggingface,llama,cpp,openai,anthropic,google]",
+    "kani[multimodal,huggingface,llama,cpp,vllm,openai,anthropic,google]",
 ]
 
 # extensions
@@ -53,6 +53,10 @@ cpp = [
     "llama-cpp-python>=0.2.0,<1.0.0",
     "huggingface-hub",
     "sentencepiece>=0.1.99,<1.0.0",
+]
+
+vllm = [
+    "kani-ext-vllm",
 ]
 
 openai = [

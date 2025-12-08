@@ -17,7 +17,7 @@ If you've made a cool extension, add it to this list with a PR!
 
 * **kani-multimodal-core**: Adds support for multimodal inputs: images, audio, and video.
 
-  * ``pip install kani-multimodal-core``
+  * ``pip install "kani[multimodal]"``
   * `GitHub (kani-multimodal-core) <https://github.com/zhudotexe/kani-multimodal-core>`_
   * `Docs (kani-multimodal-core) <https://kani-multimodal-core.readthedocs.io/en/latest/>`_
 
@@ -27,9 +27,10 @@ If you've made a cool extension, add it to this list with a PR!
   * ``pip install kani-ratelimits``
   * `GitHub (kani-ratelimits) <https://github.com/zhudotexe/kani-ratelimits>`_
 
-* **kani-ext-vllm**: Adds support for loading models using vLLM. Supports chat templates - should be mostly a drop-in
-  replacement for a :class:`.HuggingEngine`.
+* **kani-ext-vllm**: Adds support for loading models using vLLM with a local engine or managing a vLLM server process.
+  The local vLLM engine is a drop-in replacement for a :class:`.HuggingEngine`.
 
+  * ``pip install "kani[vllm]"``
   * `GitHub (kani-ext-vllm) <https://github.com/zhudotexe/kani-ext-vllm>`_
 
 * **kani-ext-realtime**: Adds support for OpenAI's Realtime API and full-duplex voice models with Kani.

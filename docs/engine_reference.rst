@@ -30,6 +30,10 @@ llama.cpp
 .. autoclass:: kani.engines.llamacpp.LlamaCppEngine
     :members:
 
+vLLM
+----
+See the ``kani-ext-vllm`` documentation at https://github.com/zhudotexe/kani-ext-vllm.
+
 Base
 ----
 .. autoclass:: kani.engines.BaseEngine

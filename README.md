@@ -42,8 +42,10 @@ many more:
 - OpenAI Models (`pip install "kani[openai]"`)
 - Anthropic Models (`pip install "kani[anthropic]"`)
 - Google AI Models (`pip install "kani[google]"`)
-- and _every_ chat model available on Hugging Face through `transformers` or `llama.cpp`! 
-  (`pip install "kani[huggingface]"`)
+- Hugging Face transformers (`pip install "kani[huggingface]"`)
+- llama.cpp (`pip install "kani[cpp]"`)
+- vLLM (`pip install "kani[vllm]"`)
+- and more with [community extensions](https://kani.readthedocs.io/en/latest/community/extensions.html)!
 
 **Check out the [Model Zoo](examples/4_engines_zoo.py) for code examples of loading popular models in Kani!**
 

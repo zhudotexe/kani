@@ -24,3 +24,4 @@ We'll also discuss how to implement your own engine to use any language model or
     engines/huggingface
     engines/llamacpp
     engines/openai
+    vLLM Engines <https://github.com/zhudotexe/kani-ext-vllm>
