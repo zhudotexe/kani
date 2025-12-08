@@ -1,0 +1,6 @@
+data: {"candidates": [{"content": {"parts": [{"text": "The"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 346,"candidatesTokenCount": 1,"totalTokenCount": 347,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 346}]},"modelVersion": "gemini-2.5-flash","responseId": "9Cc3aZ-PJfDg_uMPyt3S4Qg"}
+
+data: {"candidates": [{"content": {"parts": [{"text": " weather in San Francisco, CA is foggy with a temperature of 65 degrees Fahrenheit"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 346,"candidatesTokenCount": 18,"totalTokenCount": 364,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 346}]},"modelVersion": "gemini-2.5-flash","responseId": "9Cc3aZ-PJfDg_uMPyt3S4Qg"}
+
+data: {"candidates": [{"content": {"parts": [{"text": ". In New York, NY, it's sunny with a temperature of 75 degrees Fahrenheit."}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 346,"candidatesTokenCount": 39,"totalTokenCount": 385,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 346}]},"modelVersion": "gemini-2.5-flash","responseId": "9Cc3aZ-PJfDg_uMPyt3S4Qg"}
+

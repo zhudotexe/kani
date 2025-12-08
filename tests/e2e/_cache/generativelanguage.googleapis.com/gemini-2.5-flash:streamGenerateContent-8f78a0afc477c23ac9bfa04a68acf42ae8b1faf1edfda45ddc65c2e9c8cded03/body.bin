@@ -1,0 +1,4 @@
+data: {"candidates": [{"content": {"parts": [{"text": "Alice, in"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 625,"candidatesTokenCount": 3,"totalTokenCount": 628,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 625}]},"modelVersion": "gemini-2.5-flash","responseId": "9yc3aYTANd2M_uMP5PGuoQE"}
+
+data: {"candidates": [{"content": {"parts": [{"text": " San Francisco, has a total order amount of $1225."}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 625,"candidatesTokenCount": 18,"totalTokenCount": 643,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 625}]},"modelVersion": "gemini-2.5-flash","responseId": "9yc3aYTANd2M_uMP5PGuoQE"}
+

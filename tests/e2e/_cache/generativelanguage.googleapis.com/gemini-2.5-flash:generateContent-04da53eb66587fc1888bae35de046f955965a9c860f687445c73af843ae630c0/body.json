@@ -1,0 +1,31 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Alice from San Francisco has a total order amount of 1225.",
+            "thoughtSignature": "CrkBAXLI2nzNkPWq9025wmN3YDlN1gdzwWyjXymn/Vh71lPWccLgZo0E8D+tkOc0f5xo1/uVUqMvdj9nK0kQLfOha6pQAzjzEEB6f7rCmwkjC+KfcMOocmwPkb9V413Yn3XM4xGE6UcvjscAYVo5SH6vZjvSmc7cAfHJD+viuvdI4xJO1rnDgRerNX6tRsvktBd1iuBU8iI2mroMIA3HsUwYq+PkN5l5OWs55RtpXMgvvlO/87nUFyiWsrE="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 252,
+    "candidatesTokenCount": 16,
+    "totalTokenCount": 309,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 252
+      }
+    ],
+    "thoughtsTokenCount": 41
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "9ic3adCKHp6V_uMPy42LeQ"
+}

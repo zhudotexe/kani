@@ -1,0 +1,31 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "(8 times 5) plus 10 is 50.",
+            "thoughtSignature": "CngBcsjafCN5dhjAgBMk1nMRW9PGLTvKT5JgEHDJK+5BSK34VIq2g4lNVGbLHb+wlicF3QKAhpqljmM7+ZYaOui/jdKbvl5Cz619nlP56FJfZ3FvK6hBhjF7lBy1T3L/KeWh6xdUXwtuFoq5H/w34EaL6UrXyM0S+UU="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 234,
+    "candidatesTokenCount": 15,
+    "totalTokenCount": 276,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 234
+      }
+    ],
+    "thoughtsTokenCount": 27
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "8Sc3aYHYEbqo_uMPrIinyAc"
+}

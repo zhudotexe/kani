@@ -1,0 +1,4 @@
+data: {"candidates": [{"content": {"parts": [{"text": "The answer is"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 265,"candidatesTokenCount": 3,"totalTokenCount": 268,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 265}]},"modelVersion": "gemini-2.5-flash","responseId": "7yc3ac-6MvGl_uMPlNKckAk"}
+
+data: {"candidates": [{"content": {"parts": [{"text": " 42."}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 265,"candidatesTokenCount": 6,"totalTokenCount": 271,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 265}]},"modelVersion": "gemini-2.5-flash","responseId": "7yc3ac-6MvGl_uMPlNKckAk"}
+

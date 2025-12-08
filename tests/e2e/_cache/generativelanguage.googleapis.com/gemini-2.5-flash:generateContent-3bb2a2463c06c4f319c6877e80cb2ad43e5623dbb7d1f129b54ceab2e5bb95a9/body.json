@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "The current weather in Miami, FL is humid with a temperature of 85 degrees fahrenheit. The 3-day forecast for Miami, FL is: Day 1: Partly cloudy, Day 2: Sunny, Day 3: Rainy."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 274,
+    "candidatesTokenCount": 51,
+    "totalTokenCount": 325,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 274
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "-Cc3aaDiLq2T_uMP9J7OkQE"
+}

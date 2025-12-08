@@ -1,0 +1,20 @@
+{
+  "candidates": [
+    {
+      "finishReason": "UNEXPECTED_TOOL_CALL",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 70,
+    "totalTokenCount": 70,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 70
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "-ic3advbBvTc_uMPys_zkAk"
+}

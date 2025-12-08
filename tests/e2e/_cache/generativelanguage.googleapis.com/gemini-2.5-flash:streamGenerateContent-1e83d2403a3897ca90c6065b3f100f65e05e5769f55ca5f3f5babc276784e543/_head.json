@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "headers": {
+    "content-type": "text/event-stream",
+    "content-disposition": "attachment",
+    "vary": "Origin, X-Origin, Referer",
+    "transfer-encoding": "chunked",
+    "date": "Mon, 08 Dec 2025 19:33:07 GMT",
+    "server": "scaffolding on HTTPServer2",
+    "x-xss-protection": "0",
+    "x-frame-options": "SAMEORIGIN",
+    "x-content-type-options": "nosniff",
+    "server-timing": "gfet4t7; dur=698",
+    "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+  },
+  "body_path": "body.bin"
+}

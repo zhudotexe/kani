@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "The weather in San Francisco, CA is Foggy, 65 degrees fahrenheit. The weather in New York, NY is Sunny, 75 degrees fahrenheit."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 267,
+    "candidatesTokenCount": 35,
+    "totalTokenCount": 302,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 267
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "9Cc3adTTB8Wt_uMP9K-pmQE"
+}
