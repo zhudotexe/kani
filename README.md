@@ -134,6 +134,10 @@ every prompt, function call, and even the underlying language model.
 Function calling gives language models the ability to choose when to call a function you provide based off its
 documentation.
 
+> [!NOTE]
+> Looking for MCP support? Kani supports local and remote MCP servers, too. Check out the MCP docs at
+> https://kani.readthedocs.io/en/latest/function_calling.html#mcp-tools.
+
 With kani, you can write functions in Python and expose them to the model with just one line of code: the `@ai_function`
 decorator.
 
