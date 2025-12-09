@@ -453,32 +453,47 @@ class Kani:
                 log.warning("Exception while getting prompt size:", exc_info=e)
                 return float("inf"), e
 
-        # optimization: check the full prompt first
-        total_tokens, excs_by_len[len(self.chat_history)] = await _prompt_len_or_inf(
-            self.always_included_messages + self.chat_history, functions
-        )
-        if total_tokens <= max_size:
-            to_keep = len(self.chat_history)
-        else:
-            # otherwise binary search for the first index that does not cause an exception or be too long
-            low = 0
-            high = len(self.chat_history) - 1
-            to_keep = None
+        # old bin search: could fail under flack prompt templates (#68)
+        # # optimization: check the full prompt first
+        # total_tokens, excs_by_len[len(self.chat_history)] = await _prompt_len_or_inf(
+        #     self.always_included_messages + self.chat_history, functions
+        # )
+        # if total_tokens <= max_size:
+        #     to_keep = len(self.chat_history)
+        # else:
+        #     # otherwise binary search for the first index that does not cause an exception or be too long
+        #     low = 0
+        #     high = len(self.chat_history) - 1
+        #     to_keep = None
+        #
+        #     while low <= high:
+        #         mid = (low + high) // 2
+        #         if mid:
+        #             prompt = self.always_included_messages + self.chat_history[-mid:]
+        #         else:
+        #             prompt = self.always_included_messages
+        #
+        #         total_tokens, excs_by_len[mid] = await _prompt_len_or_inf(prompt, functions)
+        #
+        #         if total_tokens > max_size:
+        #             high = mid - 1
+        #         else:
+        #             to_keep = mid
+        #             low = mid + 1
 
-            while low <= high:
-                mid = (low + high) // 2
-                if mid:
-                    prompt = self.always_included_messages + self.chat_history[-mid:]
-                else:
-                    prompt = self.always_included_messages
-
-                total_tokens, excs_by_len[mid] = await _prompt_len_or_inf(prompt, functions)
-
-                if total_tokens > max_size:
-                    high = mid - 1
-                else:
-                    to_keep = mid
-                    low = mid + 1
+        # for now, we'll just do seq search, TODO binsearch to around the right length then seqsearch on excs
+        high = len(self.chat_history)
+        to_keep = None
+        while high >= 0:
+            if high:
+                prompt = self.always_included_messages + self.chat_history[-high:]
+            else:
+                prompt = self.always_included_messages
+            total_tokens, excs_by_len[high] = await _prompt_len_or_inf(prompt, functions)
+            if total_tokens <= max_size:
+                to_keep = high
+                break
+            high -= 1
 
         # raise an error if we can't keep anything
         if not to_keep:
