@@ -1,11 +1,9 @@
-import math
-
 import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, ChatRole, Kani
 from kani.exceptions import MessageTooLong, PromptTooLong
-from tests.engine import EngineForTests
+from tests.engine import EngineForTests, OnlyEvenPromptsEngine
 from tests.utils import flatten_chatmessages
 
 engine = EngineForTests()
@@ -62,7 +60,6 @@ async def test_get_prompt_optimal(data):
         chat_history=[ChatMessage.user("a")]
         * (engine.max_context_size + data.draw(st.integers(min_value=1, max_value=100))),
     )
-    print("optimal n_iters:", math.ceil(math.log2(len(ai.chat_history))))
     prompt = await ai.get_prompt()
     prompt_len = await ai.prompt_token_len(prompt)
     print("prompt len:", prompt_len)
@@ -104,3 +101,24 @@ async def test_spam(data):
 
         prompt = await ai.get_prompt()
         assert (await ai.prompt_token_len(prompt)) <= (ai.max_context_size - ai.desired_response_tokens)
+
+
+@given(st.integers(min_value=4, max_value=15))
+async def test_get_prompt_under_failures(ctx_size):
+    # make sure get_prompt always returns something, even if the engine fails (e.g., HF chat templates requiring role
+    # alternation)
+    print("ctx size:", ctx_size)
+    engine = OnlyEvenPromptsEngine(max_context_size=ctx_size)
+    ai = Kani(
+        engine,
+        desired_response_tokens=1,
+        chat_history=[ChatMessage.user("a")] * ctx_size,
+    )
+    prompt = await ai.get_prompt()
+    prompt_len = await ai.prompt_token_len(prompt)
+    print("prompt len:", prompt_len)
+    print()
+    assert prompt_len
+    assert prompt_len % 2 == 0
+    assert prompt_len <= ctx_size
+    assert prompt_len + 3 > ctx_size

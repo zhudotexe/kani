@@ -40,3 +40,15 @@ class StreamingEngineForTests(EngineForTests):
                 yield char
         else:
             yield "a"
+
+
+class OnlyEvenPromptsEngine(EngineForTests):
+    def prompt_len(self, messages, functions=None, **kwargs):
+        if len(messages) % 2:
+            raise ValueError("Only even prompts are allowed >:C")
+        return super().prompt_len(messages, functions, **kwargs)
+
+    async def predict(self, messages, functions=None, test_echo=False, **hyperparams) -> Completion:
+        if len(messages) % 2:
+            raise ValueError("Only even prompts are allowed >:C")
+        return await super().predict(messages, functions, test_echo, **hyperparams)

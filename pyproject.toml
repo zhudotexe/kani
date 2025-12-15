@@ -29,13 +29,17 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "kani[multimodal,huggingface,llama,cpp,vllm,openai,anthropic,google]",
+    "kani[multimodal,mcp,huggingface,llama,cpp,vllm,openai,anthropic,google]",
 ]
 
 # extensions
 multimodal = [
     "kani-multimodal-core<2.0.0",
     "transformers>=4.56.1,<5.0.0", # v4.56.1: ProcessorMixin.__call__ update
+]
+
+mcp = [
+    "mcp>=1.15.0,<2.0.0", # 1.15.0: ClientSessionGroup
 ]
 
 # providers

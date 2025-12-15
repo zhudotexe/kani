@@ -53,11 +53,9 @@ class AIFunction:
         self.auto_truncate = auto_truncate
 
         # wraps() things
-        self.__name__ = inner.__name__
-        self.__qualname__ = inner.__qualname__
-        self.__annotations__ = inner.__annotations__
-        self.__module__ = inner.__module__
-        self.__doc__ = inner.__doc__
+        for attr in ("__name__", "__qualname__", "__annotations__", "__module__", "__doc__"):
+            if hasattr(inner, attr):
+                setattr(self, attr, getattr(inner, attr))
 
         # validation
         if not self.desc:
@@ -119,8 +117,8 @@ class AIFunction:
 
     def __repr__(self):
         return (
-            f"{type(self).__name__}(name={self.name!r}, desc={self.desc!r}, after={self.after!r},"
-            f" auto_retry={self.auto_retry!r}, auto_truncate={self.auto_truncate!r})"
+            f"{type(self).__name__}(name={self.name!r}, desc={self.desc!r}, json_schema={self.json_schema!r}, "
+            f"after={self.after!r}, auto_retry={self.auto_retry!r}, auto_truncate={self.auto_truncate!r})"
         )
 
 

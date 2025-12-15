@@ -162,6 +162,31 @@ behaviour that won't interfere with other engines.
 
 Now you can use any message part you can think of - and you can create user messages with parts too.
 
+Using MessageParts in Tools
+---------------------------
+What if an AI function returns multimodal content? By default, Kani applies certain transformations to the return value
+of an AIFunction in order:
+
+* if it is a :class:`.ChatMessage`, do not modify it
+* if it is a list of :class:`.MessagePart`, do not modify it
+* if it is a JSON-serializable Python dict, serialize it to JSON
+* if it is a Pydantic model, serialize it to JSON
+* otherwise, cast it to a string
+
+Thus, in order to return multimodal content, the AIFunction must return a FUNCTION-role chat message. For example, the
+following code snippet defines a function which returns an image:
+
+.. code-block:: python
+
+    class MyKani(Kani):
+        @ai_function()
+        async def get_image(self, url: str):
+            """Download the image at a certain URL, and view it."""
+            return [await ImagePart.from_url(url)]
+
+
+However, most API-based LLMs currently do not support multimodal returns from tools.
+
 Saving & Loading MessageParts
 -----------------------------
 By default, kani will register a serializer and deserializer for each MessagePart you define, which will recursively
