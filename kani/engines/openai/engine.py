@@ -254,13 +254,15 @@ class OpenAIEngine(TokenCached, BaseEngine):
 
             # tool calls are partials, save a mapping to the latest state and we'll translate them later once complete
             if delta.tool_calls:
-                # each tool call can have EITHER the function.name/id OR function.arguments
-                for tc in delta.tool_calls:
-                    if tc.id is not None:
-                        tool_call_partials[tc.index] = tc
+                for tc_delta in delta.tool_calls:
+                    if tc_delta.index not in tool_call_partials:
+                        tool_call_partials[tc_delta.index] = tc_delta
                     else:
-                        partial = tool_call_partials[tc.index]
-                        partial.function.arguments += tc.function.arguments
+                        partial = tool_call_partials[tc_delta.index]
+                        if tc_delta.function.name is not None:
+                            partial.function.name += tc_delta.function.name
+                        if tc_delta.function.arguments is not None:
+                            partial.function.arguments += tc_delta.function.arguments
 
         # construct the final completion with streamed tool calls
         content = None if not content_chunks else "".join(content_chunks)
