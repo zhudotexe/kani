@@ -8,7 +8,7 @@ import pkgutil
 import sys
 
 from kani import Kani, chat_in_terminal
-from kani.utils.cli import create_engine_from_cli_arg
+from kani.utils.cli import create_engine_from_cli_arg, fmt_cli_providers
 
 OPTIONAL_LIBS = [
     ("kani.ext.multimodal_core", "__version__"),
@@ -101,13 +101,7 @@ def main():
     """The main CLI entrypoint."""
     print_logo()
     parser = argparse.ArgumentParser(
-        description=(
-            "Use Kani to chat with an LLM in your terminal.\n\nValid engine IDs:\n"
-            "* openai (aliases: oai)\n"
-            "* anthropic (aliases: ant, claude)\n"
-            "* google (aliases: g, gemini)\n"
-            "* huggingface (aliases: hf)\n"
-        ),
+        description=f"Use Kani to chat with an LLM in your terminal.\n\nValid engine IDs:\n{fmt_cli_providers()}\n",
         epilog=CLI_EXAMPLES,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )

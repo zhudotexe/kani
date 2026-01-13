@@ -1,14 +1,16 @@
 """The CLI utilities allow you to play with a chat session directly from a terminal."""
 
 import asyncio
+import dataclasses
 import logging
 import os
 import textwrap
 from concurrent.futures import Future
 from threading import Thread
-from typing import AsyncIterable, overload
+from typing import AsyncIterable, Callable, Sequence, overload
 
 from kani import _optional, model_specific
+from kani.engines import BaseEngine
 from kani.kani import Kani
 from kani.models import ChatRole
 from kani.streaming import StreamManager
@@ -174,7 +176,7 @@ def chat_in_terminal(kani: Kani, **kwargs):
 def format_width(msg: str, width: int = None, prefix: str = "") -> str:
     """
     Format the given message such that the width of each line is less than *width*.
-    If *prefix* is provided, indents each line after the first by the length of the prefix.
+    If *prefix* and *width* are provided, indents each line after the first by the length of the prefix.
 
     .. code-block: pycon
         >>> format_width("Hello world I am a potato", width=15, prefix="USER: ")
@@ -199,10 +201,10 @@ def format_width(msg: str, width: int = None, prefix: str = "") -> str:
 async def format_stream(stream: StreamManager, width: int = None, prefix: str = "") -> AsyncIterable[str]:
     """
     Yield formatted tokens from a stream such that if concatenated, the width of each line is less than *width*.
-    If *prefix* is provided, indents each line after the first by the length of the prefix.
+    If *prefix* and *width* are provided, indents each line after the first by the length of the prefix.
     """
     prefix_len = len(prefix)
-    line_indent = " " * prefix_len
+    line_indent = (" " * prefix_len) if width else ""
     prefix_printed = False
 
     # print tokens until they overflow width then newline and indent
@@ -234,7 +236,7 @@ async def format_stream(stream: StreamManager, width: int = None, prefix: str = 
 def print_width(msg: str, width: int = None, prefix: str = ""):
     """
     Print the given message such that the width of each line is less than *width*.
-    If *prefix* is provided, indents each line after the first by the length of the prefix.
+    If *prefix* and *width* are provided, indents each line after the first by the length of the prefix.
 
     .. code-block: pycon
         >>> print_width("Hello world I am a potato", width=15, prefix="USER: ")
@@ -249,7 +251,7 @@ def print_width(msg: str, width: int = None, prefix: str = ""):
 async def print_stream(stream: StreamManager, width: int = None, prefix: str = ""):
     """
     Print tokens from a stream to the terminal, with the width of each line less than *width*.
-    If *prefix* is provided, indents each line after the first by the length of the prefix.
+    If *prefix* and *width* are provided, indents each line after the first by the length of the prefix.
 
     This is a helper function intended to be used with :meth:`.Kani.chat_round_stream` or
     :meth:`.Kani.full_round_stream`.
@@ -284,6 +286,13 @@ async def ainput(string: str) -> str:
 
 
 # ==== CLI engine defs ====
+@dataclasses.dataclass
+class CLIProvider:
+    name: str
+    aliases: Sequence[str]
+    entrypoint: Callable[[str], BaseEngine]
+
+
 def chat_openai(model_id: str):
     from kani.engines.openai import OpenAIEngine
 
@@ -312,26 +321,31 @@ def chat_huggingface(model_id: str):
     return engine
 
 
-CLI_PROVIDER_MAP = {
+CLI_PROVIDERS = [
     # openai
-    "openai": chat_openai,
-    "oai": chat_openai,
+    CLIProvider(name="openai", aliases=["oai"], entrypoint=chat_openai),
     # anthropic
-    "anthropic": chat_anthropic,
-    "ant": chat_anthropic,
-    "claude": chat_anthropic,
+    CLIProvider(name="anthropic", aliases=["ant", "claude"], entrypoint=chat_anthropic),
     # google
-    "google": chat_google,
-    "g": chat_google,
-    "gemini": chat_google,
+    CLIProvider(name="google", aliases=["g", "gemini"], entrypoint=chat_google),
     # huggingface
-    "huggingface": chat_huggingface,
-    "hf": chat_huggingface,
-}
+    CLIProvider(name="huggingface", aliases=["hf"], entrypoint=chat_huggingface),
+]
+
+
+def fmt_cli_providers() -> str:
+    out = []
+    for provider in CLI_PROVIDERS:
+        if provider.aliases:
+            out.append(f"* {provider.name} (aliases: {', '.join(provider.aliases)})")
+        else:
+            out.append(f"* {provider.name}")
+    return "\n".join(out)
 
 
 def create_engine_from_cli_arg(arg: str):
     provider, model_id = arg.split(":", 1)
-    if provider not in CLI_PROVIDER_MAP:
-        raise ValueError(f"Invalid model provider: {provider!r}. Valid options: {list(CLI_PROVIDER_MAP)}")
-    return CLI_PROVIDER_MAP[provider](model_id)
+    for cli_provider in CLI_PROVIDERS:
+        if provider == cli_provider.name or provider in cli_provider.aliases:
+            return cli_provider.entrypoint(model_id)
+    raise ValueError(f"Invalid model provider: {provider!r}. Valid options:\n{fmt_cli_providers()}")
