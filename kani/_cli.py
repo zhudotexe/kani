@@ -4,8 +4,10 @@ Main CLI entrypoint.
 
 import argparse
 import importlib
+import importlib.metadata
 import pkgutil
 import sys
+import traceback
 
 from kani import Kani, chat_in_terminal
 from kani.utils.cli import create_engine_from_cli_arg, fmt_cli_providers
@@ -62,9 +64,15 @@ def print_version():
     try:
         import kani.ext
 
-        exts = [name for finder, name, ispkg in pkgutil.iter_modules(kani.ext.__path__, kani.ext.__name__ + ".")]
-        if exts:
-            print(f"{'kani extensions':<{max_optional_len}}: {'; '.join(exts)}")
+        exts_with_versions = []
+        for finder, name, ispkg in pkgutil.iter_modules(kani.ext.__path__, kani.ext.__name__ + "."):
+            try:
+                version = importlib.metadata.version(name)
+            except ImportError:
+                version = "??"
+            exts_with_versions.append(f"{name} ({version})")
+        if exts_with_versions:
+            print(f"{'kani extensions':<{max_optional_len}}: {'; '.join(exts_with_versions)}")
     except ImportError:
         pass
 
@@ -85,7 +93,7 @@ def chat(arg: str):
     """Standard chat CLI entrypoint"""
     if ":" not in arg:
         # print usage
-        print("CLI Usage: kani <provider>:<model_id>\n\n{CLI_EXAMPLES}")
+        print(f"CLI Usage: kani <provider>:<model_id>\n\n{CLI_EXAMPLES}")
         sys.exit(1)
     try:
         engine = create_engine_from_cli_arg(arg)

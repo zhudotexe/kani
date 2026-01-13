@@ -21,6 +21,8 @@ information!
 - Improved automatic serialization of AIFunction returns: if an AIFunction returns a Pydantic model or `dict`/`list`,
   automatically cast it to JSON instead of naively calling `str()`
 - Allowed AIFunctions to return `ChatMessage`s or `list[MessagePart]` directly for multimodal function returns
+- Extension packages (i.e., those using the `kani.ext.*` namespace) can now define a list of `CLI_PROVIDERS` for use
+  with the `kani` CLI
 - Improved error logging when context length counting fails
 
 ### Fixes

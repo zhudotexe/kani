@@ -1,13 +1,14 @@
 """The CLI utilities allow you to play with a chat session directly from a terminal."""
 
 import asyncio
-import dataclasses
+import importlib
 import logging
 import os
+import pkgutil
 import textwrap
 from concurrent.futures import Future
 from threading import Thread
-from typing import AsyncIterable, Callable, Sequence, overload
+from typing import AsyncIterable, Callable, Iterable, NamedTuple, Sequence, overload
 
 from kani import _optional, model_specific
 from kani.engines import BaseEngine
@@ -286,13 +287,6 @@ async def ainput(string: str) -> str:
 
 
 # ==== CLI engine defs ====
-@dataclasses.dataclass
-class CLIProvider:
-    name: str
-    aliases: Sequence[str]
-    entrypoint: Callable[[str], BaseEngine]
-
-
 def chat_openai(model_id: str):
     from kani.engines.openai import OpenAIEngine
 
@@ -321,6 +315,13 @@ def chat_huggingface(model_id: str):
     return engine
 
 
+# ---- CLI registry ----
+class CLIProvider(NamedTuple):  # this is a NamedTuple so we don't need to import a special type in external pkgs
+    name: str
+    aliases: Sequence[str]
+    entrypoint: Callable[[str], BaseEngine]
+
+
 CLI_PROVIDERS = [
     # openai
     CLIProvider(name="openai", aliases=["oai"], entrypoint=chat_openai),
@@ -331,21 +332,48 @@ CLI_PROVIDERS = [
     # huggingface
     CLIProvider(name="huggingface", aliases=["hf"], entrypoint=chat_huggingface),
 ]
+"""
+Default CLI providers. Extension packages can define these in __init__.py as a 3-tuple of (name, aliases, factory) and
+they will be automatically discovered.
+"""
+
+
+def get_cli_providers_including_extensions() -> Iterable[tuple[str, Sequence[str], Callable[[str], BaseEngine]]]:
+    """
+    Yield all possible CLI provider 3-tuples. Imports any extension packages to check for CLI_PROVIDERS and yields from
+    them too.
+    """
+    yield from CLI_PROVIDERS
+    try:
+        import kani.ext
+
+        for finder, name, ispkg in pkgutil.iter_modules(kani.ext.__path__, kani.ext.__name__ + "."):
+            try:
+                mod = importlib.import_module(name)
+                mod_cli_providers = getattr(mod, "CLI_PROVIDERS", None)
+                if mod_cli_providers is not None:
+                    yield from mod_cli_providers
+            except ImportError:
+                pass
+    except ImportError:
+        pass
 
 
 def fmt_cli_providers() -> str:
+    """Return a list of available CLI providers and their aliases"""
     out = []
-    for provider in CLI_PROVIDERS:
-        if provider.aliases:
-            out.append(f"* {provider.name} (aliases: {', '.join(provider.aliases)})")
+    for name, aliases, entrypoint in get_cli_providers_including_extensions():
+        if aliases:
+            out.append(f"* {name} (aliases: {', '.join(aliases)})")
         else:
-            out.append(f"* {provider.name}")
+            out.append(f"* {name}")
     return "\n".join(out)
 
 
 def create_engine_from_cli_arg(arg: str):
+    """Create an engine instance from a CLI arg <provider>:<model_id>"""
     provider, model_id = arg.split(":", 1)
-    for cli_provider in CLI_PROVIDERS:
-        if provider == cli_provider.name or provider in cli_provider.aliases:
-            return cli_provider.entrypoint(model_id)
+    for name, aliases, entrypoint in get_cli_providers_including_extensions():
+        if provider == name or provider in aliases:
+            return entrypoint(model_id)
     raise ValueError(f"Invalid model provider: {provider!r}. Valid options:\n{fmt_cli_providers()}")

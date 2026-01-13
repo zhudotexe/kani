@@ -74,3 +74,22 @@ your engine *wrap* another engine:
 
 The :class:`kani.engines.WrapperEngine` is a base class that automatically creates a constructor that takes in the
 engine to wrap, and passes through any non-overriden attributes to the wrapped engine.
+
+CLI Extensions
+^^^^^^^^^^^^^^
+An extension package can define CLI entrypoints for use with the Kani CLI. In order to do this, an extension package
+must use the ``kani.ext.*`` namespace and define a ``CLI_PROVIDERS`` name in its ``__init__.py``. This variable should
+be a 3-tuple: ``(name: str, aliases: list[str], entrypoint: (model_id) -> Engine)``.
+
+For example, for the vLLM engine, which is provided through the ``kani.ext.vllm`` extension package, we define:
+
+.. code-block:: python
+
+    # kani/ext/vllm/__init__.py
+
+    # ...
+    CLI_PROVIDERS = [
+        ("vllm", [], VLLMServerEngine),
+    ]
+
+The Kani CLI will automatically discover and provide CLI entrypoints defined in this way when called.
