@@ -1,6 +1,37 @@
 Changelog
 =========
 
+## v1.8.0 - MCP Tools
+
+Model Context Protocol (MCP) is a standard for defining tools and making them available to LLMs over the Internet or
+local communication. Kani now supports using local or remote MCP tools, so that you can use the broad MCP ecosystem with
+the flexibility of Kani.
+
+In order to use MCP tools, first specify a list of MCP servers to connect to. Then, use the ``tools_from_mcp_servers``
+context manager to connect to these servers and retrieve the list of available tools. You can pass these tools like
+normal Kani AIFunctions.
+
+Check out the MCP tool docs at https://kani.readthedocs.io/en/latest/function_calling.html#mcp-tools for more 
+information!
+
+### New Features
+
+- MCP: added `tools_from_mcp_servers` context manager to retrieve MCP tools from a remote and provide them as Kani
+  AIFunctions
+- Improved automatic serialization of AIFunction returns: if an AIFunction returns a Pydantic model or `dict`/`list`,
+  automatically cast it to JSON instead of naively calling `str()`
+- Allowed AIFunctions to return `ChatMessage`s or `list[MessagePart]` directly for multimodal function returns
+- Improved error logging when context length counting fails
+
+### Fixes
+
+- HF: Fixes an issue where certain prompts would be built suboptimally in the face of chat template restrictions
+- Qwen 3 (HF): Ensure the correct thinking parser is applied to all thinking models
+- OpenAI: Fixed an issue when using `Kani.save()` on messages with attached `extra` metadata from OpenAI
+- OpenAI: Fixed an issue with empty tool call deltas while streaming with tools 
+
+---
+
 ## v1.7.0 - Token Counting Refactor, HF Multimodal Inputs
 
 Under the hood, kani now uses full prompts (i.e., a list of messages + functions) to count tokens, rather than summing
