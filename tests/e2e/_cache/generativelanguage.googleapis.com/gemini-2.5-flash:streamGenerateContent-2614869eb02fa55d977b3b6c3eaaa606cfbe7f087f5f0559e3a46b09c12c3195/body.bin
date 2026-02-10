@@ -1,6 +1,0 @@
-data: {"candidates": [{"content": {"parts": [{"text": "The current weather in"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 362,"candidatesTokenCount": 4,"totalTokenCount": 366,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 362}]},"modelVersion": "gemini-2.5-flash","responseId": "l4P6aKrsMs_JjMcPkb-viQ4"}
-
-data: {"candidates": [{"content": {"parts": [{"text": " Miami, FL is humid with a temperature of 85 degrees Fahrenheit. The 3"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 362,"candidatesTokenCount": 22,"totalTokenCount": 384,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 362}]},"modelVersion": "gemini-2.5-flash","responseId": "l4P6aKrsMs_JjMcPkb-viQ4"}
-
-data: {"candidates": [{"content": {"parts": [{"text": "-day forecast for Miami, FL is: Day 1: Partly cloudy, Day 2: Sunny, Day 3: Rainy."}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 362,"candidatesTokenCount": 50,"totalTokenCount": 412,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 362}]},"modelVersion": "gemini-2.5-flash","responseId": "l4P6aKrsMs_JjMcPkb-viQ4"}
-

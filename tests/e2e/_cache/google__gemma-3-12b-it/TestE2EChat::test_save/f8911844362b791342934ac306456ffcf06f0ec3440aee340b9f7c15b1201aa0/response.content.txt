@@ -1,0 +1,6 @@
+<bos><start_of_turn>user
+Hello!<end_of_turn>
+<start_of_turn>model
+Hello! 😊 
+
+It's great to hear from you! How can I help you today?<end_of_turn>

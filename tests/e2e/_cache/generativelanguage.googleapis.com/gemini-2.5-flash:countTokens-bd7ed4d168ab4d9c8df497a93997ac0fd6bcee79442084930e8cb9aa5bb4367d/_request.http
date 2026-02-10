@@ -1,6 +1,0 @@
-POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
-accept: */*
-content-type: application/json
-x-goog-api-key: *** REDACTED ***
-
-{"contents": [{"parts": [{"text": "What is (8 times 5) plus 10?"}], "role": "user"}, {"parts": [{"thoughtSignature": "CqQCAdHtim9iXysW9ns49Ufo8CnOmctDqPR6xQkzDY98Vdt90U2KV68qlC_i5OggU99U8nLXbtKpnS2tLP71JVMHs6FDdGA5oLXyrkWqMizkRgb4HXhjaV4bO7UZY0XpIZQJTmM6f-yE3d8qBN4G56Pgpg8pUs8Teg-WmRG1P-6QIpnlCS8Dy83S8DaTq-iZP_CsqDizAiZmccG57WyJlTCecRLx6M6IQsj1imtHHgwpt6GsGZhxYimwfU7mk8OWu4DJxAqHGYWn7C2xRHNGVEaohDo9C4yR2NvXDoTgNoaHRTZDIBCXotfwPPsko_fM6ZpFY2xmLtZL9m1PIMDPs260804jd1BT-4-7fl7wij1SK3SwktZuQZviqcZ5MREz_UJDcVtmaA==", "functionCall": {"args": {"b": 5, "a": 8}, "name": "multiply"}}], "role": "model"}, {"parts": [{"functionResponse": {"id": "bdd640fb-0667-4ad1-9c80-317fa3b1799d", "name": "multiply", "response": {"result": "40"}}}], "role": "tool"}]}

@@ -17,6 +17,7 @@ import mimetypes
 import os
 import pprint
 import re
+import shutil
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -58,6 +59,20 @@ def mock_date():
         tick=True,  # so pycharm reports correct test timing
     ):
         yield
+
+
+def get_current_pytest_name(default="_ungrouped"):
+    """
+    Get the name of the currently running test, or the default if no test is running.
+
+    e.g. foo_module.py::test_foo[bar] (call) -> test_foo
+    foo_module.py::TestClass::test_foo[bar] (call) -> TestClass::test_foo
+    """
+    test_name = os.getenv("PYTEST_CURRENT_TEST")
+    if not test_name:
+        return default
+    test_name = re.sub(r".*?::(([a-zA-Z0-9_]+::)?[a-zA-Z0-9_]+).*", r"\1", test_name, 1)
+    return test_name
 
 
 # --- http ---
@@ -103,9 +118,10 @@ def cache_key_for_http_request(request: httpx.Request) -> str:
 
 
 def cache_dir_for_http_request(request: httpx.Request) -> Path:
-    """Get a cache dir per hostname. I.e. _cache/<host>/<endpoint>_<hash>/"""
+    """Get a cache dir per hostname. I.e. _cache/<host>/<test_name>/<endpoint>_<hash>/"""
     cache_key = cache_key_for_http_request(request)
-    cache_dir = MOCK_CACHE_BASE / request.url.host / cache_key
+    test_name = get_current_pytest_name()
+    cache_dir = MOCK_CACHE_BASE / request.url.host / test_name / cache_key
     cache_dir.mkdir(parents=True, exist_ok=True)
     return cache_dir
 
@@ -211,8 +227,9 @@ class AsyncCachingTransport(httpx.AsyncHTTPTransport):
 
 # --- tokenwise ---
 def cache_dir_for_local_generate(model_id: str, cache_key: str) -> Path:
-    """Get a cache dir per model name. E.g. _cache/openai__gpt-oss-20b/"""
-    cache_dir = MOCK_CACHE_BASE / model_id.replace("/", "__") / cache_key
+    """Get a cache dir per model name. E.g. _cache/openai__gpt-oss-20b/<test_name>/<cache_key>"""
+    test_name = get_current_pytest_name()
+    cache_dir = MOCK_CACHE_BASE / model_id.replace("/", "__") / test_name / cache_key
     cache_dir.mkdir(parents=True, exist_ok=True)
     return cache_dir
 

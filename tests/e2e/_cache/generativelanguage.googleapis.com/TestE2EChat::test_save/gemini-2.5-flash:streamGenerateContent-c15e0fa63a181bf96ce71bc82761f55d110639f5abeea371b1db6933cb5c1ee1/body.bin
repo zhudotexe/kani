@@ -1,0 +1,4 @@
+data: {"candidates": [{"content": {"parts": [{"text": "Hello there"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 3,"candidatesTokenCount": 2,"totalTokenCount": 20,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 3}],"thoughtsTokenCount": 15},"modelVersion": "gemini-2.5-flash","responseId": "4-CKaYfLF7_ujrEPi8aW0AY"}
+
+data: {"candidates": [{"content": {"parts": [{"text": "! How can I help you today?"}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 3,"candidatesTokenCount": 10,"totalTokenCount": 28,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 3}],"thoughtsTokenCount": 15},"modelVersion": "gemini-2.5-flash","responseId": "4-CKaYfLF7_ujrEPi8aW0AY"}
+
