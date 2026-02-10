@@ -1,4 +1,0 @@
-data: {"candidates": [{"content": {"parts": [{"text": "The sum of "}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 265,"candidatesTokenCount": 3,"totalTokenCount": 268,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 265}]},"modelVersion": "gemini-2.5-flash","responseId": "GoP6aOz-I4WXjMcPxsTX0A0"}
-
-data: {"candidates": [{"content": {"parts": [{"text": "15 and 27 is 42."}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 265,"candidatesTokenCount": 14,"totalTokenCount": 279,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 265}]},"modelVersion": "gemini-2.5-flash","responseId": "GoP6aOz-I4WXjMcPxsTX0A0"}
-

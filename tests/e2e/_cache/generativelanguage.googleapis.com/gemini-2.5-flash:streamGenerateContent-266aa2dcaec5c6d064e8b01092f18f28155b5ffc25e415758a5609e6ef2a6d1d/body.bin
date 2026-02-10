@@ -1,6 +1,0 @@
-data: {"candidates": [{"content": {"parts": [{"text": "Alice ("}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 706,"candidatesTokenCount": 2,"totalTokenCount": 708,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 706}]},"modelVersion": "gemini-2.5-flash","responseId": "bIP6aNynHKifjMcPpY_d-A0"}
-
-data: {"candidates": [{"content": {"parts": [{"text": "user ID 1) from San Francisco has a total order amount of 122"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 706,"candidatesTokenCount": 20,"totalTokenCount": 726,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 706}]},"modelVersion": "gemini-2.5-flash","responseId": "bIP6aNynHKifjMcPpY_d-A0"}
-
-data: {"candidates": [{"content": {"parts": [{"text": "5.\n"}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 706,"candidatesTokenCount": 22,"totalTokenCount": 728,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 706}]},"modelVersion": "gemini-2.5-flash","responseId": "bIP6aNynHKifjMcPpY_d-A0"}
-

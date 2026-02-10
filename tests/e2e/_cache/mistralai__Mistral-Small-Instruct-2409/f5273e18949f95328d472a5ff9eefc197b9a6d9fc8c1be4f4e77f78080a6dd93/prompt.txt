@@ -1,5 +1,0 @@
-<s>[INST] What is my name? (You can mention it now.)[/INST]
-==========
-{'input_ids': tensor([[    1,     3,  2592,  1117,  1354,  1909, 29572,  1093,  2744,  1309,  5157,  1146,  1823,  3742,     4]]),
- 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
- 'max_length': 32768}
