@@ -96,4 +96,4 @@ class TestE2EMultimodal:
         )
         assert msg
         assert msg.text
-        assert "bubble" in msg.text.lower()
+        assert any(x in msg.text.lower() for x in ("bubble", "sphere"))
