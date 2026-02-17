@@ -1,7 +1,0 @@
-<s>[INST] thank you[/INST] arigato</s>[INST] good morning[/INST] ohayo</s>[INST] You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only.
-
-crab[/INST]
-==========
-{'input_ids': tensor([[    1,     3,  7747,  1136,     4,  1365,  1094,  2595,     2,     3,  1947,  4738,     4, 12389,  1107, 29477,     2,     3,  1763,  1228, 11369,  1158,  1032,  8860,  8022,  1796, 29491,  6687,  1372,  1040,  8860, 14614,  1070,  1040,  2956, 29510, 29481,  3555,  1065,  4713,  1918, 29478,  1633, 29491,   781,   781,  4578,  1143,     4]]),
- 'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
- 'max_length': 32768}

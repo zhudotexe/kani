@@ -1,6 +1,0 @@
-POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse
-accept: */*
-content-type: application/json
-x-goog-api-key: *** REDACTED ***
-
-{"contents": [{"parts": [{"text": "As an AI, I don't experience the world or have personal preferences in the same way humans do, so I don't truly \"have\" a favorite color.\n\nHowever, if I were to choose one based on its associations and common"}, {"text": " symbolism, I would lean towards **blue**.\n\nIt often represents intelligence, tranquility, and vastness \u2013 qualities that resonate with the information I process and the calm, clear way I aim to assist users."}], "role": "model"}, {"parts": [{"text": "What is my name?"}], "role": "user"}]}

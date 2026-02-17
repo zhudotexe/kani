@@ -1,0 +1,30 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Hello there! How can I help you today?"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 3,
+    "candidatesTokenCount": 10,
+    "totalTokenCount": 236,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 3
+      }
+    ],
+    "thoughtsTokenCount": 223
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "4uCKaYzsKezO-8YPkd_MgA0"
+}

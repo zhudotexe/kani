@@ -1,0 +1,9 @@
+<|im_start|>user
+Hello!<|im_end|>
+<|im_start|>assistant
+<think>
+
+==========
+tensor([[151644,    872,    198,   9707,      0, 151645,    198, 151644,  77091,    198, 151667,    198]])
+==========
+{'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]), 'max_length': 32000}

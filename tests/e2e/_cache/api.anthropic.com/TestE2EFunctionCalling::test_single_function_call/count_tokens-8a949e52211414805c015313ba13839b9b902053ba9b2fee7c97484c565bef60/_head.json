@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "headers": {
+    "date": "Tue, 10 Feb 2026 07:57:26 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "request-id": "req_011CXz2pPwdvLtZ9r4UatZHh",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "anthropic-organization-id": "cb409f94-8c93-4ff3-b5de-502af8eca0eb",
+    "server": "cloudflare",
+    "x-envoy-upstream-service-time": "186",
+    "cf-cache-status": "DYNAMIC",
+    "x-robots-tag": "none",
+    "content-security-policy": "default-src 'none'; frame-ancestors 'none'",
+    "cf-ray": "9cba0e3daf539c8a-IAD"
+  },
+  "body_path": "body.json"
+}
