@@ -23,12 +23,12 @@ pytest-frozen-uuids
 pytest-lazy-fixtures
 
 # docs
-furo~=2023.9.10
-sphinx~=7.2.6
-sphinxemoji~=0.2.0
+furo~=2025.12.19
+sphinx~=8.1.3
+sphinxemoji~=0.3.2
 sphinx-copybutton~=0.5.2
-sphinx-inline-tabs~=2023.4.21
-sphinx-sitemap~=2.5.1
-sphinxext-opengraph~=0.9.0
+sphinx-inline-tabs~=2025.12.21.14
+sphinx-sitemap~=2.9.0
+sphinxext-opengraph~=0.13.0
 matplotlib>=3.0.0,<4.0.0  # depended on by opengraph
 myst-parser~=4.0.1
