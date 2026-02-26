@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## v1.8.1
+
+- HF: Fixed an issue when using multi-turn tool calling with Qwen-3 series models where the thinking content from
+  earlier tool calling turns would not be passed to subsequent turns within the same round
+
+---
+
 ## v1.8.0 - MCP Tools
 
 Model Context Protocol (MCP) is a standard for defining tools and making them available to LLMs over the Internet or

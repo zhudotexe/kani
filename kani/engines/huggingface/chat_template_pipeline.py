@@ -13,13 +13,14 @@ Hugging Face-hosted models. However, the default fallback implementation should 
 prototyping.
 """
 
+import functools
 import logging
 import warnings
 from collections import defaultdict
 from functools import cached_property
 from typing import Iterable
 
-from kani import AIFunction, ChatMessage, ChatRole, PromptPipeline, ToolCall, _optional
+from kani import AIFunction, ChatMessage, ChatRole, PromptPipeline, ReasoningPart, ToolCall, _optional
 from kani.exceptions import MissingModelDependencies
 from kani.prompts.steps import ConversationDict
 
@@ -46,15 +47,18 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
     Use a ``.conversation_dict`` step to translate the roles of the messages, if needed.
     """
 
-    def __init__(self, tokenizer, steps=None, **chat_template_kwargs):
+    def __init__(self, tokenizer, steps=None, *, chat_template_reasoning_content_key=None, **chat_template_kwargs):
         """
         :param tokenizer: The HF model's tokenizer, to retrieve the chat template.
         :param steps: The steps to take in this pipeline; should always end in a ``.conversation_dict`` step. Generally
             not needed except in exceptional cases.
+        :param chat_template_reasoning_content_key: The key of each message dict that any reasoning content should be
+            set at.
         :param chat_template_kwargs: Additional kwargs to pass to ``apply_chat_template``.
         """
         super().__init__(steps)
         self.tokenizer = tokenizer
+        self.chat_template_reasoning_content_key = chat_template_reasoning_content_key
         self.chat_template_kwargs = chat_template_kwargs
         self._ensure_chat_template()
 
@@ -110,7 +114,12 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
                 warnings.warn(debug_msg)
             else:
                 log.debug(debug_msg)
-            self.conversation_dict(additional_keys=hf_tool_use_keys, content_transform=hf_content_transform)
+            self.conversation_dict(
+                additional_keys=functools.partial(
+                    hf_additional_keys, reasoning_key=self.chat_template_reasoning_content_key
+                ),
+                content_transform=hf_content_transform,
+            )
 
         conversation = super().execute(msgs, functions, deepcopy=deepcopy, for_measurement=for_measurement)
 
@@ -261,6 +270,10 @@ class ChatTemplatePromptPipeline(PromptPipeline[OutputT]):
         return torch.zeros((1, full_len - self._chat_template_dummy_len))
 
 
+def hf_additional_keys(message, *, reasoning_key):
+    return hf_tool_use_keys(message) | hf_reasoning_keys(message, reasoning_key=reasoning_key)
+
+
 # ==== tools ====
 def hf_tool_use_keys(message: ChatMessage) -> dict:
     """
@@ -299,6 +312,23 @@ def _hf_tools_schema(functions: list[AIFunction]) -> list[dict] | None:
         if functions
         else None
     )
+
+
+# ==== reasoning ====
+def hf_reasoning_keys(message, *, reasoning_key) -> dict:
+    reasoning_parts = [p for p in message.parts if isinstance(p, ReasoningPart)]
+    if not reasoning_parts:
+        return {}
+    if reasoning_key is None:
+        warnings.warn(
+            "Reasoning content is being omitted because `chat_template_reasoning_content_key` is not set. Please set"
+            " this key to the model's expected value, which you can usually find in the HF repo's chat template. If"
+            " this model does not expect reasoning content, you can ignore this warning.",
+            stacklevel=3,
+        )
+        return {}
+    reasoning = "\n".join(r.content for r in reasoning_parts)
+    return {reasoning_key: reasoning}
 
 
 # ==== multimodal ====

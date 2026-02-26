@@ -9,13 +9,14 @@ from .base import BaseParser, BaseToolCallParser
 # list of (HF model id glob, path to import)
 # the path to import can be either a PromptPipeline instance or a function (tokenizer, **kwargs) => pipeline
 PROMPT_PIPELINE_REGISTRY = [
-    ("openai/gpt-oss-*", "kani.model_specific.gpt_oss.build_gptoss_prompt_pipeline"),
+    ("openai/gpt-oss-*", "kani.model_specific.gpt_oss.build_prompt_pipeline"),
     ("meta-llama/Llama-2*", "kani.model_specific.llama2.LLAMA2_PIPELINE"),
     ("meta-llama/Llama-3-*", "kani.model_specific.llama3.LLAMA3_PIPELINE"),
     ("mistralai/Mistral-7B*", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
     ("mistralai/Mixtral-8x*", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
     ("mistralai/*-2407", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
     ("mistralai/*-2409", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
+    ("Qwen/Qwen3-*", "kani.model_specific.qwen3.build_prompt_pipeline"),
 ]
 
 # list of (HF model id glob, path to import)
@@ -39,7 +40,13 @@ _has_initialized_model_specific_parser = False
 
 
 def prompt_pipeline_for_hf_model(
-    model_id: str, tokenizer=None, search_parents=True, fallback_to_chat_template=True, *, chat_template_kwargs=None
+    model_id: str,
+    tokenizer=None,
+    search_parents=True,
+    fallback_to_chat_template=True,
+    *,
+    chat_template_reasoning_content_key=None,
+    chat_template_kwargs=None,
 ):
     """
     Find and return the correct prompt pipeline for the given HF model:
@@ -69,7 +76,11 @@ def prompt_pipeline_for_hf_model(
                 from transformers import AutoTokenizer
 
                 tokenizer = AutoTokenizer.from_pretrained(model_id)
-            return pipe(tokenizer, **chat_template_kwargs)
+            return pipe(
+                tokenizer,
+                chat_template_reasoning_content_key=chat_template_reasoning_content_key,
+                **chat_template_kwargs,
+            )
 
     # if there's a parent and the model is a fine-tune/quantization recurse
     if search_parents:
@@ -95,8 +106,12 @@ def prompt_pipeline_for_hf_model(
     )
 
     if tokenizer:
-        return ChatTemplatePromptPipeline(tokenizer, **chat_template_kwargs)
-    return ChatTemplatePromptPipeline.from_pretrained(model_id, **chat_template_kwargs)
+        return ChatTemplatePromptPipeline(
+            tokenizer, chat_template_reasoning_content_key=chat_template_reasoning_content_key, **chat_template_kwargs
+        )
+    return ChatTemplatePromptPipeline.from_pretrained(
+        model_id, chat_template_reasoning_content_key=chat_template_reasoning_content_key, **chat_template_kwargs
+    )
 
 
 @functools.cache
