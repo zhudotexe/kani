@@ -180,7 +180,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
 
     @staticmethod
     def translate_kani_message_to_openai(message: ChatMessage) -> ChatCompletionMessageParam:
-        """Translate a single Kani :class:`.ChatMessage.` to a single OpenAI message."""
+        """Translate a single Kani :class:`.ChatMessage` to a single OpenAI message."""
         return kani_cm_to_openai_cm(message)
 
     def _prepare_request(

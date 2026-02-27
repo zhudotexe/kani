@@ -8,6 +8,8 @@ OpenAI
 .. autoclass:: kani.engines.openai.OpenAIEngine
     :members:
 
+.. autoclass:: kani.engines.openai.translation.ChatCompletion
+
 Anthropic
 ---------
 .. autoclass:: kani.engines.anthropic.AnthropicEngine
