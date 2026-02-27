@@ -2,9 +2,6 @@ import functools
 import warnings
 from typing import AsyncIterable
 
-from openai.types import FunctionDefinition
-from openai.types.chat import ChatCompletionMessageParam
-
 from kani import _optional
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
@@ -19,6 +16,8 @@ from ..mixins import TokenCached
 try:
     import tiktoken
     from openai import AsyncOpenAI as OpenAIClient
+    from openai.types.chat import ChatCompletionMessageParam
+    from openai.types.shared_params import FunctionDefinition
 except ImportError as e:
     raise MissingModelDependencies(
         'The OpenAIEngine requires extra dependencies. Please install kani with "pip install kani[openai]".'
