@@ -8,6 +8,7 @@ from kani.engines.base import BaseCompletion
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole, FunctionCall, MessagePart, ToolCall
 from kani.prompts.pipeline import PromptPipeline
+from kani.utils.warnings import deprecated
 from .utils import DottableDict
 
 try:
@@ -16,6 +17,7 @@ try:
         ChatCompletionAssistantMessageParam,
         ChatCompletionFunctionMessageParam,
         ChatCompletionMessage,
+        ChatCompletionMessageFunctionToolCallParam,
         ChatCompletionMessageParam,
         ChatCompletionMessageToolCall,
         ChatCompletionMessageToolCallParam,
@@ -65,7 +67,7 @@ def _msg_kwargs(msg: ChatMessage) -> dict:
     return data
 
 
-def kani_tc_to_openai_tc(tc: ToolCall):
+def kani_tc_to_openai_tc(tc: ToolCall) -> ChatCompletionMessageFunctionToolCallParam:
     """Translate a kani ToolCall into an OpenAI dict"""
     oai_function = dict(name=tc.function.name, arguments=tc.function.arguments)
     return dict(id=tc.id, type="function", function=oai_function)
@@ -97,22 +99,24 @@ else:
 
 # --- main ---
 OPENAI_PIPELINE = (
-    PromptPipeline()
-    .ensure_bound_function_calls()
-    .ensure_start(predicate=lambda msg: msg.role != ChatRole.FUNCTION)
-    .apply(kani_cm_to_openai_cm)
+    PromptPipeline().ensure_bound_function_calls().ensure_start(predicate=lambda msg: msg.role != ChatRole.FUNCTION)
 )
 
 
+@deprecated("Use OpenAIEngine.translate_functions() (static method) instead.")
 def translate_functions(functions: list[AIFunction]) -> list[dict]:
-    return [
-        dict(type="function", function=FunctionDefinition(name=f.name, description=f.desc, parameters=f.json_schema))
-        for f in functions
-    ]
+    # this is in the engine for hackability - this function is kept for back-compatibility
+    from kani.engines.openai import OpenAIEngine
+
+    return OpenAIEngine.translate_functions(functions)
 
 
+@deprecated("Use OpenAIEngine.translate_messages() (static method) instead.")
 def translate_messages(messages: list[ChatMessage]) -> list[ChatCompletionMessageParam]:
-    return OPENAI_PIPELINE(messages)
+    # this is in the engine for hackability - this function is kept for back-compatibility
+    from kani.engines.openai import OpenAIEngine
+
+    return OpenAIEngine.translate_messages(messages)
 
 
 # ==== openai -> kani ====

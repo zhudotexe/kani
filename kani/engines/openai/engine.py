@@ -2,13 +2,16 @@ import functools
 import warnings
 from typing import AsyncIterable
 
+from openai.types import FunctionDefinition
+from openai.types.chat import ChatCompletionMessageParam
+
 from kani import _optional
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from . import function_calling, mm_tokens
 from .model_constants import CONTEXT_SIZES_BY_PREFIX
-from .translation import ChatCompletion, openai_tc_to_kani_tc, translate_functions, translate_messages
+from .translation import ChatCompletion, OPENAI_PIPELINE, kani_cm_to_openai_cm, openai_tc_to_kani_tc
 from .utils import DottableDict
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
@@ -153,13 +156,36 @@ class OpenAIEngine(TokenCached, BaseEngine):
 
     @functools.lru_cache(maxsize=256)
     def _function_token_reserve_impl(self, functions):
-        prompt = function_calling.prompt(translate_functions(functions))
+        prompt = function_calling.prompt(self.translate_functions(functions))
         return len(self.tokenizer.encode(prompt))
 
     # ==== hackable stuff for requests ====
+    # --- kani -> oai translation ---
     @staticmethod
+    def translate_functions(functions: list[AIFunction]) -> list[dict]:
+        r"""Translate a list of Kani :class:`.AIFunction`\ s to a list of OpenAI tool definitions."""
+        return [
+            dict(
+                type="function", function=FunctionDefinition(name=f.name, description=f.desc, parameters=f.json_schema)
+            )
+            for f in functions
+        ]
+
+    @classmethod
+    def translate_messages(cls, messages: list[ChatMessage]) -> list[ChatCompletionMessageParam]:
+        r"""Translate a list of Kani :class:`.ChatMessage`\ s to a list of OpenAI messages."""
+        # we don't use a .apply() step here for hackability, so the pipeline just binds tool calls and cleans up
+        # any invalid prefixes
+        inter = OPENAI_PIPELINE(messages)
+        return [cls.translate_kani_message_to_openai(m) for m in inter]
+
+    @staticmethod
+    def translate_kani_message_to_openai(message: ChatMessage) -> ChatCompletionMessageParam:
+        """Translate a single Kani :class:`.ChatMessage.` to a single OpenAI message."""
+        return kani_cm_to_openai_cm(message)
+
     def _prepare_request(
-        messages, functions, *, intent: str = "chat_completions.create"
+        self, messages, functions, *, intent: str = "chat_completions.create"
     ) -> tuple[dict, list, dict | None]:
         """
         Prepare the API request to the OpenAI API. Returns a tuple (kwargs, messages, tools) to be passed to the
@@ -171,14 +197,15 @@ class OpenAIEngine(TokenCached, BaseEngine):
             the returned keyword arguments will be passed to.
         """
         if functions:
-            tool_specs = translate_functions(functions)
+            tool_specs = self.translate_functions(functions)
         else:
             tool_specs = None
         # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
-        translated_messages = translate_messages(messages)
+        translated_messages = self.translate_messages(messages)
 
         return {}, translated_messages, tool_specs
 
+    # --- oai -> kani translation ---
     @staticmethod
     def _translate_openai_completion(completion) -> ChatCompletion:
         """Translate an OpenAI completion to a Kani completion. Only called for non-streaming requests by default."""
