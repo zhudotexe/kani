@@ -8,7 +8,7 @@ from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from . import function_calling, mm_tokens
 from .model_constants import CONTEXT_SIZES_BY_PREFIX
-from .translation import ChatCompletion, OPENAI_PIPELINE, kani_cm_to_openai_cm, openai_tc_to_kani_tc
+from .translation import OPENAI_PIPELINE, ChatCompletion, kani_cm_to_openai_cm, openai_tc_to_kani_tc
 from .utils import DottableDict
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached

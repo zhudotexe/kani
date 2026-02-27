@@ -17,15 +17,14 @@ import mimetypes
 import os
 import pprint
 import re
-import shutil
 from pathlib import Path
 from types import SimpleNamespace
 
 import httpx
 import pytest
+import time_machine
 import torch
 from anthropic import AsyncAnthropic
-from freezegun import freeze_time
 from google import genai
 from openai import AsyncOpenAI
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, GenerationConfig
@@ -53,9 +52,8 @@ log = logging.getLogger("tests.e2e")
 # (the day I wrote these tests)
 @pytest.fixture(autouse=True, scope="session")
 def mock_date():
-    with freeze_time(
+    with time_machine.travel(
         datetime.datetime(2025, 10, 21, 12, 55, 37),
-        real_asyncio=True,  # for asyncio internals
         tick=True,  # so pycharm reports correct test timing
     ):
         yield
