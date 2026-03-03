@@ -111,12 +111,13 @@ def translate_functions(functions: list[AIFunction]) -> list[dict]:
     return OpenAIEngine.translate_functions(functions)
 
 
-@deprecated("Use OpenAIEngine.translate_messages() (static method) instead.")
+@deprecated("Use OpenAIEngine.translate_messages() instead.")
 def translate_messages(messages: list[ChatMessage]) -> list[ChatCompletionMessageParam]:
     # this is in the engine for hackability - this function is kept for back-compatibility
     from kani.engines.openai import OpenAIEngine
 
-    return OpenAIEngine.translate_messages(messages)
+    inter = OPENAI_PIPELINE(messages)
+    return [OpenAIEngine.translate_kani_message_to_openai(m) for m in inter]
 
 
 # ==== openai -> kani ====

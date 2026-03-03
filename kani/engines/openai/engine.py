@@ -1,14 +1,16 @@
 import functools
+import itertools
 import warnings
-from typing import AsyncIterable
+from typing import AsyncIterable, Literal
 
 from kani import _optional
 from kani.ai_function import AIFunction
 from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from . import function_calling, mm_tokens
-from .model_constants import CONTEXT_SIZES_BY_PREFIX
-from .translation import OPENAI_PIPELINE, ChatCompletion, kani_cm_to_openai_cm, openai_tc_to_kani_tc
+from .model_constants import API_BY_PREFIX, CONTEXT_SIZES_BY_PREFIX
+from .translation import ChatCompletion, OPENAI_PIPELINE, kani_cm_to_openai_cm, openai_tc_to_kani_tc
+from .translation_responses import kani_cm_to_openai_responses_inputs, openai_responses_response_to_kani_completion
 from .utils import DottableDict
 from ..base import BaseCompletion, BaseEngine, Completion
 from ..mixins import TokenCached
@@ -18,6 +20,7 @@ try:
     from openai import AsyncOpenAI as OpenAIClient
     from openai.types.chat import ChatCompletionMessageParam
     from openai.types.shared_params import FunctionDefinition
+    from openai.types.responses import ResponseInputItemParam, ResponseInputParam
 except ImportError as e:
     raise MissingModelDependencies(
         'The OpenAIEngine requires extra dependencies. Please install kani with "pip install kani[openai]".'
@@ -47,6 +50,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
         model="gpt-4.1-nano",
         max_context_size: int = None,
         *,
+        api_type: Literal["chat_completions", "responses"] = None,
         organization: str = None,
         retry: int = 5,
         api_base: str = "https://api.openai.com/v1",
@@ -61,6 +65,8 @@ class OpenAIEngine(TokenCached, BaseEngine):
         :param model: The id of the model to use (e.g. "gpt-4o-mini", "ft:gpt-3.5-turbo:my-org:custom_suffix:id").
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
+        :param api_type: Whether to use the Chat Completions API (default for most models) or Responses API (default for
+            "deep-reasoning" style models). If unset, the best API type for the given model will be chosen.
         :param organization: The OpenAI organization to use in requests. By default, the org ID would be read from the
             `OPENAI_ORG_ID` environment variable (defaults to the API key's default org if not set).
         :param retry: How many times the engine should retry failed HTTP calls with exponential backoff (default 5).
@@ -84,8 +90,16 @@ class OpenAIEngine(TokenCached, BaseEngine):
             if not matched_prefix:
                 warnings.warn(
                     "The context length for this model was not found, defaulting to 2048 tokens. Please specify"
-                    " `max_context_size` if this is incorrect."
+                    " `max_context_size` if this is incorrect.",
+                    stacklevel=2,
                 )
+        if api_type is None:
+            matched_prefix, api_type = next((prefix, a) for prefix, a in API_BY_PREFIX if model.startswith(prefix))
+            warnings.warn(
+                f"The OpenAI API type for this model was not set, defaulting to {api_type!r} for {model!r}. "
+                'Please specify `api_type="chat_completions"` or `api_type="responses"` if this is incorrect.',
+                stacklevel=2,
+            )
 
         super().__init__()
 
@@ -95,6 +109,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
         self.model = model
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
+        self.openai_api_type = api_type
         self.tokenizer = tokenizer  # tiktoken caches a tokenizer globally in module, so we can unconditionally load it
         self._load_tokenizer()
 
@@ -170,30 +185,32 @@ class OpenAIEngine(TokenCached, BaseEngine):
             for f in functions
         ]
 
-    @classmethod
-    def translate_messages(cls, messages: list[ChatMessage]) -> list[ChatCompletionMessageParam]:
+    def translate_messages(self, messages: list[ChatMessage]) -> list[ChatCompletionMessageParam] | ResponseInputParam:
         r"""Translate a list of Kani :class:`.ChatMessage`\ s to a list of OpenAI messages."""
         # we don't use a .apply() step here for hackability, so the pipeline just binds tool calls and cleans up
         # any invalid prefixes
         inter = OPENAI_PIPELINE(messages)
-        return [cls.translate_kani_message_to_openai(m) for m in inter]
-
-    @staticmethod
-    def translate_kani_message_to_openai(message: ChatMessage) -> ChatCompletionMessageParam:
-        """Translate a single Kani :class:`.ChatMessage` to a single OpenAI message."""
-        return kani_cm_to_openai_cm(message)
+        if self.openai_api_type == "chat_completions":
+            return [self.translate_kani_message_to_openai(m) for m in inter]
+        elif self.openai_api_type == "responses":
+            return list(
+                itertools.chain.from_iterable(self.translate_kani_message_to_openai_responses(m) for m in inter)
+            )
+        raise ValueError(f"Unknown OpenAI API type: {self.openai_api_type!r}")
 
     def _prepare_request(
-        self, messages, functions, *, intent: str = "chat_completions.create"
+        self, messages, functions, *, intent: str = "chat_completions.create", **kwargs
     ) -> tuple[dict, list, dict | None]:
         """
         Prepare the API request to the OpenAI API. Returns a tuple (kwargs, messages, tools) to be passed to the
-        OpenAIClient's chat.completions.create() method.
+        OpenAIClient's chat.completions.create() or responses.create() method.
 
         :param messages: The Kani ChatMessages to translate into OpenAI-format messages.
         :param functions: The Kani AIFunctions to translate into OpenAI-format tools.
-        :param intent: one of ("chat_completions.create", "chat_completions.stream") -- the underlying OpenAI SDK call
-            the returned keyword arguments will be passed to.
+        :param intent: one of ("chat_completions.create", "chat_completions.stream", "responses.create",
+            "responses.stream") -- the underlying OpenAI SDK call the returned keyword arguments will be passed to.
+        :param kwargs: The request-specific kwargs passed to the request, from either the engine initialization or the
+            chat_round call.
         """
         if functions:
             tool_specs = self.translate_functions(functions)
@@ -202,37 +219,45 @@ class OpenAIEngine(TokenCached, BaseEngine):
         # translate to openai spec - group any tool messages together and ensure all free ToolCall IDs are bound
         translated_messages = self.translate_messages(messages)
 
-        return {}, translated_messages, tool_specs
+        # responses API params
+        if self.openai_api_type == "responses":
+            # ensure include reasoning is set
+            kwargs.setdefault("include", [])
+            if "reasoning.encrypted_content" not in kwargs["include"]:
+                kwargs["include"].append("reasoning.encrypted_content")
+
+        return kwargs, translated_messages, tool_specs
 
     # --- oai -> kani translation ---
-    @staticmethod
-    def _translate_openai_completion(completion) -> ChatCompletion:
+    def _translate_openai_chat_completion(self, completion):
         """Translate an OpenAI completion to a Kani completion. Only called for non-streaming requests by default."""
-        return ChatCompletion(openai_completion=completion)
+        if self.openai_api_type == "chat_completions":
+            return ChatCompletion(openai_completion=completion)
+        elif self.openai_api_type == "responses":
+            return openai_responses_response_to_kani_completion(completion)
+        raise ValueError(f"Unknown OpenAI API type: {self.openai_api_type!r}")
 
-    # ==== main kani impl ====
-    async def prompt_len(self, messages, functions=None, **kwargs) -> int:
-        # optimization: since chat-based appends messages 1 at a time, see if the messages - 1 is in prompt cache
-        if messages and (cached := self.get_cached_prompt_len(messages[:-1], functions, **kwargs)) is not None:
-            return cached + self.message_len(messages[-1])
-        # OpenAI does not use an API for token counting, so we'll use the old-style message-wise counting
-        return sum(self.message_len(m) for m in messages) + self.function_token_reserve(functions)
+    # ==== chat completions ====
+    @staticmethod
+    def translate_kani_message_to_openai(message: ChatMessage) -> ChatCompletionMessageParam:
+        """Translate a single Kani :class:`.ChatMessage` to a single OpenAI message."""
+        return kani_cm_to_openai_cm(message)
 
-    async def predict(
+    async def _predict_chat_completions(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> ChatCompletion:
         local_kwargs, translated_messages, tool_specs = self._prepare_request(
-            messages, functions, intent="chat_completions.create"
+            messages, functions, intent="chat_completions.create", **(self.hyperparams | hyperparams)
         )
         # make API call
         completion = await self.client.chat.completions.create(
             model=self.model,
             messages=translated_messages,
             tools=tool_specs,
-            **(local_kwargs | self.hyperparams | hyperparams),
+            **local_kwargs,
         )
         # translate into Kani spec and return
-        kani_cmpl = self._translate_openai_completion(completion)
+        kani_cmpl = self._translate_openai_chat_completion(completion)
         self.set_cached_prompt_len(messages, functions, completion.usage.prompt_tokens)
         self.set_cached_prompt_len(
             messages + [kani_cmpl.message], functions, completion.usage.prompt_tokens + kani_cmpl.completion_tokens
@@ -240,11 +265,11 @@ class OpenAIEngine(TokenCached, BaseEngine):
         self.set_cached_message_len(kani_cmpl.message, kani_cmpl.completion_tokens)
         return kani_cmpl
 
-    async def stream(
+    async def _stream_chat_completions(
         self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
     ) -> AsyncIterable[str | BaseCompletion]:
         local_kwargs, translated_messages, tool_specs = self._prepare_request(
-            messages, functions, intent="chat_completions.stream"
+            messages, functions, intent="chat_completions.stream", **(self.hyperparams | hyperparams)
         )
         # make API call
         stream = await self.client.chat.completions.create(
@@ -253,7 +278,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
             tools=tool_specs,
             stream=True,
             stream_options={"include_usage": True},
-            **(local_kwargs | self.hyperparams | hyperparams),
+            **local_kwargs,
         )
 
         # save requested tool calls and content as streamed
@@ -306,6 +331,81 @@ class OpenAIEngine(TokenCached, BaseEngine):
         else:
             prompt_tokens = completion_tokens = None
         yield Completion(message=msg, prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
+
+    # ==== responses ====
+    @staticmethod
+    def translate_kani_message_to_openai_responses(message: ChatMessage) -> list[ResponseInputItemParam]:
+        """Translate a single Kani :class:`.ChatMessage` to its corresponding OpenAI responses input items."""
+        return kani_cm_to_openai_responses_inputs(message)
+
+    async def _predict_responses(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> ChatCompletion:
+        local_kwargs, translated_messages, tool_specs = self._prepare_request(
+            messages, functions, intent="responses.create", **(self.hyperparams | hyperparams)
+        )
+        # make API call
+        response = await self.client.responses.create(
+            model=self.model, input=translated_messages, tools=tool_specs, **local_kwargs
+        )
+        # translate into Kani spec and return
+        kani_cmpl = self._translate_openai_chat_completion(response)
+        self.set_cached_prompt_len(messages, functions, response.usage.input_tokens)
+        self.set_cached_prompt_len(messages + [kani_cmpl.message], functions, response.usage.total_tokens)
+        self.set_cached_message_len(kani_cmpl.message, kani_cmpl.completion_tokens)
+        return kani_cmpl
+
+    async def _stream_responses(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        local_kwargs, translated_messages, tool_specs = self._prepare_request(
+            messages, functions, intent="responses.stream", **(self.hyperparams | hyperparams)
+        )
+        # the sdk handles the text streaming for us, so we can just use that
+        async with self.client.responses.stream(
+            model=self.model, input=translated_messages, tools=tool_specs, **local_kwargs
+        ) as streamer:
+            async for event in streamer:
+                # we only want to emit the content of response.output_text.delta
+                if event.type == "response.output_text.delta":
+                    yield event.delta
+
+            # translate into Kani spec and return
+            response = await streamer.get_final_response()
+            kani_cmpl = self._translate_openai_chat_completion(response)
+            self.set_cached_prompt_len(messages, functions, response.usage.input_tokens)
+            self.set_cached_prompt_len(messages + [kani_cmpl.message], functions, response.usage.total_tokens)
+            self.set_cached_message_len(kani_cmpl.message, kani_cmpl.completion_tokens)
+            yield kani_cmpl
+
+    # ==== main kani impl ====
+    async def prompt_len(self, messages, functions=None, **kwargs) -> int:
+        # optimization: since chat-based appends messages 1 at a time, see if the messages - 1 is in prompt cache
+        if messages and (cached := self.get_cached_prompt_len(messages[:-1], functions, **kwargs)) is not None:
+            return cached + self.message_len(messages[-1])
+        # OpenAI does not use an API for token counting, so we'll use the old-style message-wise counting
+        return sum(self.message_len(m) for m in messages) + self.function_token_reserve(functions)
+
+    async def predict(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> ChatCompletion:
+        if self.openai_api_type == "chat_completions":
+            return await self._predict_chat_completions(messages, functions, **hyperparams)
+        elif self.openai_api_type == "responses":
+            return await self._predict_responses(messages, functions, **hyperparams)
+        raise ValueError(f"Unknown OpenAI API type: {self.openai_api_type!r}")
+
+    async def stream(
+        self, messages: list[ChatMessage], functions: list[AIFunction] | None = None, **hyperparams
+    ) -> AsyncIterable[str | BaseCompletion]:
+        if self.openai_api_type == "chat_completions":
+            async for item in self._stream_chat_completions(messages, functions, **hyperparams):
+                yield item
+        elif self.openai_api_type == "responses":
+            async for item in self._stream_responses(messages, functions, **hyperparams):
+                yield item
+        else:
+            raise ValueError(f"Unknown OpenAI API type: {self.openai_api_type!r}")
 
     async def close(self):
         await self.client.close()

@@ -1,10 +1,20 @@
 Changelog
 =========
 
-## v1.8.1
+## v1.9.0 - OpenAI Responses API
+
+### New Features
+
+- OpenAI: Added support for using the Responses API by setting `api_type="responses"` when initializing an
+  `OpenAIEngine`. The `OpenAIEngine` will automatically default to the Responses API for "deep-research" style reasoning
+  models.
+
+### Fixes et al
 
 - HF: Fixed an issue when using multi-turn tool calling with Qwen-3 series models where the thinking content from
   earlier tool calling turns would not be passed to subsequent turns within the same round
+- OpenAI: Improved the ergonomics of the Kani → OpenAI translation somewhat to allow for easier overrides for custom
+  engines (e.g., the vLLM OpenAI-compatible API)
 
 ---
 
@@ -18,7 +28,7 @@ In order to use MCP tools, first specify a list of MCP servers to connect to. Th
 context manager to connect to these servers and retrieve the list of available tools. You can pass these tools like
 normal Kani AIFunctions.
 
-Check out the MCP tool docs at https://kani.readthedocs.io/en/latest/function_calling.html#mcp-tools for more 
+Check out the MCP tool docs at https://kani.readthedocs.io/en/latest/function_calling.html#mcp-tools for more
 information!
 
 ### New Features
@@ -37,7 +47,7 @@ information!
 - HF: Fixes an issue where certain prompts would be built suboptimally in the face of chat template restrictions
 - Qwen 3 (HF): Ensure the correct thinking parser is applied to all thinking models
 - OpenAI: Fixed an issue when using `Kani.save()` on messages with attached `extra` metadata from OpenAI
-- OpenAI: Fixed an issue with empty tool call deltas while streaming with tools 
+- OpenAI: Fixed an issue with empty tool call deltas while streaming with tools
 
 ---
 
