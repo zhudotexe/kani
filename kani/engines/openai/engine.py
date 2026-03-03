@@ -1,5 +1,7 @@
 import functools
+import inspect
 import itertools
+import logging
 import warnings
 from typing import AsyncIterable, Literal
 
@@ -25,6 +27,8 @@ except ImportError as e:
     raise MissingModelDependencies(
         'The OpenAIEngine requires extra dependencies. Please install kani with "pip install kani[openai]".'
     ) from None
+
+log = logging.getLogger(__name__)
 
 
 class OpenAIEngine(TokenCached, BaseEngine):
@@ -173,6 +177,35 @@ class OpenAIEngine(TokenCached, BaseEngine):
         prompt = function_calling.prompt(self.translate_functions(functions))
         return len(self.tokenizer.encode(prompt))
 
+    @functools.cached_property
+    def _count_tokens_arg_names(self):
+        """A list of valid kwarg names that can be passed to self.client.responses.input_tokens.count"""
+        try:
+            inspected_params = set(inspect.signature(self.client.responses.input_tokens.count).parameters)
+            return inspected_params
+        except Exception as e:
+            log.warning(
+                "Could not introspect responses.input_tokens.count for parameter names, returning default:", exc_info=e
+            )
+            # default
+            return {
+                "conversation",
+                "input",
+                "instructions",
+                "model",
+                "parallel_tool_calls",
+                "previous_response_id",
+                "reasoning",
+                "text",
+                "tool_choice",
+                "tools",
+                "truncation",
+                "extra_headers",
+                "extra_query",
+                "extra_body",
+                "timeout",
+            }
+
     # ==== hackable stuff for requests ====
     # --- kani -> oai translation ---
     @staticmethod
@@ -208,7 +241,8 @@ class OpenAIEngine(TokenCached, BaseEngine):
         :param messages: The Kani ChatMessages to translate into OpenAI-format messages.
         :param functions: The Kani AIFunctions to translate into OpenAI-format tools.
         :param intent: one of ("chat_completions.create", "chat_completions.stream", "responses.create",
-            "responses.stream") -- the underlying OpenAI SDK call the returned keyword arguments will be passed to.
+            "responses.stream", "responses.input_tokens.count") -- the underlying OpenAI SDK call the returned keyword
+            arguments will be passed to.
         :param kwargs: The request-specific kwargs passed to the request, from either the engine initialization or the
             chat_round call.
         """
@@ -380,6 +414,22 @@ class OpenAIEngine(TokenCached, BaseEngine):
 
     # ==== main kani impl ====
     async def prompt_len(self, messages, functions=None, **kwargs) -> int:
+        # we have a token counting endpoint for responses api, so prepare and count
+        if self.openai_api_type == "responses":
+            local_kwargs, translated_messages, tool_specs = self._prepare_request(
+                messages, functions, intent="responses.input_tokens.count", **(self.hyperparams | kwargs)
+            )
+            valid_count_token_kwargs = {
+                k: v
+                for k, v in local_kwargs.items()
+                if k in self._count_tokens_arg_names
+            }
+            resp = await self.client.responses.input_tokens.count(
+                model=self.model, input=translated_messages, tools=tool_specs, **valid_count_token_kwargs
+            )
+            return resp.input_tokens
+
+        # for chat completions api, we have to count ourselves
         # optimization: since chat-based appends messages 1 at a time, see if the messages - 1 is in prompt cache
         if messages and (cached := self.get_cached_prompt_len(messages[:-1], functions, **kwargs)) is not None:
             return cached + self.message_len(messages[-1])
