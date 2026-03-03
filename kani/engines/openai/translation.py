@@ -103,12 +103,13 @@ OPENAI_PIPELINE = (
 )
 
 
-@deprecated("Use OpenAIEngine.translate_functions() (static method) instead.")
+@deprecated("Use OpenAIEngine.translate_functions() instead.")
 def translate_functions(functions: list[AIFunction]) -> list[dict]:
     # this is in the engine for hackability - this function is kept for back-compatibility
-    from kani.engines.openai import OpenAIEngine
-
-    return OpenAIEngine.translate_functions(functions)
+    return [
+        dict(type="function", function=FunctionDefinition(name=f.name, description=f.desc, parameters=f.json_schema))
+        for f in functions
+    ]
 
 
 @deprecated("Use OpenAIEngine.translate_messages() instead.")

@@ -1,0 +1,77 @@
+{
+  "id": "resp_06be11fe40b555140069a67e363de48196bef1d209b0b44d3a",
+  "object": "response",
+  "created_at": 1772518966,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772518968,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_06be11fe40b555140069a67e36737881969156f330e8034e32",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppn445imCpoOzHAEXeD0pJB9UByCm0yCDTjoJS4rmnlDEdtHhFdYCqFtjnsr0ZcOwSYEjRoiRPAVBmvywT3dvJLoP0IcttVICS4ea7hZG1A6mLVSZYH67Q95BVAGGil4HyGhSD5W7EhPoKgim6eKQIgI0gdRLzGouwZ8Pqj3hW5syZymqjSQsnpVCnblvIFBSoXm3ek8EwMoJIbNOzGzAnTktsipAX1qnVpesn52MIiZq9UezRhHHRmBLMvEYG5B3urrH437sRvXkPBuFmZwj3lGu2vuTnkAsdTmUMkcPzcSH66Psw1utejvCeWQmbjmjj484XwVHoV69Gmb1uElBppPKOQklnZOSr2gC7yY0WwbiUtK1tb2Cq_J_iiaSHhf9u_xzP5lSsEVUgsyZrlwS7VF0nyrB-Orc7EIE94f98sHPyBr4A04IrY68cmQpg0StfyiuxMvxuDfXcU8__WM3RSlzFlLykmPIqcpKyuqbKggGAU53V8tWXa0-z4AjtvPufE2nFLPpJ8HJOWj6FEZGpAjAVmwlJrAGII1FMTGC6QNLj9qHo1oUjUt-Dv902IFm12Lv7OY0ufHp2gCIjn_hJl8MKQ7tMIb-5U054cNzuyLq8HeQI41Di5wSPssnSKlqf777nJDQkUx6JT3f28DpdcNcK0OkhFFT14JAQLH5ouDl_UfnGP57IxKDdNh00z_Bm7VeEP_S5w3XuGc94cdA0KZWjoClinmidjYtWAZ1NxQch4gpzmUtRcqgz5iZBM7rguMYN0DqnhvrYB7uifMYKfy--Ayg8O0YGMy875lfkBKpv_o6bEchjWowo3zs5eldgdEyebAM08ysFBinxqjNmJlfs3lZoRkbCnDObbwGV-LiCdqbDfUn5AsD7ub1CO2yLzvW0406aZQD6LOHMewBn7wj_DfuxOm-moRvvgPxSvGG4to3SdnRDnYjoGt9FgBsa1Sk_vwZii5UFdc0W2Ho-cTq-OR1fRNOn47v95IInRVGEIUu8UCALl67lVAW2g9tbb1omcQvUGVa_dlq39SlvDlQTyXX82UJ8G6ie1m1iDNuU0f-mvS7JT5Szt0Le-A_e51uVKqLHo2Dikaby-epS45_b0JMEAsXvKLJHADSR8k5dHDy_7inK3n-_8VNGdYtI_1etWSlzbuhesGUgSO6A2FL4d6y-A9mZhqo6K0V2KMmdTldbDvSXLUywZnz4odQS4da_VYqRfR45jYGWyn0QBCR4D8wzQ_95bH1tUR6-7boXTOnm-8SNBVWf3SOAbVkCx16l69swHJAEFzzANXpB7mIyjJ8nL3cSpwzbR-k0wcz2yYppeWRnfY7IWxKdv4TelP08VclBKtJDaqJpEMqevJsnG3JqaiTczBcB7xSNtnTV089Pjv6r3MpAfLv932lvdfCizqz7gXnlXNvKQtEJMlchqFMA7sTbVw6JMCeeojPd1ixmaH5-zUq0AQ1jPidYo831f0pwwr3I98B1xRBBLRc3bU0XiVrY03UHXSrisdMaABfeqvwfiydcKSPF2-IbUrlvkpjLH2m-Hq_E2VFy0NqKKLZPaAMy-qQo8gKMfuD1f8Im6cJaoe-bfgV6ZAkTDAMF5_8QXKkgUfu0v0FwY7CDAvz60pXOABfU86lQjtf29ZVo_9LsR6HNFJ3f0MQt1E56X5iWgtkBCt2TPiPN2qBSQo7_voaWlDvqQT8lPWzHQBJJKSXvuC7ZoRKltEp4nKYiANvqGUYGkIDdGS8PVyC4vCvNQWLndFP5IS4QWtzE3Y2fbn-nwsgtkOulUD_BouGRtkhRtuKuPqOoNnwWNBnXuCwjItwPtVOnvgdxCN-utChqIS56Qi3HLFp8f9KVEBC2cH5TmI0iOklb_-qONBRUqrqMepYGF58JxNt_gRZeZiT8tjeK3DtFd4CUeQ9iCTiqeCNOYKQFL2rEB1ivCuNmceASbUQUaK2ZX1KwFyvdC4nyRHkZ-0Ei8nzT9aFL_FYEoxCOsq9fo7rwv8UTrflDPHVSZgLJDABSxLWPXeEdmftW476bYR6kk4Az69xkazENvRqpWZJ0s6Paw8btkCSIGnd-rkpGzCNC-AeezqDbkaUGsOAQMxiZwAAZjjuUkb9NrjrwAf5w-b2ES7MUwsTtUgc1I-f1pxZJpDLh1RMqmwEa8tcXWJrZu1Y64WIT6Z8FWIUnZ93vVMUCNaATAsTOw==",
+      "summary": []
+    },
+    {
+      "id": "msg_06be11fe40b555140069a67e37ac608196979b6329741d09f2",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "Hi there! How can I help today?\n\nI can assist with:\n- Answering questions and explaining concepts\n- Writing and editing (essays, emails, stories, resumes)\n- Coding help and debugging\n- Math help and step-by-step solutions\n- Brainstorming and planning (projects, trips, study plans)\n- Summarizing or translating text\n- Analyzing images (if you share one)\n\nWhat would you like to do? If you\u2019re unsure, tell me your goal and I\u2019ll suggest a plan."
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 8,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 326,
+    "output_tokens_details": {
+      "reasoning_tokens": 192
+    },
+    "total_tokens": 334
+  },
+  "user": null,
+  "metadata": {}
+}

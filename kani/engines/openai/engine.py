@@ -208,15 +208,19 @@ class OpenAIEngine(TokenCached, BaseEngine):
 
     # ==== hackable stuff for requests ====
     # --- kani -> oai translation ---
-    @staticmethod
-    def translate_functions(functions: list[AIFunction]) -> list[dict]:
+    def translate_functions(self, functions: list[AIFunction]) -> list[dict]:
         r"""Translate a list of Kani :class:`.AIFunction`\ s to a list of OpenAI tool definitions."""
-        return [
-            dict(
-                type="function", function=FunctionDefinition(name=f.name, description=f.desc, parameters=f.json_schema)
-            )
-            for f in functions
-        ]
+        if self.openai_api_type == "chat_completions":
+            return [
+                dict(
+                    type="function",
+                    function=FunctionDefinition(name=f.name, description=f.desc, parameters=f.json_schema),
+                )
+                for f in functions
+            ]
+        elif self.openai_api_type == "responses":
+            return [dict(type="function", name=f.name, description=f.desc, parameters=f.json_schema) for f in functions]
+        raise ValueError(f"Unknown OpenAI API type: {self.openai_api_type!r}")
 
     def translate_messages(self, messages: list[ChatMessage]) -> list[ChatCompletionMessageParam] | ResponseInputParam:
         r"""Translate a list of Kani :class:`.ChatMessage`\ s to a list of OpenAI messages."""
@@ -397,7 +401,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
         )
         # the sdk handles the text streaming for us, so we can just use that
         async with self.client.responses.stream(
-            model=self.model, input=translated_messages, tools=tool_specs, **local_kwargs
+            model=self.model, input=translated_messages, tools=tool_specs or [], **local_kwargs
         ) as streamer:
             async for event in streamer:
                 # we only want to emit the content of response.output_text.delta
@@ -419,11 +423,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
             local_kwargs, translated_messages, tool_specs = self._prepare_request(
                 messages, functions, intent="responses.input_tokens.count", **(self.hyperparams | kwargs)
             )
-            valid_count_token_kwargs = {
-                k: v
-                for k, v in local_kwargs.items()
-                if k in self._count_tokens_arg_names
-            }
+            valid_count_token_kwargs = {k: v for k, v in local_kwargs.items() if k in self._count_tokens_arg_names}
             resp = await self.client.responses.input_tokens.count(
                 model=self.model, input=translated_messages, tools=tool_specs, **valid_count_token_kwargs
             )

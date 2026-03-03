@@ -142,8 +142,21 @@ def _parts_to_oai_responses(parts: list[MessagePart | str]) -> str | list[Respon
 # ==== openai -> kani ====
 def openai_responses_response_to_kani_completion(response: Response) -> Completion:
     msg = openai_responses_outputs_to_kani_cm(response.output)
-    msg.extra[OAI_RESPONSES_EXTRA_KEY] = DottableDict(response.model_dump(mode="json"))
-    msg.extra["openai_usage"] = DottableDict(response.usage.model_dump(mode="json"))
+    msg.extra[OAI_RESPONSES_EXTRA_KEY] = DottableDict(
+        response.model_dump(
+            mode="json",
+            exclude_unset=True,
+            exclude={
+                "input": {
+                    "__all__": {
+                        "parsed_arguments": True,  # function calling
+                        "content": {"__all__": {"parsed_content": True}},
+                    }
+                }
+            },  # streaming API returns extra keys which cause problems
+        )
+    )
+    msg.extra["openai_usage"] = DottableDict(response.usage.model_dump(mode="json", exclude_unset=True))
     return Completion(
         message=msg, prompt_tokens=response.usage.input_tokens, completion_tokens=response.usage.output_tokens
     )

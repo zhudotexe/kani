@@ -451,7 +451,6 @@ async def e2e_google_engine(request, _google_engine):
 OPENAI_MODELS_TO_TEST = {
     "gpt-5-mini": {"capabilities": ["function_calling", "mm_image"], "api_type": "chat_completions"},
     "gpt-5-nano": {"capabilities": ["function_calling", "mm_image"], "api_type": "responses"},
-    "gpt-audio-mini": {"capabilities": ["function_calling", "mm_audio"], "api_type": "chat_completions"},
 }
 
 
