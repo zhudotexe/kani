@@ -449,18 +449,22 @@ async def e2e_google_engine(request, _google_engine):
 
 # OPENAI
 OPENAI_MODELS_TO_TEST = {
-    "gpt-5-mini": {"capabilities": ["function_calling", "mm_image"]},
+    "gpt-5-mini": {"capabilities": ["function_calling", "mm_image"], "api_type": "chat_completions"},
+    "gpt-5-nano": {"capabilities": ["function_calling", "mm_image"], "api_type": "responses"},
+    "gpt-audio-mini": {"capabilities": ["function_calling", "mm_audio"], "api_type": "chat_completions"},
 }
 
 
 @pytest.fixture(scope="session", params=list(OPENAI_MODELS_TO_TEST.keys()))
 async def _openai_engine(request):
     model_id = request.param
+    model_info = OPENAI_MODELS_TO_TEST[model_id]
     engine = OpenAIEngine(
         model=model_id,
         client=AsyncOpenAI(
             api_key=os.getenv("OPENAI_API_KEY"), http_client=httpx.AsyncClient(transport=AsyncCachingTransport())
         ),
+        api_type=model_info.get("api_type"),
     )
     yield engine
     await engine.close()
