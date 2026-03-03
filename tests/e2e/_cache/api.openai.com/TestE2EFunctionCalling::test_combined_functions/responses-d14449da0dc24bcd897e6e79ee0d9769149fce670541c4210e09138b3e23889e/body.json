@@ -1,0 +1,129 @@
+{
+  "id": "resp_0a5f342ec2bb4cbb0069a68172ae6c819784c5e7ba37e843a8",
+  "object": "response",
+  "created_at": 1772519795,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772519800,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_0a5f342ec2bb4cbb0069a68174541c8197af0577bac5e0e4c4",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppoF5tCthEFrZpDLq8GmPaEpfqH4kexaqUYzuQwwht5AtBdKAmuxlWMt-RvqzGDZS-cRdLaptWpalc1wiTOpRA-Ft38zO14PbChkL6raoH_tzNHY61Af37L_YgnzcHKLo164bxN0mTSpjaVF7jYnXUiL4fB4EIZqS4PWi-l87YIgrVMYO-N5ve8-yXnWKGvf0sRkI-uT9JlQiay2Dccnz0RdHZ8rkZPEM2henSFB741pYIuDjW4OYsNa2F7spUh_c3dZ_nMM_v9GqYpUsBB_gPSqTk4kx7YASCy8R68yXJgx3p-E7E9UA7thp5_OISFW-jOCqQsKhNhD24XFdhf1broLcnropOiDE2Vc6t-RFssDnVyzKFH2ODf_7UwljYz7F3BKM8B2Ff4-ip5KfGzUA_cCflEIYNsPMVXJjzlz4H-7Pebyv5lgxGvRF3tsNEkczH7TuLiCm7n1L9sCHwgYEagyDVjF3dJFsfxzzOzYt7EZ4nD5W37zMNveOt68b3Zdl2DH_iGpyH3jZ43yfZ4h06w9smTQisyMI_wbyJaMPtE5DDAkYJGv8y-XQLXegF8slCXMrPsMVIZtwWvyPr-3XJqotBMRc3zHTJJ6UHNrxS29fbzFmAC3ylxYHxjX89Z7BhiMy9TR8OMPR2QejDCReJVFuWFldnCh8V6AXkiQvwk6E1qvyeiSu7VbaySurcaJ_SgClBo0KPyj8FeSf0myyfm_ev6xjdAMxLsmFWLohmAHpNCEVvfafLaOqAVsbm57BqYoZQt5xLxkTI_f-KYFwZwq55ECzJ4Paw3xrz6uXV3cXz7OBJ4kLCzcvAsSTm_GgHHQlAleEst-8b31D1J4-XWJ1WuXSy4Evr18ZjTmLmFAAI8dxVKc-c8oY_wFz43swz0wdEWQwj2ApqDeuG1F-3rWb53rWwrUA9yAJcN96Tkx60H50qwcqsRuCTm_NfEnjTlWax31Y0S9-S7NqzfF9-3Y9mJo2QJ8hjN1IGOchM-4ojH8oQ8w4kFBME4sgvMgO_SsFy5454c_muOWTjmuCUDm44GTBQ1g8BcXO0vi7r5-5CxnZpmVowVm_DkYsuasayrStbsEW-N642pVUx4fPuOkzuMKVZ5EtCJ83APoKAloiem-gstAZjWKltbQyk_kpR9IcYgpR3w595_MOLpTtyBizkaizYPHHcgISWuOyI4nfsZN3bPa-7RhRP2Ntwkh1zKW5RwKgMGtz_al9GtHSEUwuW1LCHf_ONAnCU8PfKb-BnjZ_kXIzQwHauPzCf5-wrV0OpqJYYLMYe8FOWW8YJW4Y5RAf8PzNzIQuGwduBR0g7mkmMwpMRUnCVv5s5KaopTU8IzdVT3xnuQpo0bYLcJv7Lh2XVPON1SpEIWlUdvAssoYMWw9QfFl4zOIpyWpvBGSlBE31d5algzVXw37gY_tkysSQjT0FceZq0PXqeTXhefMrBKmK5mGZ-unpO2Qlc99_REPEzILE7ppS1_l5DBq7LQXFZG-2-8KWmZmiIjDouydC0lzxOKpZsoySxIyQtXXhTP4zzrMCkJI0mtlGt2gohAOuG4IKtNQV7mvtD4IIrwgvEINEK-EMkeOfCxpzGuC1iTwq9d5a10rbM1jVg7gsB8j2LvM_46t7JW1UmIUD_jroBlruheSriWiEkYSzzxH1HJ4d3FKmqi0zUB7jOOlTyxur5cZjetnNLxMd0kvl4H-MiHzGotncaNPfwfkxH6nUzjP6bRMTRcS9LlgDukcXT4JflCnLU_Mwc9V9i7VxCtkUVO454seRbjF4eWK-bGrJ08grn5KX8G5q2NCLy62Pk1v-Ga6s-mo8keKf6NyeYhilqs8k42RQBEoedQE2uP_68gEUZD_X5Wvksxk_egSSYrnl_r7a2kIhv5og-GkCiQlGfi3UgMECqOXyfNrutyTyNggVMSFJwKAl0i_ARiijKgh49gF7k6-FIRNPNMhvVHtdSjv97qSrb2NeCV_p9hLRecQf9ONQbgt7eJ1Aud-QzduapOihyGEYdyotf415uZyJn0BwzudWVQ5sEg2McrEqBrfgP5V_4eehBYCgZxxFo5uwYEYPS-lXBIzDxknK4wjCVi7So29NcIij59bu2wF355xvoDU-D6fBAMGKcq4UY4yo0HP3z0dijHDR6Rnuu7m7_9azptF_7W6vCjYY2pJBUFFfp2Vxc26ukYg2yu7jZj5BEzoCC0quCag7apY1DKBo1hmOMslomoOGEV2TAvkxQCv2ufwlwNNQJcG0XKQqWH9r_5R3c_YFwLwd1wXh5oXxsg3rzGFimgacm4YrUaIC1q4AaqISfGR7mDVRpU8kfMjIvdtqoPL2TGpANk6k24-AgtQlpe5FM1jS4_R-Nk6SM7Wdw3bH3CyJTku_zdUBUauBfOsFOnujT0inkDD62hLvSrDmXp-d6hExrrrmPtFmANF3EOUPRk_7GIlBGiPeey-sI-gAEAB1Spi2C6OcEV69UFqWf8eAyXbwT0mP64V50cCRLCd3_3IQWwQe5xUTGRbzaHlCTCVILJJtKP99mK7luZxsoXAOn4Gir8tQBBzvJhWCnZ2EcIrZqoca_7kZdL9PyHUjWz2BOYjvPHWrc2D6_Yjfvfg8nNOp2yHD91s1kIVJi2Xophp9q5RQnDERZpmh2pRJ63tWZBPaQvzNPuk_qrdzwC9LT9FFPTAMDGfxVHQ56WtSDjMZjYGw0aNx8jHvo9v656Ao-aJPE5qSCmZ3Ombk7CeIIj6iPuk-_mj2h7aEr7iW6icdouemOaytL6dAJYJUOvZ47JPc44GZxFTKvM9rLTBtE1M7nUH9FWhO1GHHSMrLbPMlsjHPJlaJwx-zhV6hfrJqjDkVFUSWCKe9FVZdESelKzKoiwixDz9viP4Uj7hyEBWQDQClWFglE8Axmz_jsJ96_blaQyrF7HAXrdGHN3AgVLJf3nJ3yVHeIkVnVYr9nrvpsDD-E7RZNHbMwkUBKfOPVU1MfiEfopNY_Rp9F1FQgc_PRqGe5gFJBHRYYW-iFErM7sYlgYYuvyHKmYNtyA5btXQv3Uah5n8FSzi68YdDsZbMTF067H71C3zIE5gTmvX48TW3GQd-jkwMAmzy-fFqVvpyU7gl2LPn6kSdS2PffTcv0dSVfDxuU5AlxluMyqVV28BOr0RC7fgrEJSFirhdMZTez4Yr4O3iGHKhMl8W2Hp4vysdV5vDRbeR67hNn7UufkuXfuJSiU8_MKCHzC1vcxW5iP0da6BHjIPKaau2qdEkwQm04MHZVQbkUidi3Cfjo4GmltuYL0zYagxvUtG9OnPhHRhmx3bDw4yUnUWQjbD_5X_URnw5hSmOKOrOXhCP4pIaylaZ8Ny2S5jXniOAWvHB73v9GAVOmS6Rdfe3AVKaoIl8OKf0cpX5z7va9WHIkIJWi4JK4oSElC_6UuDQpZkVK72Ow4LC0Q9RrFx_cIcaQdB_URuluE6qoPuqSmFRLAwntXx4xYOQTp3NQCArL1nX-yoq4rEtB8Q8HsN0Oee8HuoVpWNiK8hHiQv5t2Le4Tpd1ZJkJG5U5qdwwdcnMgjOT284Bvg9hp1cJDkZJvY5DSYMuhLO4gMYPEXlebA_qzBxXuW-zmCXd6GAfzFm3kRQcNLHLa_TS8hb-2rECGvZcJA0jpkzekZVcYG5dp_ioQCCSHKBaiAhgrCz6J8YP7jItnAbthAVRjII1OKzrjNQ8IxRadelVDwZ35fKxe6JGvM2ZH-8PCqcsNu37VoW7Kx-cncHRj5lT_wEjx_2V0YPcDdVI-RWQ8djEE57JDjDEADoeOxhReQRSTdMsO7Z5fHkyXpQ97D6P0n8_zsrBCaMjwRPEwiNpPKo8A8iD-Zoh1qJxiceFif7-6dJMWKBrk4ql7V0qMpVXSMLDSzoZQSyOOEUO1p_il4qmmTp1HpxTRDfcKySieW7iou3dwAAeAdCddJTw-OoxOqCGciO6-OsGMWjIUvbiN057BNGnLjkAA7Hx1G_DB707RrX-mm59wcw6KHOuKM7XDtW59UcP8chFD7lqOV1",
+      "summary": []
+    },
+    {
+      "id": "msg_0a5f342ec2bb4cbb0069a681785ee48197b21bf9b6fd92359d",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "Here\u2019s the latest for Miami, FL:\n\n- Current weather: Humid, 85\u00b0F (about 29\u00b0C)\n- 3-day forecast:\n  - Day 1: Partly cloudy\n  - Day 2: Sunny\n  - Day 3: Rainy\n\nWould you like me to convert temperatures to Celsius for you, or add details like wind or humidity?"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Get the 3-day forecast for a location.",
+      "name": "get_forecast",
+      "parameters": {
+        "description": "Get the 3-day forecast for a location.",
+        "properties": {
+          "location": {
+            "description": "The city and state, e.g. San Francisco, CA",
+            "type": "string"
+          }
+        },
+        "required": [
+          "location"
+        ],
+        "title": "get_forecast",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Get the current weather in a given location.",
+      "name": "get_weather",
+      "parameters": {
+        "description": "Get the current weather in a given location.",
+        "properties": {
+          "location": {
+            "description": "The city and state, e.g. San Francisco, CA",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "enum": [
+              "fahrenheit",
+              "celsius"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "location",
+          "unit"
+        ],
+        "title": "get_weather",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 611,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 681,
+    "output_tokens_details": {
+      "reasoning_tokens": 576
+    },
+    "total_tokens": 1292
+  },
+  "user": null,
+  "metadata": {}
+}

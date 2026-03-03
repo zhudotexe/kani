@@ -1,0 +1,160 @@
+{
+  "id": "resp_00e5fbb4749e5e940069a6818206b48196af8cf85e97291757",
+  "object": "response",
+  "created_at": 1772519810,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772519816,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_00e5fbb4749e5e940069a6818260a081968f101702129aa94d",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppoGIx6x70A4DCMKkv_imKv8JmP0VepNTPmQ5f3sZsv9WvJmg14XCNFtwvBWVZP_ubFCv9w-EImb7ICJnbAxwPfGCeOSFK0d_rSfPxdk8zWlEnlyDtSKV3vULjGkJoivBc1YP7RUzF_lBGJJbn9213aWClLeF7u7EqVc-Kh_HiuNrJBx0ZL83Df-jDWSa_d16TI_gbPCaWgpKGPprzmSZIfcTKitpl7ppcijM9ZuqDfgHvTfvVlzhgSoBFrduO9v94lc50zmGYfvX6jRQEE1owl6ZieWTxfP6lRKE-OBnaNiuiWH7v0O2FTFUjwO5SCUjwkswVDIFX4jPbV94DoNSvcQJ43KdVrYKQXw6__taZhq6X9_0yWgb7KI3tRbh8ejwI1ibU8XVBZ0mWVCrU8JWyebK2pgarsh7WBl42aG8kOFiR9Zk4vEKNyGdIPwqwr6vAVIWpxYTAvkkRPcPEuzXbia1yuHBVT3zajUEInEt7obl3S9O9OjxJXNnhiKscps1g9kHY2LybPI0flxzHzQulBq9Q-WR6pLUxVRLa9yCD3uce5oX4hemP0fZF8i_OjMVsOa3gEnqYMb8mlCQByZv7CcLhmQLi-bTVtwOg8Cm0_pKv9YO0Mge9SnnBx30nGYBJzBei9KcV7H6gAX2_M3jBfJaSamM4tQDYw6wqbAn7_Uue6yir_iuIc4M6ZWAUijqsUU2iKR4rH8XXq3rA3Gz5VgBP3kMu5-o5yKfXaJtI4x5jAZxlZ-S1oiGSfgo0Qf8ouOzH3s2J-kyr-stoKm9vKx0JZU0MUACyoUo8ZQtnqhbwhx098Tp_TeCmdY3uLDP5k-pOz92MKJ94_z-TxUgbJscQx93z0oj9tjB8P2xw_Nn5hKLaW5Q3sxVtxXSPx2XtiMlz4pn7xE7spsZCaQqXm_PPNrUytMSCDzqcj2TSI7bNRNdjI6xRsMYCEbRdmDYBIrTVv0RT2WuxhjhlYnezyGJgGIDnG70T9I6AUDFV0E82LsI5fQhEoExxrVgtKhtyJoZTk22N-rg8yyFSlywewRSXrvuCGmcJjHWBAjyQTuxaa5hMgQeOvAjtRvuAMa888TQE4yRgLmbUE_T_3gdNDX6imNpUWf_81f6Rq-rt6XOqFiN9dgb-kobRHBbVAO0mMcAtfUiR1_U296WmIPBB2PDT4oPBxdSg2-gb6ui9wNAYPpy5BB_GlxCM61ctnhD6CPAkNeivRf3PfcyCbVhreiqGkIc5-n08yPh8AmgL_zWtliTDRyChiFqbO5pQ6ndxiTl7y9L4Hm-jIkrZgQuM5R-A8r5qhtH6MB9zWCumxPsY-IGr_vQ81uaGdaN9V3EGgdlW-Zn-w5tHuDfEq-QrtNv85SwhJtU6TFofenmWHCkkVn-AaImNsEO2TbGJFCydFeWtkjpkBgo3Rv8OxUffOtg9bGAZLTfUcQEViB0O8XYX8GI6wiZPa5DD82vqe0f3f-Kw-b3gob63qyikE2QbOZHimykw2iw--oAM7ei0JypvxeDVi7VAECYvVNe-sY3jgnpPN1TWwaC2YsZpl4_i-M-ouJC4IlFdgpVIgQOqeKMjg9Cmvomyo_viON_kYZfytoaQuSD2n5l4AC5Ym5FHkqJxz-uUPdN94kGSolxWI_75et5UFkJ3lIkFGaG-b5q0UB94SoOis4_ytrZNx_3cllVEZHn41HGlI0Px71aSRZ1fQSokNwxe1JDwWRlzNAfSDlpWACdOZh45WBTYDHlYAXqVIRdf4BC99FmfuX8DY-P09-cBFckRKV_Dql7-5j_jvYIL20di_lUXwprCI5o67zKDjvtCfCkWuG6THwsVebd18GEg8saJjc3WFhAxy2t6PsA_TRimNZkPgfmZbbB5X3cAVCO-4_0EA-gW63r9OODBYwzXX4s2sFlFhYqgMc-MAMGxqeSsWrejkbZRH0tzTiv7LWMmh8gec4vEcwCirWuDdO6IaFLsfHCFb8vco1_pVQh_xkbFs-4GbFn9ZAxti2RX1IQ1ivhbGL6Bph5xu9zkRI_4JiD--qAEyopgeJBod3daKRtXAgZIRR8YQic4__icL6IYt4OWf7rsK2y7kcQNRRA8WY2mJJHe-Hoil68aQJQq5p-oZj5nIgx1CPqVQuAsUHIJ4lrgQx6L5SVoHMlCzNyYSRwQfW3202zXB_5rvv1qsWST0S-wnf-tEabARC6XATEtR2IwA3PmTf3niiFhzFocmKZ92W7tgQ_OHR5kYFh92ODKLdbdq3TIwUy9I4wK26edniXRXtzChbkKDJH_j8vR-btXLG9Xlcd2aLqVQiNgdjNkhiklvj8yNJM8SNMju6HLoznXwVjDZP80JK1Oj2GAzC5sfn5CDM-146ubGeCdQDKO0QRW9y74WVuWz4JP1dPEtKw__GoFNxW6y6KmG3NXc5B-gZI1N37oiar3ozZlnS8BwGMkQ615T-zL-hWINxLGIZD_RrygFwTVsfmQ_X4NdNykumN5TCZApjvW2shMDAw39_glixIz64p_-TDh7MvqWu-2eS5CtiAFJhsn3HgdOPSPIjtsINgR2j0O8mBJkav2WmRhKALlZ7sjRJqYaGnUydJ3ublWFwvnAONcVKHotqNSxFoTC8WhJAS_pEmkyfFQVh-57qutcha0VojFCm-jukf5esqbBKFoZhcPOMu1Y8AwE1ftL9oZDBCwf-k5DMxWvsATnX-KtvwoHOTNKjEWNIgDojHsWtz7aZVCOEAZbUOSUTWbZQoHk9-lAqvxBkl2re6g2ic_SgfHUOXN6gGidw1ewNhI9teQOYT2uKpi1F-fOnoOdIblWu4C7k8yrVy7aixPxJZaNQ4xLmktu30wz1AcFZkHNYhIChgR7hCCvH7M-11T8kHYJPPZsgetjzesI_GFCAs27bvzmHWDoOn6TwuIyDo-b9NmR6ATKEyjDehHldc0wjuRrXrwMrxQNxMM4Uu3TYD-QV746fsDr3iib_x1fqWUjt3IfG9XGsx_2n65A5GRAEMS5mn2-VT3a0mMisls-X9ZwvbsatNJm71ZyDQtnfvMTaEk2_-sXXsFNOHYqTgmbovKGNQInpyV2eAH6ulXBIUsomaSfxDQj4tusY5y2qpMg6u8xE3yF2qSkpvUK3iXfpa6Mc4jw7RrmHIp0u7zv27Lqr_hByOJ8nlrm8pCx9PdTePDE4-qCh3-1YuWWnX950pyoKXCJvh9jh9LUjGJ3xx2tj6STdX8D0tfdKfmvtT-LSoqdxVDhWel9sQjlN_kykzosLPifO6JbWGYGv1NCk9Q6BQ6XLENWV1jKx3IYVxpHyQsL_oJFs4A6sJXoBN4sfkPhWX6TEw-yUWiTD-exH4oHQQlPOlJ9WXmz0ld46I6waJ9jO2H8IANsQZn2JnIrSBfUZ0c41Bd1ZTi0kUB8wUgI3erMC3yu48hMV3VdLRnVB3xNa-39NroiJLLxv84_iEHLxw__zTWQ4T1ec8QX5oeo2Bm-c-r5OMhYRQz8C3uisNZICBN3M2LJKA5VLfh9fvooBROnWs2Os7-LJMLpAW0mogSs1gBalUQH3N-74ABzeci3M5m_2ZGtivgfiNiTqgWViV7DofFDuT1T68Oe2z86lJ0znli_-wkFio-uBnh1po2nzL43wlqH57YxVUpWXPMjc03IN10bY4ZoNbNew4Zaz-AGsY3HoDM6CTlxhO_gVmpEfwd8ArvoAi1lH-qBAVKAu-K3vOqTEs1ewrZy--n47QeHWP1TP_lo2LYBuaCaQ-49iE4RNnBZQgwazeAuP4WA3_CnxotdHs6E7Juh4GZ-2woP_tL2A_AcXopnIYMy6ipjp4xSQhUquBnuEGisaTo0i8S6p6k3ojIwvzUiUrmSMFfr77iodFwzMCXRycJ4tRmm0UJHJZq3buk82S8azFHAetWX9D0po8l74uf0rm1flHOF2K0ilH_xO1XAlLO-EW3kprT-oiD6X_eUrWh98qi9NsaMRAIMbSDVBYTnRgCNNmzFExGHp4woREPPb_M5QqLVyEyECPGbqrs_wIWiYA5DBWilNQudqw4auMkvUiqizDLT0KJEm83gp1guY_O8tB-IyTmhtR5CuKIzl06cC_LwIQTbfif8vqtJ3XHETJXNboKtsHZvL6mSNfy3OMfPimEpMI2g1OcrT4OO7786xQcfw70m6ofevniF936_9liSJHMtgLU2DOAo0Ss2HiEax3vZYGJeovM7Uh1P1BUYlccC1LLqueQkbuSrWPDeXzDXt1eyP0B8jtvmAOGR8NCXmIE44AJlKhhnj_1dQY3DQQZT6DPVqKFzm9Az1OeXNz9f1J8wLKmw==",
+      "summary": []
+    },
+    {
+      "id": "fc_00e5fbb4749e5e940069a6818836f481969569e40f316de782",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"a\":2,\"b\":3}",
+      "call_id": "call_g9EEGNjbgedZ3c0yTHOPumuq",
+      "name": "add"
+    },
+    {
+      "id": "fc_00e5fbb4749e5e940069a681883704819691bd2f0b61c3c514",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"a\":4,\"b\":5}",
+      "call_id": "call_rlOCoK8JQZg1GU4l5mRcsYvU",
+      "name": "add"
+    },
+    {
+      "id": "fc_00e5fbb4749e5e940069a68188370c8196864fa0cc468d61b5",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"a\":6,\"b\":7}",
+      "call_id": "call_Pf2DHjAXfxaBIk6g1mHHkOxb",
+      "name": "add"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Add two numbers together.",
+      "name": "add",
+      "parameters": {
+        "description": "Add two numbers together.",
+        "properties": {
+          "a": {
+            "type": "integer"
+          },
+          "b": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "title": "add",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Divide two numbers.",
+      "name": "divide",
+      "parameters": {
+        "description": "Divide two numbers.",
+        "properties": {
+          "a": {
+            "type": "number"
+          },
+          "b": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "title": "divide",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Multiply two numbers together.",
+      "name": "multiply",
+      "parameters": {
+        "description": "Multiply two numbers together.",
+        "properties": {
+          "a": {
+            "type": "integer"
+          },
+          "b": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "title": "multiply",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 154,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 795,
+    "output_tokens_details": {
+      "reasoning_tokens": 704
+    },
+    "total_tokens": 949
+  },
+  "user": null,
+  "metadata": {}
+}

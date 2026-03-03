@@ -1,0 +1,114 @@
+{
+  "id": "resp_0d2e79318058e97d0069a6816a10b88190ad1846577dd91ba7",
+  "object": "response",
+  "created_at": 1772519786,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772519788,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_0d2e79318058e97d0069a6816a4ef48190964884262d93d427",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppoFs3WsNlZP-TUXuy6YrS4tBNegacFpsAo4g3kFDhR1XzfDsy0dre-kEwNBxzoS-LjJmkqPUiU5bfIQ5qg2Y3yXVLF-SW5OA9RkiBlIwyEb1PoggmWuNqpGVetOOlYT8lSz9ItLFUr0-h1qpldKLUJBQpbbju0dOIvbksaN6GEcE1DFhNMJUvvW8kgBwPGLEENjtmvZW9cfwj_TH7-GDUIgZCVkSCEUTjqysOdQsRUB6_l2fZ0BaRPDpGzqaupLDSuMtyMOZTKzgU2RfCZJNv3sDBq3y-zFDniOpQMDxC8XvYi3GlPkGZJj-xc8SFkOsrd7BQ9yXideuX0eZjA0SKpjSbzo5V6ntGvJzMpDUjzO23XsvmhPFFw3lv5UdZCPdRUtTRFh_Uw-LvYMoE_8bXpkWJSL4mG82WT_FT4gZL7oPFnzYKmuGBhdINWCOJ3SBnx_x8Ld2_pLgM5D8AksFmVJEpk4860OrI0MbJVTGLyUqoj4m730BmS0LRdebcWnj8UvB7s-cAEP-MuNgAcXEHmWCN15qXj8847nZ5W5FPhgwDC7WU6n8Qlf22FwJ0UW8Gu37tyztYkyB3vSeQnjZWwfwpo93jvaauDq-rGhDl-rxNEnFwiqBjpwuszwpYSKpwXecwqh77f6OKvKJYkCeu9X5JPxGV2kd0T1xoGjinIlYb_iK4pgMztfmuLbM0uE66GgkxJHvgJs8AqbLnXV7niHdKdQ20VrBJizSzzlAFnHUxY5V9dtnGiAOx6SurDDfX0xJA6EhfbM3j5Noo6JPAQ2NkuMrnGMbpPpZGl_nTZPwiV2eg8DIPnF03jVzF-sij6WQG9iAjzgW2puZdo3I3gXna0T8ID_n0FSuIIDnnuRbFu6mn0_ehruP0JgKmzyU1Fmd1D0FAgC-wJb7flznFXjdtivOMcutHexfS0qkYLZYg3cuJOxcSa0d42a0C6WZKbhoO1vpV7KqBG74Wzmh7pZJHhWfbEXc6MSPrG5a4cebFmQuA59nl5eub2m4v3lgwc-YjEOwZ6PeM585OeErvQLwsN9avLLFFFeCFkDKAVLBmPkC7LDTNNevnJdzTalZUDIOuJbP7WyUZRhQ2lxDbQOAMMyQSY31VgCKy3JpQkxkmhrvqRg2ds8YBYA7srqDx5LwYUckm0_8-YR11vic0r77EppyWnz8AHGyoZaDM70YrEV7QG2_JlXXnAxh5WO_OomSIOWFwrIHYVcP6Ww7WpMNiiV7YqjKt0D8l4eKpV_7pFgaVVLDbHwEDIWuomSWg9ib5Jt8wm80CVqRlm-eNssuiSPBYLe0RUIlUo8-4pJQIrpp-rUBDRBLlLybAutAyzjov6Djdn40lLsQzsy-VQAaDGMawjA0Lud2sB6ey-tAju_mvZqKSS50S47mqQGcoNZAUIGpfEUFZvp5cwqejP3mjA0CtZLSUs43QMyMnexhzIWLo-U4aVb1W1-kYhbxiEvpCBxN48JXujEz3IjKryq0JC6SLvMIkSgZTe5W7mxcEG-C7XtDe2EILSVDLJswwGDKlTAsu4zOOpRVN-B7QfpXg_GxOeKfLSgnZhSzJfSK58HENjxbsUROtCPwkW25M8txxUlHMiPuWSXPyDfndnCnMXeJ88wCkVE2MM-qcaAqRkpSVpViZ_k4BeL9usmGpW0ZDol0TK-10KgsM1FCdbQKLsHthVaegy8gqfp2FGWLus9g2zAjNyIH5Sdb4csJKO_rWQJQADZio0OACANdo_YzuwXWn2npSh6h5fn5YG4YyWxY-vbbKlmSD4LFPHeOA7wW6HemTebyz-5dBd4Ad8qHl3J0FU3KkwMQSyU02czBga8C43FTWuEYnfOVRLJqhIJQGJ3Y5_xe2UoqHA_3mEM3JSRC7xtTA687w6zoDbKPoPQWyWOXqjGQPKN3Ld3fD_ycKkbPqvCqolXI1ukOle8hEZ2u28SCr2ju2G1f9SKjj_GNrH4-Kyp9JR9F-NEN8Fe4O1SZROktNgp2QcuwQ71yCySTesQdKqrAsfeWhinS7hgEYxMRPmB5JB7aur_3nAxUgrOCrsNRIv5qXVR81BZi2tlSpoQlnZ0bUETKQTm6RFxVgqZWDk02THM1XvMPW827-E3tG-d8REAcDf43LGWVdY2sKqeEBlGmLq7q-pfmL7GPBiq0L644tyVZNiGjFqaMMTssKv26XCy_L47J4p_-2tnrHT29VLG0WpHyvhtbRpN16lns2T0nHnsC8FJpVjSCVXnekNaZe2vGYybCwofBrcB9aTmYg3Lvwta8v1KJ1NgUSQ3ThOmjqAJfov8FdYO07fJ2aYxGJBrrwE3r0GWe5yzlPHWVNprfpmHecamW8NfZSRJgIIZR64dWd3tCSIIOIDpI_PA--DB9Xf9uF9G7kU78FV_tqnVWhraNg6JjU5lzBuY14odxr109ugcD43S2Wwkpgp2rC_lXI4MDJu9oEm5q9hj0e4nduj0T88Wc3LZx4amsuYdAxTJ0efD7becxhgi3Yv0-5x8TEG-LuKEKMoxZ2YsHxyDAykrxC_AHQL0la_RGjyekTV7-Yg4oYxaOf5Ad5puxFNuCrat3gFRQ1jSLA3MBHKUgjRHQBKks9OOCD9FKdINsK_XPa_bSdBm5M6naRky8o7G3NcDztcYpScOebebpo1-WEt66Bol-WvBU879FGefWRG52rtv1wqgjQg9TMO0nN37A3JWjL8YdxrwzcSyT24-UKaWH5D0ZKmbiaItz9jT2ahJrGyiZO6qYfl-JKpHkVOnpNDH9gyf343Z3koVreLnnufzSdZ2-_Sk=",
+      "summary": []
+    },
+    {
+      "id": "fc_0d2e79318058e97d0069a6816c2cdc81909f45facd39c6c4b8",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"recipient\":\"john@example.com\",\"subject\":\"Meeting Tomorrow\",\"body\":\"See you at 3pm\"}",
+      "call_id": "call_hCxw6TySBLWQ8Q8iduW4J2Xt",
+      "name": "send_email"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Check the email inbox.",
+      "name": "check_inbox",
+      "parameters": {
+        "description": "Check the email inbox.",
+        "properties": {},
+        "title": "check_inbox",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Send an email to a recipient. Control returns to the user after this function.",
+      "name": "send_email",
+      "parameters": {
+        "description": "Send an email to a recipient. Control returns to the user after this function.",
+        "properties": {
+          "recipient": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "recipient",
+          "subject",
+          "body"
+        ],
+        "title": "send_email",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 138,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 349,
+    "output_tokens_details": {
+      "reasoning_tokens": 256
+    },
+    "total_tokens": 487
+  },
+  "user": null,
+  "metadata": {}
+}

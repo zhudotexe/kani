@@ -1,0 +1,77 @@
+{
+  "id": "resp_06f9ef0d2975a53e0069a6819df9a48195a42f9ef762255be5",
+  "object": "response",
+  "created_at": 1772519838,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772519842,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_06f9ef0d2975a53e0069a6819e7ff081958aa3e01f5e80ef15",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppoGirP3u64RAmxstLA1OiCBhamaPlWJDA1MMGuynYFUKMFtO1toJ-IGZR27RLXr760rxMBErsqKylirS6vicuvEy_OJZInhAJ0Tgn63BVoBbBLw7GlTkuCzETjLSwY1FhT5rNjKvAx3pNLC8534mpqkwwkSGcm4nCvZY27OBNz0BLXdR74Td6AGctgTMwpW8b5gjOu_K_DJam4tS9G01-55iBgD1Ls7vK4p6KQA35MhGlXaP7RnrEIl4rbS0ajXPLU_SiqYg2s6LYIPQtdaEXWcnibEYISbmF0xyyAF1_QFcrCrc-kvhQnBhuXOak27ZQYpJZVe64g_gKS1Kf4vTywPRpfqKMroKFhGgOQH5h9zlLFuUiH-gFnI8_GnOlBZ0w_k6kqXhzsbUdLyMXxDAJgWVGI8YbDlhoA968JDipfRoZ8PyxkL_tPtc6Go415R2jND_uGIJ6dT6lmROeIywCmHSzHM6KwKu2paXt1iVfB4opSuZJJltFn2nzDUHZbKS9YelPZ6KVf6tCDLAOlmxxCsNUiedTzjNV3zWYiQw1b_azTsrHTrjKfNlqpvHXOPxjrdOC5-CSIGnBasBdb9Iaw8ErtW5Zi8IrRlhTQuliMGvC-B9IWN5L1nbKDM2AwqIVOBFRTTDaBx8d2m4Mb37WusIpKgs3Z9vYq4a2i6UUDQS5lg0dwNIUdjfxQRLt-htEnuJ_zgaedZGqTQ40owDX6slf5PB-3jjU7Ody5VBqCG1u78SxOURZbKpV6ly-EsjcZ8Inbpsu_4Z9eXQR1kgxIjJ7ViLI1r1oEgqNhoqypiG1rX7G5PkF4Ut0AjuRCFx3eoZrZRDbTFMEHbrTiV0qCEiMUr5jyId-G6a36RoP49ce2qGrLcLejdq64HB-Gtsj2Oyfqj_KUbjeHcNCNDFBB9ixcNQk-dKeG_YgkWjO60jONgzq7xIKU4boF8TbX2VCLu0WLXNotfG-2rNDM7ZhB4FSKu08Ihjfo6l7YZZKAdJmet2B0dta8mu8NqGJ8aTS_8i6pJIU5yOz5voo4Ekrb2_oiPSvzeHiDkWx9DjfpCvyhFv0XW_eY2FfA-uW47fTRikLUXwTI9H5A5Y8tpF3YYXWOco6wJFZXVJZsImLrt9t7i2VIuxMX_zsEwR5Jigg8uHI8-85sn7LUdcb9XnfaLYTaHwSEM4kCc5hNpSl0MzRmOHq-VWWGlcxCD92G8Hzj5UThzpIaj6MlwdapRYUsD5Z20uK0UyeHuzLdr_vJFzDOg5vKqJo7EQMb618_rOZV22KzfMpQRMIog3CBhpgpo8eTHBuCWFMTpsr-SDrc9PR1SGhOuab5Ywx6HL9k6nT68CKXX26mtMK9gzIcpc1fLpZmM85gEpPdjyYNe5ixLDBSYnvpRtI8s-btwgByOY_ge3rI60vnMdChBCD9oGbgYbSEQRbpqtbA1eeloAJhB7-erDGagojgucRKg56KtfMaKMWD97n63QWYI7u_EbZUI4C1OHelPxHB5UWJSVI8zQHO7JRrJ0ysPTmb6e3k3j0pjvMouCiamSQFy7nQ8BxnoeZDpdqkVVPcskySGSzsokpXJIaXLnuwFprQnHPHtn6QhUoMTpJ-oHo_lDMPi0chTnLs5KSvHQmgohHsJONmE0ZokqwCqn4qxWvkwJHJfv13X9VbDVChn-u07M3C-hQghSMaiIrzfWvmb5hcUmdbdYgUjgBZ7JKDXc_d5P9TB0j7eRuWHIoaSy9d2nyLU17Ix8XDf3CK7qO-apPz4ItKtzRXYImCNMxc9E-qEAbDuwcxIIZfL-E0F8BR4jnGGRMxhVU_r3X6Py7GvG68XroFSjd8FaeQPmfwgxzMEJcnEbJHd6W6Q2P3ZyhdG0Eq_6Ihj3D7aP-NHn-NGNKZVX6d62Nk2pzXHOw0Ahh5MTzkDQi_gzDUiCsw3tjFN_X2BZtjFyjt3Ej8_sLHsh29BoDW7kfCOP5ap4qr3zcksG89iIfqVrG5mxWhnASfPbUxqjt9Z7PwyzTMUMyft8Rimgmf-ifjKg3S_0tmTKQCAxu1sXQ2pyCMv_oEh9KO7WLQLPit4B9_3oXf6fWU_U-JDtT2J4W3i_T_3rqPN1G5guzgoA9dUrugZvqcLuP3jduBaePWUD7d_qiak6OWolfr7DHDGTgDvXkUs2Aoex0VPThulzkCmy6mYoCKKlFiET2md2i_BkMGzGaT1cBJOeKSHE66F1WGbwkGhUjJUyNZni5yE9pTTgwt5OOnJSjGLgqGkw2oirIA==",
+      "summary": []
+    },
+    {
+      "id": "msg_06f9ef0d2975a53e0069a681a1b07081959fb686c122f97d96",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "- Building: Tokyo Station (the Marunouchi red-brick main building)\n- City: Tokyo, Japan"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 922,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 265,
+    "output_tokens_details": {
+      "reasoning_tokens": 192
+    },
+    "total_tokens": 1187
+  },
+  "user": null,
+  "metadata": {}
+}

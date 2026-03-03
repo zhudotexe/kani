@@ -1,0 +1,106 @@
+{
+  "id": "resp_0bfd570006fb4dc90069a6819751308190a72963b475d84cb4",
+  "object": "response",
+  "created_at": 1772519831,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772519835,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_0bfd570006fb4dc90069a681979c208190865b62497e2af19c",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppoGbUtMdY25QLLBu3L8zocwBSRS_AdzRA5wKEG4ijMtM-BoxeXKShiWgIBQx2RJO5oBezCfDjQvvmjczciLeFfE8AwSWTqlE3kMqIN8MTrK3PztfRiiPYPfZpdenw5mBQad81JfwXgZXsvKwN-wZXv50A2cak0k-g7JteBP2N7asvrmGRYdybpzM51ZK4dbXnMTLIjX9ymYksgt3D4LAmekZo0SZQmXk43sYO7jffIELU6QFqh2S_FXzNygOXHJx76CIdAYMhUD0vqgBoI_AA664y2JRIl2IgMKry-Dp-eY9SrwIghfkYoqI_tLe3c4v4f2OChq8FXU88JRv6IVVfXkmsDszvEQS6_X1zmFDsfhAKMBVnEvE08U5xH-VxnApD-Kbk5_TaQFv7L6hD89D4Jqw4Ra1lePC0pCYKOJuKKZy_sQbxeUqdvm7XASidQnH4XG46gOu97KOLpKt3xK5Jmomap4XthoqlbBcX97_Yc56BQ0DqJp1367wFwd9z63LdE8HROscZlal4CEb0Vm0AjUipVsyYLKc-srKbfX-hwQP7D9-ltXqT3slldAtWCsILmhzkgMElqO44jbAfeOUEY0pQKRiAigosa8ILxGMzNQnWEfAqeSmHexNp23cFeBLF9w3nRawUYPZyQQgnTY5IH-n7EIkLHNjJYlEN8fD-ETK69ijRmF67TBSznqsK3UdvqQmQD7gND8FETI5wVYdIfJV1yxYUby1Hoi0B6bIQx4kZ3ZefsntaUpcfzMiFfqr7feicp0bMbSKa_2Nl8XjdYGd4OJJ4_34ouDFSmcunJoqsPi0G4DHGq1TbUpSjlqbwf_iPye2tC_94A0D6OSxWlJtmdIQvKyfEXAPf-r8MTi6AD58v8__om8cDycn0EJcuDzo3jug1xNiEyabnv_EyBE6GIc_s_SXmiANi4P0bGKdgXDwrMIcbxWXtB6wuvr4eltr1ZCxDWK6HaRm0AJbCIiexBEPmVhcTBxxa8IWSNoI07t3LcRUgjow-LRGLDg4eoDJnN3gNINze8M-2MCaA8110jIINrNfn50W1KCrkGO0N3aJ-qn7MxJZImT978O_i845nq5YLdaCW_p_lNqTyv2wVL3O0EQE_ToOILdU-v7WvP2hK-ifp9qTri7VtUA3cGfdhUpypBWaMUHe38_3OvEoffe13uoTWH1pWfpK9Wve8hkbWBWH3zLeQvPw9SU2gFa8lDbSsuifZhFBjKbRPofeegtXP_pTnp4wJnqHIMy0mNabdmQIH0VV7ZjYZSKdW6IJI2t-x8C5bdEjbPdfkqu3P-XzKHhAQDgYDyyLPx2aCrB9VGsiUdCY8NLn8uGS_zm08iVRg9IaeTsf1ekFm822ktqSE6YIIHaJINLLQPER3SwLdFZ7V3g8jssyNoiVNXkkx80lVOWlwFd5kjGk6YvtCuG2xC427tgXOge_Tj7XvjY8m9Ufr1vi2ZNV0qPiqMnuZ37ZjcYGC0eJyjy96Et9j4b9_xLfhUhlmGNwBB-JiefI3ECHNP0bIfUqpKmY9ksma8sNp1mZHvEzyFUtdsiceEGPxwlyvqXAzyQ05zYS6s4eefxx5Xbn78e2SZY5IvTFpSwGaGv_1LzUS7-VCFWlf3gZJpkbJoFJy0czzVnOj5psSjXI3Xu2na2tk9-D-6cgfk2v109R5tpTpL-0JM8YcKCau83U4WSxp5QG16-J9o5s355dPnqSXK4wY2QGYMFUTt6XM-iN5j8wqOXQASf6v3NYglERAJrUEoo2c2oEf6gr8q_TfMFGFNtr4NgugP3v1FJUQEXQ-f24EmU_o8Jj74aSl3T6Y44s3ZFcbLotCRgW_rFySUe3sLRfE8RwtWoDlZ2Q90SUQsyjNo8xs7l7WNg7789eh14WmwN6I1kEcjJLVQkvgE-lubiS0P_n6-Y6HNXUHA5fzCAfPQGYprJI57VpMN3T0xEjlGUt0mchX3d94ZzgMdaezAAHX3ZySV-vYSi1vSl39-JyNcPqR52Fth__VIpirNDRa-_qAPpw5wuPslLTi08HQfSO1i6V0ZYqjXLnU1TjiCxfJZ3RftoFw0OsLmRDZr7aVlTU3pNUnuMSod25cOnYwo_bMRDvshU3sGAiBG0lqCHIrnZVBi3CiVBjhPGRLRxExHUhyLlfz9RtJn20DoIaMT3SP3etcbH_dERlo-fu6XX5V-LTmxmRTHBzdsoUpxz4hzOuxhz6404GgLTHwq4hY-gBALxaKkBlMtwPh_3-f2f4wE6T1GhJPfYT5q5JlVUVQIa1gxghnzw5phTAMfndpnC5CcK8zkMspu_4zpGzvBL_hQglHlVnkO0XKb5mQ6TyB50QytaDtA6HuvSt-Cfqb1Jtx7Ap1IrhXAZq37hziKSguRj9yXDCl-pppwOAAMXI-sJUgxhtQhpZWQ_dvTOQRwMgho4IiZCebQ6IgIGmDxbgCubyCMcWaihTY9DSKZ0RbqbmTronsr_PLrvf8pE0ZY8hO1_x6ukl0sSpSdiLvK3fOkeUc7GKQ0eLE3GU23GTl4WHB3Sw1tEipNvjiPtu8V54IbhfMmSy0MlnyGrB-_DyrpK7LsL-dKuAEZJjO-7h_qScsbmq7Nk9M-Hwn7zkh3UYGSzSpJGXeBqWCCrnjtFuWswPDm-hub1aj8069FEsTuSaSBviOEu--_8G9Hob3wiGv000KMOioY4uQTDQFbs6shsiVXYGw9NV_7-iAiQ-dVyQVIN8i1tYjw5AMSXyzFuDrVL3ri7ujVkQQ0mjWKEQEF3d6VtiMDfd-fRzcKZ_VanIzp0ycoguqivf1jhaEteGxZSeHiECzv0TWzbmWieB9NXaEJ34xaGwijyI81Zt-IfCxQKLvSmAI1Q7p2gZ_h5FLcOraVEVME-is6ig_wC7588jfg7lnB8ofUd66WVyOyIvPyyqg_GZLv4LIQSTqgZ76QpESyMHI3pINrp_TyDV8r26v3qo6oBTkT75BbK4OjUT8a1RjG62mMNreVdzRbG6hu8QndwLweY-vUmJnEajPzVnXJUqvMQtilEXHYJPB1U3R91fhLLFKNn4BJdbTXpZ7z1XBpXrS8W6dUTqCpHm4YzmoLK603CDC4ysOX8drG5_CDwPQXDyCxidzBdXQoCvmWm4-IiuP4SRUAAvuX8R09d63z9mcvcO9lCNsaPOuuH-DOEHJw6VLUfcob58BupMPc9NwLULohXO2ioH2VV_W5dxUpKyCwXToCGYu9j1A13GZXCNT5jK0kp0NulcG1lrFlTVH5ZTyh9HKVycJZL2_HXb-mFbojA4Hu966sfiYlc6Ph5OluW4Hn3Y4ZqJaOVffPjPhh6nMn8J4Z2A0LhG21rePM__msYD_Q-aKsv7j7gJ5KfDKem66lVNDV2gnaFIUmsoUK5urTaTi5Kf4uv6GD08MPiRwT47K_9etN10_gxncftUqFvKPIUJiET_XBXwJmh3ApaPaXgahL5_ILqA_KRjn2y7QuATVay55pf0fLhg1dzTsASKlXZASzRg1Vm6Q51QS3nmDZOIpxSsSmxjPbNDtYa78hQsgNQ8JGsvr29wfM3Zm6mVPIHjrTCmiVea42CU6v05pO-4d-7rL8jTOMSDsJ0j-I1jUGpMBkC0ZITIR0PVdUHEUaQSRczQAXQyOI7cqkE2i0wL3jL7V1NSA17gHSrZQJTu_DOZ9-Qnk4l8jriPxNBld6DxEwAwBPvVzKwK3SC1VLvW-QL0HntJ1iMXP7ku8Y7ciUkEskzyqeeKiv2S9nB-Gvrj_bl7JKn1fcV8-ee59BnyCcAyw9tBbBVdYqZ78QRGRLAdW5YRtZAxeE2j_1AgRpTmZKxgtmjx4uPXYRLOkVoaHmeggqZm-_qrF2FucfO23QLnx1H0gp0JAf2V6wxjHTla_10ad1Lu1-ffMQKz4v-SQHFEJNoLUaIEPJ6KBk2uaDXjJjVfLWpDbrXqKWzRH_MWLGBpE7PiuY_iVeS7ZXRo13N-TA-8H2oKlkRG1f0YZZE_3ioNGQBjXvx_aT_PbcRb6SElJWlM592SGGfIcDvNzjHnsY_GvvME1ltizVXiT7hray8EOclM2F6_vj55GUdejDD9Xt0qXrfxc1Wa4cSCyBZsvkx5XdYE16w413cHQGhB-cDgQnyAY-tButQAa7w0a7-fsKNEtoZ_blO_qlMfIQ6w1MD5NqwrqXYElFdJtR5z_w2SvGW944GsPVb92Cc66WjtXM4YOedjuihc_7qfxCQl4Tj1hgPTt5Bu8xdPZPqYQM_hRZH8lbYMJS2vssdw0l0Xhr5D6jI1h0R6LjoQLkoueWvHwIm3UJhfKakhI1JC8a3AXkVvxTBuD-lZ095ePcj4jzsPf0-605zJA_NLK_XKQbFsWQFNSA8n42aHxJ3ebz57Vib_ZgW2Zj1YGTTY4i2SfAhKeJ3az4pFUv1qivuGItiHXaVF_2zkA7AGoGAKfahIyd6oTypiZxhZ0yhUvksBAhrcO1Ys9w0DOBrl2K9lqPHAm2FTA7Zr_CQ3zbXQ52N8fVKhfSDgjKd0wv4oNhdFU7VgWA7hGI1kfKUL82thHqUWy_pNFFEqwY3mOqRahT4T3F6_TQN6W03PPZ-gUsEBrkiZoYEGhpldd2MEPl5sNo6mOhysNYY60w==",
+      "summary": []
+    },
+    {
+      "id": "msg_0bfd570006fb4dc90069a6819b1438819083970298c920942a",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "I\u2019m not able to fetch the exact time right now\u2014the time service is temporarily offline. If you tell me your time zone or city, I can tell you the local time. I can also retry fetching the time now if you\u2019d like. Would you like me to retry, or share your location/time zone? In the meantime, you can check your device\u2019s clock."
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Get the current time in the user's time zone.",
+      "name": "get_time",
+      "parameters": {
+        "description": "Get the current time in the user's time zone.",
+        "properties": {},
+        "title": "get_time",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "A function that works correctly.",
+      "name": "working_function",
+      "parameters": {
+        "description": "A function that works correctly.",
+        "properties": {},
+        "title": "working_function",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 312,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 713,
+    "output_tokens_details": {
+      "reasoning_tokens": 576
+    },
+    "total_tokens": 1025
+  },
+  "user": null,
+  "metadata": {}
+}

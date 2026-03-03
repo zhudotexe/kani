@@ -147,10 +147,10 @@ def openai_responses_response_to_kani_completion(response: Response) -> Completi
             mode="json",
             exclude_unset=True,
             exclude={
-                "input": {
+                "output": {
                     "__all__": {
                         "parsed_arguments": True,  # function calling
-                        "content": {"__all__": {"parsed_content": True}},
+                        "content": {"__all__": {"parsed_content": True}},  # reasoning or annotations?
                     }
                 }
             },  # streaming API returns extra keys which cause problems

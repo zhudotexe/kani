@@ -1,0 +1,138 @@
+{
+  "id": "resp_011f5921429138750069a6815c611081938877ae2057e9aea5",
+  "object": "response",
+  "created_at": 1772519772,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772519775,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_011f5921429138750069a6815d1524819388393f5e2dc60203",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppoFfwuAeweQoaQr8bzdAKgJBvDRUed63Vt5BsIegJVNCaUi5Uv-72l6wacy-MGwYPI2Zn5jPdf9p4a-e1cEETtTrUiPOjSYmyyY54QShJOtQRGIvqh8djtjSjXjLPobPYsdKtxgZndlZmL1yhyS1_xXTTdKUiFFmrFTvhsWFHkXh7MbgLHhoyTh04k-QKsrYKswkWyoEZIJt5FM83DkYkoN4ipSVobCR1kHbQcJpmnInekKvTitjI35JGFw4v7bGwhIw1-T-l4psPGTsFTO_vnGAtfSnYwFbsgoZsaVuLG3ffRKLcck14YV_dVVFSg5L4C2qdcVuDUVmC5zrONbFfnLLxfKR2NRc1CFpRC-MTg0FmAYic3QaarVn7H_XK92RfjC1VBmGINbuoRkMdxtBcb0cTKivkPBTj2JPPz0rrFEO0BvOqGXIEoLyXbbaF18IznqwxMqszeoX5wT7A1znOH2yacrc-4E1fowFG5KyYxQgE_cyvJT1yKDRBW362053pbOn-NnTcZmhiWhMK6aFe4EAGuxMTM92Yc-rdAkrMa5PLHffuRCYHfYV0TKSun_yUymvajmXPNzyjpB7JMNdxdY9qgPNZQGougwtpyjenm9KzcFXr5P2ysceYebrplLK18rJ_aUI8CWXe6qiA9YSMQJv6Xewpnqyf_-zM4HnXgC7sIkvVwIi0wUIwGnY8z_MnPGeRtUoGfVtzBXtwqzUFw9xHgqftUFLDbxlhXomY2L1Ia3cmlgh_TaxUJwp9wR4NeV8Ob68W5TTgZBkZTFWhpvgm_9mw9PZQXta1mAP2MKVqQUNzbyuK18jTjP-Wi8G5Sh8ufVFt7VG9es32bKPzEM3u-VHQkNsMTJkQoaufU6j6z4JQDW_8k29sK2QkgDVTIPFr9ddgdCoge_wcgNpSmJ-CfqZvLJkusAMrCRJTRgGAkMXqcfZ-diLXucGd9qhBaV6l2H6eWyhBpxQ0W-SdO43GYXrDyI0WlnS0QePDZn3nm2NESOjvQbZRRKfSN3RIio819RUVJu2n8ELWE7ki4cBzKNHOIUUCpxauzYZHWasbfGAVBIq3SXUQ7FBqatcNgyk_B1Jh_K-83mTMUBnr8dn9PHSl9B_n84tMbkYM84riHG9Uwhza9O0IRlQ17cP9JnevLrl-jAAr--HYWB4ZYhwrpfSQCwx6I68h98AQVvIJddkMY57DaqlvrO0BiKW4-KXM-HtlMQfMF3uNO1oQYpN2Jsgdf24y_IdphOUS8gIDCEUCt6m3m_XeyG5AKhEOX3ur5xWzHBNCYxdBxJwM6hU5r6G4I1hNFIgLKrFxkFeVnnpNeTna9RyOTILX1eIwjRgIIHLu76Qp767kCzDOnX-Hh_-AUH0janYO3Kp_FMPh6T5rLyVffwsgKu7SH-MIqqh74FuT4x1d5kGpkRk4Me96wOUXv5KHSsvyyXajIUv-Z_T7A0CtUpb4vH92oxyQhnLBP0h3QVzhFq6Y-LXIxNEglXfsj0AT0fAOQnelj14JaCbl_SSaAEjQZ-vT_SAcz-1xxcRU5EhzFmi0misgHcLYfVFTkcgM0UVjsI08RILAr9p3e-HZX3MCjSr39DUwXaSQY01DDDSoTnzFaIZ0Lv1oOYYrgScYKW4EyFekJEPUHOImK7Bk9y5W4j9nYsHbCAsuSHTq9zbzOOA7_yQ3PV4fxz67jqF7vi2EEpXjCBVny6YgYSjtc0mTXB8_RtBtL-HL-YrgGuqcdnUaj0cHsPzJhm4jDq0eussXq2mwYoHJJYLPYVA2dGjkvjw5LGYFVEqrKZjUkgvYxGyCWNNuq_5KvXHRU_wIV6ipdyCScoDTStOdt2_Swm8NamTlmimtXX4PpHXhavJqx3U0Vf5V5UMIRfBHAIR5wlsOYhLVP7cqjvWek72Yrzg15_yCcoJMO4MY9y1xEjW96Bry9AiiUhsK9zmH9A2wCSzhHXRZBVP6FApe16VWYzFojV3tOyN76LF7Qafl3Gj48BOPKMBy4xPlQtfykYXzwV9wXWuX4NZfGzkMWX2c5v2ZqvOmcJmsJHMfoZtBf8_7GfYLQpmdfJailYPv-263SXLswVbL_MbOgkeI6SHdjE52L8VZSofS2Koi1FO4JD2nA7lLTvz5TqbSdyEIvydSYmYALYdbGpsnZeAzqr8SQEnVp1w3VfImqw35kEwsXOK7o0YFUKBy4w85OOO_oI0KzNsM2PP7RISjwcZoWPB92IAH_HRRjEJkvWDZrfgYKRBubNcQKRqODZsLF2eKpNDzBhXDtZoMoszILc28vWbj_f4gy9v8O31dU7rHwTTP_2UVayITyp675zMAgFzzhED5yVrv0lv8PB411WBzXVNNJCk0wbPlICqZqzJxQXYKEtOKFPwFAI3w9wdASxXlmcXuPFG76wCzelzKZcQLdPimh9tPilms_5Q_HkYEOgm4MC8I3F2dGdqWPj-qV8C9X8W910sPaXuOjYL2DIN6H_V0LLCDTMwRL80cMGg",
+      "summary": []
+    },
+    {
+      "id": "msg_011f5921429138750069a6815eccb08193bb7b7b121cee0e93",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "Here are the San Francisco users and their total order amounts:\n\n- Alice (ID: 1) \u2014 $1,225 total spent."
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Calculate the total amount spent by a user.",
+      "name": "get_order_total",
+      "parameters": {
+        "description": "Calculate the total amount spent by a user.",
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_order_total",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Get all orders for a specific user ID.",
+      "name": "get_user_orders",
+      "parameters": {
+        "description": "Get all orders for a specific user ID.",
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_user_orders",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Search for users by city.",
+      "name": "search_users",
+      "parameters": {
+        "description": "Search for users by city.",
+        "properties": {
+          "city": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "city"
+        ],
+        "title": "search_users",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 858,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 328,
+    "output_tokens_details": {
+      "reasoning_tokens": 256
+    },
+    "total_tokens": 1186
+  },
+  "user": null,
+  "metadata": {}
+}
