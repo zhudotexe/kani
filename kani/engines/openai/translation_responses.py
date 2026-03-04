@@ -12,7 +12,6 @@ from kani.parts import ReasoningPart
 from kani.utils.warnings import warn_in_userspace
 
 try:
-    from openai.types.responses.response_input_item_param import FunctionCallOutput
     from openai.types.responses import (
         EasyInputMessageParam,
         Response,
@@ -33,6 +32,7 @@ try:
         ResponseReasoningItem,
         ResponseReasoningItemParam,
     )
+    from openai.types.responses.response_input_item_param import FunctionCallOutput
     from openai.types.shared_params import FunctionDefinition
 except ImportError as e:
     raise MissingModelDependencies(

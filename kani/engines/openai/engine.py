@@ -11,7 +11,7 @@ from kani.exceptions import MissingModelDependencies
 from kani.models import ChatMessage, ChatRole
 from . import function_calling, mm_tokens
 from .model_constants import API_BY_PREFIX, CONTEXT_SIZES_BY_PREFIX
-from .translation import ChatCompletion, OPENAI_PIPELINE, kani_cm_to_openai_cm, openai_tc_to_kani_tc
+from .translation import OPENAI_PIPELINE, ChatCompletion, kani_cm_to_openai_cm, openai_tc_to_kani_tc
 from .translation_responses import kani_cm_to_openai_responses_inputs, openai_responses_response_to_kani_completion
 from .utils import DottableDict
 from ..base import BaseCompletion, BaseEngine, Completion
@@ -21,8 +21,8 @@ try:
     import tiktoken
     from openai import AsyncOpenAI as OpenAIClient
     from openai.types.chat import ChatCompletionMessageParam
-    from openai.types.shared_params import FunctionDefinition
     from openai.types.responses import ResponseInputItemParam, ResponseInputParam
+    from openai.types.shared_params import FunctionDefinition
 except ImportError as e:
     raise MissingModelDependencies(
         'The OpenAIEngine requires extra dependencies. Please install kani with "pip install kani[openai]".'
