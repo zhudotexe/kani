@@ -38,6 +38,20 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("", 2048),  # e.g. aba/babbage/curie/davinci
 ]
 
+API_BY_PREFIX = [
+    # responses api
+    ("o1-pro", "responses"),
+    ("o3-pro", "responses"),
+    ("o3-deep-research", "responses"),
+    ("o4-mini-deep-research", "responses"),
+    ("computer-use", "responses"),
+    ("gpt-5-codex", "responses"),
+    ("gpt-5-pro", "responses"),
+    ("gpt-5.1-codex-max", "responses"),
+    # catch-all
+    ("", "chat_completions"),
+]
+
 # ===== multimodal =====
 # ---- images ----
 # https://platform.openai.com/docs/guides/images-vision?api-mode=chat#calculating-costs

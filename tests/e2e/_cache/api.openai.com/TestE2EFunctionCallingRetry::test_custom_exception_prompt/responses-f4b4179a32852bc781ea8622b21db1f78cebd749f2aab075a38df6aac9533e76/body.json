@@ -1,0 +1,100 @@
+{
+  "id": "resp_0bfd570006fb4dc90069a68194db008190bdd4306212512dc7",
+  "object": "response",
+  "created_at": 1772519828,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772519830,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_0bfd570006fb4dc90069a68195729881909f69458068269905",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppoGWa1v-Rf7QWH41VJYfnKQso0y0QSUc6rvJHLCkPeD8MCY7YNqEnoiUYy9-7zzcR-DPr9oA2M1dX5fP7K7GPGDFvxVK4GuOcXI_YXEQtC6Pwa_Gk32inksYSsJx5Da9jF1qyX_sH_HoQwTLfgDdn9kbylstwWZpcsCK3zB_Q1HSUBIXSWLiwwVB6ASYQvpyzOMqAvlPsL7HCdlWgMBEqfgraoBLKajKPVmO_WZWSOVsMhv2vZra4D37iyTeXazBBnUPomOEJUn6smVMPhrPT_vHs4UfNKjIFdC5rV7Tr6gU1Ykv_A1qnzAlJ6z9t7DZLfKmTbZ6n02YXPGhRaSKH5H_tJniDFYwQB5m-758827Z8qcAuodynZtLthQglfiPz8nnzzQkPJyCM1DRkiQ8UVNH-kYlkBfMOZZh_5s6ChyNOt77UwLMhKff9jX6OhACHjA4OlkcG9Bbs65EC7vcnEL3XxQ3reRY1tuKpO3DrAhkc6xXOGcIBPQCxkPAXZsBCFJAB-D9ZwgxDTEUEM1PSwLUhLfodWuI26Hd6ZWm1ZxJ1YPQ4p9D3ld7MbLs8kIkNE5T5EYwcqeSRP5RyJoFn8jyiDs4rdEwNTFk_n2h8KmiA5S-sJB4e36EGnOmD0Toz2PtbhpnunBzh8gRCypj7TotFGk3-nPTVg6Jrb0LsxaLD4TI63tT4aKjRsjfxot1_NTqZuDy1CMIvq0Vbaqns15-2aQ77eJD4qZq4sbfKdyHyhIgtG9xPpMRXOnwJp9O1IU5RI1N58NBEiWGOdFnhMQ00SML976JKRwQmw0FQIdQUaZwRG3gEP9AYSNQQG7_iNrqGEtyZIBK-QKUYlocVfMC7KNCxyLF76-aAz_VMJ5ezjmNbxxn95aDG71WxoTqftPs8CC6mSW2qkbpESIlX9pAogi5h--vB5yOaHyY8z5PDbnf15mvUpsC4Vgys9ishY3Mfp3bIGzFhxlzT2D4j7f1Ehkhvb7va2MrZfYvIm7xwI4WxxNGih6iaDsDIYi2pLYOtuTgX0_a8qovrqzJWei4Linen1-yqoxm_5HnZsLIIUF5Ia_mo86_mRxtdohnz7cModUyglyb52UGfFSTqVobkXhl5vb_B252ZbljCjT4PM2rnRw4nxZqsuXqRm55iX5hwuxUywVSPq0PeRSLEwhyNda4CcRzefGyTmfsswyiSZgdJxL_SdN_5bbRqbhrq7UVO3bcwJKE2KsH8vkxnzwCnlYXnPXHsbgdyCwQpGBfoM57vKMuxV03vLyx_AHkYKif9Y_fDOw6nEGIPyZjaJWw8yaHSQPlYBvi5owMg_hH2i0yn9q2d0tTxw__vk1temYyFrxP1AYggGmAe6rvAyIj8EDLHwtPLw-Syg7vh3SYU1MgnVHQQIw4Sjx1yhB42kt4uEjtVh79WXHb3C6DDAuuj0OTPhcautYCWfX9Tc7j20wyehvNbElHYeYKb2kIxcTQW5N1-RvS_wwBkuoPaJAhteMnBWL8egTge-5F2qHRSD0fsnx-VZIIYIn-UfeeNl8IToFfXRBii4Z593CDHivrRjrch0n8B0iK7ZaZ-Yw1nw8V_dAL5d2dZ8s8okAQksUYgiH61VTPL-Od3lb8fO1lNDZUZEKo2H9CN4nuJTlXpan8UENyTrqdk6Pbr6sUHZI2RAjM31FfW7OUgxTeZeII8vUDD77wKalmEYF7RIefZDrV5NI78HTBr3zf2xsoIeVk3RLVG3T7dllglZeyAD0ZSrrTpJ8Tpy3yisB2MlaPxvsZAuEn0JW8S7WuaCOwhotXebMtgAuWyJoIEPDJA5AHmk93yniNxfZFyYNNs8jI0VL0H9qXfyUD_ODN8kJqVHcP1uGFSntUFPjWUVo6DzV1wfAdz3XJrfp3KOgAkyrIrS0=",
+      "summary": []
+    },
+    {
+      "id": "fc_0bfd570006fb4dc90069a68196761881909df79f3e67e922ef",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{}",
+      "call_id": "call_U5rOMp6GWSTZyqsw7ttWcb1P",
+      "name": "get_time"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Get the current time in the user's time zone.",
+      "name": "get_time",
+      "parameters": {
+        "description": "Get the current time in the user's time zone.",
+        "properties": {},
+        "title": "get_time",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "A function that works correctly.",
+      "name": "working_function",
+      "parameters": {
+        "description": "A function that works correctly.",
+        "properties": {},
+        "title": "working_function",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 77,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 188,
+    "output_tokens_details": {
+      "reasoning_tokens": 128
+    },
+    "total_tokens": 265
+  },
+  "user": null,
+  "metadata": {}
+}

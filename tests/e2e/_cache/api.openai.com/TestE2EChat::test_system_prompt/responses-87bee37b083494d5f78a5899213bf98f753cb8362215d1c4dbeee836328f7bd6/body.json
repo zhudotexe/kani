@@ -1,0 +1,77 @@
+{
+  "id": "resp_0f3b0ee857cee5530069a67dfe207c81948bc7ff6999b8b27c",
+  "object": "response",
+  "created_at": 1772518910,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772518917,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_0f3b0ee857cee5530069a67dfe6ad481948ba9df2359b76740",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppn4FltaWfb3tkt1EY8n3OLBjGMRkDM53D397THQfHXEfgh-JwP7X1POEZ_RmGana84PtFMYbzzcrOxZcQLtT-YOfGFymPPgtIdTFH_pbwKMt3oWYJQJDgjvUPJvSYOXk4ncoiFfsNm8FZLc7XnxXEHNuQPJU75NQAU52v_VTaGyhVbvMYCBBUGL5Z_DhsRRDwU1njRFhpHMM3tzsqrTdcRX4Adkvo9IBjF-GnHmtA-ozBLo4Q8JpQgNco8O6rEE4_hl3DTzR23pcct2SJCWmEGhrbYkpWyISWP0SFw1FoiXyByschU_OMHz-NvCDlmJRSK-0gtV_tAkGY3OLEDD1E_Vljfi9kNNrEA5PQVaeMabKiMDWxJo-9lI3oHGstvcCuVp7uzHKj7CwWOvC3VcouiHVUMsI805ePAtaExinrxKBySGZ3Kzczqib1mB8HcMsQuVo_lnQWTTM1AQwbHMhL0-xJbBbb_BGY8acMQU63k3SYL34uEyZIFd4z7Ak1YN2ByC5LsVW7gCAGH7xxwzEUG6EwBikaSFXgVQ8WkjfdUDE8pSM3YlptoxDJ7kR4oKQzDjED6iZ7Djah_V4oUm8zVtJOejIGtSHrre0aRIOjwkJisCP0nSdsr5PaDghwWu9OiEnrEvTW9YmJeiYxEM_Tsa89XJ9mNqz5PXVtQlehzLI4tBcL5Dey28bFBGD-ZYMP7B_A-n0B_X2EhGi0bKtgf-HDfnKPscOjlFQbvnGQebK9yYKkP7mI4f3C5hR2xN2kp4y69sq-LRmOuzcSKZuHBvmrjoecT2KlpyXIVyTdxdrSrabe1uprE4g-7LLSLjaBkOrrswS93aBdYd0XXBYFpDEeMJAi4ThzNU6OhvoZvvAU4FPEVRl6cvLMt8YQ5jeHfqnaYxOZouKPkH-ThynGhDz-QjZ-8UgtvxK9vVHXgTQVdanT5R66bc1O-iKzTCXBAf0GxEAeJP7zKDgrIRjp3E5sfktdZ_8gVoa88po4ZHok5tZl2Wj2y6HvL9eEkCiCnpoZI6xyHZwa7SMHmr4DKsfrWsIXIgi4UmrgbFVq3y6yGcMja2qDWVYQ0QRrKSjzcDyPb_Vv8sH24Mr-HnfoK7m5FtJtTyQK7uZ7RdI_NKrWNmHqeQc1-I34GGh2UvixyR5S4eC85XsxhBk8JPYOh_cnw7bWyLkuApsUjChlakTZgp5BCNfoAXO1Sei98R7fs8ViP4IlqiwIw8oSulJ_QtSYNhRwHNdq-BNpo8acjKBSqww2WF6DVSe05mUryNfQL86Joqml3MPsaeK354vVPJAM8BJQGbjIOVMlk5heKP5Wi2_S1cTNltBC_499PIAdyIdmm1KkAbtHBfKpBlxaum0Gl0ZViJ8qm9rSF_v4W_yBx3uevsFLPJkGducxRq_AZuQsLsBF1Zpb2ado9Xynha7lUzY5yaBOtEi2QOvLiUr9JoowET-fbCXOu-KHCBRIrPs7VMnVXKhETGZNKwGDd9AHWWybmENcp_bewPoat1TNce9pBIdezJo-YfpAOOnIbaXAxLUGdPTDgHYbc0834ZNjZXFPZGhcRVN7Y0U4STIsxZUqLkzmoWmTYbWPtzwP2gPBQ0zP0oeDL-BZJjmm8vBhx8xTJZxGtl0h-9QfiS8zE3lLo7VfNPUOHvDzfDv4HVJCRqOV6xx3A9A0_c3V0M24_gn6HL-P_di-IthC1-lkZLLd7IYJNZN9mAiq87IXpNnelwp422H_HVvmRfApk-XNfr0LWehpB5aryoTBc8Hn0UO72PKe97PujlLnshuEr9nuf4XvHq0qEV5LZlgTwqQEOKlMY_3qiC_IgzJfpAz2JVFv7yIDtsoVw2p7fi4fkCd_QaHxdhP68vDLbKPYpaOFRPlh0ZDGMOMunq4OtgcJ9SicqFdNgdl4iW38SUZD9Rihy6yAdLLsgK356PoHIYNa_ukhEHNO49BKCFIdk7QnHKwoWr0r6rhWXlbD5vIBq4Ba-O_GvlewrYBW0JecGWkx0SwKS8zDglHatzLOwnVmS2vxUSjWPc3_t28e2venhqT6CMvJkT00nIuJYivHwom98sF3Cknix4QlQj6iLFCRYekWoff_JrHXsEtHANn2w-gML180IX5Dz7AYRStnAWvxb8c7dcaAY_C-nyAiy1UapYKCaAnkgh2zxn4ZHOVThREMW81iSwZgoERSZy8L3OCTyVHKR98um75EiyEFkJqzFXR3FcPc5aThfXROZb5YshAg8Z-A2VF6KAA-pAyHDuSCBcaV0tYarZNtGBGofbprRwq73jWjHazdz1yL_dsYDUkNnN2Pcq4fCQurxUKDXZk-PfqG2meZI-dMfwGkYowHmMREijgHpfkVaFc_NajIKndboLZVH9aAivH80JF9HRD1GpsrIVdl_jr3tmiylXxGIvsVefJcvfAIWVKmR3tZXYC1KIha5gFbPMF63wULirwo1RmRjaJMHXkDV3H0nS3YRJ9PeUYazFQ7d5mm1Vd0TRvEddD2tsgVLWsrM15ZKVHTQk_wYyDeuTHk7YQGkNwUvpELFb3BBRplGO4jKpnmHxA4_I60pMsehAWJre8I3CQpcazf7r9MAAdb_Ixvz3_0yUz2GzXD8JHgTlwTGSi3KR9HEslUtHElcE1HKAOqX39FV6c2o63o0H9TSMhFUhACOyu6YOAfvuIEL92qYRzrhmArcTQA_FjRY5z4jnW0bAj7BgwwZivWKI0SFdd6GHLDqWB793-4mlBra8XV6hiq3LapYipcUem20GCb5Wai20oiwtqyQFAu-__LSc_HTkWqBZC8_4y2wloEtGWGxPMxTx5lL5bcivwE1kWzfFt2JNlaAUbQeNZLrKVu6pk0BdqHOYnhILf42f27QDZjTzTxNBio-TGxAxtPsfYmLIJoF2DIoIkxgVx7gD_FN3geMpsMvZDOBqjdwfwHnS0uOsbAB70y9YRR2h7_Z8JnqVEr5Or4Y0rOEiJkzVcSA-6coY0RVCAMQVWDvqcl5qXN5RFyID8WRkyOp7e1iUHaCfOHt6j9sT_n7V34I-orB-EMx8lu4D2YI7QUjH-sXkVaXvn-2PfEhEgrKQqeMxX1oy7luFIFV71QUGwyHY4tWAurTkcj5LDlOFDe3lw5YY1QAWly8F82BT5UW9lA12HX__86Kt4IXNDnPQGGnStyp0rfJOf01obR-Hl88XjapO7fjjPpkVVNagUt0-vIJCy26YYP6RhN2OqtSvFwukdVOoypGx22mzueB_t6mYKurk6MS7aEOTdlhHUUoQUdkmuBpjzGje66C_Hk8NnqK3IxMhZGIZuetZ96WDHmwX4Y7xmWGFq4jQBcE9IC-Fvfqaeu3RHkxGr-WHPyTVZNWiZ-_RO15iqWoRaIlj6Afizpw5vBBDS2MZY5LhT4nyR91FYALXAtUuKLw0Zuiud03UUEBw27W2V1q-Wz-JhrpKOhI4y-uSXJ0ZNNZ1pqTcodsOiPlbZdP4YfoU7DbfEyDTFYvt49Po3GpLs1oQAbJqH4pIVhsgxx5krFfD5ahSC9uyMuKlwidN1wlvWycMmD0IH7IllqvLSVz6oJrAPzoxi1YDxxfNFHMKP3owR323z97tf0i928rA6aDvP9anGtPQp121bSWoxBl5GNFnS9Bmy2GfVUlBC2PDQHNZDoRRpxztT0hWpl1e7pbRwzjGpL4rB8vpajMr7S-iF7OO6MF_UAZHP6QmihQ_RkI2zS5Z0ZuiZEK7Sd0s4F6fbG2Za6Z5whFY3U-RBpcoGwvZHuOJTnRQkbLMA7D3IyvUvvIuH8hHNEtgBkI-WK1hZqcuo8HcPBU7YZoWZk4wS9H-GWBQ8QAE4nOpCLq2PnMCTe_cqVYR5-Px8uXreSY7aqUAqafdLTleZe_9pJiy1_gwSSFmjRI3kLw5JKCebDUwM9rbtIN545GuoRqa4ciqS7BKQgmnjxJfN0eVbFdC2WIjS_zCyhw9UJuY3LjJ0vAR1Y2D84hv28y87-9DKovWtnbXFs647Jbm46Aaf1HBcDXnSE7pU-gB8E-q2ebUpMx8BJXkouFTNuEHAvtkGCR_HivCSE1CDEZOnwLsir1XhLWWgeNQHZK-12GJ8W8NDtRpCe2JGrsojbKJeWWJvyDB1rhRxMxAWsirxRuYsIjkrX47GEFza4pMEk2TYhYzcONEZaR9B86-q6YCbI5O2ziVyJWJMe1X9uipM4S8XXQZzVZ4nxWA93v3gAVIwNkWhehtRVhdNdOfo6uqZjJABEu0_jZvU8bxVsfCq4wYdhe-GLHGAbZqNdQd3v0CAPUfRWtkw2dzag-O1cbULxnJfzDXttrdTE5DP6ChWWbb0y24afw8uAEW-v031zII92gBc9QHeoY22znt_PXS-XPDv7LxUzBZtfmguDHUowYJnnEuCow-LnaTjuw-ygb3G9JY_YfWuseplVZBMK1DUT9WnE22pJDINIxDfhpOH03_swOR7qWg9SJYuPF56D6CVc0mNw7IjieKVtZz3PmM8SK3TjO7En3ErazLrljF22JK-SoH5Odzj3LN4T2P0jIMu80i78OfRwxQm_XorkvwrYMqj2fjJTPbl8iCu49Hv8dOrm8rObsHGCmo_CT5hBcbZPVBfWjggZypCQ6jimXTKSKIOwS-USaNuJ7aBgXWvJN1XXkRRN99wSnudE9MHTZRZy1Eazm_B15iip9jnejlHBC7zVQ_sy3UMgUmYjm5i_UAUN0SIy4vGcmvvCLwIrVyWvCbDA7wyaK1RtvMLiLePq1Bxis_z9UaPYRulgi7L4dqwaHPPK03dSToCbTPaz7hGWF83qvqb5cS5ujrymlF1jGXkHchyu2EJZRhqIIEWcLJqTXQPs5OZZYHtpJeHZkn4z9OujayUkOjBbyMqnIi8UukcP5c7tE4lxBC6QiqKNF9h9wEVbj4ETcByIfmA4x0QACNIHa9faU6KfJxC5Pfv7lQErq0uX8CY6IOH7XfWvsLcdJKcrjpD60eNuog-_8eTjlzkoVvftUBYF4y_jDg8wya5WPkV2QM5vOhWGpQOS99ONeFixv2FXhdVLEY03Fnvo0Ac7oC5LAGNvBp1oNuUo88aXtPTmSYqmw9CnsSpcVKKQqJsYmlUsGxio8klSgdBnVgcaNfIONK7nHDXUXNFnzu7kztRjt28NdW6prFEOqYASCDoriDrKNMgQgPjiBwVhewT65wyho3uavBeCfhCd-8jouRSZjqiGIjmFV9-eOZf2iw588lrZByCcx0pM0FIZ3TVA5lor0fHwBMT8ETbsAjEgKVUL5CXlWyjuwWoYcODrXmPvofOxjQTMkoVZuCTej0ffWQEKv7284Q2uiR_4NpAtqIrVJhWoh26QzPK1XWh5ehm3RixiKSXVxsjpNLdZAte3K6dyi_GeGk9MmeHquTB5LTlr6aXWG_lRC_-eCdDQ3DMSumoIuOhM4jKXFd47NjrlputgIfKw5XfoizvkhGxe_oxoeKkQWZ35c9EV4X-OROYYg5C1IOAqtOoifi1OTie2RPduTWufflVr7snAAHr356Kq2O8t-PZ8FQQmcn7TTCOnY_Oy29g32f49e0KE_7MO9k3yVutBDc6JivzNnLCMgO555s6FdTAYFWwHRX9ccTXtCEFXty7tPbRyKehk5K93bYbpf_KIgAUAbgVzLcow-sVfoPPkrlI4Q0xAbkbG-llxnBEIKe5eg1B3_Vhe6a-2zXwiT3nNVlU7molznnuNRVIIL9Jcav5tgmic4nI_GBcagdA5MSgLGA532-RNrkUJ-kReBRwbLptx0RG3fC4cGTcVl40BZab4CTxsr0F4eUaOKhmCBxIXXAkgc2WnSDceOjbKWr2Eu0yL9o8COPCGTYPns6X7xwz9TmOgbUDks2pbONg8GYPfTrJJXXhNiixOFdogYJ0fwgFOjwKmuoNVk76k-hy5ypAtNJTp1Y5JMzdfK14ytYHIbcTFHdEtFUlpByTFwuskuh0jG_3uH8gPpllt7DEkG6nE_mXkz9OPJtHhKJlnvL38BDGrHjR4KW8lbc9cHdGpEonLw72r8vT5Q6xnwoYoLEgdDMmlbuM9v-tKmXJEAbv-zmjRLoc1XZeuO-vj9zAAu1jqkXMYFv5ZOaRIx2UJYAM3dMBdzDKXBN8V3vmk7UpJIfo_plSO0mTE5GiyWZIc3n02FH2zPnRM76NpVqR01lT3Zhtmi7oitCNh7GsH8Qtj9ZRn3JQivDZUVe9AvUZzoZgO2uMGtZn1oY-vFpI0dBGlIu28WhGa8AwxNP9Wz-CALvIP1_eevq4owBMldql2GrjkYBj9hqCv7XHtoJm1skivLsAH8rNz19S2J7ukeMEGcrKEQ5_JLCu6kknXttglK5WqkJkrud8dwY7AAXxvgPX8QlG4PJOIRQU4d-U0oE6BmIogCdWFBJPt6Q-CX3DRm3P0JL7U5QJGeCQLUbcDcfDthZFU_7XMplg80KRljRKQQpO9oftpA1dCU5QqLlO9LovITOxVOoZIOf8aTwHSmtuuHKmskkgLQg=",
+      "summary": []
+    },
+    {
+      "id": "msg_0f3b0ee857cee5530069a67e0422808194bd42fe58f2ae85c5",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "ABRACADABRA\nHere's a straightforward iterative Python function to compute n! with input validation:\n\n```python\ndef factorial(n: int) -> int:\n    \"\"\"\n    Compute n! (the factorial of n).\n\n    Parameters:\n        n (int): A non-negative integer.\n\n    Returns:\n        int: The factorial of n.\n\n    Raises:\n        TypeError: If n is not an int.\n        ValueError: If n is negative.\n    \"\"\"\n    if not isinstance(n, int):\n        raise TypeError(\"n must be a non-negative integer\")\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n\n    result = 1\n    for i in range(2, n + 1):\n        result *= i\n    return result\n```\n\nIf you prefer using Python\u2019s standard library (which is highly optimized), you can do:\n\n```python\nimport math\n\ndef factorial(n: int) -> int:\n    if not isinstance(n, int) or n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n    return math.factorial(n)\n```"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 42,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 1145,
+    "output_tokens_details": {
+      "reasoning_tokens": 896
+    },
+    "total_tokens": 1187
+  },
+  "user": null,
+  "metadata": {}
+}

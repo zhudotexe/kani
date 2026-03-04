@@ -4,10 +4,21 @@ import re
 
 from kani.models import FunctionCall, ToolCall
 from .base import BaseToolCallParser
+from ..engines.huggingface import ChatTemplatePromptPipeline
 
 log = logging.getLogger(__name__)
 
 
+# ===== PROMPT PIPELINE =====
+def build_prompt_pipeline(tokenizer, **kwargs):
+    # set default chat_template_reasoning_content_key to "reasoning_content"
+    kwargs["chat_template_reasoning_content_key"] = (
+        kwargs.get("chat_template_reasoning_content_key") or "reasoning_content"
+    )
+    return ChatTemplatePromptPipeline(tokenizer, **kwargs)
+
+
+# ===== OUTPUT PARSER =====
 class Qwen3Parser(BaseToolCallParser):
     r"""
     Tool calling + reasoning adapter for Qwen3 models::

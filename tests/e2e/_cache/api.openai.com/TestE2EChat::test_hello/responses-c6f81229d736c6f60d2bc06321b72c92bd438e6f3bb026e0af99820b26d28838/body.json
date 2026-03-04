@@ -1,0 +1,77 @@
+{
+  "id": "resp_03339a67e66407bc0069a67df873c48194b00db980c734a733",
+  "object": "response",
+  "created_at": 1772518904,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772518906,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_03339a67e66407bc0069a67df8bb448194882ef253ccc8b794",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppn36yZ4VI1spmMg4LWoIfjtMmcT0iyVdTyU5XFZB_gPjduYviMa1H4soUzr8bzvoNs_fCUp5cthaxcR8fyVPi76OrKvDMpeeUbG3SbsGqbl2W6WHxQuEApZzAEidMD6ziIbF2qEAZw_sF0mJuof85zCc_y5VMaVBxW_oGt2mT1wsCy5XDKU5B-s5IkNFpyK4_2WfaCwsufIAoKkk9WTqMFqpe3T5_k5SOrTw6qxk0Jp4uaTQoXjZMXE3y64SQa7SgZWTSHJ7-fmSlM9zU6W8kiJw6SrjOi4IxNSlyd8licJ4xz7ToH3XFxGfBd9zJrKrBoWZQRodqufnbGnm_P5IrNlHE1FYJqrcA0LpJrCmdxjYzYVD7kxhkhA2rG92QyyuvPdnPyRNOxTv7toLq2x_xrLxcMGxA-YDOhQSRVMqUB-ac4bXtgmkcVIO1v4_tbPK-Wv_CsVK_cx9yjv0AoYfgxxxBCk_ooywcsIJckFZMVrgnyM6irYLQW0Qq7bSFyOcXz9AYEoNNvg3WVl6raynn5Y6Lfc0VwWuRac9geJy-jcRi_gj9Bv9BIOU0bnaJdHvBVW077ljYQz5rNEmNzxjjvvgldJfGjATvKWl5el4XzLZkMJEuAUl5KuFMOPKS0L6DeqspBQyUddkkY_sUTgmfnqPDyu56Iz6PkpeI5UrxbcS0imarPjuwnjWqpt-1d_gkCnJjfWg_xgMnyYlxKlT1XQ7NXl6MfJ0JVXjJ0pyHWqrvMMN6gvkRV5dtdnlPtVZi2zXQwJZgV2nrAzhISrZ72_Tl5Eu8WC4mNeGKXY685yGHx9nMVNuo75X3Z0k8mvF0a31u-6ZyXHbGRHKV3aw4W9oP67rdzVt7Dph90KWuXBxyQ37zrNM7vJHS3uJBQ1VuzuCzXOK4NlLqihVO5e739oY2BufzjUBN_uqRTsX7fEg0Um20qarRf-8D0gX992WA93FC7p7G3S1ENpCtykFazHKrUrSbMmWOanNOJAuc96bLy1-iQaWdkeMWeiLOB2xR8g_QgoT9uQGxULD4PlrLbobvgUqzI_Mb1TwMh3TP6nvDAQvPjq7pQrFpanzwcIHlVOG25QZtSZa6Fy_lQSKf-vjYbaphuLSqH8qw3An9MkA5qPhiX0SF_OHZUq4L2th0pM2i8FFtDByn9M0JgIpsb28gJW1JoxvHH2_A1lviWlC01dTofzZU2HkoeEsSxJAaMKavX2n6A1FbKkj3dgx7Ec23tySAssplO4Du8eAhvjkFiJGRIWbhzMyaSBNlP4HjHfKvYZLm4sKvofyMLnQW6qijlzrysrDVBiUofMcSqq8OGv2ST6osn89kQ7FrmGMRyQFOaFipPzl_ChzIzNgBXBcINzZkXuJVGBY50G54ABxEezjt0bjbkc1gZ-NwXoyMRNjhokJqrEPvi2Sdf2FrGruaeWk1lJg-BGQhAhD0ApP5VTcDiFBeyXpKrXOilq6tv1HP_2T6aF2hU2nDLmz9RHxwTKHLOKjsFez5ujOouvdKhlQw-c-AN-9LgYgN3ahmW7mLgKlAq87cI3_AnbpUbOMPp6oHQMj8F81q311-Qh8KmjHJl87qKA3mtQ-F0HVYJVfQgFa9xNApSbvKiOR85EB9NlMpwfYihjT1F1XfcQVmdSXhGOrKl82hcJXhTriY2BxCU4Ox8fOkgFFGS8dVUDtko8FSbThQdLe7dXbbf5B0PL7iDlSfIsdNhkEi93oauF2d8yeAtzoaS5Zgl2D5w3tTl8adSUMfGOFklH4faIg-cSGu2HiDtwiq4BvE3-9bELDGQ5akvsdNiVe0oKfh3Ti_XsUrJtbA2YouD4Z_-c7UVLg_G7xne0vyohF1Mk7ycekg527addBlEGP2-CFI8Apk1nB6ASZ20fLqJyH4XATVBqCmtb0FvfznjyJsd_T6soSloCM6CS9Jm3R5sjQ1T1S5B5B1xiG4KSk6R6spOqs8U2jTMkm9m-X78pGCOfb27YHaKi3POlUjy9TRJ-fDqASol0a0bR39yzaOU8pHjJVB-mDBaT9YL4yMAJkQeDnsH6JLPdoIRrI64HbXsruXKK6m4ZSzLMmxCLsePRBvus7q69Xk72dEGBz6OsiSNhjHTVtJsgOAnxRD5D8tqDd5VvCgDXqTdV0E9N-zn60dgobhkoE8oLeUbO7zja0maiVPzIptk2UZcucLjrw-GZHOy19ZoXGK40OIKYHV_5K9nEMgyw=",
+      "summary": []
+    },
+    {
+      "id": "msg_03339a67e66407bc0069a67dfa3ae881948890a7dc40deb671",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "Hi there! How can I help you today? I can answer questions, brainstorm ideas, help with writing or coding, explain concepts, plan something, or just chat. What would you like to do?"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 8,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 278,
+    "output_tokens_details": {
+      "reasoning_tokens": 192
+    },
+    "total_tokens": 286
+  },
+  "user": null,
+  "metadata": {}
+}

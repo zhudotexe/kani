@@ -6,10 +6,14 @@ Engine Reference
 OpenAI
 ------
 .. autoclass:: kani.engines.openai.OpenAIEngine
+    :members:
+
+.. autoclass:: kani.engines.openai.translation.ChatCompletion
 
 Anthropic
 ---------
 .. autoclass:: kani.engines.anthropic.AnthropicEngine
+    :members:
 
 .. autoclass:: kani.engines.anthropic.AnthropicUnknownPart
     :class-doc-from: class
@@ -19,6 +23,7 @@ Anthropic
 Google AI
 ---------
 .. autoclass:: kani.engines.google.GoogleAIEngine
+    :members:
 
 Hugging Face
 ------------

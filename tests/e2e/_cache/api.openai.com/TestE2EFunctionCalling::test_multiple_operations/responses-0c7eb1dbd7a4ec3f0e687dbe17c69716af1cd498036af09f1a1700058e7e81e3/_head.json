@@ -1,0 +1,21 @@
+{
+  "status": 200,
+  "headers": {
+    "date": "Tue, 03 Mar 2026 06:35:52 GMT",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "server": "cloudflare",
+    "openai-version": "2020-10-01",
+    "openai-organization": "ccb-lab-members-2",
+    "openai-project": "proj_bGjVvPSIOHrc3927BS25Mt0h",
+    "x-request-id": "req_38f1dc2429b043bfbb4c4db095e1a02d",
+    "openai-processing-ms": "152",
+    "cf-cache-status": "DYNAMIC",
+    "x-content-type-options": "nosniff",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "cf-ray": "9d669fa41c81af61-NRT",
+    "alt-svc": "h3=\":443\"; ma=86400"
+  },
+  "body_path": "body.bin"
+}

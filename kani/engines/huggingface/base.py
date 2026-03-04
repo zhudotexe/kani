@@ -84,6 +84,7 @@ class HuggingEngine(BaseEngine):
         tokenizer_kwargs: dict = None,
         model_cls=AutoModelForCausalLM,
         model_load_kwargs: dict = None,
+        chat_template_reasoning_content_key: str = None,
         chat_template_kwargs: dict = None,
         # multimodal args
         mm_audio_sample_rate: int = None,
@@ -104,6 +105,8 @@ class HuggingEngine(BaseEngine):
         :param tokenizer_kwargs: Additional arguments to pass to ``AutoProcessor.from_pretrained()``.
         :param model_cls: Advanced use cases: The HF model class to use. Defaults to ``AutoModelForCausalLM``.
         :param model_load_kwargs: Additional arguments to pass to ``AutoModelForCausalLM.from_pretrained()``.
+        :param chat_template_reasoning_content_key: The key of each message dict that any reasoning content should be
+            set at.
         :param chat_template_kwargs: The keyword arguments to pass to ``tokenizer.apply_chat_template`` if using a chat
             template prompt pipeline.
         :param mm_audio_sample_rate: The sample rate to remux audio inputs to. Check your model's documentation for the
@@ -155,7 +158,10 @@ class HuggingEngine(BaseEngine):
         if prompt_pipeline is None:
             # try and load a manual impl, or default to chat template if not available
             prompt_pipeline = model_specific.prompt_pipeline_for_hf_model(
-                model_id, self._processor_or_tokenizer, chat_template_kwargs=chat_template_kwargs
+                model_id,
+                self._processor_or_tokenizer,
+                chat_template_reasoning_content_key=chat_template_reasoning_content_key,
+                chat_template_kwargs=chat_template_kwargs,
             )
         self.pipeline = prompt_pipeline
 

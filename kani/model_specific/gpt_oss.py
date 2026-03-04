@@ -1,11 +1,7 @@
 import logging
 import re
 
-from kani.engines.huggingface.chat_template_pipeline import (
-    ChatTemplatePromptPipeline,
-    hf_content_transform,
-    hf_tool_use_keys,
-)
+from kani.engines.huggingface.chat_template_pipeline import ChatTemplatePromptPipeline
 from kani.models import FunctionCall, ToolCall
 from kani.parts import ReasoningPart
 from .base import BaseParser
@@ -26,23 +22,10 @@ log = logging.getLogger(__name__)
 
 
 # ===== PROMPT PIPELINE =====
-# TODO maybe merge this into the base chat template pipeline if more people adopt this?
-# if so we can remove the pipeline from model_specific.__init__
-def _gptoss_chat_template_keys(message):
-    """Sets the thinking key based on any ReasoningPart's in the message."""
-    reasoning_parts = [p for p in message.parts if isinstance(p, ReasoningPart)]
-    reasoning = "\n".join(r.content for r in reasoning_parts)
-    keys = hf_tool_use_keys(message)
-    if reasoning:
-        keys["thinking"] = reasoning
-    return keys
-
-
-def build_gptoss_prompt_pipeline(tokenizer, **kwargs):
-    """We just extend the chat template pipeline with a bit of extra code to make sure the thinking key is set"""
-    return ChatTemplatePromptPipeline(tokenizer, **kwargs).conversation_dict(
-        additional_keys=_gptoss_chat_template_keys, content_transform=hf_content_transform
-    )
+def build_prompt_pipeline(tokenizer, **kwargs):
+    # set default chat_template_reasoning_content_key to "thinking"
+    kwargs["chat_template_reasoning_content_key"] = kwargs.get("chat_template_reasoning_content_key") or "thinking"
+    return ChatTemplatePromptPipeline(tokenizer, **kwargs)
 
 
 # ===== OUTPUT PARSER =====

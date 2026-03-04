@@ -15,12 +15,12 @@ twine
 
 # test
 coverage
-freezegun
 hypothesis
 pytest
 pytest-asyncio
 pytest-frozen-uuids
 pytest-lazy-fixtures
+time-machine
 
 # docs
 furo~=2025.12.19

@@ -1,0 +1,132 @@
+{
+  "id": "resp_011f5921429138750069a6815ad0d88193a62112fd5c868c3e",
+  "object": "response",
+  "created_at": 1772519770,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1772519771,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "output": [
+    {
+      "id": "rs_011f5921429138750069a6815b1e2c81938c1944306acb4af1",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABppoFbZ_s6_OUetCx0dzDqOCL8ad18sJ7tmP4cOiPkWTC4LI_YW-7m1Bm_c4EOFlHCVRX0jDGGlOTfWCEPU5iN5WRQqEFN92KMvCfMwmEv8lhJ3EqSIwUol0mDmVwb9Np6QiRvhN2Gq87iMNT1YNVaaGOh_T6ibDajF5x7J7a2OdObKODUCPyIPzoO2D6WY6lO25pzWnCJY841iIl3raL9d2-ZfZsIhIm8x46RWPi8KEcG1mTIb9RzThyOcjsqo1-AGGk0FPZBLvymc1KrtEHgNCfbGibojTPqhWyF1a_rIr9K71iUzH0827Rh4m81UZzEgTeklRFl5Vr34Hkw3l27Ml3lMTw7MFUEF888tMeOkhfb_jmYtKhKshjMX5FrJVj2dlZ9OXu1jijo8112Xhjwf_w-AfUkWfNYreniStbRR94lyHGiJcxTyMgOftykoQ_XyFVG1yLOCTiy0QG3VvJjDGLD-LX-YT8TMQ0Dwfs9ezyYOmjSfogvqfn0329n1YInv6Vw4larM4tzxYTyr2Zy44ZeG6igl3y7AhHeLbS9fSGXKokYhUmupkXr2mj-K8ezL-ifu2I45gKBJWsoyiNwhGFMY38jtaDgbJz5maEMJLm6S4B5bGbFNJQbp5hc9JP025NzwS_yVj-QjX7IZP6LDe7uKMQxzpkiYZQu8Iq9ezZFkX3NzkbrCS44HMWZl4ZuHEt1-Qy2gf1bosqohj0t60gS9-HvAiTKZUt1Cd-9_HbMrnnCnTC27gKzCagLqNawq3KhH3o6JdDnDJ1VYPamvxp0aeyNQkTOUfAkhO9YFMvh9UVCAtZ3qH_N-ZMIqd9ysQIrS6YagSj6lCwqkYxJqIT28rTKGdWgz7Pc5S_iMF9fEylqfllccEkBpo4MC0QHyTqDH1hb33tB44xeVHPo3ytWoPEE2PIw_kcJYnI08ieAWrEmr6XDosVzvUF_1Ct-_DorD6ofiLxTevzrl1xV6nkaHkzmyalesLYOWqZMfM62wNLgsWxSUGtepl-5uFfz7T7r5CkQy-MO_X3f8e_J7TCe8aFHNy9LbeuR5cOVHvIH4hPO7dMeIq49YpmkVuOfPWTTgl0ZCcBF_PAYRSdSZs4q0OuaX62hnkE1oKvCXFRccIceMs2nmo3RZrRMbMIn4VgCizE4jObSZxyyamhOa_TwPXDkNFi7mmgeHBpbp26NC2iRHdyeWP-RcY8f6sGL6E3XPMbt2_2-NOXXNJOAKRVu9V4WZ2cv8rDe3k8CCgX1ueAjlaPjaVVvqxELErCJycDc_mVZ9LJi2xVZ0_nW1XzyhZDmXjkuffiwWRjCYImf7eeJ8ApI-QITSQyBPnVl0OpkzxCva1PxpIrjWWtoIkFugdgMsiJS6hTKKRsgYObHZELTZdAaxK0VgTmsXO-KtUCYZz-ZkPDls67G1MyMC3tWQA==",
+      "summary": []
+    },
+    {
+      "id": "fc_011f5921429138750069a6815bb11c81938a4648688f3b66a7",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"user_id\":1}",
+      "call_id": "call_LryfcQVtvXw1IZCTJzGAZaHm",
+      "name": "get_order_total"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Calculate the total amount spent by a user.",
+      "name": "get_order_total",
+      "parameters": {
+        "description": "Calculate the total amount spent by a user.",
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_order_total",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Get all orders for a specific user ID.",
+      "name": "get_user_orders",
+      "parameters": {
+        "description": "Get all orders for a specific user ID.",
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_user_orders",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Search for users by city.",
+      "name": "search_users",
+      "parameters": {
+        "description": "Search for users by city.",
+        "properties": {
+          "city": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "city"
+        ],
+        "title": "search_users",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 719,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 125,
+    "output_tokens_details": {
+      "reasoning_tokens": 64
+    },
+    "total_tokens": 844
+  },
+  "user": null,
+  "metadata": {}
+}
