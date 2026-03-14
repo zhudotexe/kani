@@ -27,6 +27,15 @@ engine = GoogleAIEngine(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-2.5-f
 from kani.engines.huggingface import HuggingEngine
 engine = HuggingEngine(model_id="org-id/model-id")
 
+# ---- Qwen-3.5 (Hugging Face) ----
+from kani.engines.huggingface import HuggingEngine
+from kani.model_specific.qwen3_5 import Qwen3_5Parser
+# this method is the same for all sizes of Qwen-3.5 - simply replace the model ID!
+# NOTE: when using Qwen3.5-9B or smaller, HF is missing a generation_config -- be sure to pass eos_token_id=248046
+# and your chosen sampling parameters (e.g., temperature=1.0, top_p=1.0, top_k=None)!
+model = HuggingEngine(model_id="Qwen/Qwen3.5-4B", eos_token_id=248046)
+engine = Qwen3_5Parser(model)
+
 # ---- GPT-OSS (Hugging Face) ----
 from kani.engines.huggingface import HuggingEngine
 from kani.model_specific.gpt_oss import GPTOSSParser

@@ -17,6 +17,7 @@ PROMPT_PIPELINE_REGISTRY = [
     ("mistralai/*-2407", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
     ("mistralai/*-2409", "kani.model_specific.mistral.MISTRAL_V3_PIPELINE"),
     ("Qwen/Qwen3-*", "kani.model_specific.qwen3.build_prompt_pipeline"),
+    ("Qwen/Qwen3.5-*", "kani.model_specific.qwen3_5.build_prompt_pipeline"),
 ]
 
 # list of (HF model id glob, path to import)
@@ -30,6 +31,7 @@ PARSER_REGISTRY = [
     ("mistralai/*-2409", "kani.model_specific.mistral.MistralToolCallParser"),
     ("Qwen/Qwen3-*-Thinking*", "kani.model_specific.qwen3.Qwen3ThinkingParser"),
     ("Qwen/Qwen3-*", "kani.model_specific.qwen3.Qwen3Parser"),
+    ("Qwen/Qwen3.5-*", "kani.model_specific.qwen3_5.Qwen3_5Parser"),
 ]
 
 log = logging.getLogger(__name__)

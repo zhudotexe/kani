@@ -254,12 +254,23 @@ class HuggingEngine(BaseEngine):
         if _optional.has_multimodal_core and isinstance(self._processor_or_tokenizer, ProcessorMixin):
             audios, images, videos = self._collect_multimodal(messages)
             inputs = self._processor_or_tokenizer(  # should be a processor in this case
-                text=text, audio=audios, images=images, videos=videos, add_special_tokens=False, return_tensors="pt"
+                text=text,
+                audio=audios,
+                images=images,
+                videos=videos,
+                add_special_tokens=False,
+                return_tensors="pt",
+                return_mm_token_type_ids=False,
             )
             return inputs
 
         # otherwise run it through the processor/tokenizer with just text
-        inputs = self._processor_or_tokenizer(text=text, add_special_tokens=False, return_tensors="pt")
+        inputs = self._processor_or_tokenizer(
+            text=text,
+            add_special_tokens=False,
+            return_tensors="pt",
+            return_mm_token_type_ids=False,
+        )
         return inputs
 
     def _get_generate_args(self, prompt: str | torch.Tensor | BatchEncoding | BatchFeature, **hyperparams):
@@ -303,6 +314,11 @@ class HuggingEngine(BaseEngine):
         """Get the list of tokens that should end a generation."""
         if "eos_token_id" in hyperparams:
             genconfig_eos_token_id = hyperparams["eos_token_id"]
+        elif getattr(self.tokenizer, "eos_token_id", None):
+            genconfig_eos_token_id = self.tokenizer.eos_token_id
+        elif hasattr(self.model, "text_config") and getattr(self.model.text_config, "eos_token_id", None):
+            # multimodal models sometimes only have text_config and no generation_config (e.g. Qwen3.5)
+            genconfig_eos_token_id = self.model.text_config.eos_token_id
         else:
             genconfig_eos_token_id = self.model.generation_config.eos_token_id
 
