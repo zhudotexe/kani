@@ -68,6 +68,9 @@ class Qwen3Parser(BaseToolCallParser):
                 continue
             tool_name = data.get("name", "undefined")
             tool_args = data.get("arguments", {})
+            if not isinstance(tool_args, dict):
+                log.warning(f"Could not decode tool arguments! Skipping this tool call:\n{tool_content_match[0]!r}!")
+                continue
             tool_call = ToolCall.from_function_call(FunctionCall.with_args(tool_name, **tool_args))
             tool_calls.append(tool_call)
             content = content[: tool_content_match.start()] + content[tool_content_match.end() :]
