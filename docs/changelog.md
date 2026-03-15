@@ -1,6 +1,17 @@
 Changelog
 =========
 
+## v1.9.1
+
+- HF: Added support for Qwen-3.5
+- HF: Fixed an issue where tool parsing could fail if the model generated arguments as a string instead of JSON object
+- HF: Fixed an issue when using certain multimodal models where `mm_token_type_ids` was incorrectly passed to `generate`
+- HF: Bumped dependency versions to allow `transformers` v5
+- CLI: Improved the handling of whitespace while streaming
+- CLI (HF): Added an option to show models' reasoning tokens while streaming when defining a model-specific parser
+
+---
+
 ## v1.9.0 - OpenAI Responses API
 
 ### New Features
