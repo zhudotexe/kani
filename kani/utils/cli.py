@@ -199,6 +199,29 @@ def format_width(msg: str, width: int = None, prefix: str = "") -> str:
     return "\n".join(out)
 
 
+async def strip_stream(stream: StreamManager) -> AsyncIterable[str]:
+    """
+    Strip any leading or trailing whitespace from a stream.
+    """
+    last_trailing_ws = ""
+    first = True
+    async for token in stream:
+        # lstrip until we have a token with non-ws
+        if first:
+            token = token.lstrip()
+            if token:
+                first = False
+
+        # buffer any trailing whitespace in each token and yield it with the next token
+        stripped_token = token.rstrip()
+        trailing_ws = token[len(stripped_token) :]
+        if stripped_token:
+            yield last_trailing_ws + stripped_token
+            last_trailing_ws = trailing_ws
+        else:
+            last_trailing_ws += trailing_ws
+
+
 async def format_stream(stream: StreamManager, width: int = None, prefix: str = "") -> AsyncIterable[str]:
     """
     Yield formatted tokens from a stream such that if concatenated, the width of each line is less than *width*.
@@ -210,7 +233,7 @@ async def format_stream(stream: StreamManager, width: int = None, prefix: str = 
 
     # print tokens until they overflow width then newline and indent
     line_len = prefix_len
-    async for token in stream:
+    async for token in strip_stream(stream):
         # only print the prefix if the model actually yields anything
         if not prefix_printed:
             yield prefix
@@ -311,7 +334,7 @@ def chat_huggingface(model_id: str):
     engine = HuggingEngine(model_id=model_id)
     # HF: wrap in model-specific parser if available
     if parser := model_specific.parser_for_hf_model(engine.model_id):
-        return parser(engine)
+        return parser(engine, show_reasoning_in_stream=True)
     return engine
 
 

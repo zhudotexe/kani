@@ -36,14 +36,8 @@ class GPTOSSParser(BaseParser):
     Reasoning segments are returned as :class:`.ReasoningPart`\ s.
     """
 
-    def __init__(self, *args, show_reasoning_in_stream=False, **kwargs):
-        """
-        :param show_reasoning_in_stream: Whether reasoning tokens should be yielded during streams. By default, only
-            non-reasoning tokens will be yielded, and reasoning tokens will be included in a :class:`.ReasoningPart` in
-            the final :class:`.ChatMessage`.
-        """
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, tool_call_start_token=None, tool_call_end_token=None, **kwargs)
-        self.show_reasoning_in_stream = show_reasoning_in_stream
 
     # state machine for stream on special token, regex for parse
     def parse_completion(self, completion: BaseCompletion) -> BaseCompletion:
@@ -72,7 +66,9 @@ class GPTOSSParser(BaseParser):
         return completion
 
     async def stream(self, messages, functions=None, **hyperparams):
-        state = _GPTOSSStreamState(show_reasoning=self.show_reasoning_in_stream)
+        state = _GPTOSSStreamState(
+            show_reasoning=self.show_reasoning_in_stream, reasoning_color=self.reasoning_in_stream_color
+        )
         async for elem in super().stream(messages, functions, **hyperparams):
             if isinstance(elem, str):
                 for tokenlike in SPECIAL_TOKEN_REGEX_2.split(elem):
@@ -86,11 +82,12 @@ class GPTOSSParser(BaseParser):
 
 
 class _GPTOSSStreamState:
-    def __init__(self, show_reasoning):
+    def __init__(self, show_reasoning, reasoning_color):
         # the last seen special token, e.g. "start", "channel", "constrain", "message"
         # end sets this to None
         # https://cookbook.openai.com/articles/openai-harmony#special-tokens
         self.show_reasoning = show_reasoning
+        self.reasoning_color = reasoning_color
         self.state = None
         self.channel = None
         self.to = None
@@ -103,6 +100,8 @@ class _GPTOSSStreamState:
             self.transition_states(match["type"])
         # in message state and part is visible to user: yield it
         elif self.is_visible_to_user():
+            if self.channel == "analysis" and self.reasoning_color:
+                return f"\033[0;37m{part}\033[0m"
             return part
         # default: keep buffering
         else:

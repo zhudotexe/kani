@@ -58,6 +58,8 @@ def assistant_message_contents_thinking(msg: ChatMessage, show_args=False, show_
     # function calls
     if not msg.tool_calls:
         return text
+    if not text:
+        return assistant_message_thinking(msg, show_args).strip()
     return f"{text}\n{assistant_message_thinking(msg, show_args)}".strip()
 
 
