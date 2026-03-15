@@ -251,7 +251,8 @@ class HuggingEngine(BaseEngine):
         log.debug(f"BUILT PROMPT TEXT: {text}")
 
         # if multimodal is installed and we have a processor, collect parts and run them through the processor
-        if _optional.has_multimodal_core and isinstance(self._processor_or_tokenizer, ProcessorMixin):
+        is_processor = isinstance(self._processor_or_tokenizer, ProcessorMixin)
+        if _optional.has_multimodal_core and is_processor:
             audios, images, videos = self._collect_multimodal(messages)
             inputs = self._processor_or_tokenizer(  # should be a processor in this case
                 text=text,
@@ -263,14 +264,18 @@ class HuggingEngine(BaseEngine):
                 return_mm_token_type_ids=False,
             )
             return inputs
+        elif is_processor:
+            # we want to pass return_mm_token_type_ids=False to a Processor only
+            inputs = self._processor_or_tokenizer(
+                text=text,
+                add_special_tokens=False,
+                return_tensors="pt",
+                return_mm_token_type_ids=False,
+            )
+            return inputs
 
-        # otherwise run it through the processor/tokenizer with just text
-        inputs = self._processor_or_tokenizer(
-            text=text,
-            add_special_tokens=False,
-            return_tensors="pt",
-            return_mm_token_type_ids=False,
-        )
+        # otherwise run it through the tokenizer with just text
+        inputs = self._processor_or_tokenizer(text=text, add_special_tokens=False, return_tensors="pt")
         return inputs
 
     def _get_generate_args(self, prompt: str | torch.Tensor | BatchEncoding | BatchFeature, **hyperparams):
