@@ -26,7 +26,11 @@ else:
 class WikipediaRetrievalKani(Kani):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.wikipedia_client = httpx.AsyncClient(base_url="https://en.wikipedia.org/w/api.php", follow_redirects=True)
+        self.wikipedia_client = httpx.AsyncClient(
+            base_url="https://en.wikipedia.org/w/api.php",
+            follow_redirects=True,
+            headers={"User-Agent": "kani/dev (andrz@seas.upenn.edu)"},
+        )
 
     @ai_function()
     async def get_article(
@@ -61,7 +65,7 @@ class WikipediaRetrievalKani(Kani):
 
 
 async def stream_query(query: str):
-    async for stream in ai.full_round_stream(query):
+    async for stream in ai.full_round_stream(query, max_function_rounds=10):
         # assistant
         if stream.role == ChatRole.ASSISTANT:
             await print_stream(stream, prefix="AI: ")
@@ -72,35 +76,29 @@ async def stream_query(query: str):
         # function
         elif stream.role == ChatRole.FUNCTION:
             msg = await stream.message()
-            print_width(msg.text, prefix="FUNC: ")
+            print_width(msg.text[:500], prefix="FUNC: ")
 
 
 async def print_query(query: str):
-    async for msg in ai.full_round(query):
+    async for msg in ai.full_round(query, max_function_rounds=10):
         # assistant
         if msg.role == ChatRole.ASSISTANT:
             text = assistant_message_contents_thinking(msg, show_args=True)
             print_width(text, prefix="AI: ")
         # function
         elif msg.role == ChatRole.FUNCTION:
-            print_width(msg.text, prefix="FUNC: ")
+            print_width(msg.text[:500], prefix="FUNC: ")
 
 
 async def main():
     print(engine)
-    print("======== testing query simple ========")
-    await print_query("Tell me about the Yamanote line.")
-
-    print("======== testing query complex ========")
-    await print_query(
-        "How many subway lines does each station on the Yamanote line connect to? Give me a precise list of each"
-        " station, its ID, and all the lines (if any) each connects to."
-    )
-
     print("======== testing stream simple ========")
     await stream_query(
         "What are some of the weirdest (real) trains in Japan? When do they operate and how much do they cost?"
     )
+
+    print("======== testing query simple ========")
+    await print_query("Tell me about the Yamanote line.")
 
     print("======== testing stream complex ========")
     await stream_query(
@@ -109,6 +107,12 @@ async def main():
         " real-time route, just an outline of how you would do it. Each step should be of the following"
         ' form:\n```json\n{\n    "from": "Station Name (Station ID)",\n    "to": "Station Name (Station ID)",\n   '
         ' "line": "JR Line Name",\n    "duration": 120, // duration in minutes\n    "cost": 5000 // cost in yen\n}\n```'
+    )
+
+    print("======== testing query complex ========")
+    await print_query(
+        "How many subway lines does each station on the Yamanote line connect to? Give me a precise list of each"
+        " station, its ID, and all the lines (if any) each connects to."
     )
 
 

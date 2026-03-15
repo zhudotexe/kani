@@ -1,0 +1,19 @@
+<s>[INST] <<SYS>>
+Before replying to the user, output the word 'ABRACADABRA' on its own line.
+<</SYS>>
+
+Write me a Python function to calculate a factorial. [/INST]  ABRACADABRA
+
+Sure! Here is a simple Python function to calculate the factorial of a given number:
+```
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+```
+You can use this function by calling it with a number, like this:
+```
+print(factorial(5)) # prints 120
+```
+I hope this helps! Let me know if you have any questions.</s>
