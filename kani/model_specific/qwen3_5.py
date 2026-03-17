@@ -2,7 +2,6 @@ import logging
 import re
 
 from kani.models import FunctionCall, ToolCall
-
 from .base import BaseParser
 from ..engines.huggingface import ChatTemplatePromptPipeline
 
