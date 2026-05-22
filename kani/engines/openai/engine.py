@@ -114,21 +114,23 @@ class OpenAIEngine(TokenCached, BaseEngine):
         self.max_context_size = max_context_size
         self.hyperparams = hyperparams
         self.openai_api_type = api_type
-        self.tokenizer = tokenizer  # tiktoken caches a tokenizer globally in module, so we can unconditionally load it
-        self._load_tokenizer()
+        self._tokenizer = tokenizer  # tiktoken caches a tokenizer globally in module, so we can unconditionally load it
 
     # ==== token counting ====
-    def _load_tokenizer(self):
-        if self.tokenizer:
-            return
+    @property
+    def tokenizer(self):
+        if self._tokenizer is not None:
+            return self._tokenizer
+        # we load this lazily now since responses API doesn't need it, and to allow overrides more easily
         try:
-            self.tokenizer = tiktoken.encoding_for_model(self.model)
+            self._tokenizer = tiktoken.encoding_for_model(self.model)
         except KeyError:
             warnings.warn(
                 f"Could not find a tokenizer for the {self.model} model. You may need to update tiktoken. Using"
                 " o200k_base tokenizer as default."
             )
-            self.tokenizer = tiktoken.get_encoding("o200k_base")
+            self._tokenizer = tiktoken.get_encoding("o200k_base")
+        return self._tokenizer
 
     def message_len(self, message: ChatMessage) -> int:
         if (cached_len := self.get_cached_message_len(message)) is not None:

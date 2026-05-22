@@ -1,17 +1,20 @@
 # https://platform.openai.com/docs/models
 CONTEXT_SIZES_BY_PREFIX = [
     # gpt-5
+    ("gpt-5.5", 1_050_000),
+    ("gpt-5.4", 1_050_000),
     ("gpt-5", 400000),
     # o1, o3, o4
     ("o1", 200000),
     ("o3", 200000),
     ("o4", 200000),
     # gpt-4.1
-    ("gpt-4.1", 1047576),
+    ("gpt-4.1", 1_047_576),
     # gpt-4o
     ("gpt-4o", 128000),
     ("chatgpt-4o", 128000),
     # multimodal models
+    ("gpt-realtime", 32000),
     ("gpt-audio", 128000),
     # ======
     # gpt-4-turbo models aren't prefixed differently...
@@ -40,14 +43,18 @@ CONTEXT_SIZES_BY_PREFIX = [
 
 API_BY_PREFIX = [
     # responses api
+    # gpt 5
+    ("gpt-5.5-pro", "responses"),
+    ("gpt-5.4-pro", "responses"),
+    ("gpt-5-codex", "responses"),
+    ("gpt-5-pro", "responses"),
+    ("gpt-5.1-codex-max", "responses"),
+    # o-series
     ("o1-pro", "responses"),
     ("o3-pro", "responses"),
     ("o3-deep-research", "responses"),
     ("o4-mini-deep-research", "responses"),
     ("computer-use", "responses"),
-    ("gpt-5-codex", "responses"),
-    ("gpt-5-pro", "responses"),
-    ("gpt-5.1-codex-max", "responses"),
     # catch-all
     ("", "chat_completions"),
 ]
@@ -57,6 +64,8 @@ API_BY_PREFIX = [
 # https://platform.openai.com/docs/guides/images-vision?api-mode=chat#calculating-costs
 # model_id -> multiplier
 MM_IMAGE_LOW_COST_SCALE = {
+    "gpt-5.4-mini": 1.62,
+    "gpt-5.4-nano": 2.46,
     "gpt-5-mini": 1.62,
     "gpt-5-nano": 2.46,
     "gpt-4.1-mini": 1.62,
