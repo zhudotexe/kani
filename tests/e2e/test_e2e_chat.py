@@ -87,7 +87,7 @@ class TestE2EChat:
                     try:
                         token_len = await self.prompt_token_len(
                             messages=self.always_included_messages + self.chat_history[-to_keep:],
-                            functions=list(self.functions.values()) if include_functions else None,
+                            functions=self.get_enabled_functions() if include_functions else None,
                             **kwargs,
                         )
                         if token_len <= max_len:

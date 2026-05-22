@@ -133,7 +133,7 @@ def fmt_http_request(request: httpx.Request) -> bytes:
     """
     # head
     parts = [request.method.encode() + b" " + str(request.url).encode()]
-    for k, v in request.headers.items():
+    for k, v in sorted(request.headers.items()):  # sort by header to prevent order invalidating cache
         if k.lower() in REDACTED_HEADERS:
             parts.append(k.encode() + b": *** REDACTED ***")
         elif k.lower() in REQUEST_KEPT_HEADERS:

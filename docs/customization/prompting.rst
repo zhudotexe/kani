@@ -46,7 +46,7 @@ For example, here's how you might override the behaviour to only include the mos
                 # if the message fits in the space we have remaining...
                 token_len = await self.prompt_token_len(
                     messages=self.always_included_messages + [message] + messages,
-                    functions=list(self.functions.values())
+                    functions=self.get_enabled_functions()
                 )
                 if token_len <= max_len:
                     # add it to the returned prompt!

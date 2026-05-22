@@ -29,7 +29,7 @@ class WikipediaRetrievalKani(Kani):
         print(
             "expected prompt len:",
             sum(self.message_token_len(m) for m in msgs)
-            + self.engine.function_token_reserve(list(self.functions.values())),
+            + self.engine.function_token_reserve(self.get_enabled_functions()),
         )
         return msgs
 

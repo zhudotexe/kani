@@ -392,7 +392,7 @@ class Kani:
 
         # get the model's completion at the given state
         if include_functions:
-            completion = await self.engine.predict(messages=messages, functions=list(self.functions.values()), **kwargs)
+            completion = await self.engine.predict(messages=messages, functions=self.get_enabled_functions(), **kwargs)
         else:
             completion = await self.engine.predict(messages=messages, **kwargs)
 
@@ -412,7 +412,7 @@ class Kani:
 
         # get the model's completion at the given state
         if include_functions:
-            stream = self.engine.stream(messages=messages, functions=list(self.functions.values()), **kwargs)
+            stream = self.engine.stream(messages=messages, functions=self.get_enabled_functions(), **kwargs)
         else:
             stream = self.engine.stream(messages=messages, **kwargs)
 
@@ -438,7 +438,7 @@ class Kani:
             :meth:`full_round` (e.g. decoding arguments).
         """
         max_size = self.max_context_size - self.desired_response_tokens
-        functions = list(self.functions.values()) if include_functions else None
+        functions = self.get_enabled_functions() if include_functions else None
         # track what exceptions a given to_keep raised
         # this is mostly useful for printing unique errors and determining if it is a last message too long issue
         excs_by_len = {}
@@ -544,6 +544,13 @@ class Kani:
         if not to_keep:
             return self.always_included_messages
         return self.always_included_messages + self.chat_history[-to_keep:]
+
+    def get_enabled_functions(self) -> list[AIFunction]:
+        """
+        Get the list of current enabled AIFunctions. By default this returns all AIFunctions in self.functions
+        where AIFunction.enabled is truthy.
+        """
+        return [f for f in self.functions.values() if f.enabled]
 
     async def do_function_call(self, call: FunctionCall, tool_call_id: str = None) -> FunctionCallResult:
         """Resolve a single function call.
@@ -734,7 +741,7 @@ class Kani:
         return (
             sum(self.message_token_len(m) for m in self.always_included_messages)
             + self.engine.token_reserve
-            + self.engine.function_token_reserve(list(self.functions.values()))
+            + self.engine.function_token_reserve(self.get_enabled_functions())
             + self.desired_response_tokens
         )
 

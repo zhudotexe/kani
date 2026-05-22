@@ -23,6 +23,7 @@ class AIFunction:
         auto_retry: bool = True,
         json_schema: dict | None = None,
         auto_truncate: int | None = None,
+        enabled: bool = True,
     ):
         """
         :param inner: The function implementation.
@@ -41,6 +42,8 @@ class AIFunction:
             .. versionchanged:: 1.7.0
                 This parameter now truncates to a certain number of characters, rather than tokens, since it is not
                 possible to reliably determine the token count of a message out of prompt context for all engines.
+        :param enabled: Whether the function should be included in the prompt passed to the model. Disabled functions
+            will still be executed if the model generates a call to them despite not being passed to the model.
         """
         # pydantic's wrapper mangles the async signature so we have to store this here
         self._inner_is_coro = inspect.iscoroutinefunction(inner)
@@ -51,6 +54,7 @@ class AIFunction:
         self.auto_retry = auto_retry
         self.json_schema = self.create_json_schema() if json_schema is None else json_schema
         self.auto_truncate = auto_truncate
+        self.enabled = enabled
 
         # wraps() things
         for attr in ("__name__", "__qualname__", "__annotations__", "__module__", "__doc__"):
@@ -117,8 +121,9 @@ class AIFunction:
 
     def __repr__(self):
         return (
-            f"{type(self).__name__}(name={self.name!r}, desc={self.desc!r}, json_schema={self.json_schema!r}, "
-            f"after={self.after!r}, auto_retry={self.auto_retry!r}, auto_truncate={self.auto_truncate!r})"
+            f"{type(self).__name__}(name={self.name!r}, desc={self.desc!r}, json_schema={self.json_schema!r},"
+            f" after={self.after!r}, auto_retry={self.auto_retry!r}, auto_truncate={self.auto_truncate!r},"
+            f" enabled={self.enabled!r})"
         )
 
 
@@ -131,6 +136,7 @@ def ai_function(
     auto_retry: bool = True,
     json_schema: dict | None = None,
     auto_truncate: int | None = None,
+    enabled: bool = True,
 ):
     """Decorator to mark a method of a Kani to expose to the AI.
 
@@ -148,6 +154,8 @@ def ai_function(
             .. versionchanged:: 1.7.0
                 This parameter now truncates to a certain number of characters, rather than tokens, since it is not
                 possible to reliably determine the token count of a message out of prompt context for all engines.
+    :param enabled: Whether the function should be included in the prompt passed to the model. Disabled functions
+        will still be executed if the model generates a call to them despite not being passed to the model.
     """
 
     def deco(f):
@@ -158,6 +166,7 @@ def ai_function(
             "auto_retry": auto_retry,
             "json_schema": json_schema,
             "auto_truncate": auto_truncate,
+            "enabled": enabled,
         }
         return f
 
