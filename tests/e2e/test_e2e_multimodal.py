@@ -7,10 +7,7 @@ import kani._optional
 from kani import Kani, print_stream, print_width
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
-pytestmark = [
-    pytest.mark.e2e,
-    pytest.mark.freeze_uuids(side_effect="random"),
-]
+pytestmark = pytest.mark.e2e
 
 TEST_DATA_DIR = Path(__file__).parent / "data"
 

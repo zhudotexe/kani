@@ -18,7 +18,6 @@ coverage
 hypothesis
 pytest
 pytest-asyncio
-pytest-frozen-uuids
 pytest-lazy-fixtures
 time-machine
 

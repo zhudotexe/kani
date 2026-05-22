@@ -17,6 +17,7 @@ import mimetypes
 import os
 import pprint
 import re
+import uuid
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -57,6 +58,20 @@ def mock_date():
         tick=True,  # so pycharm reports correct test timing
     ):
         yield
+
+
+@pytest.fixture(autouse=True)
+def mock_uuids(monkeypatch):
+    # Stable UUIDs for tests that don’t actually care about uniqueness
+    class _UUID4:
+        _i = 0
+
+        def __call__(self):
+            self._i += 1
+            return uuid.UUID(int=self._i)
+
+    u = _UUID4()
+    monkeypatch.setattr(uuid, "uuid4", u)
 
 
 def get_current_pytest_name(default="_ungrouped"):

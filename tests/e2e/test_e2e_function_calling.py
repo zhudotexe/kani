@@ -18,10 +18,7 @@ from pytest_lazy_fixtures import lf
 from kani import AIParam, ChatRole, Kani, ai_function, print_stream, print_width
 from kani.utils.message_formatters import assistant_message_contents_thinking, assistant_message_thinking
 
-pytestmark = [
-    pytest.mark.e2e,
-    pytest.mark.freeze_uuids(side_effect="random"),
-]
+pytestmark = pytest.mark.e2e
 
 
 # ==== Test Kani Classes ====
