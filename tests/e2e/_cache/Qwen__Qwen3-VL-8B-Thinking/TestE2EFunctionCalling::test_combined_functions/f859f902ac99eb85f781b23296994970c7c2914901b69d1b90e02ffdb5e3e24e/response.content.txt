@@ -1,0 +1,74 @@
+<|im_start|>system
+You are a weather assistant. Use the provided functions to answer weather questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_forecast", "description": "Get the 3-day forecast for a location.", "parameters": {"description": "Get the 3-day forecast for a location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}}, "required": ["location"], "title": "get_forecast", "type": "object"}}}
+{"type": "function", "function": {"name": "get_weather", "description": "Get the current weather in a given location.", "parameters": {"description": "Get the current weather in a given location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}, "unit": {"enum": ["fahrenheit", "celsius"], "title": "Unit", "type": "string"}}, "required": ["location", "unit"], "title": "get_weather", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What's the current weather in Miami and what's the forecast for the next 3 days?<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user is asking for the current weather in Miami and the 3-day forecast. Let me check what tools I have.
+
+First, for the current weather, there's the get_weather function. It requires location and unit. The user didn't specify the unit, but since they mentioned Miami, which is in the US, probably Fahrenheit is standard. But the function's parameters say unit is required. Wait, the user might expect the answer in a common unit. Since they didn't specify, maybe I should default to Fahrenheit. But the function requires it, so I have to choose. The user didn't say, so maybe I need to assume. The function has enum options of fahrenheit or celsius. Since Miami is in the US, it's safer to use Fahrenheit. So I'll set unit to fahrenheit.
+
+Then, for the 3-day forecast, the get_forecast function is needed. It requires location, which is Miami, so "Miami, FL". The user said "Miami", but the function expects city and state, so probably "Miami, FL".
+
+Wait, the user's question has two parts: current weather and 3-day forecast. So I need to call both functions.
+
+Check if both functions are necessary. Yes, the user wants both current and forecast. So I need to make two tool calls.
+
+First tool call: get_weather with location "Miami, FL" and unit "fahrenheit".
+
+Second tool call: get_forecast with location "Miami, FL".
+
+Wait, the get_forecast function's description says it's the 3-day forecast. The get_weather is current. So yes, both are needed.
+
+So I should generate two tool_call entries, each with their respective functions and arguments.
+</think>
+
+<tool_call>
+{"name": "get_weather", "arguments": {"location": "Miami, FL", "unit": "fahrenheit"}}
+</tool_call>
+<tool_call>
+{"name": "get_forecast", "arguments": {"location": "Miami, FL"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+Weather in Miami, FL: Humid, 85 degrees fahrenheit.
+</tool_response>
+<tool_response>
+3-day forecast for Miami, FL: Day 1: Partly cloudy, Day 2: Sunny, Day 3: Rainy
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user asked for the current weather in Miami and the 3-day forecast. I called both functions and got the responses.
+
+First, the get_weather response says "Humid, 85 degrees fahrenheit." So current weather is humid at 85°F.
+
+Then the get_forecast shows Day 1: Partly cloudy, Day 2: Sunny, Day 3: Rainy.
+
+I need to present both pieces of information clearly. Let me structure the answer. Start with the current weather, then the forecast for each day. Use a friendly tone, mention the temperature if available. Wait, the forecast response doesn't include temperature, just the conditions. So I'll stick to what's provided.
+
+Make sure to mention Miami, FL, and list each day's forecast. Check if there's any missing info but since the tools gave the data, just relay it accurately.
+</think>
+
+The current weather in Miami, FL is **humid** with a temperature of **85°F**.
+
+Here's the 3-day forecast for Miami, FL:  
+- **Day 1**: Partly cloudy  
+- **Day 2**: Sunny  
+- **Day 3**: Rainy  
+
+Let me know if you'd like more details! 😊<|im_end|>

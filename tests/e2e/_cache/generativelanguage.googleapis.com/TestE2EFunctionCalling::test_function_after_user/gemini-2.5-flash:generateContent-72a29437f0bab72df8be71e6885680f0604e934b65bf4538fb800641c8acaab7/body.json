@@ -7,12 +7,12 @@
             "functionCall": {
               "name": "send_email",
               "args": {
-                "subject": "Meeting Tomorrow",
+                "body": "See you at 3pm",
                 "recipient": "john@example.com",
-                "body": "See you at 3pm"
+                "subject": "Meeting Tomorrow"
               }
             },
-            "thoughtSignature": "Cs8DAdHtim+Hnw9Lv0aw0gywR7nPWUNGASk88Grl/jzUJn79FO1sSBqMI9U3ZhqCcuXT8mckp9NYbe0fMkFq2Y4r9qZQ1BjxiquNJWNqpLH3OMeAYBl2N3TdblVdTbkCv7eBTaVIB68o+tkvfzI3C4YltmBsTtLMiyDl30RaItONsRzwG8sTkHJ7+1BYsRq/B2f4ybgzeFVXEN63oEQVRx9/yt9+mTi5671uj1kQBG/mOklxlYg8NMIm5WLosJT8bLKgnT40zj56B84x4gJSi9REguvfrrkvvtX4XWawvtYyCHOt8OyWXgXSHmpYQI4Fk4Z/LgKHrUaDOPvzQFnk42bPzddwTMOwFrtuGhYNqu/QvcLmLSslgvQH+x228vGAFlZH1XltOynki/ewhk5BwuFSW3rsj7pTHusUHYA157uXJgR9BqIf7KWzFWgk2685/Cko8qWGoxljo/NVUu3NYfGIpVJoWGnAJhBIuyu3bGAUzqDS9vB9qJvOWvXMO6Q4ArEOVMnQbcXMac7jggDJXjeHM6PR/dggU5yzSbVEyoOFZGazAJulU3bf28MBe/YsqSUVf+0gVsHFgSvtgtknbId+p+vA5Su2B5trpjDHKbAdVQ=="
+            "thoughtSignature": "CqUEAQw51sfbT7eDGTlEomcW/3V4m2DQUCNHsrRLsStWrbIR7Tu8DSEPcbZseK5P6ouLhvwuMgYrp/tfV7ECDqyYvHBPNXv0F2smtPvJc7KLaT4mBs6pK8cezBA4IDz7fOKzz7hZPZcwi3XaUcE5PUBcHJ9TumgONPRVbtdhSBrtNqHGwMPSiZvvLg7GBeLNUhArzmM3K8+khZMMyJnn/ydWVwIhJliuCHqAHY/REBAUw7ZQ6PIgNs2mHQwuM/IvRcg7C4IF/CqKgMADXSQrS5ozZH8S2QE5jMbX89do3XFCdbdK2uFbevqXa/eYmA3s1S8LLiXdzYJ2JRJAwQZmcDmkMvsZ2nHOvo4NwI9wz9Da8BXiqB1iBd/ZQDqcjSLL/CDpy27zvJrxf5d2f0v4QAegb91YLHkT3tS5S4cyLO52MVHig6uTn9ZNjFMcFTVgCWV0CJw4Z5pza41U/zdI4iQZKrm77JQGkPObdxwVDj/t68PI0O/rFlZc7RsimNAyIksUoAZgaKjsHEsDc2mVXngM8DamcGHc5o9eBRYhQvMPJptB+D5RlAxr76wvW6nesJOdrBULtknVryuCO58rBggkQgeV5JrgB+fXxiEjlDmko3xWPvSYatUkPaeh7WmzKCjJJzRmXqgGlmlN3xyyXPZpJ3QMpk4YLTLflNjJE5lhekB6A0qYB0n03UOr2ziC/lNxhUx5d9ovgmkOWB6Wj6Xhqz1vS46I"
           }
         ],
         "role": "model"
@@ -25,15 +25,16 @@
   "usageMetadata": {
     "promptTokenCount": 140,
     "candidatesTokenCount": 35,
-    "totalTokenCount": 290,
+    "totalTokenCount": 303,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
         "tokenCount": 140
       }
     ],
-    "thoughtsTokenCount": 115
+    "thoughtsTokenCount": 128,
+    "serviceTier": "standard"
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "eYP6aPzHB7bXjMcPnIed8Q0"
+  "responseId": "rckPaqSrJaOD2roPioi72A0"
 }

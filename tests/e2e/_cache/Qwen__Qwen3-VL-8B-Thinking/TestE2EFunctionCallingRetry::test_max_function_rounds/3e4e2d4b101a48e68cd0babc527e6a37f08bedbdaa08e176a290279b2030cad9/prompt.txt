@@ -1,0 +1,210 @@
+<|im_start|>system
+You are a calculator assistant. Use functions for every calculation.<|im_end|>
+<|im_start|>user
+Calculate: (2+3) * (4+5) * (6+7). Use functions for each step.<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, let me try to figure out how to solve this problem. The user wants me to calculate (2+3) * (4+5) * (6+7) using functions for each step. Let me break it down.
+
+First, I need to handle each part of the expression step by step. The problem has three separate additions inside parentheses: (2+3), (4+5), and (6+7). Then, those results are multiplied together.
+
+So, the first step is to add 2 and 3. That should be 5. Then add 4 and 5 to get 9, and add 6 and 7 to get 13. After that, multiply all three results: 5 * 9 * 13.
+
+But the user specified using functions for each step. Looking at the available tools, there's an 'add' function that takes two integers. Let me check the parameters. The add function requires two integers, a and b. So for each addition, I can call the add function.
+
+First, calculate 2 + 3. So I should call add with a=2, b=3. Then, 4 + 5 would be another call to add with a=4, b=5. Similarly, 6 + 7 is add with a=6, b=7.
+
+After getting those three results, I need to multiply them. The multiply function also takes two integers, but wait, the multiplication here is three numbers multiplied together. Wait, the multiply function is for two numbers. Hmm, so maybe I need to do it step by step. Like first multiply 5 and 9 to get 45, then multiply 45 by 13.
+
+Wait, but the user said "use functions for each step". So each operation (addition and multiplication) should be handled by the appropriate function.
+
+So let's outline the steps:
+
+1. Compute (2+3) using add(a=2, b=3)
+2. Compute (4+5) using add(a=4, b=5)
+3. Compute (6+7) using add(a=6, b=7)
+4. Multiply the results of steps 1 and 2: multiply(a=5, b=9)
+5. Multiply the result from step 4 with step 3: multiply(a=45, b=13)
+
+Wait, but the user's instruction says "Use functions for each step". So each operation is a step, so each addition and multiplication should be a separate function call.
+
+So the tool calls needed would be:
+
+First, three add calls for the sums.
+
+Then two multiply calls for the multiplications.
+
+Wait, but the problem is written as (2+3)*(4+5)*(6+7). So three additions and two multiplications. Let's confirm.
+
+Original expression: (2+3) * (4+5) * (6+7) = 5 * 9 * 13.
+
+Breaking it into steps:
+
+Step 1: 2+3 = 5 (call add)
+Step 2: 4+5 = 9 (call add)
+Step 3: 6+7 =13 (call add)
+Step 4: 5*9 =45 (call multiply)
+Step 5: 45*13 = 585 (call multiply)
+
+So each of these steps should have a tool call. The user probably wants each of these operations to be handled by the functions.
+
+So the tool calls should be:
+
+Add for 2+3, then add for 4+5, then add for 6+7, then multiply 5 and 9, then multiply 45 and 13.
+
+But the user said "Use functions for each step." So the assistant should generate tool calls for each of these steps.
+
+Wait, the user instruction says "Calculate: (2+3) * (4+5) * (6+7). Use functions for each step."
+
+So each operation (add and multiply) should be a separate function call.
+
+But how does the system handle multiple tool calls? The example shows that each tool call is in a tool_call XML block.
+
+So for the given problem, we need to make three add calls first, then two multiply calls.
+
+Wait, but the user might expect that each step in the calculation is a function call, so the assistant should generate each step as a tool call.
+
+Let me check the problem statement again: "Use functions for each step."
+
+So step 1: calculate 2+3 using add(2,3)
+step 2: calculate 4+5 using add(4,5)
+step 3: calculate 6+7 using add(6,7)
+step 4: multiply the first result by the second: multiply(5,9)
+step 5: multiply the result by the third: multiply(45,13)
+
+But the problem is that the user is expecting the assistant to generate all the necessary tool calls in sequence. However, the system may process each tool call one by one. But in this case, the user is asking for all steps, so the assistant should list all the function calls required.
+
+But the assistant should generate each tool_call as per the steps.
+
+So, first, three add calls, then two multiply calls.
+
+Wait, but the functions are: add, divide, multiply.
+
+But the problem requires three additions and two multiplications, so the correct tool calls would be:
+
+1. add(a=2, b=3)
+2. add(a=4, b=5)
+3. add(a=6, b=7)
+4. multiply(a=5, b=9)
+5. multiply(a=45, b=13)
+
+But the problem is, in the initial problem, the results of the add operations are the arguments for the multiply functions. So the multiply functions would require the results from previous add calls.
+
+But the assistant can't know the results of the add calls until they are called. So the correct approach is to first call all the add functions, get their results, then call the multiply functions with the results.
+
+However, the user's instruction says "Use functions for each step", meaning that each operation (add and multiply) should be a function call. So the assistant should generate tool calls for each of these operations in order.
+
+So the answer should be five tool calls: three adds and two multiplies.
+
+Wait, but in the problem statement, the user says "Use functions for each step." So each step in the calculation (each operation) is a step, hence each function call is a step.
+
+So the correct approach is to generate all necessary tool calls in the order they would be executed. Let's see.
+
+First, compute the additions:
+
+1. (2+3) → add(2,3)
+2. (4+5) → add(4,5)
+3. (6+7) → add(6,7)
+
+Then multiply the first result with the second:
+
+4. (result1 * result2) → multiply(result1, result2)
+5. (result3 * previous multiply result) → multiply(result3, result4)
+
+Therefore, the assistant should generate tool calls in this order.
+
+But the problem is, the assistant can't know the actual values until the functions are called, but since it's a simulation, we need to list the function calls that would be needed, assuming that each function call returns the correct value.
+
+Wait, but the user wants the calculation steps, using functions for each step. So the assistant needs to generate tool calls for each operation. So even though the multiply function is called with the results of previous adds, the assistant should list the tool calls in order.
+
+So the correct sequence of tool calls would be:
+
+1. add(a=2, b=3)
+2. add(a=4, b=5)
+3. add(a=6, b=7)
+4. multiply(a=5, b=9)
+5. multiply(a=45, b=13)
+
+But how to know the values for the multiply steps? Well, the assistant would have to assume that after the add calls, the results are known. However, in reality, the assistant would need to wait for the results of each add call before proceeding. But since the user is asking for the steps, perhaps the assistant is supposed to list all the necessary tool calls in sequence, even if the parameters for later steps depend on previous results.
+
+But given the problem statement, the user expects the assistant to generate all the necessary tool calls, each for a step in the calculation.
+
+So the answer should be:
+
+First, three add calls for the sums, then two multiply calls for the products.
+
+Thus, the tool calls would be:
+
+- add(2,3)
+- add(4,5)
+- add(6,7)
+- multiply(5,9)
+- multiply(45,13)
+
+Wait, but the parameters for the multiply functions must be integers. Since the add functions return integers, and the multiply function takes integers, this is valid.
+
+But the assistant should generate the tool calls as per the required steps.
+
+Therefore, the correct answer is to list all five tool calls. However, in the problem statement, the user says "Use functions for each step", so each operation is a step. Therefore, the assistant should make the tool calls for each of these operations in the order they are performed.
+
+So first, add 2 and 3, then add 4 and 5, then add 6 and 7, then multiply the first two results, then multiply that product with the third result.
+
+Therefore, the five tool calls are necessary.
+</think>
+
+<tool_call>
+{"name": "add", "arguments": {"a": 2, "b": 3}}
+</tool_call>
+<tool_call>
+{"name": "add", "arguments": {"a": 4, "b": 5}}
+</tool_call>
+<tool_call>
+{"name": "add", "arguments": {"a": 6, "b": 7}}
+</tool_call>
+<tool_call>
+{"name": "multiply", "arguments": {"a": 5, "b": 9}}
+</tool_call>
+<tool_call>
+{"name": "multiply", "arguments": {"a": 45, "b": 13}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+5
+</tool_response>
+<tool_response>
+9
+</tool_response>
+<tool_response>
+13
+</tool_response>
+<tool_response>
+45
+</tool_response>
+<tool_response>
+585
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+
+==========
+tensor([[151644,   8948,    198,   2610,    525,    264,  29952,  17847,     13,   5443,   5746,    369,   1449,  21937,     13, 151645,    198, 151644,    872,    198,  47866,     25,    320,     17,     10,     18,      8,    353,    320,     19,     10,     20,      8,    353,    320,     21,     10,     22,    568,   5443,   5746,    369,   1817,   3019,     13, 151645,    198, 151644,  77091,    198, 151667,    198,  32313,     11,   1077,    752,   1430,    311,   7071,    700,   1246,    311,  11625,    419,   3491,     13,    576,   1196,   6801,    752,    311,  11047,    320,     17,     10,     18,      8,    353,    320,     19,     10,     20,      8,    353,    320,     21,     10,     22,      8,   1667,   5746,    369,   1817,   3019,     13,   6771,    752,   1438,    432,   1495,    382,   5338,     11,    358,   1184,    311,   3705,   1817,    949,    315,    279,   7493,   3019,    553,   3019,     13,    576,   3491,    702,   2326,   8651,  37214,   4766,
+          73975,     25,    320,     17,     10,     18,    701,    320,     19,     10,     20,    701,    323,    320,     21,     10,     22,    568,   5005,     11,   1846,   3059,    525,  54916,   3786,    382,   4416,     11,    279,   1156,   3019,    374,    311,    912,    220,     17,    323,    220,     18,     13,   2938,   1265,    387,    220,     20,     13,   5005,    912,    220,     19,    323,    220,     20,    311,    633,    220,     24,     11,    323,    912,    220,     21,    323,    220,     22,    311,    633,    220,     16,     18,     13,   4636,    429,     11,  30270,    678,   2326,   3059,     25,    220,     20,    353,    220,     24,    353,    220,     16,     18,    382,   3983,    279,   1196,   5189,   1667,   5746,    369,   1817,   3019,     13,  21131,    518,    279,   2500,   7375,     11,   1052,    594,    458,    364,    718,      6,    729,    429,   4990,   1378,  25780,     13,   6771,    752,   1779,    279,   5029,     13,
+            576,    912,    729,   7460,   1378,  25780,     11,    264,    323,    293,     13,   2055,    369,   1817,   5256,     11,    358,    646,   1618,    279,    912,    729,    382,   5338,     11,  11047,    220,     17,    488,    220,     18,     13,   2055,    358,   1265,   1618,    912,    448,    264,     28,     17,     11,    293,     28,     18,     13,   5005,     11,    220,     19,    488,    220,     20,   1035,    387,   2441,   1618,    311,    912,    448,    264,     28,     19,     11,    293,     28,     20,     13,  34239,     11,    220,     21,    488,    220,     22,    374,    912,    448,    264,     28,     21,     11,    293,     28,     22,    382,   6025,   3709,   1846,   2326,   3059,     11,    358,   1184,    311,  30270,   1105,     13,    576,  30270,    729,   1083,   4990,   1378,  25780,     11,    714,   3783,     11,    279,  46444,   1588,    374,   2326,   5109,  54916,   3786,     13,  13824,     11,    279,  30270,    729,
+            374,    369,   1378,   5109,     13,  88190,     11,    773,   7196,    358,   1184,    311,    653,    432,   3019,    553,   3019,     13,   8909,   1156,  30270,    220,     20,    323,    220,     24,    311,    633,    220,     19,     20,     11,   1221,  30270,    220,     19,     20,    553,    220,     16,     18,    382,  14190,     11,    714,    279,   1196,   1053,    330,    810,   5746,    369,   1817,   3019,   3263,   2055,   1817,   5666,    320,    718,    680,    323,  46444,      8,   1265,    387,  17608,    553,    279,   8311,    729,    382,   4416,   1077,    594,  21101,    279,   7354,   1447,     16,     13,  22603,    320,     17,     10,     18,      8,   1667,    912,   2877,     28,     17,     11,    293,     28,     18,    340,     17,     13,  22603,    320,     19,     10,     20,      8,   1667,    912,   2877,     28,     19,     11,    293,     28,     20,    340,     18,     13,  22603,    320,     21,     10,     22,      8,
+           1667,    912,   2877,     28,     21,     11,    293,     28,     22,    340,     19,     13,  71059,    279,   3059,    315,   7354,    220,     16,    323,    220,     17,     25,  30270,   2877,     28,     20,     11,    293,     28,     24,    340,     20,     13,  71059,    279,   1102,    504,   3019,    220,     19,    448,   3019,    220,     18,     25,  30270,   2877,     28,     19,     20,     11,    293,     28,     16,     18,    692,  14190,     11,    714,    279,   1196,    594,   7600,   2727,    330,  10253,   5746,    369,   1817,   3019,   3263,   2055,   1817,   5666,    374,    264,   3019,     11,    773,   1817,   5256,    323,  46444,   1265,    387,    264,   8651,    729,   1618,    382,   4416,    279,   5392,   6738,   4362,   1035,    387,   1447,   5338,     11,   2326,    912,   6738,    369,    279,  36398,    382,  12209,   1378,  30270,   6738,    369,    279,  12557,  10709,    382,  14190,     11,    714,    279,   3491,    374,
+           5326,    438,    320,     17,     10,     18,  17729,     19,     10,     20,  17729,     21,     10,     22,    568,   2055,   2326,  37214,    323,   1378,  12557,  10709,     13,   6771,    594,   7683,    382,  18395,   7493,     25,    320,     17,     10,     18,      8,    353,    320,     19,     10,     20,      8,    353,    320,     21,     10,     22,      8,    284,    220,     20,    353,    220,     24,    353,    220,     16,     18,    382,  60179,    432,   1119,   7354,   1447,   8304,    220,     16,     25,    220,     17,     10,     18,    284,    220,     20,    320,   6659,    912,    340,   8304,    220,     17,     25,    220,     19,     10,     20,    284,    220,     24,    320,   6659,    912,    340,   8304,    220,     18,     25,    220,     21,     10,     22,    284,     16,     18,    320,   6659,    912,    340,   8304,    220,     19,     25,    220,     20,      9,     24,    284,     19,     20,    320,   6659,  30270,    340,
+           8304,    220,     20,     25,    220,     19,     20,      9,     16,     18,    284,    220,     20,     23,     20,    320,   6659,  30270,    692,   4416,   1817,    315,   1493,   7354,   1265,    614,    264,   5392,   1618,     13,    576,   1196,   4658,   6801,   1817,    315,   1493,   7525,    311,    387,  17608,    553,    279,   5746,    382,   4416,    279,   5392,   6738,   1265,    387,   1447,   2212,    369,    220,     17,     10,     18,     11,   1221,    912,    369,    220,     19,     10,     20,     11,   1221,    912,    369,    220,     21,     10,     22,     11,   1221,  30270,    220,     20,    323,    220,     24,     11,   1221,  30270,    220,     19,     20,    323,    220,     16,     18,    382,   3983,    279,   1196,   1053,    330,  10253,   5746,    369,   1817,   3019,   1189,   2055,    279,  17847,   1265,   6923,   5392,   6738,    369,   1817,    315,   1493,   7354,    382,  14190,     11,    279,   1196,   7600,   2727,
+            330,  47866,     25,    320,     17,     10,     18,      8,    353,    320,     19,     10,     20,      8,    353,    320,     21,     10,     22,    568,   5443,   5746,    369,   1817,   3019,   2217,   4416,   1817,   5666,    320,    718,    323,  30270,      8,   1265,    387,    264,   8651,    729,   1618,    382,   3983,   1246,   1558,    279,   1849,   3705,   5248,   5392,   6738,     30,    576,   3110,   4933,    429,   1817,   5392,   1618,    374,    304,    264,   5392,  13429,  11874,   2504,    382,   4416,    369,    279,   2661,   3491,     11,    582,   1184,    311,   1281,   2326,    912,   6738,   1156,     11,   1221,   1378,  30270,   6738,    382,  14190,     11,    714,    279,   1196,   2578,   1720,    429,   1817,   3019,    304,    279,  21937,    374,    264,    729,   1618,     11,    773,    279,  17847,   1265,   6923,   1817,   3019,    438,    264,   5392,   1618,    382,  10061,    752,   1779,    279,   3491,   5114,   1549,
+             25,    330,  10253,   5746,    369,   1817,   3019,   2217,   4416,   3019,    220,     16,     25,  11047,    220,     17,     10,     18,   1667,    912,      7,     17,     11,     18,    340,   9520,    220,     17,     25,  11047,    220,     19,     10,     20,   1667,    912,      7,     19,     11,     20,    340,   9520,    220,     18,     25,  11047,    220,     21,     10,     22,   1667,    912,      7,     21,     11,     22,    340,   9520,    220,     19,     25,  30270,    279,   1156,   1102,    553,    279,   2086,     25,  30270,      7,     20,     11,     24,    340,   9520,    220,     20,     25,  30270,    279,   1102,    553,    279,   4843,     25,  30270,      7,     19,     20,     11,     16,     18,    692,   3983,    279,   3491,    374,    429,    279,   1196,    374,  22331,    279,  17847,    311,   6923,    678,    279,   5871,   5392,   6738,    304,   8500,     13,   4354,     11,    279,   1849,   1231,   1882,   1817,   5392,
+           1618,    825,    553,    825,     13,   1988,    304,    419,   1142,     11,    279,   1196,    374,  10161,    369,    678,   7354,     11,    773,    279,  17847,   1265,   1140,    678,    279,    729,   6738,   2567,    382,   3983,    279,  17847,   1265,   6923,   1817,   5392,  13429,    438,    817,    279,   7354,    382,   4416,     11,   1156,     11,   2326,    912,   6738,     11,   1221,   1378,  30270,   6738,    382,  14190,     11,    714,    279,   5746,    525,     25,    912,     11,  21749,     11,  30270,    382,   3983,    279,   3491,   7460,   2326,  37214,    323,   1378,  12557,  10709,     11,    773,    279,   4396,   5392,   6738,   1035,    387,   1447,     16,     13,    912,   2877,     28,     17,     11,    293,     28,     18,    340,     17,     13,    912,   2877,     28,     19,     11,    293,     28,     20,    340,     18,     13,    912,   2877,     28,     21,     11,    293,     28,     22,    340,     19,     13,  30270,
+           2877,     28,     20,     11,    293,     28,     24,    340,     20,     13,  30270,   2877,     28,     19,     20,     11,    293,     28,     16,     18,    692,   3983,    279,   3491,    374,     11,    304,    279,   2856,   3491,     11,    279,   3059,    315,    279,    912,   7525,    525,    279,   5977,    369,    279,  30270,   5746,     13,   2055,    279,  30270,   5746,   1035,   1373,    279,   3059,    504,   3681,    912,   6738,    382,   3983,    279,  17847,    646,    944,   1414,    279,   3059,    315,    279,    912,   6738,   3080,    807,    525,   2598,     13,   2055,    279,   4396,   5486,    374,    311,   1156,   1618,    678,    279,    912,   5746,     11,    633,    862,   3059,     11,   1221,   1618,    279,  30270,   5746,    448,    279,   3059,    382,  11209,     11,    279,   1196,    594,   7600,   2727,    330,  10253,   5746,    369,   1817,   3019,    497,   7290,    429,   1817,   5666,    320,    718,    323,  30270,
+              8,   1265,    387,    264,    729,   1618,     13,   2055,    279,  17847,   1265,   6923,   5392,   6738,    369,   1817,    315,   1493,   7525,    304,   1973,    382,   4416,    279,   4226,   1265,    387,   4236,   5392,   6738,     25,   2326,  11367,    323,   1378,   7299,   7202,    382,  14190,     11,    714,    304,    279,   3491,   5114,     11,    279,   1196,   2727,    330,  10253,   5746,    369,   1817,   3019,   1189,   2055,   1817,   3019,    304,    279,  21937,    320,   9547,   5666,      8,    374,    264,   3019,     11,  16085,   1817,    729,   1618,    374,    264,   3019,    382,   4416,    279,   4396,   5486,    374,    311,   6923,    678,   5871,   5392,   6738,    304,    279,   1973,    807,   1035,    387,  15695,     13,   6771,    594,   1490,    382,   5338,     11,  12564,    279,  37214,   1447,     16,     13,    320,     17,     10,     18,      8,  11397,    912,      7,     17,     11,     18,    340,     17,     13,
+            320,     19,     10,     20,      8,  11397,    912,      7,     19,     11,     20,    340,     18,     13,    320,     21,     10,     22,      8,  11397,    912,      7,     21,     11,     22,    692,  12209,  30270,    279,   1156,   1102,    448,    279,   2086,   1447,     19,     13,    320,   1382,     16,    353,   1102,     17,      8,  11397,  30270,   4456,     16,     11,   1102,     17,    340,     20,     13,    320,   1382,     18,    353,   3681,  30270,   1102,      8,  11397,  30270,   4456,     18,     11,   1102,     19,    692,  54815,     11,    279,  17847,   1265,   6923,   5392,   6738,    304,    419,   1973,    382,   3983,    279,   3491,    374,     11,    279,  17847,    646,    944,   1414,    279,   5042,   2750,   3080,    279,   5746,    525,   2598,     11,    714,   2474,    432,    594,    264,  19038,     11,    582,   1184,    311,   1140,    279,    729,   6738,    429,   1035,    387,   4362,     11,  25538,    429,   1817,
+            729,   1618,   4675,    279,   4396,    897,    382,  14190,     11,    714,    279,   1196,   6801,    279,  21937,   7354,     11,   1667,   5746,    369,   1817,   3019,     13,   2055,    279,  17847,   3880,    311,   6923,   5392,   6738,    369,   1817,   5666,     13,   2055,   1496,   3498,    279,  30270,    729,    374,   2598,    448,    279,   3059,    315,   3681,  11367,     11,    279,  17847,   1265,   1140,    279,   5392,   6738,    304,   1973,    382,   4416,    279,   4396,   8500,    315,   5392,   6738,   1035,    387,   1447,     16,     13,    912,   2877,     28,     17,     11,    293,     28,     18,    340,     17,     13,    912,   2877,     28,     19,     11,    293,     28,     20,    340,     18,     13,    912,   2877,     28,     21,     11,    293,     28,     22,    340,     19,     13,  30270,   2877,     28,     20,     11,    293,     28,     24,    340,     20,     13,  30270,   2877,     28,     19,     20,     11,    293,
+             28,     16,     18,    692,   3983,   1246,    311,   1414,    279,   2750,    369,    279,  30270,   7354,     30,   8325,     11,    279,  17847,   1035,    614,    311,   9658,    429,   1283,    279,    912,   6738,     11,    279,   3059,    525,   3881,     13,   4354,     11,    304,   8729,     11,    279,  17847,   1035,   1184,    311,   3783,    369,    279,   3059,    315,   1817,    912,   1618,   1573,  38447,     13,   1988,   2474,    279,   1196,    374,  10161,    369,    279,   7354,     11,   8365,    279,  17847,    374,   9966,    311,   1140,    678,    279,   5871,   5392,   6738,    304,   8500,     11,   1496,    421,    279,   5029,    369,   2937,   7354,   6761,    389,   3681,   3059,    382,   3983,   2661,    279,   3491,   5114,     11,    279,   1196,  24297,    279,  17847,    311,   6923,    678,    279,   5871,   5392,   6738,     11,   1817,    369,    264,   3019,    304,    279,  21937,    382,   4416,    279,   4226,   1265,
+            387,   1447,   5338,     11,   2326,    912,   6738,    369,    279,  36398,     11,   1221,   1378,  30270,   6738,    369,    279,   3871,    382,  44500,     11,    279,   5392,   6738,   1035,    387,   1447,     12,    912,      7,     17,     11,     18,    340,     12,    912,      7,     19,     11,     20,    340,     12,    912,      7,     21,     11,     22,    340,     12,  30270,      7,     20,     11,     24,    340,     12,  30270,      7,     19,     20,     11,     16,     18,    692,  14190,     11,    714,    279,   5029,    369,    279,  30270,   5746,   1969,    387,  25780,     13,   8704,    279,    912,   5746,    470,  25780,     11,    323,    279,  30270,    729,   4990,  25780,     11,    419,    374,   2697,    382,   3983,    279,  17847,   1265,   6923,    279,   5392,   6738,    438,    817,    279,   2567,   7354,    382,  54815,     11,    279,   4396,   4226,    374,    311,   1140,    678,   4236,   5392,   6738,     13,   4354,
+             11,    304,    279,   3491,   5114,     11,    279,   1196,   2727,    330,  10253,   5746,    369,   1817,   3019,    497,    773,   1817,   5666,    374,    264,   3019,     13,  15277,     11,    279,  17847,   1265,   1281,    279,   5392,   6738,    369,   1817,    315,   1493,   7525,    304,    279,   1973,    807,    525,  10660,    382,   4416,   1156,     11,    912,    220,     17,    323,    220,     18,     11,   1221,    912,    220,     19,    323,    220,     20,     11,   1221,    912,    220,     21,    323,    220,     22,     11,   1221,  30270,    279,   1156,   1378,   3059,     11,   1221,  30270,    429,   1985,    448,    279,   4843,   1102,    382,  54815,     11,    279,   4236,   5392,   6738,    525,   5871,    624, 151668,    271, 151657,    198,   4913,    606,    788,    330,    718,    497,    330,  16370,    788,   5212,     64,    788,    220,     17,     11,    330,     65,    788,    220,     18,  11248, 151658,    198, 151657,
+            198,   4913,    606,    788,    330,    718,    497,    330,  16370,    788,   5212,     64,    788,    220,     19,     11,    330,     65,    788,    220,     20,  11248, 151658,    198, 151657,    198,   4913,    606,    788,    330,    718,    497,    330,  16370,    788,   5212,     64,    788,    220,     21,     11,    330,     65,    788,    220,     22,  11248, 151658,    198, 151657,    198,   4913,    606,    788,    330,  64648,    497,    330,  16370,    788,   5212,     64,    788,    220,     20,     11,    330,     65,    788,    220,     24,  11248, 151658,    198, 151657,    198,   4913,    606,    788,    330,  64648,    497,    330,  16370,    788,   5212,     64,    788,    220,     19,     20,     11,    330,     65,    788,    220,     16,     18,  11248, 151658, 151645,    198, 151644,    872,    198, 151665,    198,     20,    198, 151666,    198, 151665,    198,     24,    198, 151666,    198, 151665,    198,     16,     18,    198, 151666,
+            198, 151665,    198,     19,     20,    198, 151666,    198, 151665,    198,     20,     23,     20,    198, 151666, 151645,    198, 151644,  77091,    198, 151667,    198]])
+==========
+{'attention_mask': tensor([[1, 1, 1,  ..., 1, 1, 1]]), 'max_length': 32000}

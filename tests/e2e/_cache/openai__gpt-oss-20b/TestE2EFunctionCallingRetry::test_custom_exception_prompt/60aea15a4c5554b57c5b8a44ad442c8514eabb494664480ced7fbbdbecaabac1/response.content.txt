@@ -21,4 +21,4 @@ type get_time = () => any;
 // A function that works correctly.
 type working_function = () => any;
 
-} // namespace functions<|end|><|start|>user<|message|>What time is it?<|end|><|start|>assistant<|channel|>analysis<|message|>The user asks "What time is it?" We should use get_time.<|end|><|start|>assistant<|channel|>commentary to=functions.get_time <|constrain|>json<|message|>{}<|call|>
+} // namespace functions<|end|><|start|>user<|message|>What time is it?<|end|><|start|>assistant<|channel|>analysis<|message|>User asks "What time is it?" We need to call get_time function to get the current time in user's time zone.<|end|><|start|>assistant<|channel|>commentary to=functions.get_time <|constrain|>json<|message|>{}<|call|>

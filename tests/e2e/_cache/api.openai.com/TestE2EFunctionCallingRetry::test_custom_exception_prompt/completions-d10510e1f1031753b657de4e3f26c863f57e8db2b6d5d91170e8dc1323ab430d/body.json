@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-DiAewvvzNySwtWSPFF54d7x1HLg9E",
+  "object": "chat.completion",
+  "created": 1779419778,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Sorry \u2014 I tried to get the current time but the time service failed (error 0xDEADBEEF) and I can\u2019t read the clock right now.\n\nWhat would you like to do next?\n- I can try again to fetch the time now.\n- Tell me your city or timezone (e.g., \"New York\" or \"UTC+2\") and I can help with time conversions or instructions.\n- I can show quick ways to check the time on your device (Windows/macOS/Linux/phone).\n\nWhich option do you prefer?",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 218,
+    "completion_tokens": 887,
+    "total_tokens": 1105,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 768,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

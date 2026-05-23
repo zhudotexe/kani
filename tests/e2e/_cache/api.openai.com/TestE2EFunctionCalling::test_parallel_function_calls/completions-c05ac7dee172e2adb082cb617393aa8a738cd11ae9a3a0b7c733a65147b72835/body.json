@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-DiAkwzT3NgU9mKyxI1YNu475hBY81",
+  "object": "chat.completion",
+  "created": 1779420150,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Here\u2019s the current weather in Fahrenheit:\n\n- San Francisco, CA: Foggy, 65\u00b0F  \n- New York, NY: Sunny, 75\u00b0F\n\nAnything else you\u2019d like (3-day forecast, hourly, or alerts)?",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 365,
+    "completion_tokens": 51,
+    "total_tokens": 416,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

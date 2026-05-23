@@ -8,4 +8,4 @@ Reasoning: medium
 
 You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only.
 
-<|end|><|start|>user<|message|>thank you<|end|><|start|>assistant<|channel|>final<|message|>arigato<|end|><|start|>user<|message|>good morning<|end|><|start|>assistant<|channel|>final<|message|>ohayo<|end|><|start|>user<|message|>crab<|end|><|start|>assistant<|channel|>analysis<|message|>User input: "crab". They want Japanese translation of the user's input in Romaji only. So 'crab' in Japanese is カニ (kani). Romaji: "kani". So respond with "kani".<|end|><|start|>assistant<|channel|>final<|message|>kani<|return|>
+<|end|><|start|>user<|message|>thank you<|end|><|start|>assistant<|channel|>final<|message|>arigato<|end|><|start|>user<|message|>good morning<|end|><|start|>assistant<|channel|>final<|message|>ohayo<|end|><|start|>user<|message|>crab<|end|><|start|>assistant<|channel|>analysis<|message|>The user says "crab". They want a translation in Romaji only (Japanese). "Crab" in Japanese is "kani". So output "kani". Ensure it's in romaji only.<|end|><|start|>assistant<|channel|>final<|message|>kani<|return|>

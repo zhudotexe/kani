@@ -1,0 +1,6 @@
+POST https://api.openai.com/v1/chat/completions
+accept: application/json
+authorization: *** REDACTED ***
+content-type: application/json
+
+{"messages":[{"role":"system","content":"You are acting as a Japanese translator. Please return the Japanese translation of the user's input in Romaji only."},{"role":"user","content":"thank you"},{"role":"assistant","content":"arigato"},{"role":"user","content":"good morning"},{"role":"assistant","content":"ohayo"},{"role":"user","content":"crab"}],"model":"gpt-5-mini","tools":null}

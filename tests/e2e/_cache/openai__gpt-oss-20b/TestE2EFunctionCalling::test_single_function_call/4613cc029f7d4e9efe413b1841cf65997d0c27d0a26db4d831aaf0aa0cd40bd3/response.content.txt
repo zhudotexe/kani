@@ -33,4 +33,4 @@ a: number,
 b: number,
 }) => any;
 
-} // namespace functions<|end|><|start|>user<|message|>What is 15 plus 27?<|end|><|start|>assistant<|channel|>analysis<|message|>We need to use the `add` function to sum 15 and 27.<|end|><|start|>assistant<|channel|>commentary to=functions.add <|constrain|>json<|message|>{"a":15,"b":27}<|call|>
+} // namespace functions<|end|><|start|>user<|message|>What is 15 plus 27?<|end|><|start|>assistant<|channel|>analysis<|message|>We should call add.<|end|><|start|>assistant<|channel|>commentary to=functions.add <|constrain|>json<|message|>{"a":15,"b":27}<|call|>

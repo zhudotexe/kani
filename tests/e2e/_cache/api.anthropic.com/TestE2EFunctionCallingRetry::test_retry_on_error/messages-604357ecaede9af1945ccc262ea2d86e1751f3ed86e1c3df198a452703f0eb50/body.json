@@ -1,0 +1,38 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_017v6SD2YQPXEW2oZCGwkemr",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "The function failed as expected. Let me retry:"
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01Wrgw8mXiaMUWTRmKyZtfW2",
+      "name": "flaky_function",
+      "input": {
+        "x": 42
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 700,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 65,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

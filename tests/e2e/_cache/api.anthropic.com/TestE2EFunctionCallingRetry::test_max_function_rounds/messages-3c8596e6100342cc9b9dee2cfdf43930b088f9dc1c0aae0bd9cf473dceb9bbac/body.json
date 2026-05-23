@@ -1,0 +1,27 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_013Hy1mkmwS8g8XNCzU6UmqM",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Now I have:\n- (2+3) = 5\n- (4+5) = 9\n- (6+7) = 13\n\nNext, let me multiply these results: 5 * 9 * 13\n\nFirst, multiply 5 and 9:"
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 1054,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 73,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

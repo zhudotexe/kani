@@ -44,6 +44,7 @@ mcp = [
 
 # providers
 huggingface = [
+    "accelerate>=1.0.0,<2.0.0",
     "transformers>=4.28.0,<6.0.0",
     "huggingface-hub",
 ]

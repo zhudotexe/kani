@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Calculate: (2+3) * (4+5) * (6+7). Use functions for each step."}], "role": "user"}, {"parts": [{"functionCall": {"args": {"a": 2, "b": 3}, "name": "add"}, "thoughtSignature": "CsYDAQw51sdFv6pc15zAekfegPtjSXnYs0A8KtS-uxao1viSt5EaVwzdt8uOyJmOQq03PdPptThRcv2q0vaVwjL_CuRwbIl8tEhFX92CUc4b_uc7c7eX5jVPd3e-ZFLD_yHtwGa01lFrQSVMh6N48j75YSbWFuLAu5QQNjGgeDFcMBLSwhT7n98Fx-Os-36cDBd3pIl88388JYI3H1fNplubearAT9JTKxgsZIr5gz0fa3PmHFhwbFfw1UxcXcMD40yoddEg6FDlDM6CvpYpmYtfqfk9I8rW50yQ-xJeEwWkNIfBda3bQd9UFpEG7gqOv9Gz-HSWVafrPaEw8ePSoDyGJLGsPQ3vVMRFkrVo9L0pulpdi5SkNB-mK29bVV_itnYVzFuRl0Ejlc0RudirIflDAMNAiLq7H_2nD27MDfYn1HzB3BCi6Xg1vpEv0qvWyrRZfwX-g9vZSI57aA7tCYYB5vdGjSKOaIIWPa5X7QRV93mEATPGAewOphCgpuowCZ2g0W0Hdzvs6YP8UiZnb8Etq6NlIQRMlkq-KH-_qjGCqS3o1B2KvhYAamYGdgsQ1ykJMSB3gY7zalyDWP4zFP6n3FAL4h3zcg=="}], "role": "model"}, {"parts": [{"functionResponse": {"id": "00000000-0000-0000-0000-000000000001", "name": "add", "response": {"result": "5"}}}], "role": "tool"}], "systemInstruction": {"parts": [{"text": "You are a calculator assistant. Use functions for every calculation."}], "role": "user"}, "generationConfig": {}}

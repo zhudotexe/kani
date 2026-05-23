@@ -1,19 +1,20 @@
 {
   "status": 200,
   "headers": {
-    "date": "Mon, 20 Oct 2025 21:35:18 GMT",
+    "date": "Fri, 22 May 2026 03:10:30 GMT",
     "content-type": "application/json",
     "content-length": "19",
     "connection": "keep-alive",
-    "cf-ray": "991ba4eb98514cac-PHL",
-    "request-id": "req_011CUKAnFtGj22oWftAdMP37",
+    "x-robots-tag": "none",
+    "request-id": "req_011CbGsdooTXXVnC1wvvKbSX",
     "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
     "anthropic-organization-id": "cb409f94-8c93-4ff3-b5de-502af8eca0eb",
-    "x-envoy-upstream-service-time": "57",
-    "via": "1.1 google",
+    "server": "cloudflare",
+    "x-envoy-upstream-service-time": "98",
+    "server-timing": "x-originResponse;dur=100",
+    "content-security-policy": "default-src 'none'; frame-ancestors 'none'",
     "cf-cache-status": "DYNAMIC",
-    "x-robots-tag": "none",
-    "server": "cloudflare"
+    "cf-ray": "9ff8a0ccb8839678-KIX"
   },
   "body_path": "body.json"
 }

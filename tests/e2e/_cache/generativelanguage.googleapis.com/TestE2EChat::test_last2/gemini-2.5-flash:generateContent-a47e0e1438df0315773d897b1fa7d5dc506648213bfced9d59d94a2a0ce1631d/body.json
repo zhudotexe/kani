@@ -1,0 +1,31 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "I apologize, but I don't know your name! You haven't mentioned it to me yet.\n\nIf you'd like to tell me, I'll remember it for our current conversation."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 200,
+    "candidatesTokenCount": 42,
+    "totalTokenCount": 606,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 200
+      }
+    ],
+    "thoughtsTokenCount": 364,
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "hMkPav3FAoik2roPsrfyyQE"
+}

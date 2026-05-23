@@ -1,20 +1,28 @@
 {
   "model": "claude-haiku-4-5-20251001",
-  "id": "msg_01DHDsCVNsZU3n8LLNpmLXFu",
+  "id": "msg_01XVRR34pMAoUvkiiYoobaoQ",
   "type": "message",
   "role": "assistant",
   "content": [
     {
+      "type": "text",
+      "text": "I'll search for all users in San Francisco and then get their total order amounts."
+    },
+    {
       "type": "tool_use",
-      "id": "toolu_01WxW1jSUQKQkJP7um9QRuML",
+      "id": "toolu_01QtXnCvTAd6bdz43wWRUEUU",
       "name": "search_users",
       "input": {
         "city": "San Francisco"
+      },
+      "caller": {
+        "type": "direct"
       }
     }
   ],
   "stop_reason": "tool_use",
   "stop_sequence": null,
+  "stop_details": null,
   "usage": {
     "input_tokens": 779,
     "cache_creation_input_tokens": 0,
@@ -23,7 +31,8 @@
       "ephemeral_5m_input_tokens": 0,
       "ephemeral_1h_input_tokens": 0
     },
-    "output_tokens": 55,
-    "service_tier": "standard"
+    "output_tokens": 72,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
   }
 }

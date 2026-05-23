@@ -1,0 +1,107 @@
+{
+  "id": "resp_0bdb326101683ce8006a0fcb2bb0f8819bbf665d9a8f506d07",
+  "object": "response",
+  "created_at": 1779419947,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1779419950,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_0bdb326101683ce8006a0fcb2c03e0819b91683deb18ccdb33",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABqD8suhI84o0fDbzVI0UDfbGoey5HtTBSV0OmhKJ0M0LkrO6kJRE-JI4tzuK0-M7zw3U4aXDizAdu7JjtdujMePTTTHh_LSBoMlTro3JjlrSIFmUyneBuQ9UWhoHeJhf6QiEs5ljx7WoDTpRzZzVQb7EfLXEnDon7dNLig7dMrYsuMIcc8UTEsJDdalTJj-dFtxgk8ke95HLKBOgRw4O6g5E-CFVBzo00Uh_X0x_l-f3TBoQoO4IejAPUGFLunx0D2RvZ1nawBfSimZvwfqwFjjppvRWdrGjfEMKR2MJKO0WCX3z57BHeg8d3FYg5-OcWjObYipUa_wk4pl56a28Q0vxRvjLVQohBg1ylsRSt9wwejFPKK1jMsLmnRo5Zr-r7kg7UKM8f3zULnF-d0KVLHzBc2ZcNhUjb02xgfrwMnhplB6qdu9Q988cU9x_CtpfrixjogoR85YqxFbaZ4MRuyGN1RybVkMYfu417a5nnuzYdbvkuKtbC8eHAJWIo3CU5ndL132Me4B8IciPfQkbbVRCiKVwNsplkCVcsK1mX-0aNd7pbzWPfx6tFMdXiQG0kgb16XfP3nrCgP85z8MrM2lt0At7Re-ghpMG0l8foQiojbTvOUtxEXnpFv8TNFdOXvqGosI_IBaNc_crIrXT-bGZlWWvSJwKYnBFpCYEjLhO-ALD9UDF72_-zgvd8kZRxr9jhMWp4X3cVfrWVAMfUBkUq6ZW2m-PmKBuy6k-P7691b1T0eRnJypHrPrQXdYMNZV7FW49YtwZomRZUmjIng6qKDmKrdDa8aUV0dx3cKP6I9coMIP9s4PeV1bc3nS0Fduk2aRT0VuXTFwcb_RE-eXop2LAIqmNSOfvDqdXYRNZvudmbR8dJ2AeElwi6XGv3EHMzurvGc75HhCCxbTIGROhCP87PoiJ4miREfFkoZjOTWo8Ow_wLzlv2i_Hi3zKKIQSyYCqPwO7T1I005I_iwgyg73es03hlxPDuD9TUfZiwOBqr421D4SJTAKMM7B3aiX1dHAdlBbYqk7uaqstttmuXjWUsbOLt0ktxsIQARfu7ClFsxrl9FpRPGm5vnMX0BaCrPi6C8SGwKNIoHNh7qUvTtaei3NVTt7BgoxpQwjMORTrjr-aea41vvcvhl_WJD29vZdhFtSibfocULj_yW4_bjTTn5L2Ldf21EiUu4pce1q6739BQ5eeNWtCapMmymiEC3AhvuTX4ZM_neqAeJ_e8KJnbrDZtbey1XCYS9RmpQLuDeL9usClZgR_EBF-0UiTPD2lw3oxhHLqKAllO6oyuS4l55ixHho_CS6T9LimbD2wJrSSTBmeAd6YLZ-O2mGOILE7YPhRl7Ldya7lGpSe2nb1iMDKRcS_Pv8zysHlDTj5tI_u4DO4OZEsWT7v5cTB0Ief-N41m8_MJ8KHT0SXOk6PDFoG5fMPFi_aI7sWIE4QiIRWCiX41AxYYYnRs8m87DtL4ppdovri_VXDE-KUp48WLH6mrLQXQ52a1B0eJWkyOB_-EqVCeBHFdOmc-jrQnXsY9wQTbKoaA6d5ZUJqlT2xXCXKJTIg518QWl2CWz3i5jaQjfpKetKCs3yt2J4WDp_UzL9ndN3-o-gZ6Nf7tZABneByJ5eyATEhHTRk26XnqHOaY4FsjpX_eWR9_Sin7YsNUIX51m8Tx8hBf_XjERW38N079RIrLEf7CpZ8T3YKROYj1CbxElI7-7v0OWvqTq6YZMBGyaeHjGxg5sD6Ram8mAGLP6Rq5DikoJtkqi5DJ8dF2UBwvnmYnhKT5JobwW5gE75xGQ4rVTuJ5hcQim3sbiJZ-5U7LMO415jW_ErLVQbygLYFn022gR5_ykGeHsqP7Nmn5mGskiOhCO7dKfDiV3WwaYMW06SzhBH66GRzoMic2xffW3db2JHt05Vo9zwj73CIc7aM7maxPzWIuBe04M6qEUL-SnsQRKWiPyPusejzVvCdahLy9zFy84QGL21ittTKWm9ftmWv4F-aX_B6MlpLRB1frEC3Ji_HsXLzrxwGqH_FMd2UT-NqNnqHlOCcRRmwknFbeC0ubs9z6e0Ag5Me1t1HPKztgvMuAlqakA64-Fka19Pk05JCaKFvj0VxKFdaz2Fr0MbPFRUI9km_c2fztFyV2cPt4KfXCNrwvrhfn9wIfM0tHwWrV7NqcXb9WpzRjDGlLZ8qeea9Wgbm0gdxfRtyVuoBYJusa52s5UGD7ZIRzz2_qN-k-K3L0tqk--awq2xFCy84CDt2Lk52eURPnx6jG26HPUOgyqQUI-uFm212--XwBUJ2GlJ-o9tisxvuC9Q9ezuatUgTCbGp3N6JQOrkhQSMnhkYD0-5ndsC7uXyps-A4rJQ1nF7D5Kz9XsjIvJlud3sycK3iqVgHyZCoT2xzt0BPaKvtvBRSujkrpJ2zTUCyRMOqX5kPgM_DtIOb7_rOGTvmfg0lzU_d0j11BT2Qz9g9DSVzIbgGmVzyo09fVV5DsT4NtT-dQtjOKjolzAe6C_-K15BkHVc7By5j68VskpNPhllwSdByBDJMx0e0DJWaTkKf925F2TPVft1G43BJec1Sfj_kUf-Pjz26ASvBZmHQ5p9oAvdEeyTDFzPafo0ucz7bmc8mrkUnWcEVrS_yB0mJUAbh5hGKNs__lh8dwcQgQLHw10EsUhotqUk2gnyRMsTSUSMPrVJfZ1nFInlEPCM4ay6v9SaDxBUOqjP0zWaE1sxHlm2jTzD9DGNK4ABTtRYmyHb4e2wQN3MzT0oL7zwX6lqFH8-ahaH_9I278Y_38hMlACyG_nsnatP-F3D-cYeN0PIJXQZwWLLtJwQjyTiw_Maz5Ur37g5G8pSz2kBz8QHF2vAopKonJh4uzbGPXrBRxq4W403RPI0LnrWXaCK_cnk4mHexLxCKIAzhfASanMebwD6fD1VsaD_6_6HsatCfqjqmRoRt0ZXSGHk1lC3CBw2bXkXhE2zZity--7gJFjxB_PiWo4qc_TxEhClj1QyH3IoUW09yDeKTJuEwH5g1Udy_tecFS-4z9AjFjOxSDduConWIeTXDtCb7Aj6tkjT-0nfdLhTckOvsFDv1hOo9SdAGhNWsKLulDQut8wz9ZXM_C3b01AR1I3TCw4VRqXGbBm8Gw9w2wAFnJljp0kQYbR2KJfdYkv7T7VDZpNBMkUdQuaU4JOPSVZAQEF7qOlBOcxN9KiNHOA_ZQ5Pwc_HaSBNmr4khFDmwR3ODiyfkZlPnzLSObSmaQSxr4gJtpq-PEpzslsoQJoxffEYPYLyH7NjoU9HCT7K5k1J32f3LRj8c5uCe6rY1dI3PIVqisW8B2SnYsvmC4ci-UlU0YrbplI_kYZeub_tK143Z-0uRsMSdysEMzEOGHm4gdDNvy2EXliCyVJ7yZxdo7nvKzOeQEzTivE4h9i9_mlOiH5Mi7-BAy0R4CKjEHGqJ1nVqZOWllc32tkkf4XwW1poHU98j_VOMUzGl4JjO2BwoMttyohKDAQlAsxFXVZGbZttubiIJg3BX0S7FSqMaKUKR31byEuCuDtBWoIZpEqzKQMqZBiE0AJZWkUtlnSYCI7Nkz0-EHDb6fHZxUVnn31ekC6E1hh46rsIoyJWjls9irJ3y1u4DXQIS72xeBNlnLj-Wfd3R3mu7Q",
+      "summary": []
+    },
+    {
+      "id": "msg_0bdb326101683ce8006a0fcb2e0694819b802855ae72f84cf2",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "Sorry \u2014 the time service is offline right now, so I can\u2019t fetch the current time.\n\nIf you tell me your time zone or city, I can estimate the current time for you. Alternatively, you can share your device\u2019s time and I can help confirm or convert it. Would you like me to try again in a moment?"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Get the current time in the user's time zone.",
+      "name": "get_time",
+      "parameters": {
+        "description": "Get the current time in the user's time zone.",
+        "properties": {},
+        "title": "get_time",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "A function that works correctly.",
+      "name": "working_function",
+      "parameters": {
+        "description": "A function that works correctly.",
+        "properties": {},
+        "title": "working_function",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 254,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 511,
+    "output_tokens_details": {
+      "reasoning_tokens": 384
+    },
+    "total_tokens": 765
+  },
+  "user": null,
+  "metadata": {}
+}

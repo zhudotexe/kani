@@ -1,0 +1,20 @@
+{
+  "status": 200,
+  "headers": {
+    "date": "Fri, 22 May 2026 03:22:01 GMT",
+    "content-type": "application/json",
+    "content-length": "20",
+    "connection": "keep-alive",
+    "request-id": "req_011CbGtWmn5phsmvQGajhGQE",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "anthropic-organization-id": "cb409f94-8c93-4ff3-b5de-502af8eca0eb",
+    "server": "cloudflare",
+    "x-envoy-upstream-service-time": "55",
+    "server-timing": "x-originResponse;dur=57",
+    "x-robots-tag": "none",
+    "cf-cache-status": "DYNAMIC",
+    "content-security-policy": "default-src 'none'; frame-ancestors 'none'",
+    "cf-ray": "9ff8b1adebb38881-NRT"
+  },
+  "body_path": "body.json"
+}

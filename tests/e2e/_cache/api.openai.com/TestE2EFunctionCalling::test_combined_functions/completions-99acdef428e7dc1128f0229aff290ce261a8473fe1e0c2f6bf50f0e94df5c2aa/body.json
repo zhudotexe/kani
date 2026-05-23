@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-DiAl3ZeaTUmSMDGlhxraDBcoj0zJw",
+  "object": "chat.completion",
+  "created": 1779420157,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Current weather \u2014 Miami, FL: Humid, 85\u00b0F.\n\n3\u2011day forecast (next 3 days):\n- Day 1: Partly cloudy\n- Day 2: Sunny\n- Day 3: Rainy\n\nIf you want temperatures or precipitation chances for each day, an hourly breakdown, or the same info in Celsius, tell me which and I\u2019ll get it.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 374,
+    "completion_tokens": 472,
+    "total_tokens": 846,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 384,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

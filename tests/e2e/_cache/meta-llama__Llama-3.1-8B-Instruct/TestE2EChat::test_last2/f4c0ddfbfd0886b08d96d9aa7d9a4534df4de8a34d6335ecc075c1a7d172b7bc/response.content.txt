@@ -1,0 +1,12 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+If I had to choose a favorite color, I would say blue. There's something calming and soothing about the color blue, don't you think? It reminds me of a clear sky on a sunny day or the gentle ripples of a peaceful ocean. Plus, blue is a versatile color that can range from light and airy to deep and rich, making it a fascinating choice. What about you? Do you have a favorite color?<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+What is my name? (You can mention it now.)<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+I don't have any information about your name. Our conversation just started, and I don't have any prior knowledge about you. I'm happy to chat with you, though!<|eot_id|>

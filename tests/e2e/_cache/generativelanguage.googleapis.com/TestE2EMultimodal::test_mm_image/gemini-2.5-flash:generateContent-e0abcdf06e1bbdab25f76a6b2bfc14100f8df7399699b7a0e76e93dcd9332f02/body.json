@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "This is an image of the **Tokyo Station Marunouchi Building** in **Tokyo, Japan**.\n\nThe distinctive red brick architecture with white stone trim, the central dome, and the modern glass skyscrapers in the background are all characteristic features of Tokyo Station on its Marunouchi side. The flags visible are also Japanese."
+            "text": "This is an image of **Tokyo Station**, located in **Tokyo, Japan**.\n\nThe distinctive red brick architecture of the Marunouchi side of Tokyo Station, combined with the modern glass skyscrapers surrounding it and the large plaza in the foreground, are all iconic features of this landmark. The flags visible in front of the station are also Japanese flags."
           }
         ],
         "role": "model"
@@ -15,8 +15,8 @@
   ],
   "usageMetadata": {
     "promptTokenCount": 275,
-    "candidatesTokenCount": 66,
-    "totalTokenCount": 1011,
+    "candidatesTokenCount": 70,
+    "totalTokenCount": 892,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
@@ -27,8 +27,9 @@
         "tokenCount": 258
       }
     ],
-    "thoughtsTokenCount": 670
+    "thoughtsTokenCount": 547,
+    "serviceTier": "standard"
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "TdT_aKzTLcze_uMP1Z_NoAo"
+  "responseId": "y8kParPYEPD92roPlsuaqQg"
 }

@@ -19,11 +19,11 @@ For each function call, return a json object with function name and arguments wi
 What time is it?<|im_end|>
 <|im_start|>assistant
 <think>
-Okay, the user is asking "What time is it?" So I need to figure out which function to use. Let me check the available tools.
+Okay, the user is asking "What time is it?" So I need to figure out which function to use here. Let me check the available tools.
 
-Looking at the tools provided, there's a function called get_time which is supposed to get the current time in the user's time zone. The other function is working_function, but its description says it works correctly, but maybe it's a placeholder or not relevant here. Since the user is asking for the current time, the get_time function is the right choice.
+Looking at the functions provided: there's get_time and working_function. The get_time function's description says it gets the current time in the user's time zone, which is exactly what the user is asking for. The parameters for get_time are empty, so I don't need any arguments. The other function, working_function, just says it works correctly but doesn't relate to time. 
 
-The get_time function doesn't require any parameters, so I just need to call it. The working_function doesn't seem related to the question, so I should ignore that. Let me make sure I'm not missing anything. The user's question is straightforward about the time, so no other parameters are needed. Alright, I'll call get_time.
+Since the user wants the current time, the correct function to call is get_time. No parameters needed, so the tool call should be straightforward.
 </think>
 
 <tool_call>

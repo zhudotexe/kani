@@ -1,0 +1,49 @@
+<|im_start|>system
+You are a weather assistant. Use the provided functions to answer weather questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_forecast", "description": "Get the 3-day forecast for a location.", "parameters": {"description": "Get the 3-day forecast for a location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}}, "required": ["location"], "title": "get_forecast", "type": "object"}}}
+{"type": "function", "function": {"name": "get_weather", "description": "Get the current weather in a given location.", "parameters": {"description": "Get the current weather in a given location.", "properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}, "unit": {"enum": ["fahrenheit", "celsius"], "title": "Unit", "type": "string"}}, "required": ["location", "unit"], "title": "get_weather", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What's the weather in San Francisco and New York? Report in Fahrenheit.<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user is asking for the weather in both San Francisco and New York, and they want it in Fahrenheit. Let me check the available functions.
+
+First, there's the get_weather function which requires location and unit. The unit needs to be either fahrenheit or celsius. The user specified Fahrenheit, so unit is fahrenheit.
+
+The locations mentioned are San Francisco, CA and New York. Wait, New York could be New York, NY. The function expects "city and state" like "San Francisco, CA". So for New York, it should be "New York, NY".
+
+But the user didn't specify states for either, but the function requires the state abbreviation. Wait, the example in the tool description says "e.g. San Francisco, CA", so I need to include the state. For San Francisco, it's CA, and for New York City, it's NY.
+
+So I need to call get_weather twice: once for San Francisco, CA with unit fahrenheit, and once for New York, NY with the same unit.
+
+Wait, let me check the required parameters. The get_weather function requires location and unit. Location is a string with city and state. So yes, each location needs to be specified with the state.
+
+The user asked for both cities, so two separate function calls are needed. Let me structure the tool calls accordingly.
+
+Each tool call should be in a separate tool_call tag. So first for San Francisco, then for New York. Both with unit fahrenheit.
+
+I need to make sure the parameters are correct. Location: "San Francisco, CA" and "New York, NY". Unit is fahrenheit for both.
+
+Yes, that's right. So two tool calls.
+</think>
+
+<tool_call>
+{"name": "get_weather", "arguments": {"location": "San Francisco, CA", "unit": "fahrenheit"}}
+</tool_call>
+
+<tool_call>
+{"name": "get_weather", "arguments": {"location": "New York, NY", "unit": "fahrenheit"}}
+</tool_call><|im_end|>

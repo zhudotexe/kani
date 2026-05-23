@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "kanikama"
+            "text": "kani"
           }
         ],
         "role": "model"
@@ -15,15 +15,16 @@
   ],
   "usageMetadata": {
     "promptTokenCount": 40,
-    "candidatesTokenCount": 3,
-    "totalTokenCount": 43,
+    "candidatesTokenCount": 1,
+    "totalTokenCount": 41,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
         "tokenCount": 40
       }
-    ]
+    ],
+    "serviceTier": "standard"
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "pqT2aPvWE4jn_uMPiKufwQs"
+  "responseId": "eckPauzYK4SI0-kPiYnukAM"
 }

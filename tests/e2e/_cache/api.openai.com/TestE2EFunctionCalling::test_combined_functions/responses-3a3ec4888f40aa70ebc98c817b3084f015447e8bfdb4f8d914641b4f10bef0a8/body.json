@@ -1,0 +1,135 @@
+{
+  "id": "resp_02cb5a0bda5f3e1b006a0fcc1b4198819bb257e862e094a966",
+  "object": "response",
+  "created_at": 1779420187,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1779420191,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_02cb5a0bda5f3e1b006a0fcc1ba504819bb966e34f70f63435",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABqD8wh_mOTWIm5VUelYjtY-slb2G3YA3Xef5sjkL27GeCF6Hp2oVmHcLse157nntSh0ejyqic01h4aCxLW2ZsL6wACwkMzvtYSzpXS2-AQR_GbuQa9i3AoDBZFwzjlP6bIALFKQEEcoD3lRKXK429hjbQzGSdvyMsl2ZgpXSfvH1hxT1oO4oLVnu4hmDB3SmC_DNIub6NWAgOpCJ8ONB7wpASOjpHUvojIFXVykR96H_fP7udCuQDYg1u9Q0Ejtl_1rIHwzyIHe3uLUPXNMI5LHkzaFY9zG4f-Xb3b5YjlYhu2pd-Ry2AWOvjK7R95twRPmrUtCTstAw0nTzKmNg2Eq7ME0JRSG80qfc9TepOU8TXNuXO7l--1uxsxbyRHmzBFzWv3sjoseP5WksSFu2EceF9T5_ogUTjJPGBO6b-kGDPrQVCMr8-VnVhhNv847WYruUinmgUbvAqT8SyW-ObHK6lv6SKm0TuYOs9pNDcZmYih-QShFyreldR4lnLRAUJZ7bXmxjN82m8EiQiizYoREQAFMYPJ72FkGz-ALyVzxYFiBaZkMpAe1y8TB0dRM5gThAqLXi-6_HbnEFXn9L4YEEC4ID2ggb4q81WXCwdVoVmldxqouUEeUDD1ujDR4fI8Vkf72GEFDvPCowf2PRpWw5qiDX8fklFNAHpKa5ZKgz1BsN6KCAr1Hd_mWpCG0aROlJhvcEpiRa_NpqwPxfNkDRua7kLDmOecKsocdyxEJojJxabzn3QWe6uPz_AEjRwYDOiq9TcQvSELteSAEcjipcH62ocjtjpR_31V7rFjZyAB4zGWmyrkiWuGOshxuw64WpJA6az-xqN82I6EuwLhae7MCqirc0KQ9rNMBunB95DSV3paf3O8xyxu3flXnu54EcBLtS1itgi2ThxgHzVen-ENed4yyYGyT7NjUGXyA8fHFgDR7dr_urxniZFbSxzTzV7kvDckPDbEksetZLsLYKT4MjjbZH_zTVFJDNZzoG6UFl7qY-ciKgNlMisp0ISgVcrRvynQObbtazbsEFLUY9zMU7rxX98vKM6Wz-OqQdgAaj3eh-_1bTz5X0CmHI1LLHfXJtdKKNlLIYgmgPUZ-UF_QKWIdWN9Fq7-e0MoiUzBKdwU5uGartou5R29hJ07nYDHc-6VUurdxKPLkswvFVQlcJpdPahrcn6iWLqZ3h8xHmOhU9SqWqLtd3ilBkO8QqmWl-YSzUfQ-iXozHfc4C78wrXZ1Ot2QSo-ZCbKOwDZ81tT69eQQi2UwyVdHqwQYeFBEGnTYAGYfeGRczpl1iEMi8GfugEOOT6nj0giarOs0pQmg7IAXXwqSPqFxfSmrLQ7sQTRFUJuV0_lsTGSAWX3qdMX8rDBpuDEjAfj8_O3gtn9YqWHgnkOCwf-sUIYMHMv03wPLln3lYA-4kDqUAZWz2yrOv93fihRco1OFlj4t_x1CD3H2xm1YmKNoPsi1NhbZf6Uvf22WwcSgEf09YbaVoRRxRB9-euwm0eYrHeVYU5XcQdayQIMNiwm9NS5v2kX4XROofHpDvVMLR0xXfepYxMW8RgZkZo3iQOXBvwQ12DXFwzpFiBcScQwJEqfnlfVrgYRPG5M1NqHstmsMkD7lFdNV1B0X0va8LrG3NWAMsZrbyXc5UonDWY545AUxWf1q22uO7xGbJI_bdB1-2qZ8h485j4TZYY5v5nmUU8H0--VY8aA2IzpHl0SQ3thKi4yFwzN62zOfWEvbZFT0iBphfCTU58r2rmyXy9Qg-YPIhTK5ke_Ux1HVnTQBcTsVOJvVwkFhMPgTUFpN5NXjraGzGyCFgrv3vec2Jv-F3_aElvDc5hNS-JYSVoNAR5b24_eB4HYYJqEJ7q8uXnY7V29eAhUjDfHmwE0BJ9qWKIdOkZnlTM6BpJUnFT891_7AzNhA6kySEAfUEca4VBTWiipr7lqHJVngu0Kon7VfP2IlRMaVwTF1Q9cChRb8LRAThPgFrEXUZn-HD0pwRjXigfZ1O2cl2OqqTAxW_z-VPhWWEzMRIcgOHWILSwFDb1zrwGMd50Yy6Xj6wavuKKbZ4wFUsunZvdXjXSocboCr5yav-LTRE4sdpjzv3P4lW5IjAX5BL-JAPff22Xa5pCkvU4JLDutzZhYkGk7ZGGO8r6zDA9E9LIjEfaoaHhKqMArtL55PsTXlMnsa7oY-m8rEr7r__fFsLxfZCg2zh58y5QO7obXxmTN3ER0sYWPecDAdz3IRLpOfstBBdWocmMHXxZLxNl7dr60Gf9l4E00xZxZgTdrxfKpIxn49qU6GRBbYdwvrdCjxq0vX7Bx1qV08Snkkkl4G1whUP5xRKvISOyz0iCyua88afwkAPr9KhmgenWK9up4UMLvN7ab_csbSD9u1xAalCI9faFKxb9pRmqvswEwrUKobc1tXB6XFcpWNpMIfLDuawgsfipdo03uIbYn_5250zZo-JBS9D3029V_K1GjfRcDUfuYT9OtatsGFwUM4cjAybjOxg6g3UF69eriVkaR4P-mtPgfxBpk3ww_lSkaqiagUUNNAu8Gt09q9ZsO1PSKUOZ0zX49djpN-6PKoyRlpNaPhEtI14rTwUzbJ5YmojkQ-2SxhgFTpI5_Bm-tXHt67zNPe4HoejPaWg0nRxRgaW0k0ojjgPrwm1N9zPm4Cnv1cw3iXAtiASWhtxiWJO2dr7JcwSsYQ55y4xTCJdyfDc-iLlkVEBwa6p81uep8iiCf-PAAhtVMbLZSY3YUcnEnC8e4pA2MvA-l2CgUxgzY_rci9ZKN7lp0LDdl61qGCtxCjYtnyNWC-XbA9ogKiGlX7EP7UcyKM8kWkQS-mg==",
+      "summary": []
+    },
+    {
+      "id": "msg_02cb5a0bda5f3e1b006a0fcc1eeee8819bb80a2a45bfef5b81",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "Here's the latest for Miami, FL:\n\n- Current weather: 85\u00b0F and humid.\n\n- 3-day forecast:\n  - Today: Partly cloudy\n  - Tomorrow: Sunny\n  - Day after tomorrow: Rainy\n\nWould you like this in Celsius or want more details (humidity, wind, precipitation chances)?"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Get the 3-day forecast for a location.",
+      "name": "get_forecast",
+      "parameters": {
+        "description": "Get the 3-day forecast for a location.",
+        "properties": {
+          "location": {
+            "description": "The city and state, e.g. San Francisco, CA",
+            "type": "string"
+          }
+        },
+        "required": [
+          "location"
+        ],
+        "title": "get_forecast",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Get the current weather in a given location.",
+      "name": "get_weather",
+      "parameters": {
+        "$defs": {
+          "Unit": {
+            "enum": [
+              "fahrenheit",
+              "celsius"
+            ],
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "description": "Get the current weather in a given location.",
+        "properties": {
+          "location": {
+            "description": "The city and state, e.g. San Francisco, CA",
+            "type": "string"
+          },
+          "unit": {
+            "$ref": "#/$defs/Unit"
+          }
+        },
+        "required": [
+          "location",
+          "unit"
+        ],
+        "title": "get_weather",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 610,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 436,
+    "output_tokens_details": {
+      "reasoning_tokens": 320
+    },
+    "total_tokens": 1046
+  },
+  "user": null,
+  "metadata": {}
+}

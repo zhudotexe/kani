@@ -1,0 +1,87 @@
+event: response.created
+data: {"type":"response.created","response":{"id":"resp_0ee74eb942be5371006a0fcb0b3e748199831464c479013c5e","object":"response","created_at":1779419915,"status":"in_progress","background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5-nano-2025-08-07","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"effort":"medium","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tools":[{"type":"function","description":"Check the email inbox.","name":"check_inbox","parameters":{"description":"Check the email inbox.","properties":{},"title":"check_inbox","type":"object","additionalProperties":false,"required":[]},"strict":true},{"type":"function","description":"Send an email to a recipient. Control returns to the user after this function.","name":"send_email","parameters":{"description":"Send an email to a recipient. Control returns to the user after this function.","properties":{"recipient":{"type":"string"},"subject":{"type":"string"},"body":{"type":"string"}},"required":["recipient","subject","body"],"title":"send_email","type":"object","additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+event: response.in_progress
+data: {"type":"response.in_progress","response":{"id":"resp_0ee74eb942be5371006a0fcb0b3e748199831464c479013c5e","object":"response","created_at":1779419915,"status":"in_progress","background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5-nano-2025-08-07","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"effort":"medium","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tools":[{"type":"function","description":"Check the email inbox.","name":"check_inbox","parameters":{"description":"Check the email inbox.","properties":{},"title":"check_inbox","type":"object","additionalProperties":false,"required":[]},"strict":true},{"type":"function","description":"Send an email to a recipient. Control returns to the user after this function.","name":"send_email","parameters":{"description":"Send an email to a recipient. Control returns to the user after this function.","properties":{"recipient":{"type":"string"},"subject":{"type":"string"},"body":{"type":"string"}},"required":["recipient","subject","body"],"title":"send_email","type":"object","additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","item":{"id":"rs_0ee74eb942be5371006a0fcb0b97188199bc804c5da60a78db","type":"reasoning","encrypted_content":"gAAAAABqD8sLn0EiT-K0pQHxxbwnnT88MVukmVHQnSEw0zFOgmy28ZL0_izDazu4Xia46-j7SAHWCQg-KXuNbQJZ_bJALgfDC8gz35wm_-5GbWibjH4xTXMzBlYOT4kRrrLA4ow7JxTc7ib8F_d-uVqgT9O4POGBMbpaA8QbWFUVromqOD7j2twkkIFo1FWXGKRqPn6eDKLzpCPeyEFOS3inKFvFsWaUO-3g-l6Be5xck9yLn3I2MdLNccT0QDW-Hq_vp3t88uqnh5mUPSwtXGx9IdI71mfJO_xRewfv4EbSbvw644YTay-x-I1WfM5WNLU0D0U80asBKsfUxcpu4Di5lzu5a6dakFItKHBxefZGsaR3N5t59jCmvb89ausV_bk7zkONJB0RMyHy48jU9prY0Ic5O5hKJdc5ocfNOLbzN7UNCplTGaIXvyYLvt48KaGEC_IqDt_H6wi7xz65ZCzdHnZDGAhzoT0nY-pIVzi8dci_Erqnzfs_7myXZpoKngUH7Woa9x4tGOrErsMZ99P6R32sU74JBbSpMhVr-r9uBhp9P7Q1enszHSgvYXvqegSlA_GiwEL5Yn_I5j3xep56oj7ozhq7Ch1FnzNHRirlL1ie4ksdvWr7a0-FDCgoqcAub_bOmkW8C31_Ea55_y6AR-lJjZnKA7TQA_SX7fC41XTYA53dnJgBO1UF_EioRPklC4zq2NCwakLjTw2OQ49D9fK89TY6DYT21NgAkXKYJae4yi3o88RzPZV_YobL5rY8SwPeMOHFSiyCouAO7jcWcZo5rC-5IZLBtxYdthXOThGLWo2hvi0KLWNXIMaM99gs8Btdu3LhKEoojtgAA0bTnNG9EGE_Z2Y739Res6E2eFnZ85a33zhWKkCib0V7jDKiHl7htZcUcMmLGIiuY1511d1Swtu1fWqHDbO3PRuSBXNjfwietPM=","summary":[]},"output_index":0,"sequence_number":2}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","item":{"id":"rs_0ee74eb942be5371006a0fcb0b97188199bc804c5da60a78db","type":"reasoning","encrypted_content":"gAAAAABqD8sMMYu-vcD_PoYqS4ZlHiYIGD_92QM6prp0P29cijZWVINNWgMGODYPxKuZMLbGztmKsE-kS8DS7w8oUHAY7LHNC-LaWuexjb07ZgbS21paQ3o69I-iBUwJ09Yj9eIbEif7eROR91Lnc_AQyQP1J9uctbA3sy8Pr2jjs3xXX22A-LoAS7JjqenH8YyKOdTtfX6w3ZqFHaq7BKynqrzfJyXRZi62gj8CVqvBsUcHiXrqpKKDhJ3mRGIeR9ssK8sPLgIxqptUKLgBtqfzynPprBZj6U770vc8eby6hQdRlYY5vJJ0DIPiss_bS5c1E4nODtdbH-LiP4TmpMmnjlMXIKqPsw2Jg9SewC0wMARQR16iRmtHyWoRN3LBLNnuUydtJUkGIldAryVOVd69KRKhOeFg_Z256_-0nRFTFa7xyjeMIW3yySCrfQZTYVIXVNvzU87CZ471yLtw0ErE4AVTAb4RetmRL5ATOQZla996-oJZ76BK50JCrowSPH4BB4I9etOFgYnpf_2HzJehUQND4Y5v3qpBLWjXnfJd35pphl9Uv0yv1vg96JnKyZNCQy9TPLSApl-IZPf6VZA7HkiSmIMyVicy57_08lGhXlEMXu6pRG44LrBIXPrJDv0NacL71HEXi6lIy6KAhIHPOzt9GlKzpJU8LDWkPB3fMjmHdIh-3ZlYdr8YKB7nac-81XWJNWow2PNZvUMMufykGU7KqEde7KBKo854glvg-q7XBAGRvk3DFgW-5ayePurtff0dEtd9C74IJ4pptrPSnTeaGKo7Ch9lBOGaDZpxH67D05pcJmK_MdvdqpHMLalkxBSIP1_4cFT89TiZuWuykmf0OATrt1grU--ZcPO3CeUuf2x3JS449-VM6ozEU_YeYcUrGQZKm5eB0SWP3qZu02ykVZ7x5BambU-SKScJyZoGYN0sIYqkroqRA5N5r8lgciTQEL9OESV5Oq8Wpztei5XMWkOtfMFCvBdiqRPW06nP8BpbXv962GJAdsKV_wiyLvpv1EWfEfiqUqAd-4c4YvzZDFVmj5XZBuzQhDBsvQ5sKlUZFo1WSvV3a5UMUtm4OJthSfLa8SX49bbLofJVhGmCaSKT6XYTTdWb-Zq1dse9A1D35xg3AX0JMsWKFKv_H05Qr9Tr5SNLlnqS3fzC259rxqa5i3MIuzOJNblommlXT4H3wtmDi8QoDFqekazKjZN05BRZibIXNmGTC5eVi9E0jeIPUIDG5svcnRtkiwF0JtT2KJLR3w_cYRhlDgI13n1R2AXgqqppbrBTglCFsGBldDE6ZuqTkSzQ1wXsVQaZ5BVdqkhKNcS7GLqsNdxSsSCIsHLwcpCVVe8OPafKvMJQ9-ZLJolwvEOq7025vkaR_R2OVDz87iW2FBas6Ucb6VwFpyhioLysFKYe6H4Ohc0fVnZn1NYF7n0-9M_m1Y0yD0MKk_xmOz28PdkSZnr2gO7oZUu0TVlcH4ovSgQ2kJpjvciSSm05PaHSmqj4AvypZtazsw4p-z7YIpS67GkYi7RgHTzWTUdqG5ncnGHiT9c1SyF7oJJzpm3cQ7Zg0h8nGxX8NC2d7QmE1DTS9SO3XgoXP4QINgVEnXJ_zNJQCuUekqUuU0b1vYSwz3IXZZxoYY1UsLa3w9QyNVqx4oMaipDMVP8UeR6Jk7g9Q1-TcGo8NYTgetioAnrRIUkTZ3nyzUPzthzY6_RwCAmuDRmiEc5nQnFLLxelFaPBzMAZpT6RUDVnku4hnDw7KEiCLkiPF_BlAsx7VLgNuZbmBlr9WeYN-xcxy0l-ZMvdUUPfm3ywfP5s2mwUQDy7Pek0WiQxFIxOw98n2fvk2kdrsT1D8Sc5lGS439pnmHPiDh3y297uCs38y--5tGOyZGkOAingwBdnaA_pmj65IfYpiBrovZPTeUBPtbb4ZW37LSKIg-ZIYSsxBw==","summary":[]},"output_index":0,"sequence_number":3}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","item":{"id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","type":"function_call","status":"in_progress","arguments":"","call_id":"call_yI5WNuroqR8nujoWYe9TBixm","name":"send_email"},"output_index":1,"sequence_number":4}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"{\"","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"qnKNY4OKRZnGAK","output_index":1,"sequence_number":5}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"recipient","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"M8VHvGc","output_index":1,"sequence_number":6}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"XleRDamgHYzNM","output_index":1,"sequence_number":7}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"john","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"WUYhBpY1zPsD","output_index":1,"sequence_number":8}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"@example","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"MDRcgit9","output_index":1,"sequence_number":9}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":".com","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"JsKFloFBenGe","output_index":1,"sequence_number":10}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"7C3C0hbxjalq5","output_index":1,"sequence_number":11}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"subject","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"oKH9XIc6z","output_index":1,"sequence_number":12}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"76FYtWho9rW9c","output_index":1,"sequence_number":13}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"Meeting","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"lJ0Cbv0Y4","output_index":1,"sequence_number":14}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":" Tomorrow","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"YvtVqQ8","output_index":1,"sequence_number":15}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"\",\"","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"LFFjyh4OpczvO","output_index":1,"sequence_number":16}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"body","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"t7gl1nLPuHYu","output_index":1,"sequence_number":17}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"\":\"","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"U4AYKQmKj23mj","output_index":1,"sequence_number":18}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"See","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"fTlZOONZmqjzY","output_index":1,"sequence_number":19}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":" you","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"c3NXiIcrNK2A","output_index":1,"sequence_number":20}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":" at","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"zvqStmSi6BO90","output_index":1,"sequence_number":21}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":" ","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"ITcRpoTFYag6Bc2","output_index":1,"sequence_number":22}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"3","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"JR2Z2AWPe0VK1p8","output_index":1,"sequence_number":23}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"pm","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"1sk2nZY2o1Mqle","output_index":1,"sequence_number":24}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","delta":"\"}","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","obfuscation":"ueuBnF8mWxRSsF","output_index":1,"sequence_number":25}
+
+event: response.function_call_arguments.done
+data: {"type":"response.function_call_arguments.done","arguments":"{\"recipient\":\"john@example.com\",\"subject\":\"Meeting Tomorrow\",\"body\":\"See you at 3pm\"}","item_id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","output_index":1,"sequence_number":26}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","item":{"id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","type":"function_call","status":"completed","arguments":"{\"recipient\":\"john@example.com\",\"subject\":\"Meeting Tomorrow\",\"body\":\"See you at 3pm\"}","call_id":"call_yI5WNuroqR8nujoWYe9TBixm","name":"send_email"},"output_index":1,"sequence_number":27}
+
+event: response.completed
+data: {"type":"response.completed","response":{"id":"resp_0ee74eb942be5371006a0fcb0b3e748199831464c479013c5e","object":"response","created_at":1779419915,"status":"completed","background":false,"completed_at":1779419916,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5-nano-2025-08-07","moderation":null,"output":[{"id":"rs_0ee74eb942be5371006a0fcb0b97188199bc804c5da60a78db","type":"reasoning","encrypted_content":"gAAAAABqD8sMEPNZsEQdebyM3l_DIME2QqmA3dNM5gHVmr53OyKFcbGIiIZcsQIJsq2gv_f1wx3i4S8OUb_1HNcMLSw8sKmMTx5jUk6zazT8Gv7ukegnCqysNVbqA8BIvezRhV5Ll_BKMmZpsBCUx3bzLT4WvckNw2feulNxlJ4AruvmUewGPVuwwk77tuwdqWU3C8Cl3-raTYPZwQs-FO3gP9EEwCp7V6ONVFpuiBlP4TTa4-f8-3NvN5WjnFqUVdtDlNWWYjwkoI3xl748cwLAGKVVHU3TbT-PRNxSCwCbcIUzMzVqF9tSpJkOfDdnhVZseDQAz8ZciMm0tKfSZMOqEhchKfcBJSH_vyAn2IAM6_OVNunL8mU30U-4wSCZkB97AAZoybSrxSw-9LpqNW76H2-MH6-h8vc6KdrJ40DRPVW-HimX0OhyLdANJnScD4iG1Pyw_tnNxkcx2CaRaNmpmbX1Tn2rzzOgstYCKb1Lftkw_DMnzyk0aoqVyC-vbib9eiasiLONyj_dkXEyeIf0nlFAKn0SQwLpdxXX781wV_xjK1zfrxB4uKG6VdKLfoJHL2RwhM7-e7r2a-YssmxvfdF9veMbSEumdtuxwNQ417qa1HBt51Bd6QLJYxoxdmu5sZ4AtOr0KCOMAo36s7eNggt71zmwiZE3zcl71kgIKqhCZQVG55jfM-g4WRBJqO5tYNS4ylSdkjZ4x20T9oLVl6KFq7WjuOGh7gcsKoc2p9jmjR9AD78OoB1KFke2O3fB7dEV7iQmZqan8envi1Aoi6hcq2DY77cDD3tyFRY_XReyodQrSZq5jwf9oxBj4tulTqxNqTxwnlHE-CFbbjB1AVxcc4Kt0TnO3WiGCL7JbGqsRNXp-w3Sx-LMLLIxc7i4tEjZwSvuJnFysmeuxLbUGawEIPKVAzngW2kuE4YQzZPKSO1K1Ro7eMVPb0MCg01Dv7qo8_osAghracHb1iYcsn5Ek-MkGhtrC2X6nXw7fVXfAzQ2njeMHRdx-OwsxVZG5orXtjLCUrFLi40Z6xvOzqiGC9dbeSGZ3D4NbHCmA8tr5Svg0xuOXAEJQrddLRuv9PzaUD6JnbmJwltadiDQiDBxYArd1KZOAX93NjGISyLpiGF8u7-gNJj8jUarQTzpbf619JEPx83Q7bwpsvYOr6SZpZQIHZoREY_MMbh0UPg3HpdiRkVMLocN-XjZR1TWmjm-Noj41uGEYs3cPTyndTxunHYE2B4vdnl6xMZtTsjRZn00So4ydpg2dSeGx6Ziq8fuj7_gITtKUlQgK4VzxPlbIPRjV8W4ncf2GSc9oUc74xySlxd-DKBZPzNxpMJ_OWdotSVJdcbAQgUL7wjvx1g4ncfVK1FDejv6legNYtR7bNhPmX6h4F7A9pmNq2TcS-PaJ_Q3_cCPWDNO36v3-nOkWRkmpok3aCt47vX8BsvYVghZPOjPFm2JWKiJ9ztlmVU55WhIjEMc0t2w3ZfBbWaHM26oCkoPzYDpW3WeqpQ_EkNChfOcOA4dF0W5aBZ0CzdQumbL6y-wfadOolVQxh7yPI3e6WJAXzSmzfkpYpqCaqg00KjQecN99_b4BJQr92UoA683LWekFImUzIKM3B6bv5qILnGUrnW787K3YsuiwjAqULS-jkfGECjWoXZcPJr15ZHbnXhoCrMy7YPQMNUfT7fuhxQndNkSpR_dCbqKQABJBHGJ1m6NJCrAxuTaBA4GiCVyGpzRsKkZaaFx-_huX_0lLrIg5vyCL9xsQ1QS0HyBPyweZJ6mPsCTMPwW2c-Ty-eMXi5urDc0t4C8WJPcMT0ghsNdtGp-4uoWg3S-VTNaIW-a-gPupGbZ81zAcJBgq0rN9zT455s85OqMSGnUMYWWfn7ytUakPrzE4LwghrA3fDhuclXAaDyH5T4Oy16-zORtn4Uk8WszXUz2YUkJDk-EYw==","summary":[]},{"id":"fc_0ee74eb942be5371006a0fcb0c902c8199b4962e8b848c9d42","type":"function_call","status":"completed","arguments":"{\"recipient\":\"john@example.com\",\"subject\":\"Meeting Tomorrow\",\"body\":\"See you at 3pm\"}","call_id":"call_yI5WNuroqR8nujoWYe9TBixm","name":"send_email"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"effort":"medium","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tools":[{"type":"function","description":"Check the email inbox.","name":"check_inbox","parameters":{"description":"Check the email inbox.","properties":{},"title":"check_inbox","type":"object","additionalProperties":false,"required":[]},"strict":true},{"type":"function","description":"Send an email to a recipient. Control returns to the user after this function.","name":"send_email","parameters":{"description":"Send an email to a recipient. Control returns to the user after this function.","properties":{"recipient":{"type":"string"},"subject":{"type":"string"},"body":{"type":"string"}},"required":["recipient","subject","body"],"title":"send_email","type":"object","additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":1.0,"truncation":"disabled","usage":{"input_tokens":138,"input_tokens_details":{"cached_tokens":0},"output_tokens":204,"output_tokens_details":{"reasoning_tokens":128},"total_tokens":342},"user":null,"metadata":{}},"sequence_number":28}
+

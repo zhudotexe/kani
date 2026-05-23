@@ -7,11 +7,11 @@
             "functionCall": {
               "name": "add",
               "args": {
-                "b": 3,
-                "a": 2
+                "a": 2,
+                "b": 3
               }
             },
-            "thoughtSignature": "Cv4DAdHtim8IxYF2HMiW6jTHP32j5LWVaHDu+JfWWDwWC5KHwegR9/pS76B8BF3RGpA5O8tfpYXru1k7cxOgVKXzy6MpEpbUbOD8XCRRVO3bIXFlNbN+VqYoNj89clh0VuL7jU3ahYGjMw3S8dp0QHKNwOCYXyVcPjPMPzKMkfFXNjA5L3u0L7aSAbPi8DeIhfIlujkXyl2f2uOwoKKAykWSGC6YKRDfEzbqWX5WF1A2kvw8MX1NtYZuPwgeIF2uxERaxKR7qNWQxOkfkmtOLMUuwm2TXSjVfIv8m4MrD/tTbp4ODtd1l/BweQDm/oaEZ2mflWKIcSkP07YcnJqjh0yFQgkjqB5M9r86+vUgBWZU477lJF3+QF1lKGt64WZ5V/NLPR2H3f0l7OzxzE3k7HpCiyuKm4ktRhkuAK9NcrivhZzXOaZcD9Gku6PB0Xeq4ChEJDQlH01NRiuLrqT6TuegSkCePhTF/+x01UUwsYOH2agfHhUoD51Ith0teUU4v9vq3dlq6WaEle7eXAl4+cIf5fbxFW/ZJNtgHtyEMekbR84cij5SCOm+TYy2grOvtQiGLwbjFPKgpEDnrPgoFbl3dT8jTj4gtNKI/HAQ2l6tnmDlCnu1bYsH7uNBowkqnvuW8dnYCC2y/kXaEKaIKWFzl4g33Hr/wSy2HAzfmODu"
+            "thoughtSignature": "CsYDAQw51sdFv6pc15zAekfegPtjSXnYs0A8KtS+uxao1viSt5EaVwzdt8uOyJmOQq03PdPptThRcv2q0vaVwjL/CuRwbIl8tEhFX92CUc4b/uc7c7eX5jVPd3e+ZFLD/yHtwGa01lFrQSVMh6N48j75YSbWFuLAu5QQNjGgeDFcMBLSwhT7n98Fx+Os+36cDBd3pIl88388JYI3H1fNplubearAT9JTKxgsZIr5gz0fa3PmHFhwbFfw1UxcXcMD40yoddEg6FDlDM6CvpYpmYtfqfk9I8rW50yQ+xJeEwWkNIfBda3bQd9UFpEG7gqOv9Gz+HSWVafrPaEw8ePSoDyGJLGsPQ3vVMRFkrVo9L0pulpdi5SkNB+mK29bVV/itnYVzFuRl0Ejlc0RudirIflDAMNAiLq7H/2nD27MDfYn1HzB3BCi6Xg1vpEv0qvWyrRZfwX+g9vZSI57aA7tCYYB5vdGjSKOaIIWPa5X7QRV93mEATPGAewOphCgpuowCZ2g0W0Hdzvs6YP8UiZnb8Etq6NlIQRMlkq+KH+/qjGCqS3o1B2KvhYAamYGdgsQ1ykJMSB3gY7zalyDWP4zFP6n3FAL4h3zcg=="
           }
         ],
         "role": "model"
@@ -24,15 +24,16 @@
   "usageMetadata": {
     "promptTokenCount": 176,
     "candidatesTokenCount": 18,
-    "totalTokenCount": 350,
+    "totalTokenCount": 328,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
         "tokenCount": 176
       }
     ],
-    "thoughtsTokenCount": 156
+    "thoughtsTokenCount": 134,
+    "serviceTier": "standard"
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "qIP6aMjPG9STjMcPrvHrkQ4"
+  "responseId": "sMkPaqe0OZaJ0-kPyqOi4A8"
 }

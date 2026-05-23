@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Hello, Mizzenmast! It's a pleasure to meet you.\n\nWhat can I help you with today?"}], "role": "model"}, {"parts": [{"text": "If you had one, what would be your favorite color? (Please don't mention my name.)"}], "role": "user"}]}

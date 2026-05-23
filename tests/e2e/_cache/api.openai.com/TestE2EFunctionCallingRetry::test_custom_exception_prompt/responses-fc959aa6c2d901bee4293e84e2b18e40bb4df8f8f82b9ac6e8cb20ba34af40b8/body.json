@@ -1,0 +1,101 @@
+{
+  "id": "resp_0bdb326101683ce8006a0fcb28155c819b818e6d2305b51347",
+  "object": "response",
+  "created_at": 1779419944,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1779419945,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_0bdb326101683ce8006a0fcb28a1cc819bbcd22a97302db472",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABqD8srr5_bLxg1Gu2Kw9Y8p_2mAHUfv2iU0Wjgr9ucSiLCsFG0Z9vous0w3dsTrWekgyBkpnIE8OIMa7Nda1Zs0XG1CSY0q5jIDvg5QHpx4V76PHIoQDtc1TkYtKqLzPj8TOunSKPnd3oYd0i9-4TtmF4yBj-PHa17mOmIzkGJU--4oxTZOlOuEQPS5lHSzaOvPBLgq-OHswGnvdabOLCTzpT85_dlFOQoQIUW4afpTPcoMwSPYQAd_wUlcFKi96OHnNwt19rnjqNbmmy4sMwvRP_Ju5qpkhfb9lRdHMk_MqcL-jY0rdxCj9xO0dL-l-z2vjRdrlLhbz8rcUfz9P5RB1ULMM6TJ7svC_ftvamz0MF2HCc9RHYeZRDyBvC9t1OcM9qaBK1x0XBq4BeHDkMQ0WfKsWwQAXUHELynRTJZgZRMD5l-8NWoE7TM-m4NsS-9vfsiMiUfSWdXBfdW971sIyprAkv32PMQbmNcF-uFOoxz3cLVPqyfj29pkemoiuUjGYYr-A_pyruqTQGo8_1RGMmvTmlYRf_9s1s7EMl3ia2hwn2dGWc3wd6X9hySYba0M1O5Qrbs_ntK9hUnoFCgi4_s2en-VyrAEqjC7uDhPEi39jqNNz3S19XeivUut9qN498rS8e2TtFt2AWCq2uhDf83URImpNkjh-drCp62FLm-_PFq1EmoAqv938NTbLCrNt1jGDlGXN1vts19sXY-ev34hdqOX7OwiCdTT-4r4G7tHW2CQW6pq0Ao1UQ77TlrIpv6HT23U24dsn6Vai1VdPidkC5gwxyS6otFS1exdkDuzznCKoSuk_5AzrqGPfMcN5RXI_6_LhD7CmMnn5oALlUFkL6WwwKEBPVGu-zamFkYvw-c0sDGyMB7GPWw1A_p8bzXd6oxHpSusk96rzeDQ1Zn3ac-zwa5WceUDX57VROB1vPLyqT0cHqkOCOgu2pxw0c28Gaz8B3igsb1VRl74-c5zzspumgVJ-YBU6akaTcjlIcLuSMdgEit6uWwHXChySk2bB9sOLV1J-PmRJpjAo10aBfttDSzqJa5vVK2rrhjhbuqqC8HHfk52hl53Yid0jRhK_rJTw7rjFOtuRtN5zqqhU2tTIy6qvgx2da0EQ3K-q-LhwwPN7UbvYX7wFMpz5tul4_F7RU7K71GGi56TFlKrx_Vg8ST-phSPakVf_lciGyY8sfaotCpKXl5QR937O50EUdU3JuOmzVuamclkpwO_g8O0Nf5-QvoJ5vvSGcVMytC3p6NOLAI5U7TUOZ5HodIgBaS7iNsQ-aYAH3dWr_Ztw9GbQnhpasyu1s0MT1JcCDTH5JY3I8wQlJbQgV3X3kaISXAyFyU4BcPswvZ8vjT693ONxJ140wlL-OYwdAe9IM19tRUmqc6FO1Vt-K9poLjtCHAeaZMpPL0LxjCOZ4PlmcwMYL9roFyoRnKRJhyZPGuwR4dqtrj85gIElUEB3flFXJ7VylGKmmsI1dcziltRDKK9aaZ8SpkR5g44-OK-CAx6wSmOaOwsqwvrQlLy1a59jD6eH9w2ykdwZKejfaSTwPMWXxdOstVl-rZxFT3pXDtzf_U0dQglLBHwXCmFnkd47HFITpLOcePmOMBjheHhgh7SC1JDsx5C-yJeIQPJCn_DR3vfZNx0BRBNF5cPw3f",
+      "summary": []
+    },
+    {
+      "id": "fc_0bdb326101683ce8006a0fcb2934c8819b8e2f8babd0fc903e",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{}",
+      "call_id": "call_CXB8xO6HwitGz2X8rAcYRv9Y",
+      "name": "get_time"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Get the current time in the user's time zone.",
+      "name": "get_time",
+      "parameters": {
+        "description": "Get the current time in the user's time zone.",
+        "properties": {},
+        "title": "get_time",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "A function that works correctly.",
+      "name": "working_function",
+      "parameters": {
+        "description": "A function that works correctly.",
+        "properties": {},
+        "title": "working_function",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 77,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 130,
+    "output_tokens_details": {
+      "reasoning_tokens": 64
+    },
+    "total_tokens": 207
+  },
+  "user": null,
+  "metadata": {}
+}

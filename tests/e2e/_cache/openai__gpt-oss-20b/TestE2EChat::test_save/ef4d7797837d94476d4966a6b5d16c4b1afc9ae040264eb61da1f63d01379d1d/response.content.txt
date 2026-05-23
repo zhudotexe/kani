@@ -4,4 +4,4 @@ Current date: 2025-10-21
 
 Reasoning: medium
 
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>user<|message|>Hello!<|end|><|start|>assistant<|channel|>analysis<|message|>The user says "Hello!" We need a friendly greeting, maybe ask how they're doing or if they have a question. Let's keep it short.<|end|><|start|>assistant<|channel|>final<|message|>Hello! 👋 How can I help you today?<|return|>
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>user<|message|>Hello!<|end|><|start|>assistant<|channel|>analysis<|message|>The user says "Hello!". We need to respond politely. Perhaps ask how can help.<|end|><|start|>assistant<|channel|>final<|message|>Hello! How can I help you today?<|return|>

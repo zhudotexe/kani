@@ -1,96 +1,42 @@
 event: message_start
-data: {"type":"message_start","message":{"model":"claude-haiku-4-5-20251001","id":"msg_014D1dFLoQqtMQcCVZgt559q","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":832,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}         }
+data: {"type":"message_start","message":{"model":"claude-haiku-4-5-20251001","id":"msg_017m1xKSeSuVdVHe9ZUBhMW6","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":832,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard","inference_geo":"not_available"}}              }
 
 event: content_block_start
-data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"#"}       }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Tokyo Station\n\nThis is"}      }
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}  }
 
 event: ping
 data: {"type": "ping"}
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" an image of **"}               }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"#"}  }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Tokyo Station**"}      }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Tokyo Station\n\nThis image shows **Tokyo Station** (東京駅), located in **"}      }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" (東京駅), locate"}       }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Tokyo, Japan**.\n\nThe distinctive red brick building in the foreground is the"}          }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"d in **Tokyo, Japan**.\n\nThe distinctive"}            }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" historic Tokyo Station building, which was completed in 1914 and is an iconic example of early"}         }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" red-brick building in"}               }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 20th-century Japanese architecture with Western influence. The building features characteristic red brick and white stone construction with"} }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the foreground is the"}           }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" a domed roof. The modern glass skyscrapers visible behind it represent the contrast"}         }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" historic Tokyo"}   }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" between Tokyo's historic architecture and its modern development. The plaza in front is"}  }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Station building"}  }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", which was completed in 1914"}           }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". It's an"}     }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" iconic example of E"}       }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"dwardian architecture and remains"}              }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" one of Japan"}             }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"'s most recognizable landmarks."}    }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" The modern skyscrapers visible"}    }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" in the background are typical of Tokyo's contemporary"}         }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" skyline,"}               }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" creating a striking contrast between the historic"}   }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" station building and modern"}       }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" urban development.\n\nThe"}           }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" plaza shown in the image is"}              }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Marunouchi Square"}}
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", which sits in"}          }
-
-event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" front of the station's main entrance."}      }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" a popular gathering spot for both tourists and locals."}     }
 
 event: content_block_stop
-data: {"type":"content_block_stop","index":0   }
+data: {"type":"content_block_stop","index":0}
 
 event: message_delta
-data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":832,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":136}      }
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null},"usage":{"input_tokens":832,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":124}        }
 
 event: message_stop
-data: {"type":"message_stop"        }
+data: {"type":"message_stop"       }
 

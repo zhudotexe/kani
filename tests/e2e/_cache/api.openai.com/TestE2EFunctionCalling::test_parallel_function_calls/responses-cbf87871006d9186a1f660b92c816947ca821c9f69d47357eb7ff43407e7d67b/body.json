@@ -1,0 +1,135 @@
+{
+  "id": "resp_02e90c8dbbaff06f006a0fcc0d5b34819bb35eb25acb4845d0",
+  "object": "response",
+  "created_at": 1779420173,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1779420176,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_02e90c8dbbaff06f006a0fcc0dc5c4819bb5719497225d928d",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABqD8wQBS0zsEZiVZG-VLQfKe_dCAJkEDBVnUmKeyQB2Og0uZfrXvQWBJpQFdMsr82IcM0F5Q5oNKrwQJ8vol75lTgMZU-fNFkN8yt6wwZiClHm7E18PY91nBgGqgV_tJJBQKuPkPYMID05wxLcq3YDWQdsGmtaN-_P0rqhsxUHCuubV2-W2zzOSwtXVEdLDxhStdlV3-bF05COey5Wa7mUWwQmsmXP2YF-I-JtI9qd6ztL8lJ6z82Sz0FA-pClvcbr2L20ld76dvfZ4yHAlLLE3ZENU7mU6grYCcZwXAhrmYQqdXqkSCHzMW-6n22nVGZrtoGfSb9dKpXJgKwu541MPgH063wUxZR5kmly_i6A_urL_1Xl1C0S-s_7U7kALyDFyxjozp2gKPBRORiY0UbSNGGyyfan6Z1SICYiFcQ978G-kGNyQGcIAbWHPO7PN1-M-QqVuScLSVUXyHw6BvryP5ZMLw0NW4Cplb_Acqy7zXFhfTJzo6iG3akNnxcC8RIiM9A0HUSjhvEW419tBdAjBs7qkVmIt4hX55jxhtqCKBhC-B_2ED-5RqLxrs-UMTyKAmsRw8DQyy06k9V9bNk7eEfs2meGYYkwcVTsFjlOpx4VyTNgOHmwSZ1XnfvKq8UFlQKyVg7H0cUM2JHRyDAkgvv56Sin8LSBVKK6e23NpNhB1Ozr3y_8vyuz_55dkQAky5Br2nINVHSjFGWvDRoQmzq-PEdXrc1A6BOMB3Fgqwfv8J-VsxxqHdDe5FyKmSIi72iYLV_icykdN7Ci87A5CzP36aLZlQeoM9TLp7uUAz1MrMNBTxIXH3ws1-WmdUrx-BD9w0yaEyraLOwY093S-Xkxon3GyjZ4gVpPgg7J6pRSPdCJwqvkQr9gcQCSxhOuRKivypcQQi-HbSE3IJJ_w84cTDu8P4x9fyppkrURyBZW8fq2-ZSF2IQJ1xfzEsJPRxQOTPA9g4E8E0Qq03G0U1jNGb80BYg0tlqd804VCKj0GrDVoHsmCkRRJqFyRDME02VBrilkjQdotg6mjTYeQlPntl50iHVnt1sYQRnqPgYJTpJwgK2Sgg4GDXfB2tHKbgAoavYmlEg1vcDkVHpfC6g_Afd5KKCb3jRGFNqxae5J-kYlp_IwdQdw5--ccDM66m8vJX96a0ulxHzODoNdO_TPsAww_UFXWAe62317kSmec2GZxP4gkoblelpA7TBsAkE36aNInw8a-xY73ntgN1Ri4xBjYf7k529F_kL93SpPPb7ZdvM7538GrNV_2HNw4ljVIEG2plqYlNHBwimc0p3cbNGkKCDD3L5vUfGmZ2hRdU_Kj08vXVqWWrtFdn7Rih_CeHDvblYIyTIdMBcEroocLGo61aUutp6ZBAOQNXTzdwyFitoguPN3_Rf2KZheIsm6504ZTZg4CgofZ3zoTSisJNoWYBvtUYi8PJEjl_2-TREvkHC3bjaxE3NHe0xEjBeSWI0SjbXiuMz-3BZHyQnGNNhbtrP6du9ap1TR4ryqGyXi5LXADd0Wuuo2HsJJndr1brT248Bu5kWsQtpZFbsgAFDzd-NyowHUo1rFTMbuyARzJO8ucadURiGUFVx5BtzGfpSSeRJgQqNj6ojq7QhYqdAV2-7uYNXTtZjvMfhrUoG7TMeJhFGDwDywYPKL-_vNkaZbFbKo5ZE-1-FjnlDE89q-NHHnK32rzn3GHPN6OGzuVClZPGnJx3bp66BPFnSPKacu6EgSlOKbIdIXSyGhzp0gpZQKLEIe-JCqaO_tqcdNv1HSwJHyLNyQ_KtAuqKaZg2_u5rBNVJinOI5Ic8dPR0BvqO3ElV9H87IMJXbeE4CwGkSOYZP4D55-DCi-FPo7ASxSzR38sltR44tsMZCygEraF0XT6mXtDgG7H9nqu--ndQEGfpS0Fn6FTQM4K552fofthffo1yGqd4Ux7089G4XjvZzra9ticNcp0ls9VAu50tt1BpOZhz4hY50RI0-RYC0vxkRRmJmHf5IsHDFQtCGn2unn1_wCuQ05MHPGCi03QJ7MANIa-cdhtUJ1wk07BGM7C0CQ3djVauWK0VQ2RbfrSFUfos_rLxzdGaxZHUp-kcLGKcHeTV0-K8qes2qyhQAMw7jqBodW4iTzBesrvkPh0ntV6olgcvu-FtlVP9b9jfqBlw_oWUW-ld-m4YqygDI8JYE7iUB1N9PgRkw2mPgRt-EnJz2RFQ35PW_uMk17XpqyJiVFu8qnVFOmoYd6x4QZ9JSu4ktYJMLvNRzuNhapcZR33cuCYd3shCC6v-XRI3kFV8P48opmrIenrzw98TqBp4ehj7WmM_bAXWP0O6U5a2_-YdzdmWUbrDS5bFv94qSOfMf0H0pu1dRouY1",
+      "summary": []
+    },
+    {
+      "id": "msg_02e90c8dbbaff06f006a0fcc0fbe08819ba010913a3855c20a",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "- San Francisco, CA: Foggy, 65\u00b0F\n- New York, NY: Sunny, 75\u00b0F"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Get the 3-day forecast for a location.",
+      "name": "get_forecast",
+      "parameters": {
+        "description": "Get the 3-day forecast for a location.",
+        "properties": {
+          "location": {
+            "description": "The city and state, e.g. San Francisco, CA",
+            "type": "string"
+          }
+        },
+        "required": [
+          "location"
+        ],
+        "title": "get_forecast",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Get the current weather in a given location.",
+      "name": "get_weather",
+      "parameters": {
+        "$defs": {
+          "Unit": {
+            "enum": [
+              "fahrenheit",
+              "celsius"
+            ],
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "description": "Get the current weather in a given location.",
+        "properties": {
+          "location": {
+            "description": "The city and state, e.g. San Francisco, CA",
+            "type": "string"
+          },
+          "unit": {
+            "$ref": "#/$defs/Unit"
+          }
+        },
+        "required": [
+          "location",
+          "unit"
+        ],
+        "title": "get_weather",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 558,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 274,
+    "output_tokens_details": {
+      "reasoning_tokens": 192
+    },
+    "total_tokens": 832
+  },
+  "user": null,
+  "metadata": {}
+}

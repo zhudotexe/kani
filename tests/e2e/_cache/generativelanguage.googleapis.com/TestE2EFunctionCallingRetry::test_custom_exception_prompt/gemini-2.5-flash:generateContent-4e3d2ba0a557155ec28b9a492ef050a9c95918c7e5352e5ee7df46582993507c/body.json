@@ -8,7 +8,7 @@
               "name": "get_time",
               "args": {}
             },
-            "thoughtSignature": "CtEBAdHtim9KmOL7TwLLLd8M2Gxwbyj1LMU2IWZk0Uj7Q0+0a66TH9Ml2ny0LHPyd3yBum9uGIIR6ilvYUd9QVqELrm4T4toN6jWhxssrgZ2S5xR/SigN4QhaxU2gf+YywjdlXPM5gw+hcmK1EulAf6vHs7NwabCQNQZRX62ILpxjE6L14pibfAfSRI9L/JkjvWFxIRss2EqXpYYPNycwxofyE4qA33SAmZtVg5zLAGxyNDi0GkwOOCT07RyaYzjR6mHQZd692+IPhwdm4uOZhZNxEc="
+            "thoughtSignature": "CrUBAQw51se1V5nCIqf4uXOi878lAmKQ4usisHGtAKwJP0JfRP9FxT57xmsfMc2HZF9z+DyQPXAHSLkY6MaCFVSap+Y+g0TYtdi7ilbaLoU4t1qexg2VP2Qo/ZOBUUYEj7Vzc5gN3nb4d2+sfBNwigps0kbQOhLJf5N9LAoM/xxoOszXDeFe9lgcgypVIULVVJywSCvU/r2jPZOWXo4QtaKQV/W9ZNIF2GHLD8oCKePC374cqwfRwA=="
           }
         ],
         "role": "model"
@@ -21,15 +21,16 @@
   "usageMetadata": {
     "promptTokenCount": 81,
     "candidatesTokenCount": 10,
-    "totalTokenCount": 134,
+    "totalTokenCount": 124,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
         "tokenCount": 81
       }
     ],
-    "thoughtsTokenCount": 43
+    "thoughtsTokenCount": 33,
+    "serviceTier": "standard"
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "zIP6aKHrMY3NjMcP9-7RsQ0"
+  "responseId": "xckPas3AI-K22roPqbjY4AU"
 }

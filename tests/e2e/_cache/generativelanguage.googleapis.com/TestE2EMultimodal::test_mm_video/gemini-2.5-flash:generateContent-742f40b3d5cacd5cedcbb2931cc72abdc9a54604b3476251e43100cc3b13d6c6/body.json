@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "The video shows a **soap bubble freezing solid** in a cold, snowy outdoor environment.\n\nHere's a breakdown of what happens:\n*   Initially, a transparent, egg-shaped bubble sits on an icy or snowy surface.\n*   Over approximately 10-15 seconds, ice crystals rapidly form and grow throughout the interior of the bubble.\n*   The bubble gradually transforms from clear and translucent to opaque and white as it becomes entirely filled with ice.\n*   The background is blurred, showing trees and snow, indicating a winter setting.\n*   An ambient, atmospheric sound accompanies the visual transformation."
+            "text": "This time-lapse video shows a soap bubble freezing on a snowy, icy surface in a winter environment.\n\nHere's a breakdown of what happens:\n\n*   **Initial State (0:00-0:02):** The bubble is mostly clear and transparent, with a few tiny specks of ice already forming, primarily at the bottom where it touches the cold surface.\n*   **Crystallization Begins (0:02-0:05):** More ice crystals rapidly begin to form within the bubble. They appear as small, shimmering white dots and lines that spread outwards.\n*   **Rapid Growth (0:05-0:10):** The crystals multiply quickly, forming intricate, snowflake-like patterns that expand and cover more of the bubble's surface and interior. The sunlight catches the crystals, making them sparkle.\n*   **Full Freezing (0:10-0:25):** The entire bubble becomes opaque and solid with ice crystals. It transforms into a beautiful, delicate sphere of frosted ice, reflecting the ambient light. The process is complete by around the 0:12 mark, and the remaining video shows the frozen bubble stationary.\n\nThe background features blurred trees and snow, indicating an outdoor, cold setting, likely at sunrise or sunset given the warm glow on the ice. The video is accompanied by calm, ethereal music."
           }
         ],
         "role": "model"
@@ -15,8 +15,8 @@
   ],
   "usageMetadata": {
     "promptTokenCount": 7360,
-    "candidatesTokenCount": 128,
-    "totalTokenCount": 8203,
+    "candidatesTokenCount": 288,
+    "totalTokenCount": 8278,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
@@ -31,8 +31,9 @@
         "tokenCount": 777
       }
     ],
-    "thoughtsTokenCount": 715
+    "thoughtsTokenCount": 630,
+    "serviceTier": "standard"
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "btT_aNWZCLLj_uMP6IzRwQo"
+  "responseId": "5MkPatb5I-eE0-kPuZXtAQ"
 }

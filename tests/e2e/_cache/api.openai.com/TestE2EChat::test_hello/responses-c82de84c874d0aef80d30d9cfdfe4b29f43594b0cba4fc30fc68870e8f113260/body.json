@@ -1,0 +1,78 @@
+{
+  "id": "resp_0937f9d8efbc43ed006a0fca95b258819b816a36451acf627a",
+  "object": "response",
+  "created_at": 1779419797,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1779419800,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_0937f9d8efbc43ed006a0fca9604e4819bb36ec2292ac59fcb",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABqD8qZ-E_PcybRiqJit6gD9c4kRTaEm5CMqR7HFJ25p97qcJBJDo9-T28rAxHoOIeZQyecKy0l8B__3ket2YXL3wxf6CmYNBrlBf4yfvnUgh88WRkWXMqEnRORTWP37EdDWiKj5DI9fOezoNKgoISwbrYnMRgeupALI_4Ym-5KA1Tf3qpmerWjvCxk9Nhq2rjJEgDCAYYso-o-_ko5JuOCk5tp8A9fMvFULyi8Ga4yRudI_QydAbqhLnWAOPhxiMsica4DRh4wHHUC6zEOoa7TUroq69y2aORoPlan-wdq8sUGXL-2cgQtnRL0Xj1-RAcZFIdA99a5Ep1z2k_McYqICqKL-_k6knhbRC7msTct27H-lYLPUAXozk4iDbtWcmye7s86QQ7mtzn_0aY_BtatnNr1l98TUdPBkhgGO-cg9ld7Y-X2uhMtokZPFSYUKvdU-aL-LVnpVPDxwSOgqnaEnWBhxTXWEAdbpI4zoiV0Wy4_hn4CMIn8Vwg6kzJ-IMKMXbJ4RgwSBTGlKeRTlhU7byMjobmxWdQqlPmmfSs8WoTC9QDEPT2uJX_UduMjVRicIjlSpjpxw8-JDpO3nRneuSObLwq0dCtrtj7dLGzp3BxboQGloaxQ1U4HjB5Miv5UxTLMF-2iy3d24F8PSpVbqJ_yjJdqi1xfTzfN9BVorMCgUj2WG5E2f_meWNLypXvz4OHbMQ3SuqBSZyaK9xffXSLT7B3z_ASX1EL6v5c8llnNxvWgITbiI0yxvLrNH_mqb3_cfNvThUiXgXXSiMk_dTxfHydnqWAmj6qGV2eW_PfzYlQDYlra-Y3WvBY40TZl7kjMY_a0Y6m509kKtLYupbz3j6jH2C32BRum0qvrDioYIr72X9e6cNXzBH3ktkWepiW4eB7_ZE3u9bdS3Sru8moNDjqA0Q6YeGfs0iLSdBhFfc22HpShCU8g3NafG3MzY4lB3WiuWFwtwjQePXVeycYAkjZo8zPe6Rrav6lK7blq_BwsmAfvgh8Yh6ZyTg5cyvVPphFnZuIHRg8nG0koL0FykH6oI68qtCnYvfXase_WaJoJKmIMwIvjTRC8b36QbXqnfIFVOANURV-S_n_EDq9g2kVpqA8xK_RMbHzgyHYHJ70HEOZcStnpvEuFM8ME_6ZSPMsr2sCr6Mt2mGdm9mTY0j3x8gv5PtZAXloygHW_mCyppFQsPfBtuz6Hcoxss_gXs8gl1WNa3fzyJrkIoPK6hmtAkFksNyUyb4PEzOA8xpVmj7u5bUnMdz3Q6wAaO6bOt507jP-09LDFQ2Ptx--WE5ox02n-uRgmgPbDVWwbBd27HV-h4ZyEHo9mE3lFMftXAVKvSmuJSrS5ydi0jhwUsYBwb2rx8bfrFGBh_lGKnkDAdD-q4Y8jVsaw4x-1SJBIQNlf5PxSWsDZuE4SLMrrX192Ie3r52nr_6O5xHVifRMt5uiEwci4_0FKjDW7NcopbPtSe3Nvhpe_U2kTOXQnI08iaysEjeHf6F2Q1RKXDoZ-roLk7YmEiofF-2Og2VI-6sse36IMbz9t-LGzC8QtJgMT4m7l0TZeMnqOLbTpK3hOaUUoKhq2xBw_v7Ewv6z8Plo77PAtwwtJEQN3Tl0S96wxogywuUp59ZMlnJ-rBHFlpq4W6UxSZyS6H6zAXwvk9D7_VlwcviGUbBXQ3uv59dKJfJtrcYFGWn7Cv9tH_-eLffzFwwnYi-iSN8EKJ3xtr7zoiTTXhC1C2su2FmUGIrUz1iMu6pOkHuWfSET1hZh7faRcNy2AXjPTvn5x93Fs6F579HhEjpfSi_G7e4g5OJf29Zseutm3gIbb-mrlR0oTGIV4TdbGr16qGcC_pT-fg6zoASOm2cySb0tofSf37Rk4UNKA0lUeUgphzNpAy0TgFyP8a9U3_CAJPMEdcy9t0RwUiyL--jSphmovzbDRn4ekgtJqygXrQi3aZbhDZlEPPfkfw31G7DPqSSwDEQACwjJyN-NNhL4OUCSr7H2QrODgWcTsoaIkilXHXOByJBOcabpbg7LwG1qCsOe6VQjUfJbIRRCmIaYbaiSbF-sOTeOjEF5D18iUOayCzTRJo3H8tK1pSxjbyBtwuAO8FklLU1ijc0MO4vEAK_3CCyinp4R80Wxye2Su2O1FxvzPi0H35zrlJtS8AU4f_LYmN8eor1Dwui5tqTmP_PQ6Q8pEf4CWFIG07E40RjDFVN63NSjlyCxF10tnHHz6m9Q7SjbjNrEZ6rd2E_ZFl2TOkIS50gjniwta37fMpgWz1LOX25P2ODjP-rJPYTnooRxacNK5UE9krEVrruC9yeyg-pdRNKRLi_0XYPoq2k_13Oo7p2Hmu_ENPcsipSBb57WE9vmIlT8d7VaL7gANUXiKWVEvpdWcPD9_RBL10mCMgLb8GN2JXqwh-2wZtqwl8vJ56HJ4_5Pa0IcjlPykB3vg2NVO8VG62x0d1Fmwc-MqgzEWZMGk5r9UM-qbi9rXOyvdtEw3p_aIq_vwfsERBBFhtZVq3cRjRdpfF2kd7MbgW1Hxkv_eA0uiXkasWIS2YE6UmALf-yAHo5fWJSEYQ4KLMnldd09MgDz8x1g_0_LEwtz6f0BPwy36apnusa5DIWarmSynXzgVUNYuATeDo5F3vzDOTt3BOpB5WPGK0lyxM1X7LkjzCXXL9GxKNVZIVZ6jIyvYernTfaR2o4JnoasXxwQjbTEzRwdPLR6CMMdqA5RgBCmN_0K_E1Hxq3e-I7L9CtcT1VjpY1R0W86qKxysKKvfqoaqz6kKI-_Y9JCHj055wetP16-8113caI9W_6PVFkiDMaZLnJf8C_EYxTEhNGJi3rDmMmYpwjVbkooGRIJUOWi16cUsNpKMNUPRRtGdHoULphWyGRgiv70v-QlSkXCNkcHi61b7JrIKsT5dphwxUYnB_QVGFY_tuloZQosmFgWr4-G7KE3FNU0lsj_t16G5Hjkd0qfc9mtkDBOo8OMXz49Ab5lYQvTeATE-EzpI6O51hheOqjY2Y_4M6ogE5aRmj41s8lsKTvcoea2r0TislOo1FkAgvsmm9osP99_PzG0_3pFHTLeeQu22r845vQ7w0s2XPmaMVqFz7a80EfX9_pvB2TJdOwq8l9-wQ1whu78c92ODoYOMtwdxa8OAhs8VCQ==",
+      "summary": []
+    },
+    {
+      "id": "msg_0937f9d8efbc43ed006a0fca97f278819b95613c67e6c4ac55",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "Hi there! How can I help today? \nI can:\n- Explain concepts and answer questions\n- Write, edit, or brainstorm (emails, essays, resumes, etc.)\n- Help with coding or debugging\n- Translate or summarize text\n- Brainstorm ideas or plan projects/trips\n\nTell me your goal or drop a topic, and I\u2019ll jump in."
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 8,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 439,
+    "output_tokens_details": {
+      "reasoning_tokens": 320
+    },
+    "total_tokens": 447
+  },
+  "user": null,
+  "metadata": {}
+}

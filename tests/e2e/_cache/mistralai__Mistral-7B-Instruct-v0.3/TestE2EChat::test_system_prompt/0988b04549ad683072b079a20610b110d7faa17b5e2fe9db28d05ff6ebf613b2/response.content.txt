@@ -18,4 +18,4 @@ You can use this function like this:
 print(factorial(5))  # Output: 120
 ```
 
-This function uses recursion to calculate the factorial of a number. It multiplies the number by the factorial of the number minus one, until it reaches zero, at which point it returns 1 (since the factorial of 0 is 1).</s>
+This function uses recursion to calculate the factorial of a number. It multiplies the number by the factorial of the number minus one, until it reaches zero, at which point it returns 1.</s>

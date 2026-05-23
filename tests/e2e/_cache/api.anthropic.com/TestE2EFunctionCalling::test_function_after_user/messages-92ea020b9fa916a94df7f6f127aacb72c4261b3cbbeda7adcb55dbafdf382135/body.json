@@ -1,22 +1,26 @@
 {
   "model": "claude-haiku-4-5-20251001",
-  "id": "msg_01QQ7EDd2dqUQCgo6dCjSQNY",
+  "id": "msg_01PPo91FSdR759h69LGwRsrk",
   "type": "message",
   "role": "assistant",
   "content": [
     {
       "type": "tool_use",
-      "id": "toolu_01AGcQV3soiesH3KzoTZASJa",
+      "id": "toolu_01H5XCg9M7TBDvhapcjqtXto",
       "name": "send_email",
       "input": {
         "recipient": "john@example.com",
         "subject": "Meeting Tomorrow",
         "body": "See you at 3pm"
+      },
+      "caller": {
+        "type": "direct"
       }
     }
   ],
   "stop_reason": "tool_use",
   "stop_sequence": null,
+  "stop_details": null,
   "usage": {
     "input_tokens": 717,
     "cache_creation_input_tokens": 0,
@@ -26,6 +30,7 @@
       "ephemeral_1h_input_tokens": 0
     },
     "output_tokens": 98,
-    "service_tier": "standard"
+    "service_tier": "standard",
+    "inference_geo": "not_available"
   }
 }

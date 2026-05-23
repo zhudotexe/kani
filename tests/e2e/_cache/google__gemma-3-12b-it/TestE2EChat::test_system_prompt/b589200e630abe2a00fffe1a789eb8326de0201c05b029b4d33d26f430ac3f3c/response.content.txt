@@ -14,9 +14,11 @@ def factorial(n):
     n: A non-negative integer.
 
   Returns:
-    The factorial of n (n!), or 1 if n is 0.
+    The factorial of n, which is n! = n * (n-1) * (n-2) * ... * 1.
+    Returns 1 if n is 0.
     Raises a ValueError if n is negative.
   """
+
   if n < 0:
     raise ValueError("Factorial is not defined for negative numbers.")
   elif n == 0:
@@ -27,14 +29,12 @@ def factorial(n):
       result *= i
     return result
 
-# Example usage:
-print(factorial(5))  # Output: 120
-print(factorial(0))  # Output: 1
-
-# Example of error handling:
-try:
-  print(factorial(-1))
-except ValueError as e:
-  print(e) # Output: Factorial is not defined for negative numbers.
+# Example Usage:
+# print(factorial(5))  # Output: 120
+# print(factorial(0))  # Output: 1
+# try:
+#   print(factorial(-1))
+# except ValueError as e:
+#   print(e)  # Output: Factorial is not defined for negative numbers.
 ```
 <end_of_turn>

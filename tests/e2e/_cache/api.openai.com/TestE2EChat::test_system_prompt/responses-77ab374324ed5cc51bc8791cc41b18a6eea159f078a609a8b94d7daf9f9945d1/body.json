@@ -1,0 +1,78 @@
+{
+  "id": "resp_097019c4d725e7f4006a0fca9e4b348199983dc666e9e28534",
+  "object": "response",
+  "created_at": 1779419806,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1779419815,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_097019c4d725e7f4006a0fca9e9a688199804b69d0f757b80d",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABqD8qnCi-gbZ1Zz8cqvLg2DzblviSx9Vfqc5OrrQOGGf7kzqKcg7BtyFhzmRTPRnQeEwfDrctcz4mqoG9Sax3tSLjiNLjRna-F55Co31zEQ7zTKSZuEXhojjoC_RFvVcjMmvQd2rJQLd5qHicAZiT0zRqK4_oU45e5XhxY8onCIDC0YqtKe0Mu8DhMKWFu0ZsP5iPfi-Vhd_eGJ9TFPj2rwIsCwJWkYhiBOIhjdxoDfE_88km8C3jvEtsX8-zAXkqJ9OOR5dVPar2hrPN8vZ1ovxwQsLDEF9BVEIKnXbwPKVw3zABz8cZaps5aU_9mm6wrVPpIKg5_nhoq5mN5-6ftV5ioEKT3o1PbcXBNP8VvDrtY3HCSeGYoRnOR71b5BhI440ZouwA8krye43aqkF8EvzeHyjN8EDvlLk9IApM74BDvZVB2ByBsgd0NqKA1PteZHhd5Mw9v544Tr5_6pb5DwaUeGqxu7r0-Vb1eeTSJFDJeU6-HxhJrz_TOjAXtxud_iuttXIYIoWmMWE1pq0DXTA4h7np084VHW0TwQjLC2Ceag-3elHmUBL6PfD7l7wmDIokG09BheoCA6mw4WMTuHLF9yptnEN1uxvOc4b75HVmLk48tMM2WjgBodXJJsKtpU159u4wP1l8aH1-GwP0PSgjlDdDXCrsP5M9Z1WE5wiqYWzL_wBZYYatXeqiGJoR4PdR9D4hX8hclMrpam4QfKmAx_Cjw78Q1m9qHduqukWTpq_4Zh1PwW7AqcwuD6ixYfWTfwTmbiSXmMWHnApjxdHoWMai_oaCXavie4_dVsS3rwr3jIn3QUfk_F90hNbwuYAeSIaf3PLyPoSmPaqTBPiX9Sr0sA5baAdp3EsUUGBYPDHbi0rnslt5cI_Op6GPxMrKVJSW0wIVZxr_1bfNZx-LiNxpRM6i9KkZkur25VJHEOlGQgyHnwN-wqOFN6cuYdsvFxl4-iH-_DT4e0o6Eff1GK4MHJ0oDPpYoRZEzy-zt-4hxzVpV-OwFcGNH9vZeHUW3fpqCkPh6LWgGsRvNiLou4MaUkNofv8cPtLznVbE7fP6WHaGEsiIzeVaOBFzI5Tqf8F5RrUT-eoOGJvL_zpiq5ISuvu9rDdtysUm-0L4Ed3_rLPygR9mppMXJH88aNYJ5Zy0ZIj2BowSw0dPqByEDJVeK5t9WE_SBPyvm_L1ee950R2gs7JmEzAmG45_fkNmbeBMcPaVXCYh6rt6YE4BAKCmnkDCw9YJQ6igmztaZ4xL7Y-Uk5nmg2MpJMhuCGA3cgyMX8kV2LMpoA0R-3QYzxVkr9PwXY13IRedfN55w6U2Q612kl4tmUPFvgHuoeoo30u85GRD1S6C1PIuxwjLnwmoWOZT63G6y0_RlkL9mGbGaXdKY0HutKlUXPKr9XnuIty5BUMvVBzQ0AfQh-gqp5NvBUb0SaJjvHRo-KQe20oN9iG2GuqQmdi1Fqy_8awvjNtftNxX8dfdtrQtWf21vrpX3TdcpQiLFf5zjEh6vHBEplvO-XFlmwyARDXSGe6HGe2Mw53-193WEYXcg0oJ14Mih8v1Tmxe0TKAnhGzCfl-nB04uDfioT0ku9x6UQBfqZb5U_63aw2ujpg8rXeh-iRPBT6WraNIreG0v_83Re9kkfZ_RTPdPERboRBK_3cUjm08sfiijOpHeWLMC2vuGi8InKEXE2G5F6qN0F0PEuL4J20JEqqYnXYVd-yIZqTcNaFNj8DqC7gK_2OPcX14FXttLHIUNE3OkTp_xa6Qnx-raoQJWFNpafD3Dt-phYr6ZgJN6BNGvkLR3ART8wYa7h7JxNc18JjHNqnukhkPo-Zh_XWK-xp1vVpVmyQ47p9_DQRAWk8gVHWTz1zJEYfPlOFpI9PYY1Qw7xfBMawUy4lzY5NQiK6MI7FNCUuwmKPyiebbKdTWQ_JX2oLkYnRWNOEM_HAqx-acT7QL7uC43tboUu9KFIjKRFDhCfhJzYvcmRDvwR8NDImr0TfCPiO1Q9iclUOckUyFbboaHcM2TKA-o_G_UGKzapIL6VA3ETWPIAPnM8xljyYkhqfP4xYoUc_xSmBgR3VUQGaURZCLX-BGLBzB_w5k4zvIGA2VpR8f-y_4HBU1m78-Ry13UkdOh-e8VUyDJRwmPFepk30vGB-l4lYG9BS1geHmZ2WLW3_1BDDX1TNEPAyCZTeOxqGXtn3CasXr1jbOxaQPkXVBKJT5SuAoPJWBTi-Pu1RSf6O9M1cS4mNnOqudhmPW7CNu0qI4fufq8IVQ1vgIHHfB1zD1ibIwq_UqnUAeq2Jm2neI2nOIka9GthzYNeMQc-G4teMCn_dc-RdnBX9KJNXOZJitz4uYFSBGGUQZSdi6lJDDbZdAA2UmYC34uu2OTw0Q7txmbfLfen9WWo4fwZJoMtgJFaI8UtWaKn4SwuFQkXbehgr_EUfh0IjbRiuyay3y9y9pMBgMAhTQtoS99uPPzc-r2gEJJvWz8mv5-QTTJDJ23S173VvXBuwEkWFQFcVjq0DqO3d75T0vjyfgCjjaaXpV1J0KtrFPNyLSra-xjSZD1UN9EMGlOy3AM6ZcBUkbKRsAelzBTUD89hGCOJprS0xUR6VFb_Zd5890v3xvA-Bob6p1XUf1OpmdDfZQ_rgOf0oqhvkuGzIhtTMlBpP5yhUu9smT6GEH0F-Umn2ONue9zvHFLNSRvpYDO1IN0kT9vjP_6fmrN_dwHROFYEO1Mx0IrQufHvG-aF6MnrkNsbCp-Dnuwy3ZyRHZF-GaHleVAQMdU45CbSpjrKCUtrKdw6VIlO0r-xAjpU0-L-5k86sfixem9yPN5wiDOdIBImQVOesM-2JxKx28mNLI_oVXZDhfuOd7IF8xkDi5VNAqsgOIFUCHMV4deupq3aMuuf9NDd8Nx57_u4Qef-LSIADNuhbwtDNO-7dqyqAoEY5qKiQtRF0_D5SvjsCHc7YPhNMkfjU5IiRjGn_1ZaKhWTkWcI033KJhm6PqMJORjBR2v4yHVIUSrStlpiXP39vPsvw3GY14FakSsbTEkK-tmpUXSKpwLFV6rSndIv7GiFPeW3nhbJQOK-cGMX8-78kwOEC-43GAcB_Ry87AN5SmDTIzdE0XpsdHsMgvGegB7UWMKItctqT79v-6F7VefEgX7iAmWZZXk-12GL5-f_w9sIstyle2fGtqJbOISXFtetC_OSkFZGUoq5k80VWQ4tTKAdn-wO3Kd10i3IDXE_HqiozcfaAfvVmCG4uzGjcngH_Kjm-8X_h5IR0VgBdnYnldM6MgaKOnFuBAsrTfRDLYL6aXA_x09jCXxPqQiMMzrDstImoSbJyijZhTNeTe4vdESF708vp0HUL7gONrzy7ZTYycbdooAAJ0RR2Xj1AbmEHSjFSvpGYqdDhwCkdCHHkcxZ9T4DZcSAYYwxWs6C6pjAcL6obF-JvD8LHA7xP_emPfQzAmoJnkJ57GuEpjdyZMPcBuJliw9IhnlYmF29uX3kC8xk6R7CczsjkEToTSVHB31baZHLZizaiW1kj7O9yNzPT9d4TdmMRsVCWvJXq7qri_Gt4Rr7fsM1xNWHf7gl0er0CoeRIlYTu2egRHiglDCiLLO7mVwoakHFL5En9lZ96-Qga0v2AAifGOB09sXCcUBRh5NU6c5Puyp99pfGfBFX4XCsJeAQCkgYzD4_z5E_BaiU3YqTvqdPAxr09y-dFfx7wSBYBdPBvT8w-pWEhg9YvSyFGiw27pByU15YKBkA5lUKMuaeavhkJdC4lec6FZwnb0sb2P6VsxAfJWZGbBV4ZjTAnzAJyf260X7cEESBfJsqr2i8lxvJ2FEp7H9NiPGqF9LC2EEVOrGmAcCru0xTyoZNFFgOEZcG1pk34EEnDbtogH2W3iqxMInIxb7v-pqV_2QqQAHXCn9L2f0T-idn4ct6vLdaiMOmbks-6gR4sfJNwP8pjmXB31OMRmSQZvKJ1quYfExiHXKIDupnk7AqLsUSBZtsrMp7LnLmWUr4q0HsC1FILnz9UnFO7WvjzKIrofnH4WKDFEm3gXC0T335xhTlEsfIrnGOF_FtOX1xBNGBdTYsEH2sqnRQU_3nhaFXklsPOhM55SeFOM4ZGDoBakBnJ-ZfchdNs4ke40yHqpkMRUBIOro8aRRrDpm--V5yWIrJLukKoQlD4AOgBroGGJ4HjwmRSWFrmomaNPL3Q-m8SppENCFbrdJDEZuBSs2b6ixkuK5EcrsLWObLMV37z4S-46WJY8E7HTv7p6ZL1o3p685JCMGzn5nF7eKSokgXTybGSmJ7ma6ncEetD68Ul7U0LyLepco8mocOiq3-vVQKvL75ePvw4y-YTmxinGS_Hornx8XWiT8B9I_2gssrJl9cBys2A80HEl6iT3AiGPlahJYlZ_-MMO3NyMbh-7SmfirHtY1zSFQXK9RriAK51Pga-6FXc6hdz9fDCJWbn7dLLs0iLtd-M5RqeYcmYPmJ1qNcRpKLcJfjLOhub5zyfVrEv2wLw9IJ9V-4V9CLl0KBOciSS25I9aKgmsYWv6-bevF8s0eiZ8zoYZdXR-xXbRTO0xsN7pfe2uPnrF2tcmgekByieH9EXV1fbGpjl0d7uS0UOO3z5mKKFY3CI6rk3DNEM5eENhyJIZGegiTm71bnBWL_CMBCdWc3kYRzxkKX3S7D1hkU2brzIe4E6wbQsOh3Q0H-OFZx8Kyde3JweDVmt2GaS99an0FnhyCKM6i_-sU8BWXR_iQOv1dXhOqWGJ9duzdxh0NM1mgV3AqhGH8sNPZ2poX9Q9_kYJk8BgogW2UyQ4E9A7y4rEywBaRNLn_siZgdLVhOGNsna2-Ixo2AUZczrtBhkmnZlHED_EJt4HYww872AGLQBU7oyo6LpA-qQYsntaEAVyf1EAItiNmyQocOr4pkx38imE2e5mgCHSicokt3y-uUB6u0F7O5sHC7jSEQWQQtrCojupmv618xLJvNAA1LgrA4aU86kIuyYg15ax5DTfMgYRnGntAatwqfdlySWF33dXpfUbFGpFOxhWmpR56fFtnvMz2vhcy83jOnVV1lXZUeDajxjy9mJy4W3bUvSY7T4TnC2ASx1AN_NPR0KDB_QFZI2RpPVMoXxb7e1nKaEts89ZVgGYV1jCXszXD8BQcMi5QGIDG5daYBecP8q0GEBNU-HZ9cRMJEoAlW0w1vcQE1-rU0--4HUyo7B0of0j5M6ebr1Ytf7Jn-fSrTv7uxB2QJ3xg7Wz20Iaj-Qb1Mj0ft9RrXmLbSrHP1KZ-s_TGjVJUDsMxE-ytWkxNip8UslhPdxRAsHmeustR2677aPygiwWMlYnpjct3n2BpcthfhvczEzIZzkaFDK685CSA0jHRd5a_Pklu109GpEJUVnew6XrRj8mWIPvOPUS6hDSpZPsfLVMqdkopN8UzcYkk_Ga74z55ytdyu8NPfvXm-7zgEqLPuOCbHjTdVd0PEifgtV3d3XhRJBkAbgjlBKAdg8VNRxxuPzoESBHUh8WeNlpD9eHLOeqiANtJvmfoN8Z6fpMHbMXL9vi3CYfLbvs38kgz1nVfqY676UTGCPgtJSsnBfbu9-27WH19PpnPKCqGT2Nq-pj321oBOE8xb0UXxUReHibdRYftiHtcJVSSkieMPfn705uJ1VgAuRdcxbDnCGPt7gK4jYdPu-9V_cKjrwSwvA86lOYl9UGC408ubjXIDAfoCtTIC1t2LQohLN0o5_A2BUpIhzAEhszmBLbWC8yEHbbDx-emznWixJzwhTSp0gpMwBdOjjyc3no1cUwZsm5Bv1NhLM6eL-F7ztNjzBgbl3S_ycP_IiV4QZW3iqKMRiRpYtksukTh_8W1x-MrK6DnWEhnky5j_DCGH84_89JMYgSI_TOhN5JURfBKxCqi1k6_bMYaHE9lDhIEkiY_yQynToYwfIOEvDtyzh2o7MH8rLGpVa3hHYoJGpwk_SfsHJiweq4vXcPFJSLJ_7urywcR9VWm0CrJvEBqoQebPHwFd10AehGT0z-M_NAgjGYYX5IWUS7KEPHhGOVAfzf2QJqAI4EwbyF5awNaICcBZ1qXO6SIVz-3tjpb52YX6hbz_55PPvMBs-HDsaAnB1jv__Gr_s1XRgDDsHGHR3OMNyUslpQsl_jkHCJvjZaNfoKFyCtZyXdaYOcHdlQFF1HB4Mr7cQBzkFJwB5XPiTqXhVBskyIlMwZ32KKm32aRRI4_Wpcw-xARSKslj4ultVCmfJfKZUiWwbg4-MYkcFgnODLrYvX5LFOD6G3yOHJ9SYY-1TD1id9kLCdv5mgGE35gYcvE4MfL4chVJzjacNS68Nshc1OgEh4aloe-CPNCp_yi-RG2NIbSMrugOsG8Gh3kpP1oYh2fexYjr3Tu7Uq3bkGYBBUdKVz-oVcwX4dWHEGSKn8nrQWjltc6JgxArg4mtky9A-Q-DQIsBMlAVd-AvlO7qLxl9QxvmfK8Tz4Po09WNBVFLjE9kknki3WtH-fKzTXfFyttp2fWEgIzP8sBosb74LUhRchFCyTYRvpoGda-w_lyng9XwUe_I0s9DorQuCnYrdwuvNQqsyBym4gYHwQjD-VDpNmu35vU1kZL6Lfu8cRPnFGznawC9jIielQ7ER3FoKWMaNLkA6_LN88bAGB0SyGm6AiqAy9SblooV_Mf5XwKP--nxnz0KIz3hzCnB4Hdt81KANzFAMYbMMe_AKXwfVupu4mhJcnfcut-Xj0CeHSHpncGZ5uKXuE5_4WzGLIJk5UKSbjv5I7pge7S-fU2d6ezhG3IXAsdlk082nK867Yrt3vsGLYTm6c-MlN6c3K4ZcUUn2omVxqBBZfkkbEihSo5aD2jtzcr0cfrCdX1H6N9E9DaZpYqIVIk77fjd4aCYbtr2cRMj8L1Sn3dZXXHsnoCrB9aHy3Lh5jgikzgn7HeblZwLjxd1knh8DEAAKbRPvG2_lYLLxWfc57FhuQhzEfn74WTdXl-sIcOI-fi9K7_sbKzEOkHhtSZmC5gyQX0biNkyvteU3JDlVKhsIhyKP4v7hzuZ7atevJ-qhavG6gv75Zpgt5LN4smKK0W7fT3nLlxGQ5JWsUgKFGNASGckt8f6AvEBLoaWioa8UXROEbFSc9F0rqOMX4cbaREZ9ww9W9KvxQB4GbH8unADCredObUT-nALbm7c_TX0ra3c96uWFIHsp_l_qV9gdHRlbbkwZ7YzSza1crdeHdQXKYuKvn9g0c0HWyjwVx-vjkYkyizntBvAMvAf_hZhDzccKgXbgy3vjufW_WfilLitK5Whk1HnVlYudA8kxd4-UPTDvoXm2hknUJml55by5_P2whivQZnruaIGxaIoBdYqBXxEDfjhutMemTfZfP3_uNiWsVLqbv-dAOMDYU2l53ycSjzZupTNWtrY53iqBwZWCLHsRlp3ynihNvZ7usYYqlBOnVDA-iMNj154KsXTLvSQDGT2ZCes7Bw8tLKHBRX-WcWsGkvz6f25Lw66AeDVRudJ1HINhBF6GZhfzsksUdaICoaExFkfX79dZ6r3W4kjHRQs-9XIdSJeEsOM_hs0ytQhXLtUdqWq4D-vkeymthEOGqsuAg3kup5P7a0g9S9v-Tw7AmspHQKfVCloZdHbuHnrYgUqiZuwoLhlsapQs1ZUIrQTrchvh02neZs-oWiw3wGrcXSjio7KpToOLXjFJmpucQZrPs9kzQRS4ItK339O3mJgVx-ZWIYtG5gLLg_vNONKqaLMrcZEymRBrOPvobBeJh1vehj_bxpP8qVqJvz5ZXdQQjD5K9b8IVZrhP_8vlHg6ELZHn7yuYD2QBW0x8rgxdrgr_axT3ZPw==",
+      "summary": []
+    },
+    {
+      "id": "msg_097019c4d725e7f4006a0fcaa5b6b4819982e46397a7bdf5c7",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "ABRACADABRA\nHere is a simple, robust iterative Python function to calculate a factorial:\n\ndef factorial(n):\n    \"\"\"\n    Return the factorial of a non-negative integer n (n!).\n    Raises:\n      TypeError: if n is not an integer\n      ValueError: if n < 0\n    \"\"\"\n    if not isinstance(n, int):\n        raise TypeError(\"n must be a non-negative integer\")\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n\n    result = 1\n    for i in range(2, n + 1):\n        result *= i\n    return result\n\nIf you prefer a recursive version (works for small n):\n\ndef factorial_recursive(n):\n    if not isinstance(n, int):\n        raise TypeError(\"n must be a non-negative integer\")\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n    if n in (0, 1):\n        return 1\n    return n * factorial_recursive(n - 1)\n\nOr use the built-in:\n\nimport math\nmath.factorial(n)  # n must be a non-negative integer"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 42,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 1410,
+    "output_tokens_details": {
+      "reasoning_tokens": 1152
+    },
+    "total_tokens": 1452
+  },
+  "user": null,
+  "metadata": {}
+}

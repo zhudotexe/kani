@@ -1,0 +1,115 @@
+{
+  "id": "resp_0631c4b93e86d78b006a0fcb0917b08199b0a30345316d1cf8",
+  "object": "response",
+  "created_at": 1779419913,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1779419914,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_0631c4b93e86d78b006a0fcb0963188199935b3ecb3717bef5",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABqD8sLx-YcUFvpybpmu-abABwnoeqr4VG3iwW06vn9cZLOe0zLNw3sd4jdtUtIW6jJ6OdMVXu7gQ3KqWoHLZowiWd_YPMzLuJdhW00x8fyqWThXGmdktJprD1xDg_1smvkj-QlqDSJ0tjY20NoHOIWOBnVIOKIOF6G_xlHjSujLh4uBppiM450-PFuDvoYBcg4g31TTQkl8YI3RkD8Y96_Ndc5YVlUUu5rMQMTXi1_uYXGqHg9g1ubg5_wt7-N8nJB01EeJE_TRCLgp9UaR17IIgMGwqQuBrmFLoiF6QuxAj0Xt2jpwuXyOycxyjGz-hQnXwAUqK0fdtxAyqZC-JDgttImWC5wo9T2gzojt-0tcLTTZM8i8Hxut2txMdtstIQL8sVE_7ULmKeXuwLKH20BIBL4rKJkoC2_BgvC68O9pP4PESHkEyzr294NQLDZoSAv90LH6X6xTLL5C0KtM543MkviYXiotf0EmhM0AwtH7u0zzPEJzbVCIDJ5oVjKTnAhj17HcFx5z1nwhDhA1OanQ61njMTsVTS8iMqXfAQL5OHjdexaPzPysNZB5KHdZLB33iuIIGu9TBwVha-OsBA8KserySHpmVNqCk0uXXTA_9U6EbIyvgttaCAPrKRWnrTr6LhwEk3EyGICM0U3IIUs12yLPngQRTTgI2bLMoHftPFT6koCeq0y5iwGOKMDMDHHd6a6yDt2L2p2gMCp2Ex2JalAxDE3LXCvpiJjyT_tYPJoyoOsExKE_s43eC4th-m0615aLqUJ2r5DOD-JIDk0ag05BFcCKsRXZ2sGg3An5H4Yh577d69I32RfGs8adfdz7rcmZh-JMFkCAcxrvUxIB29-WIRU7X2RNwK7n_oXC6xoQ8TFQo0qWWntDaFfZwYRC9fio4qNVc8vtO_vxV7zAeJ1S_I2NYo5UixfEFCWecGjWCAWlTdFp7n-gL5d-Qm56ycBPyJ-wEGAXblV71TRAizu-OQTISpKM1MdgBryubJjrMX1LD0REZdmonQbJE6L-_caksvEiW71X1TzNWZ2H2shHEyK_7ukoIszN8r5cOALH2nw8f82impC_r6buI-ZMRf6G_0nrHtO1DCkkimNAwHzDwBgQU2aR_FHF4l141aEXteGs_VEwGEA3-RdqINTBwmzanmfWdTHWfDeE7ZVonBODlvLMNIuONPhNCUlgQnf2MQlkVQTXOS0yj7y3Oc45Te4MX1vAXVk8g1EiU9kQkbHtFjPBSraB4UUz0fZTXFE-CCkHgBWkSqEZ9zVooh3KheJsYvXlNF4vum-iJHN8aLoRQtzYbaWoDy2ARuMYpSVOAVpw3n3S0igYbIGDlEmqYF5zT-MY4iZXYGge4HiPmF3C4Fln9cOWaU0Lsi5D4FE1zCS5FVkCdc3RaqCYlFu3y1yC3RwRPCWHjfTw2XFCVbzFOoMbwOv6S38E4WEPSiRq1chEhVurON-pYL0IaxZXYdLBCU6AYEJgw1Ljy-JuOZ30NRP-P4U4n5t6foG6gGCgva2tioCtNDkXmDugt2UeWpg6meZcJapOQBqroTpkexjhliAaZq1A_P8qTvH7rzfRD_QjBe5WH5TeQaj74dC2-YwNI9sqPUDO_KTM41_qOQVyao4QF4w0Mqfap-rluBOzWHOAYOhjjCltdmdQiUzGzxwykPG0cckVQfmlPy8we4OaS04VsMxe2m01xRe-8SZYkQV28ZXkVLK8l7oHyjJ0UAife8956AXPqspQlcyeTiAXKT2mfuaClaBovTf7xE2yijaKldCyd6fv4f4BF5PRLL8TUNS57bT5qj1JKLmBO3yJQkZPmGZYNcq2fxz0MebnDBLhTO87pl1o3xLppbZzzxpmrdPZ1fJ2ht6C_q5HXX0xdjsQE3hfvAjg1jtLonzdqmxjWFKU6lEEpEOMAV4to7_4qz_TSEMc3fprSqYFgfJBUPL9JY7oKj1XbrPBYBpW_lGOFrwownQ8gTqXetXO9G3OgPsWzf41LR93dWKgjYiPopboX3jqXvsTvd0qoOKFvka11QCCVibxzH-GJ4MhdN-nkc8liE8wdRnh9BpnBS-I1GeOrKkyUryrxYnyXBlgppKOUYaBrvt0hKcQYZ33ITMVXdLA1PYNgpPQtSgq5oIdzFWeYs170zMFPHSXPtbgPTKhVkjo8ANsWHPEwZi15c4",
+      "summary": []
+    },
+    {
+      "id": "fc_0631c4b93e86d78b006a0fcb0a794c81998d92eeaf7df09b46",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"recipient\":\"john@example.com\",\"subject\":\"Meeting Tomorrow\",\"body\":\"See you at 3pm\"}",
+      "call_id": "call_8oEOx48f2o8f3mwofKSfQiJ3",
+      "name": "send_email"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Check the email inbox.",
+      "name": "check_inbox",
+      "parameters": {
+        "description": "Check the email inbox.",
+        "properties": {},
+        "title": "check_inbox",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Send an email to a recipient. Control returns to the user after this function.",
+      "name": "send_email",
+      "parameters": {
+        "description": "Send an email to a recipient. Control returns to the user after this function.",
+        "properties": {
+          "recipient": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "recipient",
+          "subject",
+          "body"
+        ],
+        "title": "send_email",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 138,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 228,
+    "output_tokens_details": {
+      "reasoning_tokens": 192
+    },
+    "total_tokens": 366
+  },
+  "user": null,
+  "metadata": {}
+}

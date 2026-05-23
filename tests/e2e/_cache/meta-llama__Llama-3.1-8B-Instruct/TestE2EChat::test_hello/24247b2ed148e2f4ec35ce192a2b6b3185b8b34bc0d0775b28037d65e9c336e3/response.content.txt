@@ -7,4 +7,4 @@ Today Date: 26 Jul 2024
 
 Hello!<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 
-Hello! It's nice to meet you. Is there something I can help you with or would you like to chat?<|eot_id|>
+It's nice to meet you. Is there something I can help you with or would you like to chat?<|eot_id|>

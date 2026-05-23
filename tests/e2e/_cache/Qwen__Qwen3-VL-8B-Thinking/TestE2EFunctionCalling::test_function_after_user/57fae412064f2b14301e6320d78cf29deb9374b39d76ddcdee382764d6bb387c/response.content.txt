@@ -19,7 +19,13 @@ For each function call, return a json object with function name and arguments wi
 Send an email to john@example.com with subject "Meeting Tomorrow" and body "See you at 3pm"<|im_end|>
 <|im_start|>assistant
 <think>
-Okay, the user wants to send an email to john@example.com. Let me check the tools available. There's the send_email function. It requires recipient, subject, and body. The user provided all three: recipient is john@example.com, subject is "Meeting Tomorrow", body is "See you at 3pm". I need to make sure all required parameters are there. Yep, they are. So I'll call send_email with those arguments. No need for check_inbox here since the user is sending, not checking. Just construct the tool call.
+Okay, the user wants me to send an email to john@example.com with the subject "Meeting Tomorrow" and the body "See you at 3pm". Let me check the available functions.
+
+Looking at the tools provided, there's a send_email function. It requires recipient, subject, and body. The parameters are all required, so I need to make sure all three are included.
+
+The user provided all the necessary details: recipient is john@example.com, subject is "Meeting Tomorrow", and the body is "See you at 3pm". No optional parameters here. I should structure the tool call with these values.
+
+I don't need to check the inbox first since the user is directly asking to send an email. So just call send_email with the given info.
 </think>
 
 <tool_call>
