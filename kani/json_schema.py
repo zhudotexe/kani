@@ -1,3 +1,4 @@
+import collections
 import inspect
 import typing
 from typing import TYPE_CHECKING, Optional
@@ -56,6 +57,61 @@ class JSONSchemaBuilder(pydantic.json_schema.GenerateJsonSchema):
     def field_title_should_be_set(self, schema) -> bool:
         # We only want titles to be set if the field explicitly set it
         return super().field_title_should_be_set(schema) and schema.get("title") is not None
+
+    def flatten_singleton_refs(self, json_schema, threshold=1):
+        """Substitute any refs that only occur once with the literal."""
+        defs = json_schema.get("$defs")
+        if defs is None:
+            return json_schema
+
+        def_counts = collections.Counter()
+
+        def _count_refs(obj):
+            for k, v in obj.items():
+                if isinstance(v, list):
+                    [_count_refs(x) for x in v if isinstance(x, dict)]
+                elif isinstance(v, dict):
+                    _count_refs(v)
+                elif k == "$ref":
+                    def_counts[v] += 1
+
+        _count_refs(json_schema)
+
+        def _flatten(obj):
+            if not isinstance(obj, dict):
+                return obj
+
+            new_obj = {}
+            for k, v in obj.items():
+                if isinstance(v, list):
+                    new_obj[k] = [_flatten(x) for x in v]
+                elif isinstance(v, dict):
+                    new_obj[k] = _flatten(v)
+                elif k == "$ref":
+                    # FIXME this is hardcoded for now since the def template isn't likely to change, but a bit fragile
+                    def_name = v.removeprefix("#/$defs/")
+                    if def_counts[def_name] <= threshold:
+                        new_obj.update(defs[def_name])
+                    else:
+                        new_obj[k] = v
+                else:
+                    new_obj[k] = v
+            return new_obj
+
+        json_schema = _flatten(json_schema)
+
+        self._garbage_collect_definitions(json_schema)
+        if self.definitions:
+            json_schema["$defs"] = self.definitions
+        else:
+            json_schema.pop("$defs")
+        return json_schema
+
+    def generate(self, *args, **kwargs):
+        json_schema = super().generate(*args, **kwargs)
+        # flatten any singleton def/refs
+        json_schema = self.flatten_singleton_refs(json_schema, 2)
+        return json_schema
 
 
 def create_json_schema(params: list[AIParamSchema], name: str = "_FunctionSpec", desc: str = None) -> dict:
