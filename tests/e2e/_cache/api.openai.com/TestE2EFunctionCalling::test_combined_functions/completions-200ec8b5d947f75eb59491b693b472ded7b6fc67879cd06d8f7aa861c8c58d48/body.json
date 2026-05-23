@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-DiW5r9jBHeUibcbhO1NZjIujaXCsu",
+  "object": "chat.completion",
+  "created": 1779502171,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Current conditions (Miami, FL): Humid, 85\u00b0F.\n\n3-day forecast (Miami, FL):\n- Day 1: Partly cloudy\n- Day 2: Sunny\n- Day 3: Rainy\n\nQuick tips:\n- Expect rain on Day 3\u2014bring an umbrella or plan indoor options.\n- Day 2 looks good for outdoor activities.\n- It's humid now\u2014stay hydrated if you\u2019ll be outside.\n\nWould you like hourly details, temperatures for each forecast day, radar/precipitation timing for Day 3, or a Celsius conversion?",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 374,
+    "completion_tokens": 317,
+    "total_tokens": 691,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 192,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

@@ -1,7 +1,7 @@
 {
-  "id": "chatcmpl-DiAdB7FYLlZkZemy2CSjmHtoh0XHo",
+  "id": "chatcmpl-DiW4mqpGUIJfk6m8o9fKfULRo39w7",
   "object": "chat.completion",
-  "created": 1779419669,
+  "created": 1779502104,
   "model": "gpt-5-mini-2025-08-07",
   "choices": [
     {
@@ -17,14 +17,14 @@
   ],
   "usage": {
     "prompt_tokens": 63,
-    "completion_tokens": 138,
-    "total_tokens": 201,
+    "completion_tokens": 202,
+    "total_tokens": 265,
     "prompt_tokens_details": {
       "cached_tokens": 0,
       "audio_tokens": 0
     },
     "completion_tokens_details": {
-      "reasoning_tokens": 128,
+      "reasoning_tokens": 192,
       "audio_tokens": 0,
       "accepted_prediction_tokens": 0,
       "rejected_prediction_tokens": 0

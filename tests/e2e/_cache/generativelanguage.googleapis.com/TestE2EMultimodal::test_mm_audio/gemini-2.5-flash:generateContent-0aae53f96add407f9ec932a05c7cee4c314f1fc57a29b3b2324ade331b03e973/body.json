@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "This is a recording of an excerpt from the Apollo 13 mission. It is notable because it features the iconic phrase \"Houston, we've had a problem,\" which alerted mission control to the explosion of an oxygen tank on board the spacecraft."
+            "text": "This is a recording of an excerpt from the Apollo 13 mission, specifically when the crew reported a problem. It is notable because it captures the critical moment when the crew announced, \"Houston, we've had a problem here,\" signaling the beginning of a major in-flight emergency. This phrase has become iconic in space exploration history."
           }
         ],
         "role": "model"
@@ -15,8 +15,8 @@
   ],
   "usageMetadata": {
     "promptTokenCount": 544,
-    "candidatesTokenCount": 50,
-    "totalTokenCount": 594,
+    "candidatesTokenCount": 69,
+    "totalTokenCount": 613,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
@@ -30,5 +30,5 @@
     "serviceTier": "standard"
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "18kPapOjFKOD2roPzK3IAQ"
+  "responseId": "qwsRaqCVHo-9_uMPxeCU6Q0"
 }

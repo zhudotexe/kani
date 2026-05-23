@@ -1,13 +1,13 @@
 {
-  "id": "resp_03e1121313250fb1006a0fcad99df88198b90b5346d77a8d40",
+  "id": "resp_0a63f7a253cfda4e006a110cc52a3c819290404619376eb815",
   "object": "response",
-  "created_at": 1779419865,
+  "created_at": 1779502277,
   "status": "completed",
   "background": false,
   "billing": {
     "payer": "openai"
   },
-  "completed_at": 1779419867,
+  "completed_at": 1779502279,
   "error": null,
   "frequency_penalty": 0.0,
   "incomplete_details": null,
@@ -18,17 +18,17 @@
   "moderation": null,
   "output": [
     {
-      "id": "rs_03e1121313250fb1006a0fcada83088198aa11f9092386912b",
+      "id": "rs_0a63f7a253cfda4e006a110cc569988192b9e8253cb667e7e8",
       "type": "reasoning",
-      "encrypted_content": "gAAAAABqD8rcxppiGJlgpSW2EIUmaum6_W-qKQrT2t54GFA-QgRQkYaIxfmA1RpN6Zn0QnziWpPl90ys5P6vvMXdTkLw0FnHZqDYHwRbLfk9u00-GyoFPI6yHQy07HNFCOqGDxpC2phS5K6Jh5KZZ00QEcfr-SndusfvdGnoHHoJR8FC9YCQjq84OJP_1fYis_tdGeZ1z7DJrUWlcd507sjvJppewrh_VMCMHeyFvPnB3uYBbILUPFL6NANMGaRVeM284v4tG84n6SgQS4mKGpGTddppawB8ciktTKAh9M1v4HjvaF6yuFBf7KbhObLWgO5dRCPRIgH-gGQM2j1hzGt99B-cdf9rczPm_kOjbZAG2jxx6-ZFL49tKgf2nPWzY2rtTmlu_DvRamc8ETAbj9ykuxXXuyaeuP4q59a2wH6nrdShKAo1H0_W0iespRILou1c3Gp9iiQg6pjiyKeBziQwIFvx3iRET6ykmFsxmeClfz3tJhrz2rci9gH4V0c5R78_hslaVSzjKGy5o1tuQYKvO3_3Tzn1yHqQP_bmLVejwz9288O9uvff5hyUbyZdKuhZrxs3C1SI4KnwTHlYutwBmEqhI14bLdTcktHfdbRFGWV5HieMtllyuomuSQWs2nCCENzes-9A3j0SNCYHKWaDrewEzCMqrovGxgTcymA-oL8gDifWE8HWCL2-toSi0PdxBTq8t9WI-5h14CCpwkFl1cSTaxhVDyCwImkhCpvA4jIyqkBnrD5Bz7yeEaw88phH1G6zDpzgTMLhNWvkrUGgVu7bGBSqh1SbJnNU1uZKBEoZtS2HGLdlMGui0og15r8PneCwaaWQF8eH8FEQgFNBsAkm0KwVXG5u-1On30OoUuVlTBKbpAJ8mYQI1-eOxalN-bn7yBm2r3XhLJuVYCej3l0zdDZRZWqMa540u_LV1I7e3FK5LeOEXbTgs6nPixJanMViCxB0CiWHaW3fYNrJESPu_tQYohxkQntSoBeJ62haIFZnR93BD8kuPX5TpM5GYUM1_SXd1G8iMlR26WMbIcbO_4oUNf89RkcIphDrrh1Sg66dzbcYt6znaQOkH-Uec6XhOyx8jbxsbRzabRX91u1iQEXhtg2lllERo4vC8mJp1i8iC90afx86l15YSAc8QVGjlMeKTd-3SNA-ukOiTd_DTdIu-BQImmhVbD3aIe_tr-MyLrce6O-xNWMp9BHQEriLQcjpUF65M8W09HSCysMihvWKOTD0MmMxvF8k9NinTaep3NxQe4TCsFYrLh7SuUe5sPXxgiHBbZfSugtsdUA9HTCM9x02iDVfiSf8T23ENaz30RGWa7-pfDfnD0hkpjj3pk3V3r3mn_leOapozomYLxf2xX4CTmGl9CpSU-Q2ckEXlUMlnyKRqvP7thwBOfuoQikrdRZGMpuDxYe2bNYenIHAEvcRPN_v-NGIcUklkhPBvksILnyioQcTc7bPHS9I-hIE4nW9b3lNVdCpMa5gOG5PJrOUC9d04u4kK_Dvqrp9bl3r20MOcWmP1N0j_F5fIyBOqYZrqib4smIZUcI--5Lah1U2Dqgh5_gnY8VNb7PyZDKY-PI4wd3TkolA-_YDHTK2M0WpoKFvAYJ5Y9uIVyXMcnhIWtGSqjjpCWm2zOBTX6WpCET0eCR_yoQxY0SWk2b-Uqg4J5cTaHM2EQSdRCExp176b1XLDFC9JtG4tQBz0hQVG91rB9gbf4YSkjbGSyMyhMW36EYZa5ZWWTE0U0mxhok8AuP7iI7LJFJyZ5ku9dL_i8V6tQhHrBYWaBohKyaEtWsDPAXzECfxxozWdCU3snVQnYLP4HfQO2EMQGx00UUan6Zovyl1mnpjyh7jHoTjgHmgy8s8NRfhOdo3iCJDff-uDzPZjmIm1TDiMtEQ_aeelZFKrv1zDoMJhJkDnT4aQMO3XKt88AR6_Jv8dwcYRlxYnoNr3h_AoXU6vC-PRV0jCW1j56ne1_yGilUUYUiNOd3t8LqNywHVSPbB2s0F8RcGfxVdKfVcKpfyCkHywWLvxw81UEoXVv9c6t6Z2P6k8fEX3PO7AMTAMkumF5TE0svCi-lhWaxwufCD8UhAXHELeZoeDxcUrWCkeP17ObdhNSo6QlmCXQsxsRDR6T2TgryXS11vbDl2wLPrEqOS4l0Y4HQKjFrYTVAqbwuMyzIciOx0MomSORiFvPDCgyzJ3f_rMJ59efS1hsPn57AGFMMl-WkWMN8Cw3aA6z7KO2RzwOOoWQOjjcbOdJDLRzyIasoYTqz66Sss1r__8xCJ0iX3DLTEzN-4fAqw3iYrcfRA",
+      "encrypted_content": "gAAAAABqEQzH0w5ZkTU1i0pQ_ugQYrzb00eAONVgRi3R5s-mdUn5h8m_PgRsUDoQGK9jMW5fkKpRAARAV8aDyzeAiB96EBWtu3Mqdv1x3-q3ZzGy88NX8AJNqpiFXofUhJDuKHjvouqtl6PebCXCR-wNiBlyJym_8qhsFurTbh44fsblXBm0KBmE3jfmqmna4kZbblXBZkSoo6y4YhcQr0SBWmT6fSTXh9uLi165ZL95NvaBh_ube4udugATvnnU46ngePr3noJVnamWnfbb0XESbMgoAlESxzV0zpxSDIF4MiwhQOEIawgAiwWRn-IRcbT_s8gZOpK1TYcdZSTM2FoqCfYsa7OPuf99v6zKXcpymdj5oNb9RFoCW8MH7R34rzDbb-2heyFtnB8VzqwXADFwYxXxysAUKl10TCHdejcSHrZCGKQ8F013wW11VTkEX-1NLwSzQg5YJDvWxGtqY5WNiHTBmifoHKj5fmBDqbvI3fJDcjgpVwyjV1IwGcf-9-bVoytaNH4Rnjr1aFqwj8D_t2IwkqHqw1U8UE25BqaD3PUrj7wyZXDHbufmCY_lG7Tk5We1muwCkTJPPlrh2W9SHulvJEh_YoAJpTBaM4xZSNJND2UFzfFOk7ECpYwTDiOK-GB9MU3Q2DNIck03dZotxbUy6YXLoR-7gDjdwCoUbPuHwz_MpOHYoc4AIZhw9hhlyQpsADwfqNQk7gIncKiOh1dxy3iyM_4DMXo7XAnOPQC_p1OP8znCiLhdYx6eP1Iofg-NV_TQVWMIwprjtm_0QO6hKO1bJ7sWWdEbhrNeJgVKWQhvI9KX9XhVBFXruTBVuBG9UTv6xTRQRqnTDfmzTaY7WYm-X7iztqUKqkfIlTh7jhT-ic9S2h2l6ANrD4tLo5sI7Cc_34XAQZaZsXAQv4r5IawzzoeRmG9c6fD4-g50k6Nee64i0KiEWFzuIrmn93BhDu2u0U-_PpbpxH-oIEKSoE-xWzv1PeqDJwmd_zUmHc-0i11vS45jc3OCP_kyqPY6FNjFpqHqXTTmWgdVEpLIDjcxyFbPW4twbliI8ugvgv2JjiyAzU2PJLp18bEc_W__qyRf1b0ZZ2DGxG0jHOHs-4aaDsvzPA6iREqs5udpnx3_6vtYy21JRV1hmqxXRMo8jsWHc01XW-PdgKhg2c8IRCr_B_ZgSR_FOUKoNmr2HK8SzFe749trkQd-bW3QnrzocmsaEZ0UkXPwpgQ5l2T4-65rcvLz_nonJJjiH3ZNX-PT09JmX7zut77vTHPkshY3zi_fTtU6_3I8drgjevR8ILjKlgzswSi-iCQNRFWkaLiHBGjoUHCNsXAMQy5OehFczmH5iFs92K4KhMi9UvFpJQTDzogz9wW2Fjpf--wc6wVSMpADGKm-pQPE9ZHCcuEQyLjCOLGwpWvAoTAT3O1ym9Dmdmxc1xw1LtpZsbaO4iMc9UcZMLv_cBi69DGyU0vnqDlEOtk2pwgGprqgTGfKQEGMAFBtlJhQCty-iUJOHx9cKFAJfxeHt5CFXFDTDj8k2wo7Bnpp_JKpuPo9u6ibb-3_30e5kgoXD4Gcw186nRVpZuKKS1FP8ZNm_7m5lsPEx0KzyGlLKQVx0GNqxIXaG4Y3_Wd5F1rnqb7z-RcwraOmU05jQuvprjBNDJqWblNtpbWINS9ZCq3JszXmQs7kqaqxondcJCYY00rMYlUjSlKFYwdYkSIjPCqsN2VwZ8dl3ngF2syaSCsM_7clA1vDAeZJwjHb6Moo9Bq7S8jjH7e30FxQB6hpwNQfpfe824Aa8uAivKiqGfyGsLaPVVmkM44jkJf2bNP-l7HyOklQogpl44oNQy8KnwhNy3FzkUMCm4XlV3dYBpTI0mARtLKAa75YAG8BCXvCtR6UxqNe8bDoXROSn1gd_UInSJNa4L0Trd7jdPNyTUNxY3VYIPNdY_fyPUHcO0VMEctMrEiVZ5nsEM39--XL5GIWJ2pkvltF8HradjZnuEAWhF825KEi1p7eye-okQH0wgKW3_9bCNtgoOUGzoQB2mvL6La5DpXL2XlVP_4e-SFjv7h7Gx-stBeuj6rvo03HsuLtPEJ95kKHLIekvJ6kD9U5mqAIQtogLzsj9-HDpofHmawEGyuHfCYHa2jSOFrrm24tOq8UWod4KLg=",
       "summary": []
     },
     {
-      "id": "fc_03e1121313250fb1006a0fcadbe0608198993cb23fb4b0046c",
+      "id": "fc_0a63f7a253cfda4e006a110cc6d9248192831978d9f900fbd9",
       "type": "function_call",
       "status": "completed",
       "arguments": "{\"a\":15,\"b\":27}",
-      "call_id": "call_LHIAvO3PQeRNaiQQ66ZihU6N",
+      "call_id": "call_ZMc7PPACde3VR5pPlTYwcvYf",
       "name": "add"
     }
   ],
@@ -38,6 +38,7 @@
   "prompt_cache_key": null,
   "prompt_cache_retention": "in_memory",
   "reasoning": {
+    "context": "current_turn",
     "effort": "medium",
     "summary": null
   },
@@ -134,11 +135,11 @@
     "input_tokens_details": {
       "cached_tokens": 0
     },
-    "output_tokens": 275,
+    "output_tokens": 251,
     "output_tokens_details": {
       "reasoning_tokens": 192
     },
-    "total_tokens": 416
+    "total_tokens": 392
   },
   "user": null,
   "metadata": {}

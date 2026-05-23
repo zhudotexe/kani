@@ -1,0 +1,6 @@
+POST https://api.openai.com/v1/chat/completions
+accept: application/json
+authorization: *** REDACTED ***
+content-type: application/json
+
+{"messages":[{"role":"assistant","content":"If I had one, it might be teal — a balance of blue’s calm and green’s freshness. It feels versatile, calming, and a little bit lively without being flashy."},{"role":"user","content":"What is my name? (You can mention it now.)"}],"model":"gpt-5-mini","tools":null}

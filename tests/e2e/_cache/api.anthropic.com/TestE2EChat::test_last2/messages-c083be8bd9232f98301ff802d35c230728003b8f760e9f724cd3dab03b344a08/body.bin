@@ -1,30 +1,30 @@
 event: message_start
-data: {"type":"message_start","message":{"model":"claude-haiku-4-5-20251001","id":"msg_01DjSbpPkipkbWhQAJy6pPQm","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":18,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard","inference_geo":"not_available"}}               }
+data: {"type":"message_start","message":{"model":"claude-haiku-4-5-20251001","id":"msg_01ViGrjMnGFkiXHKq4L1zKCU","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":18,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":2,"service_tier":"standard","inference_geo":"not_available"}}               }
 
 event: content_block_start
-data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}    }
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}              }
 
 event: ping
 data: {"type": "ping"}
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hi"}             }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hello,"}            }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Mizzenmast! That's a great name—very nautical. The m"}   }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Mizzenmast! That's a great name—it has a nautical ring to it (literally"}      }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"izzenmast is the third mast on a ship, right? Are you interested in sailing"}     }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", since a mizzenmast is the rearmost mast on a ship). Nice"}        }
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", or is there something else I can help you with today?"}          }
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" to meet you! \n\nIs there anything I can help you with today?"}            }
 
 event: content_block_stop
-data: {"type":"content_block_stop","index":0  }
+data: {"type":"content_block_stop","index":0           }
 
 event: message_delta
-data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null},"usage":{"input_tokens":18,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":54}               }
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null,"stop_details":null},"usage":{"input_tokens":18,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":62}     }
 
 event: message_stop
-data: {"type":"message_stop" }
+data: {"type":"message_stop"      }
 

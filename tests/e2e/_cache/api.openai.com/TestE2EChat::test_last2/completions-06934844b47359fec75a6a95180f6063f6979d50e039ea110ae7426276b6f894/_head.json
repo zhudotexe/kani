@@ -1,18 +1,18 @@
 {
   "status": 200,
   "headers": {
-    "date": "Fri, 22 May 2026 03:14:53 GMT",
+    "date": "Sat, 23 May 2026 02:08:45 GMT",
     "content-type": "text/event-stream; charset=utf-8",
     "transfer-encoding": "chunked",
     "connection": "keep-alive",
-    "cf-ray": "9ff8a72168bbea23-ICN",
+    "cf-ray": "a000839759eb356e-IAD",
     "cf-cache-status": "DYNAMIC",
     "server": "cloudflare",
     "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
     "x-content-type-options": "nosniff",
     "access-control-expose-headers": "X-Request-ID, CF-Ray, CF-Ray",
     "openai-organization": "ccb-lab-members-2",
-    "openai-processing-ms": "4431",
+    "openai-processing-ms": "3212",
     "openai-project": "proj_bGjVvPSIOHrc3927BS25Mt0h",
     "openai-version": "2020-10-01",
     "x-openai-proxy-wasm": "v0.1",
@@ -22,7 +22,7 @@
     "x-ratelimit-remaining-tokens": "179999961",
     "x-ratelimit-reset-requests": "2ms",
     "x-ratelimit-reset-tokens": "0s",
-    "x-request-id": "req_935a43c2476b41629c250d0b522224ef",
+    "x-request-id": "req_277e16ae672a4eeebf919ea695596fd4",
     "alt-svc": "h3=\":443\"; ma=86400"
   },
   "body_path": "body.bin"

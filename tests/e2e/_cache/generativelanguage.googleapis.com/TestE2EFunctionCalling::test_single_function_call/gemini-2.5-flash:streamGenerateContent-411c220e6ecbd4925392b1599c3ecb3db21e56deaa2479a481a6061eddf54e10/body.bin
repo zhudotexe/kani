@@ -1,0 +1,4 @@
+data: {"candidates": [{"content": {"parts": [{"text": "1"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 271,"candidatesTokenCount": 1,"totalTokenCount": 272,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 271}],"serviceTier": "standard"},"modelVersion": "gemini-2.5-flash","responseId": "dgsRavLRIYS-_uMP3q7b4Qw"}
+
+data: {"candidates": [{"content": {"parts": [{"text": "5 plus 27 is 42."}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 271,"candidatesTokenCount": 11,"totalTokenCount": 282,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 271}],"serviceTier": "standard"},"modelVersion": "gemini-2.5-flash","responseId": "dgsRavLRIYS-_uMP3q7b4Qw"}
+

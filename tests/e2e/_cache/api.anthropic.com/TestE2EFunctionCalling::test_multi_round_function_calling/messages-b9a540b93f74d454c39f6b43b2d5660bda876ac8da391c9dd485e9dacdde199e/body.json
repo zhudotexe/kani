@@ -1,6 +1,6 @@
 {
   "model": "claude-haiku-4-5-20251001",
-  "id": "msg_01XVRR34pMAoUvkiiYoobaoQ",
+  "id": "msg_01N8Nin7mKuZpcq6q3b9Jt9C",
   "type": "message",
   "role": "assistant",
   "content": [
@@ -10,7 +10,7 @@
     },
     {
       "type": "tool_use",
-      "id": "toolu_01QtXnCvTAd6bdz43wWRUEUU",
+      "id": "toolu_017ckbhRe83midxTafru4v3H",
       "name": "search_users",
       "input": {
         "city": "San Francisco"

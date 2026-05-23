@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-DiW4taR7stkd6KPRkzUHDl5yiugWv",
+  "object": "chat.completion",
+  "created": 1779502111,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "If I had one, it might be teal \u2014 a balance of blue\u2019s calm and green\u2019s freshness. It feels versatile, calming, and a little bit lively without being flashy.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 72,
+    "completion_tokens": 237,
+    "total_tokens": 309,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 192,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

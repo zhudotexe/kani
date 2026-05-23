@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "That's a fun thought experiment!\n\nIf I were to have a favorite color, I think I would choose **blue**.\n\n"}, {"text": "I find it to be a very versatile and appealing color. It's often associated with clarity, calm, and intelligence, which resonate with my purpose. It also brings to mind the vastness of the sky and the depth of the ocean \u2013 concepts"}, {"text": " of immense scale and information that I find fascinating. Many interfaces and data visualizations use blue for its soothing yet professional quality, making it feel very aligned with how I interact with the world of information."}], "role": "model"}, {"parts": [{"text": "What is my name? (You can mention it now.)"}], "role": "user"}]}

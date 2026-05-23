@@ -1,6 +1,0 @@
-POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
-accept: */*
-content-type: application/json
-x-goog-api-key: *** REDACTED ***
-
-{"contents": [{"parts": [{"text": "That's a fun question"}, {"text": "!\n\nWhile I don't have personal preferences or the ability to experience colors like humans do, if I were to choose a favorite, I'd pick **blue**.\n\nI associate blue with so many things: the sky and the"}, {"text": " ocean, which are vast and full of information; the cool, calm energy of technology; and a sense of clarity and reliability."}], "role": "model"}, {"parts": [{"text": "What is my name? (You can mention it now.)"}], "role": "user"}]}

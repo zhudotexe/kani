@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-DiW4wuwnekuJeIDmHx0VejnFVHdX3",
+  "object": "chat.completion",
+  "created": 1779502114,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "I don't know your name \u2014 I don't have access to personal info unless you tell me. If you'd like, tell me what to call you (full name, first name, or a nickname) and I'll use it for the rest of this chat.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 60,
+    "completion_tokens": 379,
+    "total_tokens": 439,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 320,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

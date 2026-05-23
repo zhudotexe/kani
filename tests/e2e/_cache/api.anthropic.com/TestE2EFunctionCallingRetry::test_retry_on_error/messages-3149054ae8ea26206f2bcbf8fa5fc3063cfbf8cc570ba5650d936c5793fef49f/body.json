@@ -1,6 +1,6 @@
 {
   "model": "claude-haiku-4-5-20251001",
-  "id": "msg_011dhFCexsrbLfBSzTBZGNKN",
+  "id": "msg_01XrQrA9yPECysTJBASZfLWS",
   "type": "message",
   "role": "assistant",
   "content": [
@@ -10,7 +10,7 @@
     },
     {
       "type": "tool_use",
-      "id": "toolu_011t1WDbMMP2CQbzStbC9ZBZ",
+      "id": "toolu_01X9kSFt6scLeHZBtRN4Jdo5",
       "name": "flaky_function",
       "input": {
         "x": 42

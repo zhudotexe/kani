@@ -1,0 +1,246 @@
+event: response.created
+data: {"type":"response.created","response":{"id":"resp_0d72ebc7644b7c69006a110d0fc83c8192b5a036251d009331","object":"response","created_at":1779502351,"status":"in_progress","background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5-nano-2025-08-07","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"medium","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tools":[{"type":"function","description":"Get the 3-day forecast for a location.","name":"get_forecast","parameters":{"description":"Get the 3-day forecast for a location.","properties":{"location":{"description":"The city and state, e.g. San Francisco, CA","type":"string"}},"required":["location"],"title":"get_forecast","type":"object","additionalProperties":false},"strict":true},{"type":"function","description":"Get the current weather in a given location.","name":"get_weather","parameters":{"description":"Get the current weather in a given location.","properties":{"location":{"description":"The city and state, e.g. San Francisco, CA","type":"string"},"unit":{"enum":["fahrenheit","celsius"],"title":"Unit","type":"string"}},"required":["location","unit"],"title":"get_weather","type":"object","additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+event: response.in_progress
+data: {"type":"response.in_progress","response":{"id":"resp_0d72ebc7644b7c69006a110d0fc83c8192b5a036251d009331","object":"response","created_at":1779502351,"status":"in_progress","background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5-nano-2025-08-07","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"medium","summary":null},"safety_identifier":null,"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tools":[{"type":"function","description":"Get the 3-day forecast for a location.","name":"get_forecast","parameters":{"description":"Get the 3-day forecast for a location.","properties":{"location":{"description":"The city and state, e.g. San Francisco, CA","type":"string"}},"required":["location"],"title":"get_forecast","type":"object","additionalProperties":false},"strict":true},{"type":"function","description":"Get the current weather in a given location.","name":"get_weather","parameters":{"description":"Get the current weather in a given location.","properties":{"location":{"description":"The city and state, e.g. San Francisco, CA","type":"string"},"unit":{"enum":["fahrenheit","celsius"],"title":"Unit","type":"string"}},"required":["location","unit"],"title":"get_weather","type":"object","additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","item":{"id":"rs_0d72ebc7644b7c69006a110d105664819282d203b3f96a0fe9","type":"reasoning","encrypted_content":"gAAAAABqEQ0Qjm_kWyic1xjZlU_D1XBwe3WfXsjX1EdpfZvQWUG4t-JGUBNNxKxvgV8Dcdh1mjh1ciTcXG8jdVT-BMHhp6syBhhGLiMCaW6yV-FUaaF9SDVNKDbc8Lycx-M8WMZE1fTDBF8AQWTt4fXvlNi_EfSvF2oW_ibvrdJihYb3EXrbP6BMfmY7grKR-tynvdd9v-yMdfeal3QI5laJd-o6jGZU9u7RyyG79dGAxlyUk_Ye9WgU7qCAJyV2BGWl_qwNYDr5m8whioqTAaqcjHNbO5OfRIVgDqvkvqzqZoidy0XOy9QvfzhsMgMMjmzzfcrKLpyFj1TwSwswWte9Bff3ku4BK2YcfYIEP9VGkAdu2sQ0R9mB6mvZPr5WQN-doWFPt5dXQ8YG0050VFfLOfiD2bHUtAa0DLLkk-v4LcghR-HXWTBSqktVV-fcXJbiat9zBUE9yBVF-YvBFCpYtaR5unks4UFD7CxVl2fmvb8Wv0tiuPdkfBy5XSbbJysPRoMlEch7_PQGu9ugJPtKIrTXBv5l7BglJ2QP4-c7CA-8h81QJqr9czZhMwQXrS1FK90c-qYJ3HN9S4g4ZjF7hjEsc42KZ9wKbisyEBsm6010fE6tGRSJTcaB1gGEZcLOF8Nhbs3KP1MzCOCRWcXVCj308Btke0ev7HNSTD3CXiZDvrFrfxrH0N7GK6ghdGi95CcMhYZpzzF-OZ0aYMfVQjRlvfzpaeeCxUetrJBXQcmLnlfJRbF8pMiaGnpOXxE4OWUDCHcC9iGwV2nZz2K5RccbdqoP3xDd6ot_LMJoWZPRJ1miFmAgDTMCo2lQuoaQcp15czthhLL3LiEsM-c5LjCdxyBdnJ66Oyv_C0gWj-BLYGMi9zUk8NqpWK5JXeCACYoDqFnvdH1u84GqaJ4XWoTY88iMmd8A7XbCu5IwJb2APyI-e2M=","summary":[]},"output_index":0,"sequence_number":2}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","item":{"id":"rs_0d72ebc7644b7c69006a110d105664819282d203b3f96a0fe9","type":"reasoning","encrypted_content":"gAAAAABqEQ0UCPYqi0s7S-KaMnvUX8i7J6ZV95w-xT0x9MNAodubRNf33_gWEF1sOdL6KsGY22Xis5BHaRD2ApZinY5A8kg0qPytHccGt0vXWDXyQ2-oBltBklJZ6v_EWU5KKo4AQa9KpUZvyDo2rxhxKuLMFWWmeHxZ_B_lboUeXBlcefud8Q8p2RayyJE8LjoSLmo1QuBcm7doxXg8FefZ7ldHq4cLItRS_TrAd1UWG_0s-IvgdiLey0qzgwNtMAlrjiq5pBeqkgO54WLf32sovIIMHJ9B4CGeHGrTV0lplKFT4cHNRSKtGrNvnKDr5K8g7IYJzgOaYo5zqmJlREyy8vBebpDTEHlPL3cwQle-0oENgYhNwel5foaOdKNlTlK8k4Lbz1jUzPimtToxcDm3w8xTWuuHEqN61GM4dwJ68Vk6wKiWyf3cSPIy2aHrEYU2M1F-Ou8YlgBGB4hby3gwQtQDDk1g91aqmYCYmYWAIvpivUGoQI_LKzfwuee_FNW8Y6lolvoEU9QRXNrnPBZkR5AzHvAciaFQ-uxaWkZMSYm230GgDU7--K3PWy0l1gyR6n6p-2EZ1t9YMzJF1rVjdYc0mQMvwfeigMVaq7BJ7E9Vr1qrG6Rvs_sMTeLS807P__5zFvM5HZOotAWp7_ll7Q7_P74FlNZhQYCNzPw_50i4Nni1GlkwfKwCV7QmcblmMfUP1LynLCJN1U_1JxEpG2Xw-g7sKAjHQEuVpBrjLm1c6MQ01OuZ6VfiT7bN37t74q68nErbzQL3VsFLApN8QtPF6ryx2moFFe7bfJ_z5F6g7l7JvT002pDZoqt5QYw2VDV2i958FhtMAt7r1LPeuN2F5qT5x_bt9jUVHbHtXFQH0Y4AmHXdMe8xl3GoVqWxlJ7E_pa8atcuvbIkJlD1NbWmVfQfY_gjtRNpTCKjla1L5MSLOjBPrVk-SCfnyS-yRONzxaML8itOsvHwSdiFDxMw6gvNrPqT67bx9fUI3l-yVaThaKBTuOeNO9TT33_W92ESQhzMbXJa4ZuScrRR3jARRoKpeo2JjKRTwOA3uYnBAhOAl_CJ22kLinX84H22MvieMSOZj-n09hiE8SorcxfMSncSo6ZKzVXCr5qH7xMYJgNl_uSotSSO7hRRAqMWmWzjNFZNhR2pqhpTAP9nP5bH4eE8sgj-zzevvRGVaiA65hzLf0CD9yNQxA_TZh6uZgT1d8E9pvqMwQ7h6NwO62vvnapCnMNlDigLQflBlDV0EFcCTa-u7M_YOl1VGVXiwPemE_MZSUqDvFaEVQaVxcL1KdfmWdpJTl9_iXLnvuQMwWQqUCR94-AkywOtwUAH1Vjh3yYO83AqTC4lH4vd5eJADqGbK9rBPBFYUO3PaQLT-lBonNEIL2nCj4-n-padoSaYuaZrUetRDOfZ_WV6p3VpPmWYhSd3-Esw8dGWTBAsBdSSohpH46_Fxjrj5y8mUJMrFb56JllNwpyGw9DcQobKfLug0mHKfwNxPg5eoxXb-nQCns6rtA5HKC-OVyOQY1T787JKRKhvcuqxEUXhBfFTPrr0aLQ5quAgHBhiXOAOoo9ggSSNLqSba-CALLOpBAQjONTatnDFNfTQAR9ik9Grt9V57OX4zKsGdpuqnRljX-gTlJW62Yxsj-Yf6Fijt-CdXvKyaj1oUHTBPssRnLzMYsTFkOHP3R5iCNq3xv6GGXh80W_0fkIZmMAIjluvwL_EVtJUWSco70iX_UQo09F3-Z2hsm4RTh4q86dcOKlZDWaziAztTFyU1oAf2W6htqfLVSwxxW9vyDhEl09LQB3HegTykW6bZ4BvukF_wItqFZK49TV1Y3SzDuqMMI-Iz0-4bYWcMvjKnOWYjNGM9QZ905L6O49P3iRuGarQctZm6k4olEFVqea7oyQko2tSaAXgdOCai4rmglN9DyxOhQffv-qIDEMDFDEUlNv_q03SiY760o_rlARFsEn07GqhS4oYhHcKG_0vt88kY511fSaysTcjg316YqxSCO_fpLBq3apqx3MJZ7xaGZP17C-7in41WQ7fdvetiJhVwFGyYEqjJHFPfUc5dYCIMFujCJ45o4KbjltT9XrJbJJIZ_GjDhCk3xJNBjzCQWJqf_tKiaN5Kh8k1amxQ7uRL2lUouFMMXtB4HTlnJXBoZML-7pfrkGe6AkLYpmy_unupMtWPh3Y47nzXwr_aIY4lkLOpwHBaK5pAm90DI7RpMf6YzGSPZ_p1ZTDb75tNusl0N9_huz9MuOamGIdue847Udw_-YfJNUgm4z3wYFO3pbqM8OEEMRLbXMNrI3xy3l7PQCSfF2l6RCOK2nt-3ureOutPXaMMJXkP4emXi9YEsMs8nUXwSQF7gv9g2moJlqcexLm--9m1Ce1Wh3XEh0k6_F_bg10Xhm8KXqvvxKH2SCXurNZHaWOdbmbjVlgXxHrng4G-5yrJ2mt5m8oT6u_SsX4Ep5RYNB7ZwIPhiAMGF2iQE6u_15G3hn6oYZO_6ICETEqerQCww-k2CgsGY5xFk_wqhCY_KBwbvT8_GyLoU54HPwW9iKte8l27V5GOVtBdQx8GJ6eNnTEFYB7ZXrEfJhJWHot0E2YPb6aRnYT7Th217wCvbtyU2GCdshRBr0BZohIEmRJmHehiqe1TwQP4I00cS7_zh22BOmu0n_zgMNWiF6IDbIRsD_bAP4_vYvRU4lxF-kg9WU75nVEo361JAfo1Km7u0q5glHQBdam7RD8PNK3NM2MZCB8yQo91rZ8po651sKCh-O3NW14jFVMvJSTgf2xwZyt9s7B6mV7j0lp8v4K3tCeXwv0TeERupH5oS1U5NGwZPmbskO2PoFKHR66mpYl4k9i4HxN7iBLBN6ZU9ylnO5XqGw6S0HnOtHWFgJavVOPvtd-nuii_bGlqzZDRF6cKtI3MkRKWQrQByo7Fpa5sDKdhlwKPh8ZnTTTuarZL0QhdlPEO-zf_aUcZRbW2HdakMQ8hmwbEmr6uvYuSTV7aBScxqZL3NGmaAVbDgysYebvLWOT7Ki3Fvq0tVD-F-DoaDzv67eG_WY72KasuDs5RhpNUpZSnKcaDCJo62Xxp1DUO_gBstKWywnOJdk_ywswlwoJEPqzzWsFvZa33Raw3cKLJ_CUqZFhaGFUtzvtvRSRNeo22OSkC754gegVf-9TsdbKI5fwgkUGkwq0hWIP87V6183VWaLFZLLjCLqYa66LBdHsM4HgJOSS_VCJj5rcEVyzSRPokOtV1YquczBApcjeKqrXytUbJu2qwPtDnQChR-Qv6rPDoMxL-282mHKuQs5EuFqUZYn_8_ZaQjMqTCYLTUkFX8iS4FjX4ZGTRASDz0LffKq2UWfvEKVuiO5VDFx5Erl6gKsyrKQXGtDACD6RNR9am8vRyrG4_FJxxbu2t7U8QOeo60Agx7rPxMxeOy5Fl0DtnQR6pKuT7nLk9L9R58YRxlsEWS4v0mcdnRODaMqLZvkjjK9Xahig4swbfKtWocec464e0fjZ27p_7o6L_KLN8DieYFYQgFb0IuPG0lExuyFye9ZoGrZQbKjm0u92ygF7mvfHBKkCht_NRwA0fM08GKAgK521xB-dX0L2z8xBNq0MBxkWCc-pT4oLrb_Rd7UCcKq6Vcl2ddRBH_9qOD7gDN2cNdJpxo7yqaefbcD8oXXtsMHo1wE3OS-2gkRuxe3FMFDDpoTL3Gw4os_iKM6RXFoSZoBQtv4GIgyaejzMrA1jubjb9T2GjcOuCSWG7pNStSVxGESOUHkAl58lWdbd_2WURgeEFtws9f0zjNuf9Nm__Mf5joR7xqyDPsC6dCq3N9DioW8aF6_sA9lYxBIhOdU-XgDvMznIenSTZWK9R35fR9wAa7gDwYOJqpqiQ8HzpmhSPvFEmmlxbM9DQ6Zmnrv9ntWZGQYpZZnPwcaXZwEbEr4rpzGvBzSXXKVTTANq1yC-P0Zd4Ox92GOCH1j4L6S6HgYng7Hnkmrps9wHnap_bJQa2rn3zWwpScFhKi6PSBoiAjcCh7r7LWapGMTNzW7VzRImD76sO7bpwHkNbAJmCBPZw6EYAzq6EAfdPk7KHB3sEwdkjCOawi7No3Hc3l0zbDozNM3ZKEMm91mZEH--T-KOW2VlC_j-ynjr75m924xTMHnoXf6Ig8XkrNKaAwlWW8I2j2qWkOG3MnR9qlwebhEfn6rIa6m2l5SRyD8wQmN5sI0V1GQWGa0aptqke8p6ulABhUsm31XMNf8Qe4BXGH3fpab7o0eUZPxtvGV3SMqxnOWFb_GC5IbmsjtH-5QyvDFe5gLPzL7fZRJStw==","summary":[]},"output_index":0,"sequence_number":3}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","item":{"id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","type":"message","status":"in_progress","content":[],"role":"assistant"},"output_index":1,"sequence_number":4}
+
+event: response.content_part.added
+data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","output_index":1,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":5}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"Here","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"8rzxwmlB1LAE","output_index":1,"sequence_number":6}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"’s","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"t0vEwanQZm3gBK","output_index":1,"sequence_number":7}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" the","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"21DojB8sjNCj","output_index":1,"sequence_number":8}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" latest","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"6TzlAb0To","output_index":1,"sequence_number":9}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" for","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"pSQUq8eKaR80","output_index":1,"sequence_number":10}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Miami","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"DzoYPfECVN","output_index":1,"sequence_number":11}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"djBbAJpEbTu8Jwb","output_index":1,"sequence_number":12}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" FL","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"PMOV20VqLAVjd","output_index":1,"sequence_number":13}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":":\n\n","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"4mgopBhKwJYuQ","output_index":1,"sequence_number":14}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"-","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"J3EHLG72y8bdE6u","output_index":1,"sequence_number":15}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Current","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"wqPCRP86","output_index":1,"sequence_number":16}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" weather","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"NSw8EbjI","output_index":1,"sequence_number":17}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"ytuPwefkJVz92Wo","output_index":1,"sequence_number":18}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Hum","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"BPIda1IOHFAk","output_index":1,"sequence_number":19}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"id","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"ni8c5mi9xowucu","output_index":1,"sequence_number":20}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"cwip2fJwodSEQJ5","output_index":1,"sequence_number":21}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"37CSu6yLtgFtM7t","output_index":1,"sequence_number":22}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"85","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"uiSrBHOVE21GYe","output_index":1,"sequence_number":23}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"°F","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"jE9pLbM96hG2Ok","output_index":1,"sequence_number":24}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":".\n\n","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"d9eFac4mNQgvv","output_index":1,"sequence_number":25}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"-","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"oFeLEERpcCnpTRJ","output_index":1,"sequence_number":26}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"GTc4iVUVjVO1VHf","output_index":1,"sequence_number":27}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"3","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"4nM7WNg4iUwXCra","output_index":1,"sequence_number":28}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"-day","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"4g8Z6lopuPIQ","output_index":1,"sequence_number":29}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" forecast","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"8j26kIZ","output_index":1,"sequence_number":30}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":":\n","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"Ek1uaUJzDi7WVJ","output_index":1,"sequence_number":31}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"MkQZSqzYxGiKxGh","output_index":1,"sequence_number":32}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" -","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"gcctd0GgvEFux2","output_index":1,"sequence_number":33}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Day","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"enjmEmO9kSYn","output_index":1,"sequence_number":34}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"RLg8cKpWFDBhZW9","output_index":1,"sequence_number":35}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"1","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"6cIgCFG4iKFjvNI","output_index":1,"sequence_number":36}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"oNbXNyt6Cb497cw","output_index":1,"sequence_number":37}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Part","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"jb2xyIsGP60","output_index":1,"sequence_number":38}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"ly","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"Qmu0I3RTniUlTn","output_index":1,"sequence_number":39}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" cloudy","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"wzPEmk0Vp","output_index":1,"sequence_number":40}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"\n","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"7heg0ixeiyVPdo2","output_index":1,"sequence_number":41}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"fpl9rRfxOjppjwc","output_index":1,"sequence_number":42}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" -","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"SnmhPfiQeaHtAt","output_index":1,"sequence_number":43}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Day","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"O7bjKVvfRQA0","output_index":1,"sequence_number":44}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"Q7ZvJGzN2sK7Lfh","output_index":1,"sequence_number":45}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"2","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"RFfBFlLD5eA0WpO","output_index":1,"sequence_number":46}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"2fJQu82dVG8miK7","output_index":1,"sequence_number":47}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Sunny","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"aibInmOOa9","output_index":1,"sequence_number":48}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"\n","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"abUNH1j8N0EQoZY","output_index":1,"sequence_number":49}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"Le0bG1a8pgwjMk0","output_index":1,"sequence_number":50}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" -","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"3eTgy7CDdoxihp","output_index":1,"sequence_number":51}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Day","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"SZYRnoYD6QLe","output_index":1,"sequence_number":52}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"vpSZI0du6yY3mkp","output_index":1,"sequence_number":53}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"3","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"yCxyoFo87sIXtFc","output_index":1,"sequence_number":54}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":":","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"D9SFbXsFjFAGXEz","output_index":1,"sequence_number":55}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Rain","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"Wtde7hEQ30z","output_index":1,"sequence_number":56}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"y","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"c2CbujcxdyjsQmD","output_index":1,"sequence_number":57}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"\n\n","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"yYtv8f5A2xup2g","output_index":1,"sequence_number":58}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"Would","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"rIjLBKDAwvt","output_index":1,"sequence_number":59}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" you","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"xePQ67VtRDoV","output_index":1,"sequence_number":60}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" like","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"lvwbVZZrF6h","output_index":1,"sequence_number":61}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" temperatures","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"Txx","output_index":1,"sequence_number":62}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" in","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"Wwh0cICOhImCs","output_index":1,"sequence_number":63}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" Celsius","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"amiSjO2H","output_index":1,"sequence_number":64}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"QSsvxTpklgQlahT","output_index":1,"sequence_number":65}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" or","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"7hWayoOhFGKcj","output_index":1,"sequence_number":66}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" more","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"UiwpdJ62kR9","output_index":1,"sequence_number":67}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" detail","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"uwY63nFRr","output_index":1,"sequence_number":68}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" (","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"P2boet2V6ho0gd","output_index":1,"sequence_number":69}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"wind","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"SwGlQfdLpzhA","output_index":1,"sequence_number":70}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"bbAoUhr95x5Rxsj","output_index":1,"sequence_number":71}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" precipitation","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"EI","output_index":1,"sequence_number":72}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" chances","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"CMFolu5Q","output_index":1,"sequence_number":73}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":",","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"A5NAClG4gDc8epz","output_index":1,"sequence_number":74}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" etc","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"8aBoZchNaCDQ","output_index":1,"sequence_number":75}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":".)","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"rFQYM8ClNGrUsa","output_index":1,"sequence_number":76}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"?","item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"obfuscation":"CVUIHnknynRhhsN","output_index":1,"sequence_number":77}
+
+event: response.output_text.done
+data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","logprobs":[],"output_index":1,"sequence_number":78,"text":"Here’s the latest for Miami, FL:\n\n- Current weather: Humid, 85°F.\n\n- 3-day forecast:\n  - Day 1: Partly cloudy\n  - Day 2: Sunny\n  - Day 3: Rainy\n\nWould you like temperatures in Celsius, or more detail (wind, precipitation chances, etc.)?"}
+
+event: response.content_part.done
+data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","output_index":1,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":"Here’s the latest for Miami, FL:\n\n- Current weather: Humid, 85°F.\n\n- 3-day forecast:\n  - Day 1: Partly cloudy\n  - Day 2: Sunny\n  - Day 3: Rainy\n\nWould you like temperatures in Celsius, or more detail (wind, precipitation chances, etc.)?"},"sequence_number":79}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","item":{"id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"Here’s the latest for Miami, FL:\n\n- Current weather: Humid, 85°F.\n\n- 3-day forecast:\n  - Day 1: Partly cloudy\n  - Day 2: Sunny\n  - Day 3: Rainy\n\nWould you like temperatures in Celsius, or more detail (wind, precipitation chances, etc.)?"}],"role":"assistant"},"output_index":1,"sequence_number":80}
+
+event: response.completed
+data: {"type":"response.completed","response":{"id":"resp_0d72ebc7644b7c69006a110d0fc83c8192b5a036251d009331","object":"response","created_at":1779502351,"status":"completed","background":false,"completed_at":1779502357,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5-nano-2025-08-07","moderation":null,"output":[{"id":"rs_0d72ebc7644b7c69006a110d105664819282d203b3f96a0fe9","type":"reasoning","encrypted_content":"gAAAAABqEQ0VAwtMpLY7GiUZq4lFaiW_40ye71dno0yqJWOobOrCFD-gp-mcV3NYtmIlFuXiblNTrIDKutVScriMDw0sNW8x0c-ePbMICV7TpYIznxLB5u4-fmINoQkS9EGuay1i7LCNO45ZYe-J9IDBoavLF533QeJBBH1w0aNcz0vw9a6pA2rclXdMRdn-wNYbk8K7_4PGlvxYmUXvxVCLkLYmh0CAP5hJL6BNfER40ng9Ilyz4ItQL1yW-lV_QY3pHzfNF_WVReVCzwRqQbul6BsVRgi3RkN0UjNr-KNl68BZ0mpoeUjryVbR8Sry6Po4SucVcVvusGatsa4LuOuQEIXx7ZosTnUiWZbyzfNL4irQGHQZlfcz0YNVSvDc6pTxdqIcGJK7L8b3CP9rknxmqM-fVUK_jtjj7fCxcswG5LpzHIoYhjC7LEmrdYL3-KbJ283BiOLRQVBSTIk9nEonM6yTzbRjYgOspLUGhfCpd071gPtIQ4g0ueAxbB5v-O5_JdbI_s-puhcsPFWL-FvV4svvEe2gWn0ou1mkkpn-I-wmiU4tKqj0gz5WHOvuCuMM1NBE6q2wUZZ70VHfo2xjbPoOFAm4Nbj24q5OBbOpt6n7no_lvFtoXKoggYN0n1h7_MUGynicVv4SFW8fTRvqZkL95OkQkWhqTAEJIZcZ3UCIKxlbPPMpE28v1ZAN1tycZBJlHsnRviJg8mUzKIYG6mR6o_15OSbBGh6z9DhgOPuv1KUZxwQad-5S0fMEz_esgT3jgMebFeyBJN7b6aIb5Nrr2loqbM7LoH5ejZ2YzR7K6hDZilq1bf51XyllDmAtxFKKJBjzsBgYWcFw2Q71ddCdJVKCxp_XJOcg3Rj0RdOKCC6LPPdPpgIQwdqciD-9BdENEA_MRawAohbW6KjRUREqzDGlZVzjCSpoAlwrcJ-9_PLj4jar32DffLxxgKFsrqgapo6rZZLvDuL46UsMu7mqb9EBXRv82GkP88WKLK3LiKK9NsiWLvsUXGXekWM2joLR7oI-lEX-sMJ0_Wpzop4ElZfQ-fmYBgQQ5HKsh9M-OsoVIPyKI0pTNVBm5Ra-4vZJ8nftDAFiTX306vGYXcjFV5cbeDRk-zMdlPhSPSXCMfAl6NI6Sf6X5vHr2GI0cjOFncqzJg0VpfS5tniXWFoZqBKDYmJy_gA0_tdrI3sfCVkaJqCvFR-9j5v9g0MW9fVXsP8YZ0cTaDJC6SOpla6KS4jJ0JEw8M8ExSPE_j6uBIe5gkEa21G9HE4pIIKpMXyN3HhLEkcE01mHYTWwTUih7rcecqhjS_7v93gVdc22pO8hkr9OyHzOAN4r-fUAIT2Iibf1LIpA0B5cAoxxLajTLuoZFGZoPd0O-IUhMrrOysoe5xnfxW6pyMhz1u_b393jGl4IX0OezRAqHP39RPFLkYHvVRLEIAWECJsosryIo1dMTRdfYros-kJXHeut0xnTJQhSCWCOrFvVczJc1qc4wVCRPbGZ-FM89I-jzVoEGrP44Su8_ph48uxk7Nq7RcO_idYrYRGEf5c1caM4Pl6cONKUD7F3JuNcAVJZQmWsW35ltWMw56Mbe5RMKBbGL9ZR7_ylxLsvNX9-D5PHQ7RpPMejD617er0UjKTHy9huh2GX8jePwS2EfnQsVNtJok6rIp5mY1y4VYaVLEo0tZTvKjMJYr1g4Ot0_VuaPpujBeosiJfO3bUkBKQqfWje0xN1RqXceBqC8dKsjg-_sy9X7lKwfbY83OL9yym1p5GxvGNSvZRMx75Or0LWIwF3nQFIq6id48egMdYWiU2vhoBoJLkaAyLIT2mzLleh0dAMyXuN2iF19CWy3CLH_uDyIBzi2LjFXpfaYhTX-ghSuGUfFwsZPILBd4cgOMLuQucJZTjQbdKZmIzhEB3awZZ28qMWzD0EBySREzLV8iJZR2NGJ56rusOtFvXxwnP02qoJkUXuIq0CzbrEvHgR00I2lHWFl753UzDKyUxjTkviYqQurZjwnsb_C_Qi4y85Gm3PfudLE_2dKBaCrb3nNg_TMG3IIB2v4WDgWehpKoyH6kXBmsQmNiWPgn1mDqKY8FF7KMrNzOXqgB1f2JzBXoOBxLd0iKAAC8aCVsPIAABBnii2YQf-pV1blfBfYx6qcfGaU9B1ZpvnPI5tHHf2ZyCr1R4sHizuI8f6LizkNhTlRHsKVh1x0OtmpHSAD_h1EaJqvB1dBzwtxip1ciSugIJWep9TPAmkQb__oTc_JUr06AfaEHgd9OwT46LQG4_huljUp0kFk-IKAZvqrcoMDy0GGEQ23GNwLsvcLTD1FS1R22pfWUAfPGMAcOufS01SvbGqJHeVfSJhu-hQShDnRMa-5F7C7PfeROIGkIqaO3vk3TIcYX5y7Puf1dETAWU538i0oJfdRzX7uqQKOxbwvi52SKmCz0e1R1i3VZ6Q9GNTJy3MAr7hAw9n0Yy_pqCvf2-Bik76gsWdWcS71TyYbcec9eAx9eZVnIld9cdMY0IYICa05ePvymcRXVX2NUhdqJH_mCgmPbpFrdXi6ARl1z4DRzkNW5_3CCayjOXYwHv7UKxMM5dDozXDSI3ayhe_qJwufp_6gWKAqUt43Hiq2fnTt8uTlhZx-O7zBQDoitVUCJgCTiVfrc7Fb62WULU_H_I_FtOiqSk5jBqbCsJflPowoLSTbCUSvZvPC7P3-cbZhLk2Pqzcg__Y9ZViqGRRO4Ia8q8nPZvMFUD8hrqTh85YN88ci8u7AD-xUmDlriM6C3z_aWcGfvPzQVsMf-_o8fgnqG-w-SS7apypWEZgSPw1klrK99QV3r7Y8fqO8WJ57uChDMp-Ncw0QDU6P4rT-mEIobzUIA5bTZCT5TRZK97Vut8C5yhDUEvrias3jdK3j9fPBBtfkAjb0WNNn_Wp6QiOex8hdV76ZBarzdK0IP9GztOAK28POD5SV9PjyAGSprLSv7uEPETl_65JA2x8oDO9YnP90KwBRcKo-Xfu6jsqYhWKoKDdgrzShK3hR_uWp_sWIdCdquvjr1MD_usFY8hlQqKmcCFJ-lGGoAVcyN1slyZDhA8nJMKOF-bhRJOOvyk7hsAcpWcDgsg9nzO24PpJBpQ__vRTGmWdB3CADbjeDuK7ynSKoImncSbOtIgpp6gAUd4o63gx2UfwZseFMSbXwPifk3uf2cAEcs9Rb7E9AVU-_LC-3BwiRrd3ZXgphGxkCAJeg3akEefN6atdCEjB3N7ics1R8EhkhcvIRdsmjGC4gnhKa7x-EzyCsOot4-fQ1bQzP0AhUmiLsSD_llwt7ibd4SsqRWVT46kD-hNmKOc_Vaiar1a5l99evOnBpxUJ2fLDSBbfwI6IB9gR9ml6FAUyXu8pSRTOpJZ1UwowdSGQtSI7ym0ha1ZInvvUnhGyLtHlB2kGd9fwJnZjVtH7M3-JBn9I8U12ejnMRGk48d5gTFY1zuSUAZ7ZS9GlWLoH5EbMCAu65W8QqGy5R8QhxWv4nI9Mct6DBO0JxyrWwWn_XCWEy_-w_yFDv6oicCwnZzSn_0tBWnaPiHo4-oXuE4vYLzJQW6K63NFebbWLEHNDhV4CG9koQVK8GRDgcnXpzYikTCVI1KpSiOOAZ2wU_3k7kbS0uYEVDSG7k-CHzCQP--r2Jxy-B4gPzQJvtp_ZiP-fjlcVYip_7Cl9WjlLIWKxK9rRMN5kFXetzUKtt_oRDyfVvjvWp0l8Ds8iyuvcv660Ls4NOjIwZv-KI6HGylH_be_AXOVI5Z3cKuVOHV8VKTZ6ltD3zOYFbpRx4SC4lTlu8gPk2QtI69ZCDF9QHBSvogrGZTdai5IAoUTJW9ybAbjAa4n95S4IkeBSAWI9acIFaMhPPZX0IXhLHT0dVvyexQKUEGTpaUTL_DM5FcLryMP01LYSJCFmEHyQsxo4hXXqk_YqId1waPFPByPFazSp9frTRGzrYj3mnxdlfJpfF9aHwLr6ScP1_LnGcurJO5uIAFY4_ac92ykZ8dqXNQTVY8-8EQCw6T9wOaSKjORvmLVE0lhmDXSYqX66b6GY7K7AktDK8tl_FYRMzjOM33bNHbFi1xMZpcb-Ecz067cfUzqTQF1v8t4IK-44kY1oEbgbKyDCKMV_X5wm-T2JvZwweB0liHBUTQlYDg0pTZfyc3291caFLRz7aVuH2-mPMO3fzfTC8mIY82F6G7gQvolynboT22d1LZFhdWptt7iFLVmzcc5IrgFRwu7OpRuBidTkXUGEchsTX-yHcsXUqWuD8B8cPaZkSwRBnwd27vxo7PHjxnbwWD0k38k6ZjoEyywo1Q==","summary":[]},{"id":"msg_0d72ebc7644b7c69006a110d14cc748192b5349ffc1c0f76b4","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"Here’s the latest for Miami, FL:\n\n- Current weather: Humid, 85°F.\n\n- 3-day forecast:\n  - Day 1: Partly cloudy\n  - Day 2: Sunny\n  - Day 3: Rainy\n\nWould you like temperatures in Celsius, or more detail (wind, precipitation chances, etc.)?"}],"role":"assistant"}],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":null,"prompt_cache_retention":"in_memory","reasoning":{"context":"current_turn","effort":"medium","summary":null},"safety_identifier":null,"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"medium"},"tool_choice":"auto","tools":[{"type":"function","description":"Get the 3-day forecast for a location.","name":"get_forecast","parameters":{"description":"Get the 3-day forecast for a location.","properties":{"location":{"description":"The city and state, e.g. San Francisco, CA","type":"string"}},"required":["location"],"title":"get_forecast","type":"object","additionalProperties":false},"strict":true},{"type":"function","description":"Get the current weather in a given location.","name":"get_weather","parameters":{"description":"Get the current weather in a given location.","properties":{"location":{"description":"The city and state, e.g. San Francisco, CA","type":"string"},"unit":{"enum":["fahrenheit","celsius"],"title":"Unit","type":"string"}},"required":["location","unit"],"title":"get_weather","type":"object","additionalProperties":false},"strict":true}],"top_logprobs":0,"top_p":1.0,"truncation":"disabled","usage":{"input_tokens":820,"input_tokens_details":{"cached_tokens":0},"output_tokens":705,"output_tokens_details":{"reasoning_tokens":576},"total_tokens":1525},"user":null,"metadata":{}},"sequence_number":81}
+

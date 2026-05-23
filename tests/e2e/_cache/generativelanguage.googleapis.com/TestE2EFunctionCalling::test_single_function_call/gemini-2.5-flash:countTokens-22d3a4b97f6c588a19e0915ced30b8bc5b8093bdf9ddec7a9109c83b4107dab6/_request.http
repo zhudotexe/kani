@@ -1,6 +1,0 @@
-POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
-accept: */*
-content-type: application/json
-x-goog-api-key: *** REDACTED ***
-
-{"contents": [{"parts": [{"text": "What is 15 plus 27?"}], "role": "user"}, {"parts": [{"functionCall": {"args": {"a": 15, "b": 27}, "name": "add"}, "thoughtSignature": "CvABAQw51seZIrktHuCYmAxAndNs3xf9sIdEhy-AuS-60F6LtajDxj8561IXqFJVxXHHLo6DeHWikEGtn39bAyH9b9HqnPo8Vv0SPxeFcMp-7SzLDTUSLW3gsrngxCM3RDR-cDqAKpoc1SdehtVoGYFEOKa-pJxSnhpGBvDcgJddy7VSb-4t3LMm9vcyqnT4Fsul5fP0CkHfNLyviXNFtWSVv1uTR481SA6i1qIxjFBUOjIaFCT_SqGclTlBhBAptUsdS8we-glAlRdoM_VinSef6pga-WAxrcanQlzKWrAfyiYdrb35txEBoz2T0MOIoqEb"}], "role": "model"}, {"parts": [{"functionResponse": {"id": "00000000-0000-0000-0000-000000000001", "name": "add", "response": {"result": "42"}}}], "role": "tool"}]}

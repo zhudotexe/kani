@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "I have called the `flaky_function` with `x=42`. It failed the first time as expected, and succeeded on the retry with the result: \"Success! x = 42\".",
+            "thoughtSignature": "CtUBAQw51scbrgiDkMsUBWh/JNz3X2o0qk9CVqAhir5VeM0sJ4Fzswg3OA4t6lzy7ZX54oc1t88Z4sYdDYbWfAwCX8hzVyEpL/2C0udIit02l0X362Ha1zvDDUgx/PpPECpi48vhYLXEEfk6lDXqIYMzC16daPOIjCOD+UGaw8V8jHC71NS3gCtsvZCt+01zxHlY+KpGbkq4H4TH3ZFGxwfndGmYAs2QXt/Tsm2+6DziaeOd1K+AkzytTUcIf7OW05GCdnmoRobGdfywpgqMv2licwJK1aOv"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 138,
+    "candidatesTokenCount": 43,
+    "totalTokenCount": 220,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 138
+      }
+    ],
+    "thoughtsTokenCount": 39,
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "mQsRaveDOtSM_PUPutHxwAI"
+}

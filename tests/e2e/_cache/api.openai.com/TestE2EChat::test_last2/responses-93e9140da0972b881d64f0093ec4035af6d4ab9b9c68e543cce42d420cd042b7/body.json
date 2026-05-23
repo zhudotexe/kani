@@ -1,0 +1,79 @@
+{
+  "id": "resp_070867de99d1cf4a006a110ca5ae8c819dac6ebe6e230e7ab7",
+  "object": "response",
+  "created_at": 1779502245,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1779502249,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_070867de99d1cf4a006a110ca5f5a4819db978c46fc497b1d8",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABqEQyp2IvUUsXV4o4pNlShYz8BFUcrD7NN87N5Y-gusoqO2MZD398iBa_oQGc_2oCasamFbL1cAtfuG_9AZKgFpzW30DSkdELA4xlg6GL7ASEVwzByFe6_a8-xShhbIcZ46Ztg0rmexyoLYJDLLFtjLU0GL_kB9m-N9v_tgqL0_WFGR8zKtCTyg31exlax7298W1-lirGUSBXUCe0j3IJPX6Ge_zxbFgvoDcQF1ibTvLk9vXxmPXuclbpJUw99rbHwfYaMUSuLHwePhQHv8aWzZA2UVKMOFFwWHcOSTGS-cXIjrxHTpUw1M4PJXLWz2kwJbxxpyrNk5OYgShelSOGuVrbeXKmrQM2N_0heQQ02XRc9NVDYF3DLxvJWAEpM5-utq9yCkfCm7elHMEXz8O9i-R04hZKdJ7IiQpnPxPfM08WqYcIW51QLPxS5JL-uXK0koCbUjSaX77a0xri9BoN90_pjPTS4huFhoAlfU2ZrlZaLbWIx8AA6X0BbB9RljeU2pcNhp-4OD-WbR0mBA6Fybox5AXWZC3Mh7l6X26xcYYwZVFQJpoNwodW83nDuyouD3uFuHAY4pdwM60BYRMeVRiewkotf-QAwoAeseO6BKKMEWYQlvWEs4qKAYypHg2ZkBuUtzRGAiZ5bcFoGqfYQFbLKGb8hZAQAFPSnuDqD172VbKkxTuB_dCnbtSMdNhaHzNXCI2GibIUq-CyFQPjU3U2aUNGMV9bzMvP3GQxGz11GFOZtl-QVTrfGq7aF_CsFwherTl6b97xr06BFDbwaZ6RAfhKH5SpxN7rlZJkzI48UaDnaajZJOKVVhP8JhkKtdnYvgmWQvMq6NAWW8wZPJx3QcREE3PXYRPglaZghSDolFBVWA9RRcxLsVLiyx-TFDZaAyglJDZaJtu-OvIa1-oDTAkS0Q6kOyUPRos57VfN9TsVWL9DiZzKF_ZnxrHeLipkgpTBCivOjuCe79gEwDaFUggMDgSKKtnqpe4qE6sOhRmSdr1O5_T4ttedHeInYKHCg4K__rCrKipVYZ9IfyVEx7Ggh_KSSK-vuckqMay3O7zpVhO-sjdCqB3QUkNN-q_UcdWDXFG8uwA3opttjc_mDNNmRAwBOb8aTT2S4W3WvIAPuSOEruFYJr-SRjU8QPz_XM8C-8udRjOZLSvsE8o2_Uiguw17BjBpRYsdswOLcByLXurcjAzvfIIwgeheTlj5wTn4NL3v-qgKmi0L-32Pkpt3PLFSn5adRKxqSaY-8z06aAViAtnUwxHiHmdtre59ta_cRSVrGa_b6cMtKEm6DwLfzzIPDp4kRnkIjr-f6c1RQpuTmjHWz9rmyg_Ex3BtOWHEW5DOgIR3bR9jX_q0OcM-6Gs7qWqOP_i6EcNvMnMb7bRewSfFo5ctx9-wDEISgaEr7N_WzUaJ3T8HUqfcLypGWSf82FHQSlNCl1_gPoHHUUKTS6ihdVcb-EuCy6GdTsgG_Qh3tMlZ5yMK3F0WmCv7tkg0xTOl3r2fK7GcotEcntAptWuyJwTrbO_6QBQoWQP5nzbCVMUkv9NJ-exLBRyuHRhLwCK6R4Yen4PazyMly4gyMqHHfIjxUbO0oeaqsIGdaDXWiEiZoxTY-VEZVti4XQilFqcQOZ-r_QvW9O2Qg8jLIWcwpYhUDcRP_ZI7fcrvTxucR-oa6iSwEI7Ypfujghl_X9AFbzAO3QiDbdvyxCM95sxiJeBpG2gzEpgjeUxVDfgTuqEcyC61lQGRI0WJb_FPEMVg6fNTT1NSIA0AaAQWIak6fZLao6blFipEQJ-ajC7k-MpRbfZm9uCH26DjabszlLsxAD2_7_36tTYVNfkJtNdoWrA6CbScoRA68IatP6ED-tJfjbuU-ETqoYqnZBQddw1CHAHJxX1pUSLa_BrE5xZRN1n-gdgx5pLRRWp31nFUzr95DrUzeASMmlhEbnNzXf89R-USR_S8ZRXXVWKT5TasKhUH7mgMjW9J9WhIvpA9O4sAyCexgqF5RX27Jb2tt6fFLMiLpQjFWrc_Hqf4CQkfv8CZKkq7-fXBs6K7okW9UIHASSN2sL8S1KfPTU44n_8MSs0fPdgQJrOKTetofAhI4pNyUYfD8GECv22vcgzThQdV-x-xsMh_lxVYU3YUYoVVoYNMkbREt2GLgoqIG_dMEfKAwOdrUgcOn3kMnAgR06vTFpE59H9eE-QmAIndNbL488w_AWwPXxPh5uyZks_eXAR4JU4Bbh7dDRDhwo-gdrPE8zHmbM6lUcO24yAzWDkBlMKQ25aznnBx16zWWWX8u0IzLlTOOEUAKB1mnMc-e9KMx9huwNqwNnb2Omh7fgEP1sBUA9jFUT5bFx3sVPoGCLuYVc7RQHAYlRyi9935OWjHfiMbbl1BUgyxGzWYA6nilC3RqXvzIvR_sMEMibsJAe-KunSlXMLiB45ZdfDIA7eXM3lVlLhDuPcq0bFcfb4cZa1NeMUnR8q9zHN_Eheigs1SC2tCljmoCkedKBdBIxuWTChtk9X30-MMGzrNSn97NlV7QzIhyS_5lRg9gEXcHQGHxwoH9dxxOguakQ5X4yCl-ievCNE6XEHrzaG6m3mFv6oiDg53h6pZjeAP1v3gfpqY95wCpXkBRTGObtxsNBIXa2v1eyU06gZ_Jc-mat_5eEQ8vYlPppMchWkGzIzYQOzurGIcdRHtHs8R4CaKivyeigeflt1NR_Ui7T8VT5NCxF3wL1A7LgZPbDx5fib00ta4rt9xqY6VLYy6V2apzjlwv_gqnI_xealWK9tqR6UngoLYapxiz5ZHjXBVQC3-0Czm4r2hQyiU_CcJymv92SW4UCHrWHu8S-vGxDoglzSSCgL4wX63OVl-OUy03tu2KhKBDbbEGWcD7FTpHuOLqz43--P5YNUV08arZ67sqPaVjZkJkrkTPeajyPkl7VyLF51xrMBUiy9AGecxpQrzLi6ugWClENKzDRB-JxwUSihlq6u3K-L5vCozHI-yLZXvLIAgJ-qdKK1xFcctv-gfN3ES458YnzvMosJu9SuOKKA0xdTnjlcbONgnYw2qFYe6pRGOy1-Y41j2yb0bklNQLGwkuLOIM835O8RiJBR42AivJ-1rtjLppYEMAvMMYpubeghc0P2704BUevxXmKfimfDnEIEfcZPRBVbv6Jfgfr9J-BE2uBHFtNc-7eOhwH1YFvFNmWhRr_1Hs4SDS6cgmdqPhqU4HKKD9egZzy25vzC2fjYMpPN0QzBngO2eZ6l3GEI7w5x0FHHlgdlKMBKFdkN9Fhw-KScszV0Z4tcwDzy1LF9-7Ntgdkhoh31ObIHAOABOLEMtugfd_E9u_deRQhiLqY3LVzywQRgzykhVv-eYzXEaiXFoyhvX3TDYxr4LRhZksfe4UlVjdtbuT_kQqYU0uAk_VStqfVOj-N9SE1e14D1-rqhQJtMjLC9bz4JjBc-z07g9YBaQqHWQO-ZHvrOaj5pOFqLHpw3RI7dhAEfn2Npa4vDesmP2FCTNdRGW3DvDEq-Yjvxbn4LdKBVbwF_GII9RBjBBNYzn989pEyTjWHuDIfuPgnOmuRoj9K4Ng4D9llYrrhMQiLcbYuOpvTX-x-XFAKDOR8hKiXondjuAHoOwu6qK5gjd_sdQY-mZ8OwoXdPZkncpVMrxmoUVjzEAwON4JC5AYs5pBNaFzsytD620P3z-CFSei1CkHaBiK38tmOLtbhsMFVx9OZl_XzvIi4m_eWRDJ6KeZMJu_R42k2Jb9hq4MLcPpATOq4h9Cshv2DLHHJz_HOpU5QY33X27KsT7coUyk7icSXsTsF8mbMuxGyizDd-k4szXtMrJZ9-Q_q9_f3z-rloq_biAYUCM_2bZn8t4GEcWPu9KaoYkCSiE78gzocDD64hMW6_Qoc-neVt0NgR3c5sBfMTlnbJ_uGmB1iWqwmEzX1F7HqszZCHFxsZFWfBC5FVbZ0f_EtXfYUMk0ub0siq-CsQvsBOgMKxAvdaDOtA5lUIcyXxbqFXFuJ8Ga1ERNjfXVNvpaHzy3SBi5xZr95ubVKVGBRWYLog85Sr9ohpacVdizN7vtEZNOYevXoS10Xq-tog46GBvsDmbbYQ-aFqg_Q1_qE5VQsIIq8KBvYOKaI-623JDoHqSxKUAqXTR_hegGUKCSb5qbPuzp9-BGf3Th-_4k-a85yCsIhW6Ds71ibgGPQxpY0I2dbiSvRCPKwNKVyJkz_V87zqXoPciGtKPWGrdMTu2VTL0evAEHn7tQvN0wAjnQx4uXSRuucFkWbECHL1rbu6OhUHQTSZBYaY5LLkzICkA9o2kUFz6wcHjvLOnCDq7CJxGL03LvufUOVmXdqfG0WNNzgaN2B3i_4pCwIcJ8cZkvisooi3Yd5qtdw93A1OMZvZ_HYX5LihYmdaeaDTg2dareeciSQ8BggfPWd3ckCBtAhNlFrPWMy_eenUZnRend3EDooxdgLQ9_hSJLBcdTf7LwiI_mZ0GNV2re-Akt2YtAlpuPSYbN-U6KZ4UbE-070wuknZKMJeXHuq2KZPYgUes2cgxH_KdNEhibXResPT49516Bmth9WEZvPiW22iuA-rG48ifWvW2lBqoLSZIys4M2D8rtvk_9",
+      "summary": []
+    },
+    {
+      "id": "msg_070867de99d1cf4a006a110ca93058819d8c6a1b9c4130eb38",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "If I had a favorite color, I\u2019d choose sea blue \u2014 calm, expansive, and reminiscent of the open ocean. It pairs nicely with whites, sandy tones, or coral accents. Want a quick color palette for a ship, logo, or space?"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 118,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 669,
+    "output_tokens_details": {
+      "reasoning_tokens": 576
+    },
+    "total_tokens": 787
+  },
+  "user": null,
+  "metadata": {}
+}

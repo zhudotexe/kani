@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Call the flaky_function with x=42. Retry if it fails, it should eventually work."}], "role": "user"}, {"parts": [{"functionCall": {"args": {"x": 42}, "name": "flaky_function"}, "thoughtSignature": "CoICAQw51sd5tDJpOTy_UxfLkMCEyfLQaz8lruglnNGZrxizHxDiCOgPPpLtecrBGHzr1GbeLtWzb3_arzQOpgm_vd7dmSmOeJpea3M8HdeABEBonUT9caT8E88m-rm85A0rchGXT2g8xdL7krL6y3T4WcDEVNgLSulAYnKIhJBys9iXmkJn68xogl9WXCjyME6WIIi_-s9KLJzl1UMAGS5jcVVzI6rGFN_A0OKn7m5azZCo0eCw8zEBrDmy3sZQVpXjy4WzxQSrSoA3dKxrlgBAJRc5dZ7FpgmX5Yxn2KsbR1MANYAd9Wru03n7fU8FsD5quAcz9pibaj-r13bBLYayeMyL"}], "role": "model"}, {"parts": [{"functionResponse": {"id": "00000000-0000-0000-0000-000000000001", "name": "flaky_function", "response": {"error": "First call always fails!"}}}], "role": "tool"}]}

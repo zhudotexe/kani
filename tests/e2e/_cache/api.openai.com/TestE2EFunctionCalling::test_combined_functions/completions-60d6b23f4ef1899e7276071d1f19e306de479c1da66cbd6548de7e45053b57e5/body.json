@@ -1,0 +1,53 @@
+{
+  "id": "chatcmpl-DiW5peArRQnwGqTwXsbXzaaamklVz",
+  "object": "chat.completion",
+  "created": 1779502169,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_GEXdqpXzfvkEDrzKj0mEG2Ma",
+            "type": "function",
+            "function": {
+              "name": "get_weather",
+              "arguments": "{\"location\": \"Miami, FL\", \"unit\": \"fahrenheit\"}"
+            }
+          },
+          {
+            "id": "call_8WpqWcdhJkX6VYy4I8Nol1CO",
+            "type": "function",
+            "function": {
+              "name": "get_forecast",
+              "arguments": "{\"location\": \"Miami, FL\"}"
+            }
+          }
+        ],
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "tool_calls"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 258,
+    "completion_tokens": 127,
+    "total_tokens": 385,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 64,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

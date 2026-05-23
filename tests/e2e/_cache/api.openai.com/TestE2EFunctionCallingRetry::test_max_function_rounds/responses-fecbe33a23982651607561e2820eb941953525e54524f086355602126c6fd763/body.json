@@ -1,0 +1,152 @@
+{
+  "id": "resp_051eae09ecd39ad7006a110d1e47848190b5dfcce336ddad41",
+  "object": "response",
+  "created_at": 1779502366,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "openai"
+  },
+  "completed_at": 1779502370,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_051eae09ecd39ad7006a110d1e91708190a2da49668c6a0dd6",
+      "type": "reasoning",
+      "encrypted_content": "gAAAAABqEQ0iZBViSym2xl46PZvYEuIsx4pXhUMKAMpfP-3A4Ahcbpp_o2KVGevA6FMC3FiWZ7meiLITO3K0hK2GlIKWa0H8pdEL-nbylYdD8mjjFyqnwHa7XezR-4JCFjuXiprZ0o72hz0eKkEW1AhNnC2y3Ywjmtra6fuGN4MKAfZbhBe-mRNn3v6Y7bp8HyKwRAUiTaieSlFlKLLPMrr659BgLlRudQsoeqCnIGlwGfvXVa8WMyE8mS5ZylpoZgXtHOAQx7UsbHgM4IBKgmmKPyqtSli29OQlRMah_ytgCVH3OqHCcF8iIlk6iObN-Zug__52qQgtNAWIJpPzldJk4EUpg_syKlAMnxtxnFGOYBqHzinwStV7dyeet0_MV-gsFVon76rB411Q1g1N6kyHlSPmgZv2v8C5nJVfGxUtrw3mwjBvrCKjIpmMBcI6bLm0uQzt1DiLomnOy4abLZ1A7x19bNwgp3jo1mxu42Bkdbdcq5qRFUmpW8PwcphmWvhHx5jAAKTjqfHjXa2K3lB-eUT5lwkGA61uAac_YTO0lQF4ebscIFL-U-xJg_b75z9ZMG_HLwO2JwKaESLwoitpvtZNNne8Z2jtA4lPYztoxJlXRvmc6K2zdJnzgESqGnXImTRz-fdL867AUDyhiOnSelTipTqWM155fwb9iPou8F69CHL81Ig1VyLnw5O4M61JoHfav6L7Hgl0pb_ITstj3wo9xi6wam3ddyn5xSOKDl2JPvAWBAhDc10GghRKjf0FKWhtks8ZoKDS_FbDBX4PB3WoZxCuylpc6P3pCKhqYTYaUmptNi2XNqcYOCJF5roXxLCNpbkVdL9oIFXixxcOFCiq41wATgI8zKKMjpfVkKPQCRhCjLZjpfLCLG5Fd_PQKRO1JpzXUNyWkDFNtjImDr7HdWKKLxemZHGI8j70-uJNxiX6y3r1O7AJq59txd_g53NFh37mQtMVnNKeZLfSPLAg0C_uGXrnW3zg2Gu9baqSN5YWQFZ0F8cnaQ2qaIMPgOeHYzRebtklGc-4vTspU9KJi8hrIBBIs4gqwgp_9mGCI2fvAxOppjHo6Yz1_tvf62nuPAJPuhqk3eiLsmU7Nmd4p1KERviSNVR3-WI0F1B-AdmkFQGc48L7341KQ-CsX3LdO8u6-2ULw0bKLCyblR5TZlaEJgtLkEVLvt5nl3vHH_gcFvzxzTqV_qhd5DPUHq7q5zdnaavNppSVfTWxs9kz4j7ZkHld1_rjDiQP-WiwS6TVpd4_jjOKvCs7Z7O-KmrsDyhEVpZAAdygFGhweewbr-I5RJXBUNACzAnDHqquWQn5Whk8Stc_Ik1B-jIQuhiyWsie5n4DYV7hAf1EZUPIinwA8Li7bUv3-4zcRTS6GpxdHxkuZzt8wmwwAc-iWyn-DE5uB2dJpy1tTyoIdBdEsCzfwu_-YBiSj4dlA5p1CenjRDl-CYfTktYxcy7UAqRVDTA_WhVMYSaAa4UjrkJYfPpCt3geNHEYAP8YBAJEWwC_YJ5GRjJFuvPftoVS6vrT3EviEufBNcEuwYxI99wLi1EiPlFIW1NWX12FqAXgehZWeGQ8rxaKOLeGaHjSeXQAoT2A3qJzy2mi87yuqGfZ41xpY8rsjrliqFmybvJTphlbpQ7WH41EjI1w2oRCwfCEwD8uGu4IdUX-8TawBZmnL0jihD-b3yAhon2wfzxlAb8SwEnZCmDw59WVdfHStjMNZhFPaxETKo5eCTwAOae5FORmSajyBT4BqXpjwgbQZpDZLJEke5S35TZEhnEW-oial-tgt5qb5r_zco-uZaKwau83wVp5oomRSY7ulQMoj4nD2SqS-_761bxLSJagyn_SI6cERkxy1Gddk5uQoZ7-qaa9_skEDhuo5LZVpDStF9P_e9TGErU9qHUOwKKwQgUP7d135F50b2oAkBpX2gBObKCQrS4aV5ar7HcoWyUF_1PPQl0wT0WRZiiovEoAV10LjIonMJr4vlLmYgWZYi1IRGedmnrBQI9x-2Vot5qNoAtrvpP891Rz1nxaz5ej0ngqPuQskFEythHOKFmlPptScjYqDrO5Kak_4ApTYPFYV6XWd6CCbfhd6YdKvLFtc11YOyCLg8E0E0OGTb1TzRaBUBfiZfLpJV336JfvDCw8o22qGkdyhNh8CxMd6v0hb9dCEXUAv3YF3uSH5Wax2bO6avN5PxEmEy7qwXNwaj4Hfor7xYkEVbc0qG3KRD45AqOC6MmlTZxHljwSBfsAznNjF8b5a4OotZt3KPEQqpzO5cW2li3jiZoNPKhzZ-OmooaAH42nbWkGkE-RM3haaJO5inIwte78UpTubk8dzUcC_9ZOiiX3WjGz7Lqv_TLK7tVL2-b_2mJMzwv4vNhqD46TL3_q5Eal38ypIgiVN0SyQFy4Hf3ae_p2RCCP1yvmjfmt-sVTZg4WLEZrvfKRV3-W6bG_k3AVO2MGsctoYigdKqS7C1rQfs2q7yjY6zZjhKNJhiNAKYp8zi5q5AxVU1zAzhlKzWphYy9mUbTMSJp0zwTn8R8tBK9YV7NCTOgOlyxUEzkyxR9cnLhC81c7gIHwYyqFAU0hOLSqTAU7eh5H5hC0-CQyhcNO7hGaX3PFJLCI1Zy39Ygo6VJmkPpswYN9P1C8eCQ0ryPsI51uiarOBf1ekDPRjkh3-bGpCNggHEj8aCTChlERtw-4jOWiEWYOUu5eyfTdutJQswl4X3kyuziKSNYN8ys4cKgoQOCm6AJRm8_4dwoQTJDP87dw1KyXBgflauy3GZCExu4dygWVb7rLRyDTX0aXCTmxcGVb6-s1P8cZI3b6ZvAk0aMmHBkXrL-Ec3piNX3oSShv1BeBy0KVzWhmeMu0IxoZ1bwv1e7zRDFjTwCrA0m_PbPtsLiWTAswt4P9oB50VG3XH3YbKYHT0lhdNNbnTH5cxLZy0T7hwsLiWwOxnZKbH-td1_SdtjR8RpKykaP_y2RlZFhMcyiu_ZHJ9GwRe6Ocyr_W2osIYdMncoF22xBn_wuHNrFtn99fYMrwrwWFHG_aqHt0oOnrf9g2959eFLlykqUMFbCeKPx6PANgx73Xi1Ud-FqNDwmsbUO3cWrnibrQnU52QxncbijT9mCUQVPgqyNDwk65D5I2sHrtTFdSJEeRdmMBpW_d9YhqUpyVDpojJbp78ByQegdw8b3nXb5uorLIzqnhnB4Ggij0Elf5ccml5VCrZXuTqJsRp6pelgAmoPRwOtI5jrJsAgOIzR_cU-8_4T16R6HAq3etCKBN1lWrXFcsMALVbV2W-NFvWKW59QbZ_VygCfkQDwkS0YF-eyKH3Bpoz4lLJqSV9rnoJe9nNm4MrWQG2BOfdMUMCzi3q2eaErQX0-GYCUu462Ur16HRBQ_myDInWIkaURhoa-sjxOTZQ7K-w5BRauIabvCQ2zJgDDq8PjOoUBF0nGW3XLY6fiLhskhCQzcVwdrUWeU84rS2C4WPgUshxmglKmF4_ffeXs0F7YytTAC7oyMdTiOPhapY78Rey9f7pPfuKXoWoKsujTZdjbZBNgBZk6EjeQjfshnDz1sRiXx7-mD69n_rXoReioJYm5Lh9AJBgI5AOQJ3IOcjvA1tGw3njnNPVCrTLWWgXc0NIKNTu_pIOdBtHt2FH8tB5f_lu6Bw_bRgdP3KEdRb7XWALtoLwAmHuBE2S9DwsTR_XLLJd08EZEh2M9_qFblGQKmM6MHsNusm7W_p-GElvxNHcC6DMEGnpUT5UMZFgQPsdd4BDktOfcM9ezee_6_sSn-ylq8PTNTNpQYhr7Y-FwmmKOW2e494Qkd6J1EK7QhVe8c_ZF7fpHrqMJldru1FQ1iYj-ACHS8yTDKfHEb9Ws4rZXVhLZ0WoNpnuj1LMKgkIULFzwfWWf8hUeB0pAEuQrjQhRXp7j6-NR2qlnW25Xltbl3FOUSLeLu9t6ZIttJRprZloi0972P5Z8duU9pSzeI52cqCju1RzAAOuipAg2NGXenyXkbcGWo0itBF2AMUoPYDcJ29EwcVD97N0V6yBMRLBv8eepbLxnNvxJdRNDYeBhIJqA5Lq9HcPOszP-JJXFCpTnxuxdCVDeMGyL_WUdA8FiEp3wpWESfVbnfmoA==",
+      "summary": []
+    },
+    {
+      "id": "msg_051eae09ecd39ad7006a110d21bff08190bd7ab6ddf97e9f0c",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "I can\u2019t run the calculation tools this turn, but I can compute it directly.\n\n- 2 + 3 = 5\n- 4 + 5 = 9\n- 6 + 7 = 13\n- 5 \u00d7 9 = 45\n- 45 \u00d7 13 = 585\n\nFinal result: 585"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "medium",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "none",
+  "tools": [
+    {
+      "type": "function",
+      "description": "Add two numbers together.",
+      "name": "add",
+      "parameters": {
+        "description": "Add two numbers together.",
+        "properties": {
+          "a": {
+            "type": "integer"
+          },
+          "b": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "title": "add",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Divide two numbers.",
+      "name": "divide",
+      "parameters": {
+        "description": "Divide two numbers.",
+        "properties": {
+          "a": {
+            "type": "number"
+          },
+          "b": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "title": "divide",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Multiply two numbers together.",
+      "name": "multiply",
+      "parameters": {
+        "description": "Multiply two numbers together.",
+        "properties": {
+          "a": {
+            "type": "integer"
+          },
+          "b": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "title": "multiply",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 1271,
+    "input_tokens_details": {
+      "cached_tokens": 1024
+    },
+    "output_tokens": 619,
+    "output_tokens_details": {
+      "reasoning_tokens": 512
+    },
+    "total_tokens": 1890
+  },
+  "user": null,
+  "metadata": {}
+}

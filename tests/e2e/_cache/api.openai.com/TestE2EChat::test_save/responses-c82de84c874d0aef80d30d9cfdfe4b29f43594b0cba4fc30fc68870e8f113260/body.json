@@ -1,13 +1,13 @@
 {
-  "id": "resp_00741fad75731cc2006a0fcad2bacc819b8685f24df31b04f4",
+  "id": "resp_081064a24a346124006a110cbdf108819da469707aedf2b650",
   "object": "response",
-  "created_at": 1779419858,
+  "created_at": 1779502269,
   "status": "completed",
   "background": false,
   "billing": {
     "payer": "openai"
   },
-  "completed_at": 1779419861,
+  "completed_at": 1779502273,
   "error": null,
   "frequency_penalty": 0.0,
   "incomplete_details": null,
@@ -18,13 +18,13 @@
   "moderation": null,
   "output": [
     {
-      "id": "rs_00741fad75731cc2006a0fcad309d0819bbbc6e1ee410a1d57",
+      "id": "rs_081064a24a346124006a110cbf5de4819daea0228c4673cc5f",
       "type": "reasoning",
-      "encrypted_content": "gAAAAABqD8rVqXPtzNyidkV54DqTYRl8Lw57GyLtUUrfBi5kX3iPIiMbSakBsDQhBYVKfy_Syq_FlN-nPRiTuQcCzUXIxnjwVYfe72ipCIY5affjznPAgJnHbGTfM2uXMAd7GXLGzRL7AcwDUvLsjtB8YPKR_DlFXSZZE3P0XBKv6Sogv0gnE17ae3FycgTmVe-9xI7LwwNlRyPJ8STRxmsk-zwIZj7Kk_aFBvdGU2QpodfHmBhn9IavOEsQX-JmuJ_-MwFdulrJverwA1ZBFVir8IaSGfKmIabaiA5aX-GSZCb3_3gv2iBZbqFP8ntZuYTjoZFxDx4_ib97LtHAHrBbubUVYrIKsoVoHp4FH_Ov67nfZRIV4HUxAziZpMmKX08ES0GgU1KO1_c4TOkr6RJ2g7DcbUauI-9O9k_Jzb8PA79j6qYkcgLEvoLWjMAbAPez65Iz3XSQ1WC8Ni_NtVWwHyeSOg0AVaO4iB-FTeWH9lLnik-ZIYq9aWEQZZT3PIgqAThY7TINJY8yAzIw-HLluvn7-xZKsMckyiZWNLFnWIxsWnkP70IYjNAlu-Hd8L0x4MWIFJeRiqPPtjNoYNt2AIA2ktELqcWrLnq1637VRBzcXnAsU8J8GPHGuVgA6jbzve8SV1eRmLvKwi4fIF6C23-pRquYQoCrmV_Xalmk3vPIol3Fo0bka-PtYnmIqgc7PhxF77x9bfXsjj2Ht7WSIbrNxGZSiHhPhbf1suqB0KnFrXxySXdOB2SejkZCrEZa7DXyN6mDWXcFH3PHVntbD1NE3ak6D0pm_0vY5YQNx7EwCVxzhiKBiRQIOcUJtd_ArrZL5dcHncAsBSGDOm-65kB7SupFhWt_Xuh8OcJN8TO2jQzyd3eLq4kT46G5j2nFPzMIaFc9lppDiwaYA1Kr6d3A0URpMsvJJrSFlLNlSkWVHQqYb5iXCMUzGA4BeNtD1pbsyzDhYtqxi6rSNRIvYhlzVjzWjfYmdNCajQggARzwcev-uuSGMsplBcBOPKPoy1yVDm9bN81fOmSZ9bLv3-R2pRQaZjLEJCgN9w-74CbbROeuM5jPUCLZHLu6NXTWgjw2mOVvvzI8S4dQcvhyTvXoscZjNsr0XmVkpxKKxr0N7fTQtsLcZqmG220L-GTjAVBnPxpwwpsIwEHI0W4ZiejDLgaAgFuZs-3mHR5T0IQTq2Vp7dG_eOWGRxA0Dtih_J2btIoZQTi0zHsFeL7lrfDHJo-BsToL9tTHeAqVFfPh8Xvgv2xbw_kjmYMN_khcT3e_NDHKR30IFVjMCTXg29L9SZn5hyZy5dCmRJy6tCYulQgC8jUUW_9yfhFZ7kwzNSvkRHpxiDLcgK5_DmAaEURRQ-LtpQW_cXqpzHFHgL_eid-LSd1FaFaB_nv49vLtILEVgWWKMaGJ6zBfZUs8V7l9XO-TEK4fuGR-oNT5TO1gOBuHDUH3iNieKbm_F1jn1bCvddiYHOGDXs4Df49_cxTokqQl7--c-sjJv4rkB8vEgQ-6vZIZrTqqQdr4ah57_KWrm1sqWgpqUvsXrG5krTojl89PCC6hhDJDVqoCHsIwoBbdmUbfQB9JOIuFlUewFtQgtkWFhjuDQWi3l740KOVWBuAZu-TfhdWM2an_R4Sz7bLhv66Dn3SNHLBnzurmubrqydOJ3BqjCJRAfW7zCzR7uo0VD_Nx5vVzLwgAkYMwwJhsSs0c_TVQyVUPhADpYXO48lxwFIh_MMPh-FTKDxhEqSnErDgHrAMfk-KYfg8FZxCSg-np3Ls7_yC8andm2uklrG0kgakmb55TNyCyFrcoNl9PMAi7_ArM4mz5NF2zCf5ICMyC96NFb1Ht63KDWxrgDL-fngCGYSFYBsHDcAMtmMXZFfHSf0xtT2dp6IAlqal0oepZUcggtscsO_SC1YrAMwfKEOV3YQzg3uQG5ORn0k_o2u6iffaUEDovZyR9UGgTgZcYNJPexw7gwiKFYgjsUNcSedUL-bGnfDbbQ5ZJUuQ6Qc5w_b8g6r-bm_p4_WJyGX0oP8vUkg3uMBG9YOTKeEfi7pvXgnDvQOgyKAI7HKihegJM7o-4r7ZOSgtWGbNKIOvj__732zL45B1UEVeeG0aqo3AV7Qvj7bgss8agZqW1sXDnAcqlxFwVBrAJPbNhZoR9upa3QJgyPomICREz3l0Rl4qDrAAvVZFtTrkSUewV4JCdsvNvTWQIz4Ku9itM_lJ6duyQvBq3SBOGmQ449y4omMiWYU5AzMFmi3P8P91NPugNt7b5xK83OIodYBVrdUp22RAo5Rqd_iu6LAwW9QqTlA5B0bgiH09xnov2MRCSFeyfNiCF8gMBe5VN3geMCqVc2-BJClg1BLxVgSkLrL-wG5CK57Z-Ih5Aw8qBFVu0Jy7J1-D6yhhWLlW7sbJqTr5efGBjt4O3obfJFMsmIAQrfdgnSIVJMagm7FquqTOrANK3AkQBzMbr0naRx70syn2fKdgGxsR5FAg6wfYbYwRYUxCIdVpP2r9V2HEnttpEcWJ1reSV6LXrXtCIXjLNfxCltHtFSnkm9ht3f3rcJ16wcrlvx0bjTsIPaLyW0usXtfnxZieB3N3P8_m3nCXZN1E9JFoJYHw9LGMcy5MxRVu9TqWYe1JMF_UZFw8HD9FxFAwm-U8d9ZmSJ9lhdy8ExQf3wzsbZKXnrBo4ZqhM2gw1NuZ6GBnnmWqvbvMzza87k67mc37KgAnz23-ypsDaZDRHVALqu9hUWI_2ii9u-t1m3wVhZmuYvHSQpeKfQbisMOCmSEpJ926r2-ziTtwx7n0cicF6XpDKXoWGS1jCVJCBaqpKNBu3rotUemwcEp8PD4bw-63Qgk80nEg-YsbEJth0wGUN_jDKdmZKjzvUCZm00Hk8tma4hC2V1DxSaPw3WfrOLSxUtv-sbb_3IUWWysW0y43o11fjwQs_2p6c8Z6cM7Ka-d1CSpO1xQnrbclbb9lg88AL1f4dWukNKqlMa7g=",
+      "encrypted_content": "gAAAAABqEQzCn8KhFx6ZWeIORXj24_HgBiLzY9oS9pIjNUQzZ-BUtu0lCJlhmYQrGzPvwHFLQiyVVh4I0-qkawnUqA_cUAMt-ZQxTo4kcX1QZote0Iwucvg8OfedXfF_f2PTCdmcMwqXDwfkAvwqPRnx6cGwPoD2jTW7roWkABTtstNQJqFKsEImmPTd33J1VTxaBv8kTaujtLa8F6fmAw0Mm0H2TnDlx5OvXU6NkoMJJZnhSgsbZPI6pgQHB37k4m7mOxJgxDnJ3cUD4n_A-NC1a4CyBg9PkhCsrMS8c469satrfi5Mv1NT12o-XGQcB27wNBAuE3ehiD5aCWJpxoE55I_bw4Y_BOy2_8mJDlh4ypM9K53HW40rL3vPR0iUWz-hfmDXn1tDBjDr0v-Nfft3ThnAWU3UROrjpPoZbuCzQKEACVJfq56MtWnQJF4OdShG0CZjDiXbupen85tIFVSpCBMwOqABQdQWeha0H44XiFjtMu6C5csk4ZfiuNfR7EWPcY7UySi3-XQzzuJk0bcwsk7IuW079CC6SpZhmQc-DOgLlT4m-BEyT5ezvuyX3hi1kBYpHrq7sFlW2tWIQdhnTo6FYwXIb1zATDT1h1cRR_nRyIAD7fv75LbzFs-B9TmC6b8CmtUw3HTLsqGfYczZXyAltUsGo4KoyHPtyO_iQUY3jhnprPalRrdqVIGRh_QCQ3Q3S5-lPy9EZ9R4DbXNv7r14C379nkGRPzXXyRFL68S1NyjsOR326ZbpWtcaFpciSl4RxmE1VMJm-axj_-yyR0mTfEbt-C35mDYsAQon83jgiIduTijr0qC189X2NJZSXkTuxiHz-QulhTkoMbv2jbq-il7rYnTcj3CDj7AK6R1Pe3MQ-LmA856hLHFNRMxaFYplJPLJOMZnyCqa6mP7Ez5w3YSGswY9JgvoSY-Epsf9rNhudZFZydY_XWGyhDYWPjodhwWj-1ZBIoD27CWcNgJznub6in_kT9dT5u5-Q2bxEnYg1cPY19u4lA_an0rmYrVecSukNrycIm3r4t8fK9UpNo3g_mIaV_a_elyoI7sGbUXeSTjuem6Xbvd223wVIxQPwqwVgcoNXPBVpQ47qtgGiT89r3mBOcKrsNKbszBL2oOsAuSvf5muyFfCHlwlf9dhJyyCiqjKwUnmOf8R6hoB04y5Rb2a64k6LkGHuBXBXOVcrk9ON1J_3PHkkF-K-8ql5Uib4TZL0YlAuEu1nQtGrnWtJyE4Z2CeS31EAziqOeLv6RjpEwDHA-oK61j2hnrokgEu1hfrFx77XOXdDyDEqcCO0BXuXQGVBGaGi91FAaYcd_IMlN6kfG1DVPKXp5GDVKDbiQ5uB35Hi6lXHIDg9YJn8zxtkyC5mlMlGdoiTtywU1rjNrthie-d5G5med4mdyZwOipYkOoBlwYup5zSxJjWko_ZQIxIx6gdtgsnyckrJhl-9wMBKF0DJs8V3PkG-bOamQ5ROrZ420TGC0WpJpboamnb2EY6x0PVA9EO8fVYK8qU7cqMM7NU398LBYzTIcUY-QB8ZPe8bnagWMhQz0E2M_swT5AozGyscPOKI8Vdv-sIYnATv6oTDjpIclpUapty_HMcAgi-XkaQn96czp0-ThDjhMbG-K3wUOasyp05jU_LLApc2cZzSi2viFjwz-NTEGoToYCic21aLVuZsI4SJRKnwT3uChTV5WnCfZmuIe3SxPnct45A9Hi6BPVoYEeJos-lGEN3lgBitbSVaZc6gyazVeoAR4t7u08ai8Emjh44jsZ5YPCI5pNPggVMigLnSQPZ-r3epaeBhZuCNhhJwrcQysUXv_eON-qbzoA3_3ifhecAIBYn6Ob2g4EzVRbO5lIkyomG-tY5WWR2C4ai0AtdWCWnwGZmS8gVzfmNuurn0mGUQlQTR4DUGbbyqgqczDSoG32yq7wAJILqfhj5m23iOnJsOKR_NZc_5DEtS3Mpu2sDMNkBfW2gvIUXmEQ7eNbeUT9o6FP8Et_tmwlcjfxWUCPJSz2hq99exueFfyrd-RipB-Y5p_Zmd6J0R3je65cGS8vUp9-_Ml_ZSYf-J_l_pyltlNdc6njhAL65qVBr84uJvS5CWTH947n6f0JDJffpliYwMnW3DnPWu-vNzMncQJ8FkuFxfgksJkFR0TPZRyJheySB7uNj2_iL-Q-KdM-OkUU_adgbxb2pMEduhRVcMTDCOV0dySDQbflHsWHuSSeeg5GSNjmBzKuFVO7-b137vVRFH2b-mDQPrxcCaR8dh7YSW0YmsvZ0reQyT96QYTlH-mJ8Hz8jeH-MfLEJwO89jhS-KaIyaFCXRoeB5x3IBkX3YOmOruBIK-m-pojjJndkk4YqZ1M98EOkRCZ6527J4pDNxMvmbG4OapsHXtpcgDvXQdJbhTTz73sji_jdhSmA-YiuuhmRc4AOE8J0QPurJPdP5PxH7RvxA316AFmKy5j04qn1q820KF2PGICUeq-jcH_q_5kFqI66EbviPndHHsHxkCZqoZf7YE9c1WNLJIAaGQkzdrYu8XcQiUm2Gme3ls9WSluaF5d1FgsTGEslYvWwtFFFnFbc57bkM91e9LVjwEiUCRY3CL2ka_dUx0F_JwEaB7An_JVCHYPSO0LJrxtqflIZOl_lKdFXsEdxbxA5MEwJ_UkxXLIU_0swNKctNjuIfNPaSj1_zWZJNJMZT7gjzLX1E9bQgglCOeZkQYCkzkuuHW12OaBSXIn1ZgJVkQHmfF-tynEenxZRLD2ngwNz98rCKZC0wl2-C5fBz74DrmY-CvPCSA9o3AuW31bmfkYmzJGSosmXyl2QHW8JOHnWx8KAroCEMHu8Tbg5lEcHetAs1GFoEMyijgOaUt0Tsxqa4oVeL4VdJulUIwR2oJYhaySzbOS2f-Rqh_vOSZOnasANcPsimfUGh6ItCz_3XXBSuJMdDoOli6XeYAa53fJ-pb-BKultkBogw4YUnqoHQWUXLVlKp6uH7YBBpRx5jdxDZ2qsokBeJ0cOuRW2CRrw9GmOQ4sf3pG2hicrZ3ElXw0rWG4T9vjXp-UpI0SBTwY5M1OcVPtY6Xp1z6etnWuwgcqmxE2WmEzqd_RUV7omKBYLTz9QQdxWxjWgjwr5pdkxUuc6SC1Pxo9snCDXDQQqoEHFrfy6zyvV2QZX7bCFJKlnH8YeEdtnlVq_VT0-EtC3AMSwcto8L-cVizbDG0YQHwKLkZzHvqHL-neo0z6GNUuKXdZnLcFdyH-b8053adD7i8AXfU28CCm3EQJfmpi7cwL0T78ce6RRRM7BTlc-hfaomjA6zev5PNiaVC3SFbK3Q0ErYaL8QyIi3w1EXcybpEsPCpbJYSluo5-B7IMQzeDuBNdyvSG5X3EKk7g_iZGMtEZ1kcY51h2fNMJDuC9bwh-nNvEAFYE8w==",
       "summary": []
     },
     {
-      "id": "msg_00741fad75731cc2006a0fcad4db20819bbcd04cf1bc7b1cac",
+      "id": "msg_081064a24a346124006a110cc186bc819da42904892ecb65ee",
       "type": "message",
       "status": "completed",
       "content": [
@@ -32,7 +32,7 @@
           "type": "output_text",
           "annotations": [],
           "logprobs": [],
-          "text": "Hi there! Nice to meet you. How can I help today? I can answer questions, explain concepts, brainstorm ideas, help with writing or coding, summarize articles, practice a language, or just chat. If you have a topic or task in mind, tell me and we\u2019ll dive in. (And if you have an image, I can describe or analyze it too.)"
+          "text": "Hello! Nice to meet you. How can I help today? I can explain concepts, answer questions, help with writing or coding, plan things, brainstorm ideas, and more. Tell me what you\u2019re working on or what you\u2019d like to do."
         }
       ],
       "role": "assistant"
@@ -44,6 +44,7 @@
   "prompt_cache_key": null,
   "prompt_cache_retention": "in_memory",
   "reasoning": {
+    "context": "current_turn",
     "effort": "medium",
     "summary": null
   },
@@ -67,11 +68,11 @@
     "input_tokens_details": {
       "cached_tokens": 0
     },
-    "output_tokens": 417,
+    "output_tokens": 481,
     "output_tokens_details": {
-      "reasoning_tokens": 320
+      "reasoning_tokens": 384
     },
-    "total_tokens": 425
+    "total_tokens": 489
   },
   "user": null,
   "metadata": {}

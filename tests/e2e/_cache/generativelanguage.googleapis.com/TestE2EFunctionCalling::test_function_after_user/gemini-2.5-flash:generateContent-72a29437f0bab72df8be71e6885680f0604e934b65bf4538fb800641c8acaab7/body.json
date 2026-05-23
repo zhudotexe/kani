@@ -7,12 +7,12 @@
             "functionCall": {
               "name": "send_email",
               "args": {
+                "subject": "Meeting Tomorrow",
                 "body": "See you at 3pm",
-                "recipient": "john@example.com",
-                "subject": "Meeting Tomorrow"
+                "recipient": "john@example.com"
               }
             },
-            "thoughtSignature": "CqUEAQw51sfbT7eDGTlEomcW/3V4m2DQUCNHsrRLsStWrbIR7Tu8DSEPcbZseK5P6ouLhvwuMgYrp/tfV7ECDqyYvHBPNXv0F2smtPvJc7KLaT4mBs6pK8cezBA4IDz7fOKzz7hZPZcwi3XaUcE5PUBcHJ9TumgONPRVbtdhSBrtNqHGwMPSiZvvLg7GBeLNUhArzmM3K8+khZMMyJnn/ydWVwIhJliuCHqAHY/REBAUw7ZQ6PIgNs2mHQwuM/IvRcg7C4IF/CqKgMADXSQrS5ozZH8S2QE5jMbX89do3XFCdbdK2uFbevqXa/eYmA3s1S8LLiXdzYJ2JRJAwQZmcDmkMvsZ2nHOvo4NwI9wz9Da8BXiqB1iBd/ZQDqcjSLL/CDpy27zvJrxf5d2f0v4QAegb91YLHkT3tS5S4cyLO52MVHig6uTn9ZNjFMcFTVgCWV0CJw4Z5pza41U/zdI4iQZKrm77JQGkPObdxwVDj/t68PI0O/rFlZc7RsimNAyIksUoAZgaKjsHEsDc2mVXngM8DamcGHc5o9eBRYhQvMPJptB+D5RlAxr76wvW6nesJOdrBULtknVryuCO58rBggkQgeV5JrgB+fXxiEjlDmko3xWPvSYatUkPaeh7WmzKCjJJzRmXqgGlmlN3xyyXPZpJ3QMpk4YLTLflNjJE5lhekB6A0qYB0n03UOr2ziC/lNxhUx5d9ovgmkOWB6Wj6Xhqz1vS46I"
+            "thoughtSignature": "CvMBAQw51seuTGwT6sbncOP1/MDkQgP9nQmfSu6tz7lQOiF+CT+qYhm2/oEg08mVOZbkncBN6osOnF+FvnScwuTixC0oMOPJBOWc/Ttn52t0Iw/h2QzHQZ9wOTotV1/sOIuD1mM/VDnXjAa8SjOKAuRhYq+GHRagt2+QyCxPDj+5doyBcky9jIeCp/fZ51Ul0ok1dX/Jvbn3ZYbGDZsE39RrpSF1/Y11/hHyvSrtgjMst304VPEaYWE+THqu+2mcZJ9GQ7engGAuuRRcys8kHgTFyhWHxGwb14/frHQaSL1UbOZgGN39MHscOZkDebwi06EFG1Ch"
           }
         ],
         "role": "model"
@@ -25,16 +25,16 @@
   "usageMetadata": {
     "promptTokenCount": 140,
     "candidatesTokenCount": 35,
-    "totalTokenCount": 303,
+    "totalTokenCount": 225,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
         "tokenCount": 140
       }
     ],
-    "thoughtsTokenCount": 128,
+    "thoughtsTokenCount": 50,
     "serviceTier": "standard"
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "rckPaqSrJaOD2roPioi72A0"
+  "responseId": "jQsRapH1EZyf_uMP8YmkwAg"
 }

@@ -1,0 +1,6 @@
+POST https://api.openai.com/v1/chat/completions
+accept: application/json
+authorization: *** REDACTED ***
+content-type: application/json
+
+{"messages":[{"role":"assistant","content":"I don't have personal preferences, but if I had a favorite color it would be deep teal — a mix of blue's calm and green's freshness. It's versatile, soothing, and feels both thoughtful and lively, which seems fitting for an assistant."},{"role":"user","content":"What is my name? (You can mention it now.)"}],"model":"gpt-5-mini","stream":true,"stream_options":{"include_usage":true},"tools":null}

@@ -1,0 +1,6 @@
+POST https://api.anthropic.com/v1/messages/count_tokens
+accept: application/json
+content-type: application/json
+x-api-key: *** REDACTED ***
+
+{"messages":[{"role":"assistant","content":[{"type":"text","text":"I appreciate the question! If I had to choose, I think I'd be drawn to a deep blue-green—something like the color of ocean water on a clear day when you can see down quite a bit. There's something appealing about it to me conceptually: it's calming, it's the color of vast spaces, and it sits right between two other compelling colors without fully committing to either one.\n\nThough I'm honestly not sure if \"favorite\" is quite the right word for what I experience. It's more like certain colors seem interesting or fitting when I think about them, rather than something I feel a preference for the way you might.\n\nWhat about you—do you have a favorite?"}]},{"role":"user","content":[{"type":"text","text":"What is my name? (You can mention it now.)"}]}],"model":"claude-haiku-4-5"}

@@ -1,6 +1,0 @@
-POST https://api.openai.com/v1/chat/completions
-accept: application/json
-authorization: *** REDACTED ***
-content-type: application/json
-
-{"messages":[{"role":"assistant","content":"I don't have personal preferences, but if I had one it would be teal — a balance of calming blue and refreshing green that feels versatile, modern, and pleasant in both nature and design. What’s yours?"},{"role":"user","content":"What is my name? (You can mention it now.)"}],"model":"gpt-5-mini","stream":true,"stream_options":{"include_usage":true},"tools":null}

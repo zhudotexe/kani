@@ -1,6 +1,0 @@
-POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
-accept: */*
-content-type: application/json
-x-goog-api-key: *** REDACTED ***
-
-{"contents": [{"parts": [{"text": "Call the flaky_function with x=42. Retry if it fails, it should eventually work."}], "role": "user"}, {"parts": [{"functionCall": {"args": {"x": 42}, "name": "flaky_function"}, "thoughtSignature": "CrcCAQw51sd2ZBR647Mh42t5D44V9e8dCm1b3IcV2AI9kNWVQWL6tEiKEorm3zf7bbqlLSp7BBdB9x6lJT-U-T_D5-TmiOKk2T0dWIwxvc04l2SjXDUiv9AtR9Su8yelViWipeyYDGlRmlykNTOTlEcZftdYOSGhWlOFlx0AF7XSfXJyZYTHM3E8MEomz2sM9zTL4w_NNj1j7s2Rw25pYGwPR9mmAztxLVJo6ge3iWbnu6OKRXxwPWr3BGhJ1uqux2KaUpDL1Da9uRdKkKSzsVfCPwHt_1ZTVWmQO1fulK89p0D1dYE0tbhyGe1mcpC3xMyhkvMLzF0KBu_SXjQ4GsTXQ-1SPddGk55HMpLcgViGJ_EFIyU0UWwtCloFz2w5WBAGIjZZB1rDrTzHsKEj2YyEOTd8KJNOvds="}], "role": "model"}, {"parts": [{"functionResponse": {"id": "00000000-0000-0000-0000-000000000001", "name": "flaky_function", "response": {"error": "First call always fails!"}}}], "role": "tool"}], "tools": [{"functionDeclarations": [{"description": "A function that fails the first time.", "name": "flaky_function", "parameters": {"description": "A function that fails the first time.", "properties": {"x": {"type": "INTEGER"}}, "required": ["x"], "title": "flaky_function", "type": "OBJECT"}}]}], "generationConfig": {}}

@@ -1,0 +1,47 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "functionCall": {
+              "name": "get_weather",
+              "args": {
+                "location": "Miami, FL",
+                "unit": "fahrenheit"
+              }
+            },
+            "thoughtSignature": "Cr8DAQw51sd7vig6RDnwpmXvBQuk5nslmv9USgWHC97Tm316isJvUc5pPsqhepZn7ECpNo85gGpvnNbLCLpQ/y7lIvbnk4H+zniiPvHSTF0rF7WiLQ3kVkXjIo29VsD1AWd72oU6P/wu1XBF6kOUhqlM86BLYqrxKv0ibKKtlTl2Om/qRzogIlhUZR+nH59MJMhxGx0bZWXDOC/S3FycySOybtrjkvgT0T/Waxig21/FkU2q9ymddTrm5Tcax5w5WFwViok7fZFdGBVR5+DJ9Wzb/qwHptMmjW/P4HNSaJUVmqXIcwBDXhA/ViC1POmvYgyjPG/PAI8x6Yvm/g3D3oKCAxNckm5VZnSJIBODevFe8Vj9/Xp0x1++lG/V0Ox1DcN6A4xElFR2igod7UgXgcOu6qls9fm/dyyhmRCpa0FK7kDcWfaDjTSm5xLlrJ3pxN/7cilLtduUJXDXjft+uPE51CKAtMeXH8G5HtPOHVNcP2VV0rOHJZbXOCt+xHfpz/6vSoXFTm1TmlXiFtF6zzT1w1LYht5+Gi/FSgX9EuHQV2BMGnyJDlstUep5eCvR2CQ/IjwAmQezBgj5Meqje9Hr"
+          },
+          {
+            "functionCall": {
+              "name": "get_forecast",
+              "args": {
+                "location": "Miami, FL"
+              }
+            }
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "finishMessage": "Model generated function call(s)."
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 164,
+    "candidatesTokenCount": 40,
+    "totalTokenCount": 309,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 164
+      }
+    ],
+    "thoughtsTokenCount": 105,
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "jwsRavWINaOb_uMPh5uXmAo"
+}

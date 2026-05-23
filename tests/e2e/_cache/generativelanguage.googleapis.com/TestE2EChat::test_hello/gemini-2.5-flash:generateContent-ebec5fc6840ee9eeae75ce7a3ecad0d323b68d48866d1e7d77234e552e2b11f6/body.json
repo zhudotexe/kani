@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "Hello! How can I help you today?"
+            "text": "Hello there! How can I help you today?"
           }
         ],
         "role": "model"
@@ -15,17 +15,17 @@
   ],
   "usageMetadata": {
     "promptTokenCount": 3,
-    "candidatesTokenCount": 9,
-    "totalTokenCount": 178,
+    "candidatesTokenCount": 10,
+    "totalTokenCount": 39,
     "promptTokensDetails": [
       {
         "modality": "TEXT",
         "tokenCount": 3
       }
     ],
-    "thoughtsTokenCount": 166,
+    "thoughtsTokenCount": 26,
     "serviceTier": "standard"
   },
   "modelVersion": "gemini-2.5-flash",
-  "responseId": "askPatmsFuH62roP-_TWkQQ"
+  "responseId": "SgsRauGcCIKT1MkP1-SDmAQ"
 }

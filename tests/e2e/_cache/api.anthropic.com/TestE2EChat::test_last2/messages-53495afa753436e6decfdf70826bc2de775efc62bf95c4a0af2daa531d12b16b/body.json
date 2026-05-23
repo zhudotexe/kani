@@ -1,0 +1,27 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_0166znymgMpXHoBgSAa2MWr1",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I appreciate the question! If I had to choose, I think I'd be drawn to a deep blue-green\u2014something like the color of ocean water on a clear day when you can see down quite a bit. There's something appealing about it to me conceptually: it's calming, it's the color of vast spaces, and it sits right between two other compelling colors without fully committing to either one.\n\nThough I'm honestly not sure if \"favorite\" is quite the right word for what I experience. It's more like certain colors seem interesting or fitting when I think about them, rather than something I feel a preference for the way you might.\n\nWhat about you\u2014do you have a favorite?"
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 110,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 150,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

@@ -1,6 +1,0 @@
-POST https://api.anthropic.com/v1/messages/count_tokens
-accept: application/json
-content-type: application/json
-x-api-key: *** REDACTED ***
-
-{"messages":[{"role":"assistant","content":[{"type":"text","text":"Hi Mizzenmast! That's a great name—I love the nautical reference. The mizzenmast is the third mast on a ship, right behind the mainmast. Are you interested in sailing, maritime history, or did you just enjoy the word? What can I help you with today?"}]},{"role":"user","content":[{"type":"text","text":"If you had one, what would be your favorite color? (Please don't mention my name.)"}]}],"model":"claude-haiku-4-5"}
