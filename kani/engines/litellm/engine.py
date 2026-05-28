@@ -54,7 +54,8 @@ def _parse_tool_calls(raw_tool_calls) -> list[ToolCall]:
         name = func.name if hasattr(func, "name") else func.get("name", "")
         args = func.arguments if hasattr(func, "arguments") else func.get("arguments", "")
         tc_id = tc.id if hasattr(tc, "id") else tc.get("id", "")
-        result.append(ToolCall(id=tc_id, function=FunctionCall(name=name, arguments=args)))
+        tc_type = tc.type if hasattr(tc, "type") else tc.get("type", "function")
+        result.append(ToolCall(id=tc_id, type=tc_type, function=FunctionCall(name=name, arguments=args)))
     return result
 
 
@@ -205,7 +206,7 @@ class LiteLLMEngine(BaseEngine):
         tool_calls = None
         if tool_call_partials:
             tool_calls = [
-                ToolCall(id=p["id"], function=FunctionCall(name=p["name"], arguments=p["arguments"]))
+                ToolCall(id=p["id"], type="function", function=FunctionCall(name=p["name"], arguments=p["arguments"]))
                 for p in tool_call_partials.values()
             ]
 
