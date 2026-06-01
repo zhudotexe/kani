@@ -13,6 +13,10 @@ class AnthropicUnknownPart(MessagePart):
     data: dict
     """The raw content of the part returned by the Anthropic API."""
 
+    def __str__(self):
+        """Anthropic-specific content is hidden by default for models that don't explicitly request it"""
+        return ""
+
 
 class AnthropicThinkingPart(ReasoningPart):
     """
