@@ -305,7 +305,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
                     f"The engine returned an unknown part: {part.type}. This has been saved as an AnthropicUnknownPart,"
                     " but will not stringify to a natural language prompt for other language models."
                 )
-        content = parts[0] if len(parts) == 1 else parts
+        content = parts[0] if len(parts) == 1 and isinstance(parts[0], str) else parts
         kani_msg = ChatMessage.assistant(content, tool_calls=tool_calls or None)
 
         # also cache the message token len
