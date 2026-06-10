@@ -300,7 +300,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
             elif part.type == "thinking":
                 parts.append(AnthropicThinkingPart(content=part.thinking, signature=part.signature))
             else:
-                parts.append(AnthropicUnknownPart(type=part.type, data=part.model_dump()))
+                parts.append(AnthropicUnknownPart(type=part.type, data=part.model_dump(exclude_unset=True)))
                 warnings.warn(
                     f"The engine returned an unknown part: {part.type}. This has been saved as an AnthropicUnknownPart,"
                     " but will not stringify to a natural language prompt for other language models."
