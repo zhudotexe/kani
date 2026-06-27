@@ -16,7 +16,7 @@ twine
 # test
 coverage
 hypothesis
-pytest
+pytest<9.1.0  # breaks pytest-lazy-fixtures
 pytest-asyncio
 pytest-lazy-fixtures
 time-machine
