@@ -1,0 +1,11 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are a calculator assistant. Use functions for every calculation.
+
+<|end|><|start|>user<|message|>Calculate: (2+3) * (4+5) * (6+7). Use functions for each step.<|end|><|start|>assistant<|channel|>analysis<|message|>We must calculate expression (2+3) * (4+5) * (6+7). We need use functions for each step. So we need to compute 2+3, 4+5, 6+7, then multiply results. We must call 'add' function for each addition. Then call 'multiply' function for multiplications. Use as many steps: compute sum1 = add(2,3); sum2 = add(4,5); sum3 = add(6,7); Then compute product1 = multiply(sum1,sum2); product2 = multiply(product1,sum3). Output final result. Provide each function call sequentially. In conversation, must use function calls. Probably use "commentary" channel for function calls. Then provide final answer.<|end|><|start|>assistant to=functions.add<|channel|>commentary json<|message|>{"a": 2, "b": 3}<|call|><|start|>functions.add to=assistant<|channel|>commentary<|message|>"5"<|end|><|start|>assistant<|channel|>commentary to=functions.add<|constrain|>2<|message|>{"a": 4, "b": 5}<|call|>

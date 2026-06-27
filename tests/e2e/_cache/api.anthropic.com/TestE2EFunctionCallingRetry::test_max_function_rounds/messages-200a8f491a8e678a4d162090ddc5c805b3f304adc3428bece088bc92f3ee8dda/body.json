@@ -1,0 +1,63 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01Dckc14sBwfXKPVytWKqcCw",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I'll calculate this step by step using the functions.\n\nFirst, let me calculate each addition in parentheses:"
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01G7iSffn61Wrws8YUGxPk6z",
+      "name": "add",
+      "input": {
+        "a": 2,
+        "b": 3
+      },
+      "caller": {
+        "type": "direct"
+      }
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01Cq2dvDLmDzDjybFnRfKHhX",
+      "name": "add",
+      "input": {
+        "a": 4,
+        "b": 5
+      },
+      "caller": {
+        "type": "direct"
+      }
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_016dKkAvx3fEbWtAoKJLYpwW",
+      "name": "add",
+      "input": {
+        "a": 6,
+        "b": 7
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 749,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 195,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "status": 200,
+  "headers": {
+    "date": "Sat, 27 Jun 2026 06:39:36 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "cf-ray": "a122749d2b009bb9-IAD",
+    "cf-cache-status": "DYNAMIC",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "x-content-type-options": "nosniff",
+    "access-control-expose-headers": "X-Request-ID, CF-Ray, CF-Ray",
+    "openai-organization": "ccb-lab-members-2",
+    "openai-processing-ms": "140",
+    "openai-project": "proj_AHkoyf1RldMpzpWmLkUjwazN",
+    "openai-version": "2020-10-01",
+    "x-request-id": "d301b206-54b3-4af0-b54f-d72daed28c00",
+    "alt-svc": "h3=\":443\"; ma=86400"
+  },
+  "body_path": "body.json"
+}

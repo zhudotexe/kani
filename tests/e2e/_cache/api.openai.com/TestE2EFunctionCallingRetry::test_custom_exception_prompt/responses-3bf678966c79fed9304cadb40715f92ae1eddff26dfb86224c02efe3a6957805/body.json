@@ -1,0 +1,126 @@
+{
+  "id": "resp_03004b6c5457e161006a3f70660b0081a1b6571f050694bd14",
+  "object": "response",
+  "created_at": 1782542438,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1782542442,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_03004b6c5457e161006a3f70665b8481a1ba92a0078e42451e",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "gAAAAABqP3BqFvo35jt-gHeExbPmVzOd9SM_bkyJNF6GFzCLtEdm8xYqOzR59pkXg9Q3WI4S83b3a6lOTxXAeLIQAgLl1hinF7ILV-F31yGOYyD7uz0O04LnIJaUO1bU-3K-JG_HTffuNj2Dszm9vZbAkXFgybCfMU58loICOPLo8-NJENN9cM0PpxcVXqEvyMCrFvL-HSWYdbDtlRR0rliCJJm53UV7HqBgF2QCSZyKtd0SF1b6Vu8m_oPk4xf-e_fHEe_Na77qaAxoehd1ADkY3yhK2P7WL-uilhfAE_SHazF5deog3qEnr65xgxBw3IdfW9GSzCcIvO5joLnXruh3UqeM_TF-1QTeO7MmZzbgygqowghcaWf0ulvvwDHRKZ4yzCJQ6lWDM2O1L-yzK_BQKTpt93MlkXNhJs0hzxAqBefyJ6NRArlbPK__SE6JuJupxkFPqAEMuWHPyufQUXcxii01RzN15cnGi4dbKa2PkhSZCyJdS6RAANAZo2kzqs9_DiKnZ743L27cw3-6fBpEOOaZZcfVJ_6jH2zitlM28l9EnR1p2bnwFgikxVN3lVK--FxAkwZrTIoY8VdT1VpQsabiBaRGUTB4rfl3Zho12MJMq_P48uKIvs1ccuW8f4lJ2ekHdHog47ajKnUAnJHwHvVSM4RJ9xG4dbE8zNbh99QqgQAnMKmIHQ3Xn7Ec4ny5AuXQjeDye-lWdqkBRWeKtVzEK-0rkKZPa_5hjEPnv3Na-B8r2cXbvEmRPPqGciuG0ICdwBRRGwZaEOPnnVBYmLLx0xuU7q044ko4-BIh6y-Xd_1mUtglrtYGQl9PN7N0YolukCyq-Rv8djCMOJyABONF0wZcmVX8-nDz5s-NI7OfNSCtpRXhchy-76Bzb_XSkZgcW6rtPvnIvptcBTeR5gIJg6Qkj4U3m91AMkkiB_pyXEzPt3IxFjJv7Fk18AGmnJtwq0HdlrekEfYvdYypQG83Zjg29tvT4Uh-hIK6sXWTQlMowsfJNc56O8BBvOGUDbZUx0xxH3NYA-o_b4rfO7fukzJ58MJ0zWklpE4XbaMj9kbyEuwht8F66RqYsnHfwVBmkd0TX9eCAPOgFC8xg8nT0us3TI6rsXdzSGoo5zCVhKbOISxuC6H0ihyn-4KkjBcPF1vJe8QZWYid8vCT8k--IXtBnr0uvOH_z-077TGBSyaeYjPfIi6QUCaFAu8emmXkrFj1y1WBew77t_TG3H2jZDV5eSD228YTwePPemVWsCvmVgXAJ899_LLbjir_DRCJ8Aw-VRnkCDhnTYwpiim13PFYtAd9jfxv9fok7NzVqfibcEH1xhjjx3io0qXsP9mNnvnxhMLba5q1UEMUnuAnXb035jOr6bZL7oM2yfkwPhP00Gklyll_alF0skiQO_D78DM02EV5Qbc51IfJkFKxxI_pdRA1L1e5dbwuNBh93VeSCgr3dVCa-A4uzl2WcdV6r4KyDooM2NOAE-Mo4rev-PdbL3SVj--x5L-Fs9mlTkLU_a_cdM1-LAnbWnQ9CalgS4raSoppOAzUUDuyFdnfxgJUuYjvmUbk2mDPXKB-sXmtsmQHG5c9ZiYVksM8XY_lnM9TLF4UNuXW0FwXT43AlflbF-AvF5X2jbGtldagimimuemDVVga-bJCxYXxkV6gnL6Y1Xt5Cm3UKVaAT259T5l6mkE5aqrbxXos0HDVXrG_CnR6-Fso65Iie2B2JbRaZjGUzDZ66hWDlhQYh2Zjt_Yqaup4BmEGyT8g0RnMv6gGkwltyj9neer5xinnHR3kbCFMNawu39_obtlD0BykTO0E8Hi8N7o5j1A19rLm3STxVCJ1xvFCnhQ_r3ZFG6tkdPRA8m4gJxvtpZNLjSuKjNFPLqPCfK3_fpzmNkbWmS2PIIimo-bmcBQbp20SA8p0ImafB1YnoXgJhaZHV-GK_dhZNHd3JIolnvf21AO8A1XWHBVBKZ82hlNI_QpGlfj3StsiAH7sOU8EjKq-lsoNkTQByGOQOeNzJQ7m8n6bwyeVb_9R1-kWsRk4afN7L1tXRG-g5jigy59g59nMfDslA2PYZmv3j_SZp8i30LvTXx7y1NMB9XhdCkfkK3ptuYP-fzfwBD7t3D76D8b-fPUTSPeautt4tm7gCK23n_ZRQEw-yNoikdeayVi5mUO9EZkYB58ToBDhaX5LqKpHDYRmo8CQTlFGVUlj8Lp-6wgc1xNJZAtFlQW0iuEduMfynEs0UcokZ-ETskEQjneb4glkbu9x2VbD0grpml_23orgJNcj2A6dzEik6KO5E4JK1fO6kocDWxuJUhrDgleHCmoDNsylGwjqY-Ebhdb9nCRuQ23zTiCzR5KWQvyI3aJTsA_gBIZikI2oR4EIIMu2sz9n5xvHCq0Lqx437XXCqBMcdSu8VBnMTZ-1k_B-bijM1Lto1ZC9VnXtsDgT0HN36BOpHgmaMlIvw8CL2gXCINVdfgru1k44-roIRp_fjoQu8S1hv2QMlGIIRHBHt1aOMqHM_qCZKET9JpcUZxzReouJnaF0k6b5BLUECSw0_Uv1uT6FGPOmhR8CzRLIpdzv42LneSG2b5832967wac73J4eE7DXGMxBTWWC-085F8O41kMVRKuTpApMgSdi8lZR39j6hSnocXEUlcbVbgkSptLSoDQGpfLqWU1i7U9fsMjq8jZPNyW0LHglrrQw8l8lBS8zxjjnnok5qhcV8nXlgWAS_1TE7haYN1BiaDxkbQx7Fi3GtPl_PEyUQOeGdVa00XeCqmDMQ6_r-Cy5PnHsU9zMK7HAMv4WFb4WNprA8Yg2Szx4Ee1V3HO1WISzVfss4bDB3Fgd7yj4yOyPhKDRwbfQ7vibXMBQ05-yEncy2Cf670ITZB_rz3qmGuqDnqmgfGGTs1xgUQCkIF2xpdcDLHVJ70mF2ufQb6sH0BUyDpRufbllksdgVYu1-l6VUuPsDzXNhTwy0wQ6bDkKLbZYUHygOGM27zJogoBpTPD3wNhYnp3wbr2IOigXWZZI41TpnKqE4zA2pexXL2U3WFAIsh_1_gpdX1hd2VHAFvYlBSlnZFgGLm3WW3ypuNLGT-C6Lm1fxKIj8kiB0pwPwrmRpCklOMmKHpHRZcmFs0dliS7uemQvxk6WiPxJzJ0ylgAG8VSihp7DsNLa-DBn1Dzpd_2rLHzNUhBakmBLBhDQXKXRmQ2Q8s3n3IHh1WcMs_1n0Mzj62NVbOmdAFeZqtzy8fBClhRQkMXXOXDSeRdM2-SGNYQlH55OE6f-qjgMoxWEnd1SnyYmok7xHTDvjgzTzVzVZETOzRG2X2GIe915NRGHWc16R-0OXxfTQzUHvDjdwCtz3rpi-vfuxTf4QPW5TtUFHGGOgGzPp0tlTIvsOaVosuVKY3kG_xRdt8BuSiAe9otK-sENiyswubSMTuBRIcXydRXpte5Ao-A6Rt_nEaUMl3WNpViTjXfTJeBBGEZjHel4_OUgCaosvgGEHiZY34r61yp6vLJdUT8eTo2PFqB_Vu3NrGK5VUkA4mp0pU2U6S7JFnHiCL9EtX--EqVJjiorzTHWPEuK8iqFkH_orLQQxOmN8hIBV_AejJ2PBdBn-fairtCwA0wli5jz8banZLbu-6nTtk5PJlfgumTwzXg5pnIaSwgRnd6_UqQq3I0BMWrFccGs_NuJ3dZsr37l-bLFsKJyFb0T2ldLE9LfaDJ36jFB99OVVbfVJuBUU_Nz2hwJu-Lc3E1ZucNE62-ci8Ym05BbnXt0n1n0wSKeRdi36oZKEGo61pRAExzs-skU6aHb1m7_YxY4-K07ipdbdE4lZQryFyoQrA42LygjAOQyfxQs0lvNzRuky5wLkpJrjF0Yo3TJ-Bevw5xiGWx8kR2qfU7vYxG26iFcI0vt6ojUXkRCVt43h6NGaWrCPiMoyP_wlWKG2hdnTREb_5rzB36UBBN8I4nqX_4kl9jY-4rPJQ949kkhXm_nkJJxxMlg2Uqf6ARNomDty0N0t14mxj-xzNDDwbtn8cGsQ2zFpFoiBTqULRykn3eu8zjwT7DRJ7Qfd_HQjopCyIfC3JxuMP6U9Np1_Srrom1IoqU4mbFDn8GpzePHR0P9exoZtV9Oc_C1cREQptmem445DR6rZ6-m_z9vfXo1WK5-esBQF3hPj_ZiwWHxz8igkMG68EBmH_x54TZxPWV3dA6HxJNJz9ZPKjeaey2tiR4OjeAf5u5I9xHODtcEtamTfMG8EjyL8PUPSVpC5C-Jm_RGPOUWS-5JqMxBHbuDl9YXU9fZuDrhzK2TUZU91GO0DTlen31PzCEYnYt66Vm2QdzDXIPm4mj02f1YvUgARfEc2P6KzkChNx85Z3AMCSq8Ze5mwxV3kZ7Mh8xp5Nqo8VSHoWfePzAPRpt7xHrRdmvpgt4iF7w5mU3TcteWyWKKGERWY7gaBy99F8d2Ozi5_GkNdHlquitkLRfXhJByCE77NNRlt_ZQV8AmV88Dm4veHH98qUlYNbJ6ASrUFIguQLmpYj3hsYjmped1bHk=",
+      "summary": []
+    },
+    {
+      "id": "msg_03004b6c5457e161006a3f706993e481a19e53b8f8ae096c27",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "Sorry \u2014 I can\u2019t fetch the current time right now because the time API is offline (error 0xDEADBEEF).\n\nIf you tell me your time zone (e.g., UTC, America/New_York, Europe/London), I can tell you the current time in that zone. Or you can check your device clock and I can help interpret it. Want me to retry fetching the time now?"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "medium",
+    "mode": "standard",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tool_usage": {
+    "image_gen": {
+      "input_tokens": 0,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "total_tokens": 0
+    },
+    "web_search": {
+      "num_requests": 0
+    }
+  },
+  "tools": [
+    {
+      "type": "function",
+      "description": "Get the current time in the user's time zone.",
+      "name": "get_time",
+      "parameters": {
+        "properties": {},
+        "title": "get_time",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "A function that works correctly.",
+      "name": "working_function",
+      "parameters": {
+        "properties": {},
+        "title": "working_function",
+        "type": "object",
+        "additionalProperties": false,
+        "required": []
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 313,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 675,
+    "output_tokens_details": {
+      "reasoning_tokens": 576
+    },
+    "total_tokens": 988
+  },
+  "user": null,
+  "metadata": {}
+}

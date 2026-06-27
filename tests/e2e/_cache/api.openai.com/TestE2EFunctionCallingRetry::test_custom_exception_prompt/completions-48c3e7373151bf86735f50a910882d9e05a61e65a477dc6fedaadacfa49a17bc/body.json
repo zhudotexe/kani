@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-DvGym7f6vaEoyF75ZFQSfs6LeFQDh",
+  "object": "chat.completion",
+  "created": 1782542336,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "I\u2019m sorry \u2014 I tried to get the current time but the time API is offline (error 0xDEADBEEF), so I can\u2019t retrieve it right now.\n\nYou can choose one of these options:\n- I can try again to fetch the time.\n- Tell me your city or timezone (e.g., \"New York\" or \"UTC\u22124\") and I\u2019ll help you determine the local time once a time reference is available, or walk you through calculating it.\n- I can show quick steps to check the time on your device or via a website:\n  - Windows: check the taskbar clock or run Command Prompt and type time /T\n  - macOS/Linux: open Terminal and run date\n  - iPhone: look at the status bar or Settings > General > Date & Time\n  - Android: look at the status bar or Settings > System > Date & time\n  - Websites: timeanddate.com or time.is\n\nWhich would you like me to do?",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 218,
+    "completion_tokens": 852,
+    "total_tokens": 1070,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 640,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

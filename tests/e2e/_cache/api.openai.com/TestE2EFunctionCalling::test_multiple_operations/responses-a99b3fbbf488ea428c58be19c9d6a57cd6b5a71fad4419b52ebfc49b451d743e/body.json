@@ -1,0 +1,163 @@
+{
+  "id": "resp_087cc43e63d26142006a3f70144fcc819c8e264c9b508b3adf",
+  "object": "response",
+  "created_at": 1782542356,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1782542358,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_087cc43e63d26142006a3f7014b80c819cb346acb4efa2beeb",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "gAAAAABqP3AWVR8gf5x1ipcyZALsU5DHMd2evwrdg1jZKQjRxnU9M2Hwbjq1U8vPqo9l-MVFXx8PUvfoV64rdVfP7mHLigM9Nri5JonnMzFF6CkP2zf78Pwi6TJ2Oar4x9tytjyBl775FyhvcF6N-Jk8uuBN12ON9LvpkS4R7r0NQ7m9N_jsGhUO-FDNTZ4J_cI31LuIDQRdWnGf9WYWXOa1B0dvQvl1ooBF_1aPyV8uxK8kFOwRNHKWUo8nxsU6ct6U9aUNILHIZLf-QwSR8avmcjkawxHxf_WuZz0AIT5lboJm5LdyTCSkfH2xQ6tqr10r0oD2L5-ro5aRPL-FCS8eXgDZ123WVw5YhodHOm2JzkCLMe-2XBiHB_mY6MDOUsVTmMECyLoxZpWI_yX5VK6PAsLWapiW3IQpExe4gd4zwA3FaSRINs1bE6zrMKTlKkHNratspy4NW7MRfQSFnQJs9-Td3taN_vQ_FKS-MH3ozhxhpnldn0uMw9Q-0ixEdNBiL2H2ip-_gw7TQyaAgv7JPSe7fodfl8LigowbvdoZDlfjO6qCgG48L4WBBYcrS7A-Xg4euTuaqrrlSYHXepJ8jua38ABmfk_Zwf18tlKfYRs0VkqZxh-2MGtL4Q5XCc5ppp3wsDIJegyg3P-YlMDf_tn-5kws7YbZhAzZ_pq-hUKWl68925ox0KLPrRZC47V53h__ZKrUxBf8pVl9ew5UIgmMp31fpREANo9oCcapSKiEXg-a8RlkZdwO_sywL8RGxIqvsGu7bDbNJAf1cYRVfaYV3YHYrDrzf4PFlXzTbw9P0RTOoN1DEJtO-J9Y-Rs3Dgs72C2an-Aq5rxl6x2Sou2APZn-4QtQ3rnJ0EqAam0C-FRiuMxa0GByi3_IvQOEHiHliLevtDm9y0jmwXRYhwEMIQB1x9mCDNF7mA9YQ7XO-bt6Fz4xaJbn_EUb2YnFsyFkrHRtxNzNOQZgpenyoUQMR7j_WrDunaqgoAbDP3VvS2CICv6SOYQLa-5QRPpC5VHuw2DG7WzK6oB9PQE6Q0w44Wgw-ZJy_HQHh6q-X9lCaOEgotc9jVBGW_n4Dwj4GLiitc8DqTrR-EA03RpRHQ4iRE8Fe9jTTO9Ozi7W33u5dYn6lt0JODA9VGXszy36D6M-9Q15pbTmGapuxDCeHGpAmYqRnyetpBDpsN463piKQd7Z4r6CCD5WBd9ODW_aHgIA8gML_sqeSQGEMdMufsNpWc-IQkferNK3Mw97LzOstUhjFrJzo9VyweXA0QOIXATELeqjyZTz9zKHXqozLNoJAWUNuMFJFB_bVFIbi2pr18dPFLH0wNgPSPsStmDc5y5f-xh6KTGko6MoYprK9_ys1Ht2INUh85GADf_0ghRGF35p4IgfKiqE6SG_5YTVLsoKKjSSS2pFtmRv7grtDGcFsVZMFxxIMIhwywvK-JDz4stYPNuF3QZ2jiugF_pl41r93AEmgbeYMPzzQX3L0XpddsdhfqgF3X77cznXorrT9OK69msvaSEKmIICExCqlLbixsFJzmk54k8Vkn5op8ivp7zMzvBdFripxBXIxX06xkpu-fvQRUa2OEWkT3RiLNU1IHLwdHR70Wsa8OLb_gLYssV_vet_ClYTHpLfR1LPEtxwSQNkBLLbQjoSob2XMlU6XN2--_4msRVcAS2RZwpET8SdLytq4OjJpom7CTO6xw3VgUQtWggN1uEkgwKRNEJMJLAmtCC5z1hRud1ksKxF46igrmbB58FfmPn_Yct1oM5RiRc9_kVLYhhuNybE06Oja_FRdQ3v5LxJ-90G5JcBqYHWqImYlwJkJxXu2ZAJpxM-6FxfK3xzsMNqqFycJzqaDCzz-U0Tf8qtSVblLQ3f4wfaB7gU0J9dxDQ7G8xhoQosP_UA8oNz78TWUMyyQAcJzJwsM6YNgSwjDFubDqbehERiEDflgr_rAdHUcdF-E-yEHruxrS9e2x99ddkTp7cafkKqXPW-tH8gvrDz3VwLaXXGT_eUQdJ32MxDPjcrBG-jrX6O-QWO4mWDgrsNMokPZ103EOTdVyQdb6daTo1d6v6IeTsEScWL__Mmurl3Bp-Xovvz3szNjZ5WXNmb-5Y-rxuysXY0cbpKYiVXDu2vjLsKNQ8Y63yJR7Ujoq_wEv4j5CSgUaFttybe9ZyzjA1X8JwBI3JB2cLCK35cX5iAJzpWIWQ1zD-rEMd_3epwsmUQriRLmGJ2hb1niR-dN2K1e94xye_sJlThm-efNYvsC5Uq9_nVjl5pZiOyCpwpbrFKfB7PL8Fla8j8QnKRfofycud7_pciECC-Z9QEuUv2MyF_p6vWe53DcQtgD1i5dGbJl_atee_PL-ebD2g6CksQ_UCxi7Qg5EtR-cJIPIVd8f6NFKFfCqq_2581bt-xvIKsERjOBTLl47tgBJbcWtWnnt8RmpweU3rCvAa4pHn75X64zQ==",
+      "summary": []
+    },
+    {
+      "id": "fc_087cc43e63d26142006a3f70166640819cb220f68f7e985829",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"a\":8,\"b\":5}",
+      "call_id": "call_jxslGLkAPPLXewfhWRG3V99N",
+      "name": "multiply"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "medium",
+    "mode": "standard",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tool_usage": {
+    "image_gen": {
+      "input_tokens": 0,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "total_tokens": 0
+    },
+    "web_search": {
+      "num_requests": 0
+    }
+  },
+  "tools": [
+    {
+      "type": "function",
+      "description": "Add two numbers together.",
+      "name": "add",
+      "parameters": {
+        "properties": {
+          "a": {
+            "type": "integer"
+          },
+          "b": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "title": "add",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Divide two numbers.",
+      "name": "divide",
+      "parameters": {
+        "properties": {
+          "a": {
+            "type": "number"
+          },
+          "b": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "title": "divide",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Multiply two numbers together.",
+      "name": "multiply",
+      "parameters": {
+        "properties": {
+          "a": {
+            "type": "integer"
+          },
+          "b": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "title": "multiply",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 128,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 312,
+    "output_tokens_details": {
+      "reasoning_tokens": 256
+    },
+    "total_tokens": 440
+  },
+  "user": null,
+  "metadata": {}
+}

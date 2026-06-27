@@ -1,0 +1,40 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "functionCall": {
+              "name": "send_email",
+              "args": {
+                "body": "See you at 3pm",
+                "recipient": "john@example.com",
+                "subject": "Meeting Tomorrow"
+              }
+            },
+            "thoughtSignature": "CvwDAQw51seL+aktDHxnQ/ninw6xQG+wDvH6YsuTIok8vIGjKQM1CbqtKYuGaSP2NjO3/NjCyzIjvP3INFsDxGvaPcY6SubmbW6+0/bC4RRR4/xvi06cAHbEr71az6a2VUqCMZSIMcW5QeNgc4o3GEjrc64vvguDa+AkSTAdOMLO85L+9qmnuzJ0iQ1vHG9+k9MUi7fiFvpvChUHMtywEhP2s6L+o6jGu9gUkWTO+KpygQg4WEaMTJ/sEIju9FNQVLgHbb9BAoQhMvE3TpqXjAGXy5rixRym2BMe77eSI1HJRWadXiko9+xDaZ4J3UNJD8+knQTtynYHum9lIngb0gHqWIfl6WoDL+YrZ6XK44WqyriQEYZK0hzS/yQTalxcoGe7SpvXe4SlzWqW+XDwLfrmVeOotnX+TnakrkJGqxSu1pQBw+6rQ7uKtnpyNlIi7vsiO3f7QnZ46aiWNWjcAgyzA04fNj56/X0rH14wPXrntI2jsBxo3ohnhN4ZZ/urKKKtB4Gy7vTkpv8ELBh4pmjeP9huVO1MybBd+SQtXJTZPleAtB3eOs4g2RVy+gSBLVxicA32eSxyfNTVoJBrglgeojuAvaizZd5YUpCmP4mga7nvJwX6IA7zFKmBFZf2c1g3CU+V8yakrHLeFyQuUlBbRUIdprbL52+3UXuqEw=="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "finishMessage": "Model generated function call(s)."
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 140,
+    "candidatesTokenCount": 35,
+    "totalTokenCount": 287,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 140
+      }
+    ],
+    "thoughtsTokenCount": 112,
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "rW8_auLZEpSs1MkPs-rhsQE"
+}

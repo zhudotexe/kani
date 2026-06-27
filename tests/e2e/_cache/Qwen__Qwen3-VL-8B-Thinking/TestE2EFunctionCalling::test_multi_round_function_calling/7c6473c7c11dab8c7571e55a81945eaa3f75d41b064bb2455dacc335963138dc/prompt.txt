@@ -1,0 +1,166 @@
+<|im_start|>system
+You are a database assistant. Use the provided functions to answer questions about users and orders.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_order_total", "description": "Calculate the total amount spent by a user.", "parameters": {"properties": {"user_id": {"type": "integer"}}, "required": ["user_id"], "title": "get_order_total", "type": "object"}}}
+{"type": "function", "function": {"name": "get_user_orders", "description": "Get all orders for a specific user ID.", "parameters": {"properties": {"user_id": {"type": "integer"}}, "required": ["user_id"], "title": "get_user_orders", "type": "object"}}}
+{"type": "function", "function": {"name": "search_users", "description": "Search for users by city.", "parameters": {"properties": {"city": {"type": "string"}}, "required": ["city"], "title": "search_users", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+Find all users in San Francisco and tell me their names and total order amounts.<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, let's tackle this user query. The user wants to find all users in San Francisco and get their names along with their total order amounts.
+
+First, I need to figure out which tools to use. The available functions are get_order_total, get_user_orders, and search_users. 
+
+The user mentioned "find all users in San Francisco," so the search_users function seems relevant here. It searches by city, so I'll use that with city set to "San Francisco" to get the list of user IDs.
+
+Once I have the user IDs from search_users, the next step is to get each user's total order amount. For that, I can use get_order_total for each user ID. But wait, the user also wants the names. The search_users function probably returns user details, but the tool description says it's for searching by city, so maybe it returns user IDs. However, the get_user_orders function gives all orders for a user, but to get the name, maybe the search_users function includes the name as part of the response. Wait, the problem statement says that the functions are provided, but the actual response from the functions isn't specified here. Wait, no, the user is asking me to use the functions to answer the question.
+
+Wait, the user wants names and total order amounts. The search_users function's description is "Search for users by city." So maybe when you call search_users with city "San Francisco", it returns a list of users including their names and IDs. Then, for each user in that list, you need to get their order total using get_order_total.
+
+But the get_order_total function requires a user_id, so first, we need to get the user IDs from search_users. Let's outline the steps:
+
+1. Call search_users with city "San Francisco" to get the list of users in that city. The response would include user IDs and possibly names. Wait, but the function's description doesn't specify what it returns. However, the task is to use the provided functions. Since the user wants names and total order amounts, perhaps the search_users function returns user details including name and ID. But maybe the actual data structure isn't clear here.
+
+Alternatively, perhaps get_user_orders can be used to get the orders, but the total order amount would be the sum of the orders. Wait, the get_order_total function is designed to calculate the total, so perhaps that's the way to go.
+
+Wait, the user's request is to get all users in San Francisco and their names and total order amounts.
+
+So, first step: use search_users(city="San Francisco") to find all users in that city. This would return a list of users, probably with their IDs and maybe names. Let's assume the search_users function returns a list of users with their IDs and names. Then, for each user in that list, call get_order_total(user_id=...) to get their total order amount.
+
+But the problem is that the user might not have the names in the search_users response. Wait, but the user is asking for names. So maybe the search_users function returns the user names as part of the result.
+
+But since we don't have the actual function responses, we have to proceed based on the tools provided. Let me check the functions again.
+
+The functions are:
+
+- search_users: parameters are city. Description is "Search for users by city." So the result would be users in that city, possibly including names.
+
+But the get_order_total function takes a user_id. So to get the total for each user, we need their user_id first.
+
+Therefore, the steps are:
+
+1. Call search_users with city "San Francisco" to get the list of user IDs (and possibly names).
+
+2. For each user ID obtained from step 1, call get_order_total to get their total order amount.
+
+But the user is asking for names and total amounts. So perhaps the search_users function returns the names as part of the user data. So once we have the user IDs and names from search_users, then we can get the total orders for each user.
+
+But the tools provided don't specify what data is returned by each function. However, given that the user wants to get names and total amounts, we need to make sure that the search_users function returns the names. Let's assume that the search_users function returns a list of users with their IDs and names. So first, we need to call search_users for San Francisco to get all the users there, including their names and IDs. Then, for each user ID in that list, call get_order_total to get the total.
+
+Wait, but the user is asking for all users in San Francisco. So the correct approach is:
+
+First, call search_users(city="San Francisco") to get the list of users (including names and IDs), then for each user ID from that list, call get_order_total to get the total. Then combine the results.
+
+Therefore, the first step is to call search_users with San Francisco, which will give us the users in that city. Then, for each user from that result, get their total order amount.
+
+But the user might have multiple users in San Francisco, so we need to process each one.
+
+However, the assistant is supposed to generate the tool calls. Since the problem is asking for all users in SF, the first tool call is search_users(city="San Francisco"). Then, once we have the user IDs, the next step would be to call get_order_total for each user ID.
+
+But the problem says to use the provided functions to answer the question. The user's question is to "Find all users in San Francisco and tell me their names and total order amounts."
+
+So the first step is to search for users in San Francisco. The tool for that is search_users with city San Francisco.
+
+Then, for each user found, we need to get their total order amount using get_order_total.
+
+Therefore, the assistant should first call search_users, and then for each user ID in the result, call get_order_total. But since the tool calls are to be generated as separate steps, the initial step is to call search_users.
+
+Wait, but the user's question is a single query, so the assistant should generate the necessary tool calls. Since the search_users is required first to get the list of users, that's the first tool call. Then, once the search_users returns the user IDs, the next step would be to call get_order_total for each.
+
+But the problem is that in this scenario, the assistant is supposed to output the tool calls as per the instructions. The user hasn't provided the results of the function calls, so the assistant must generate the necessary tool calls to get the answer.
+
+So the correct approach is to first call search_users for San Francisco. Then, for each user found, call get_order_total. However, the assistant can only output the next tool call. Wait, but the problem says "For each function call, return a json object with function name and arguments within tool_call XML tags."
+
+Wait, the problem says the user's query is "Find all users in San Francisco and tell me their names and total order amounts."
+
+The assistant needs to determine which functions to call. Since the user wants all users in SF, first search_users is needed to get the user IDs. Then, for each user, get_order_total is needed. However, the assistant can only call one function at a time, but the problem is structured so that for the user query, the assistant may need to make multiple tool calls.
+
+But in this case, since the first step is to get the users in SF, the assistant should first call search_users. Once that's done, then for each user, call get_order_total.
+
+But since the assistant's response is to generate the tool calls needed, the first tool call is search_users(city="San Francisco").
+
+Wait, but perhaps the get_user_orders function is also needed? Let's see.
+
+Wait, the get_order_total function calculates the total order amount, so we don't need to get all orders, just the total. So for each user, call get_order_total(user_id=...).
+
+Therefore, the steps are:
+
+1. Call search_users(city="San Francisco") to get user IDs.
+
+2. For each user ID returned from step 1, call get_order_total(user_id=ID) to get their total.
+
+But since the problem is about generating the tool calls, the initial step is to call search_users, then for each result, call get_order_total.
+
+But in this problem setup, the assistant should make the necessary tool calls. The user is asking for the final answer, which would require multiple tool calls.
+
+But according to the problem statement, the assistant should output the tool calls. So first, the assistant should generate a tool call for search_users, then for each user from that result, a tool call for get_order_total.
+
+However, in the context of the problem, the assistant has to decide which functions to call. Since the user's question requires both the names (which are likely part of the search_users result) and the total order amounts (which require get_order_total), the first step is to call search_users.
+
+Therefore, the first tool call is search_users with city San Francisco.
+</think>
+
+<tool_call>
+{"name": "search_users", "arguments": {"city": "San Francisco"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+[{'id': 1, 'name': 'Alice'}]
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+Okay, let's see. The user asked for all users in San Francisco and their names along with total order amounts.
+
+First, I called the search_users function with city "San Francisco" and got back a user with ID 1 and name Alice.
+
+Now, I need to find out Alice's total order amount. The next step is to use the get_order_total function with user_id 1. That should give me the total spent by Alice.
+
+So I should call get_order_total with user_id 1. Once I have that, I can present Alice's name and her total order amount to the user.
+</think>
+
+<tool_call>
+{"name": "get_order_total", "arguments": {"user_id": 1}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+1225
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+
+==========
+tensor([[151644,   8948,    198,   2610,    525,    264,   4625,  17847,     13,   5443,    279,   3897,   5746,    311,   4226,   4755,    911,   3847,    323,  10163,    382,      2,  13852,    271,   2610,   1231,   1618,    825,    476,    803,   5746,    311,   7789,    448,    279,   1196,   3239,    382,   2610,    525,   3897,    448,    729,  32628,   2878,    366,  15918,   1472,  15918,     29,  11874,   9492,    510,     27,  15918,    397,   4913,   1313,    788,    330,   1688,    497,    330,   1688,    788,   5212,    606,    788,    330,    455,   7869,  10784,    497,    330,   4684,    788,    330,  47866,    279,   2790,   3311,   7391,    553,    264,   1196,  10465,    330,  13786,    788,   5212,  13193,    788,   5212,    872,    842,    788,   5212,   1313,    788,    330,  11662,   9207,   2137,    330,   6279,    788,   4383,    872,    842,   7914,    330,   2102,    788,    330,    455,   7869,  10784,    497,    330,   1313,    788,    330,   1700,
+          30975,    532,   4913,   1313,    788,    330,   1688,    497,    330,   1688,    788,   5212,    606,    788,    330,    455,   3317,  37129,    497,    330,   4684,    788,    330,   1949,    678,  10163,    369,    264,   3151,   1196,   3034,  10465,    330,  13786,    788,   5212,  13193,    788,   5212,    872,    842,    788,   5212,   1313,    788,    330,  11662,   9207,   2137,    330,   6279,    788,   4383,    872,    842,   7914,    330,   2102,    788,    330,    455,   3317,  37129,    497,    330,   1313,    788,    330,   1700,  30975,    532,   4913,   1313,    788,    330,   1688,    497,    330,   1688,    788,   5212,    606,    788,    330,   1836,  16348,    497,    330,   4684,    788,    330,   5890,    369,   3847,    553,   3283,  10465,    330,  13786,    788,   5212,  13193,    788,   5212,   8926,    788,   5212,   1313,    788,    330,    917,   9207,   2137,    330,   6279,    788,   4383,   8926,   7914,    330,   2102,    788,    330,
+           1836,  16348,    497,    330,   1313,    788,    330,   1700,  30975,    532,    522,  15918,   1339,   2461,   1817,    729,   1618,     11,    470,    264,   2951,   1633,    448,    729,    829,    323,   5977,   2878,    220, 151657, 151658,  11874,   9492,    510, 151657,    198,   4913,    606,    788,    366,   1688,  11494,   8066,    330,  16370,    788,    366,   2116,  56080,  40432,  31296, 151658, 151645,    198, 151644,    872,    198,   9885,    678,   3847,    304,   5836,  12879,    323,   3291,    752,    862,   5036,    323,   2790,   1973,  14713,     13, 151645,    198, 151644,  77091,    198, 151667,    198,  32313,     11,   1077,    594,  21403,    419,   1196,   3239,     13,    576,   1196,   6801,    311,   1477,    678,   3847,    304,   5836,  12879,    323,    633,    862,   5036,   3156,    448,    862,   2790,   1973,  14713,    382,   5338,     11,    358,   1184,    311,   7071,    700,    892,   7375,    311,    990,     13,    576,
+           2500,   5746,    525,    633,   7869,  10784,     11,    633,   3317,  37129,     11,    323,   2711,  16348,     13,   4710,    785,   1196,   9733,    330,   3903,    678,   3847,    304,   5836,  12879,   1335,    773,    279,   2711,  16348,    729,   4977,   9760,   1588,     13,   1084,  26475,    553,   3283,     11,    773,    358,   3278,    990,    429,    448,   3283,    738,    311,    330,  23729,  12879,      1,    311,    633,    279,   1140,    315,   1196,  28360,    382,  12522,    358,    614,    279,   1196,  28360,    504,   2711,  16348,     11,    279,   1790,   3019,    374,    311,    633,   1817,   1196,    594,   2790,   1973,   3311,     13,   1752,    429,     11,    358,    646,    990,    633,   7869,  10784,    369,   1817,   1196,   3034,     13,   1988,   3783,     11,    279,   1196,   1083,   6801,    279,   5036,     13,    576,   2711,  16348,    729,   4658,   4675,   1196,   3565,     11,    714,    279,   5392,   4008,   2727,
+            432,    594,    369,  15039,    553,   3283,     11,    773,   7196,    432,   4675,   1196,  28360,     13,   4354,     11,    279,    633,   3317,  37129,    729,   6696,    678,  10163,    369,    264,   1196,     11,    714,    311,    633,    279,    829,     11,   7196,    279,   2711,  16348,    729,   5646,    279,    829,    438,    949,    315,    279,   2033,     13,  13824,     11,    279,   3491,   5114,   2727,    429,    279,   5746,    525,   3897,     11,    714,    279,   5042,   2033,    504,    279,   5746,   4436,    944,   5189,   1588,     13,  13824,     11,    902,     11,    279,   1196,    374,  10161,    752,    311,    990,    279,   5746,    311,   4226,    279,   3405,    382,  14190,     11,    279,   1196,   6801,   5036,    323,   2790,   1973,  14713,     13,    576,   2711,  16348,    729,    594,   4008,    374,    330,   5890,    369,   3847,    553,   3283,   1189,   2055,   7196,    979,    498,   1618,   2711,  16348,    448,
+           3283,    330,  23729,  12879,    497,    432,   4675,    264,   1140,    315,   3847,   2670,    862,   5036,    323,  28360,     13,   5005,     11,    369,   1817,   1196,    304,    429,   1140,     11,    498,   1184,    311,    633,    862,   1973,   2790,   1667,    633,   7869,  10784,    382,   3983,    279,    633,   7869,  10784,    729,   7460,    264,   1196,    842,     11,    773,   1156,     11,    582,   1184,    311,    633,    279,   1196,  28360,    504,   2711,  16348,     13,   6771,    594,  21101,    279,   7354,   1447,     16,     13,   7143,   2711,  16348,    448,   3283,    330,  23729,  12879,      1,    311,    633,    279,   1140,    315,   3847,    304,    429,   3283,     13,    576,   2033,   1035,   2924,   1196,  28360,    323,  10767,   5036,     13,  13824,     11,    714,    279,    729,    594,   4008,   3171,    944,  13837,   1128,    432,   4675,     13,   4354,     11,    279,   3383,    374,    311,    990,    279,   3897,
+           5746,     13,   8704,    279,   1196,   6801,   5036,    323,   2790,   1973,  14713,     11,   8365,    279,   2711,  16348,    729,   4675,   1196,   3565,   2670,    829,    323,   3034,     13,   1988,   7196,    279,   5042,    821,   5944,   4436,    944,   2797,   1588,    382,  92014,     11,   8365,    633,   3317,  37129,    646,    387,   1483,    311,    633,    279,  10163,     11,    714,    279,   2790,   1973,   3311,   1035,    387,    279,   2629,    315,    279,  10163,     13,  13824,     11,    279,    633,   7869,  10784,    729,    374,   6188,    311,  11047,    279,   2790,     11,    773,   8365,    429,    594,    279,   1616,    311,    728,    382,  14190,     11,    279,   1196,    594,   1681,    374,    311,    633,    678,   3847,    304,   5836,  12879,    323,    862,   5036,    323,   2790,   1973,  14713,    382,   4416,     11,   1156,   3019,     25,    990,   2711,  16348,  43502,    428,  23729,  12879,    899,    311,   1477,
+            678,   3847,    304,    429,   3283,     13,   1096,   1035,    470,    264,   1140,    315,   3847,     11,   4658,    448,    862,  28360,    323,   7196,   5036,     13,   6771,    594,   9658,    279,   2711,  16348,    729,   4675,    264,   1140,    315,   3847,    448,    862,  28360,    323,   5036,     13,   5005,     11,    369,   1817,   1196,    304,    429,   1140,     11,   1618,    633,   7869,  10784,   4277,    842,     28,  32574,    311,    633,    862,   2790,   1973,   3311,    382,   3983,    279,   3491,    374,    429,    279,   1196,   2578,    537,    614,    279,   5036,    304,    279,   2711,  16348,   2033,     13,  13824,     11,    714,    279,   1196,    374,  10161,    369,   5036,     13,   2055,   7196,    279,   2711,  16348,    729,   4675,    279,   1196,   5036,    438,    949,    315,    279,   1102,    382,   3983,   2474,    582,   1513,    944,    614,    279,   5042,    729,  14507,     11,    582,    614,    311,  10354,
+           3118,    389,    279,   7375,   3897,     13,   6771,    752,   1779,    279,   5746,   1549,    382,    785,   5746,    525,   1447,     12,   2711,  16348,     25,   5029,    525,   3283,     13,   7662,    374,    330,   5890,    369,   3847,    553,   3283,   1189,   2055,    279,   1102,   1035,    387,   3847,    304,    429,   3283,     11,  10767,   2670,   5036,    382,   3983,    279,    633,   7869,  10784,    729,   4990,    264,   1196,    842,     13,   2055,    311,    633,    279,   2790,    369,   1817,   1196,     11,    582,   1184,    862,   1196,    842,   1156,    382,  54815,     11,    279,   7354,    525,   1447,     16,     13,   7143,   2711,  16348,    448,   3283,    330,  23729,  12879,      1,    311,    633,    279,   1140,    315,   1196,  28360,    320,    437,  10767,   5036,   3593,     17,     13,   1752,   1817,   1196,   3034,  12180,    504,   3019,    220,     16,     11,   1618,    633,   7869,  10784,    311,    633,    862,
+           2790,   1973,   3311,    382,   3983,    279,   1196,    374,  10161,    369,   5036,    323,   2790,  14713,     13,   2055,   8365,    279,   2711,  16348,    729,   4675,    279,   5036,    438,    949,    315,    279,   1196,    821,     13,   2055,   3055,    582,    614,    279,   1196,  28360,    323,   5036,    504,   2711,  16348,     11,   1221,    582,    646,    633,    279,   2790,  10163,    369,   1817,   1196,    382,   3983,    279,   7375,   3897,   1513,    944,  13837,   1128,    821,    374,   5927,    553,   1817,    729,     13,   4354,     11,   2661,    429,    279,   1196,   6801,    311,    633,   5036,    323,   2790,  14713,     11,    582,   1184,    311,   1281,   2704,    429,    279,   2711,  16348,    729,   4675,    279,   5036,     13,   6771,    594,   9658,    429,    279,   2711,  16348,    729,   4675,    264,   1140,    315,   3847,    448,    862,  28360,    323,   5036,     13,   2055,   1156,     11,    582,   1184,    311,
+           1618,   2711,  16348,    369,   5836,  12879,    311,    633,    678,    279,   3847,   1052,     11,   2670,    862,   5036,    323,  28360,     13,   5005,     11,    369,   1817,   1196,   3034,    304,    429,   1140,     11,   1618,    633,   7869,  10784,    311,    633,    279,   2790,    382,  14190,     11,    714,    279,   1196,    374,  10161,    369,    678,   3847,    304,   5836,  12879,     13,   2055,    279,   4396,   5486,    374,   1447,   5338,     11,   1618,   2711,  16348,  43502,    428,  23729,  12879,    899,    311,    633,    279,   1140,    315,   3847,    320,  16169,   5036,    323,  28360,    701,   1221,    369,   1817,   1196,   3034,    504,    429,   1140,     11,   1618,    633,   7869,  10784,    311,    633,    279,   2790,     13,   5005,  15963,    279,   3059,    382,  54815,     11,    279,   1156,   3019,    374,    311,   1618,   2711,  16348,    448,   5836,  12879,     11,    892,    686,   2968,    601,    279,   3847,
+            304,    429,   3283,     13,   5005,     11,    369,   1817,   1196,    504,    429,   1102,     11,    633,    862,   2790,   1973,   3311,    382,   3983,    279,   1196,   2578,    614,   5248,   3847,    304,   5836,  12879,     11,    773,    582,   1184,    311,   1882,   1817,    825,    382,  11209,     11,    279,  17847,    374,   9966,    311,   6923,    279,   5392,   6738,     13,   8704,    279,   3491,    374,  10161,    369,    678,   3847,    304,  23463,     11,    279,   1156,   5392,   1618,    374,   2711,  16348,  43502,    428,  23729,  12879,   1827,   5005,     11,   3055,    582,    614,    279,   1196,  28360,     11,    279,   1790,   3019,   1035,    387,    311,   1618,    633,   7869,  10784,    369,   1817,   1196,   3034,    382,   3983,    279,   3491,   2727,    311,    990,    279,   3897,   5746,    311,   4226,    279,   3405,     13,    576,   1196,    594,   3405,    374,    311,    330,   9885,    678,   3847,    304,   5836,
+          12879,    323,   3291,    752,    862,   5036,    323,   2790,   1973,  14713,   2217,   4416,    279,   1156,   3019,    374,    311,   2711,    369,   3847,    304,   5836,  12879,     13,    576,   5392,    369,    429,    374,   2711,  16348,    448,   3283,   5836,  12879,    382,  12209,     11,    369,   1817,   1196,   1730,     11,    582,   1184,    311,    633,    862,   2790,   1973,   3311,   1667,    633,   7869,  10784,    382,  54815,     11,    279,  17847,   1265,   1156,   1618,   2711,  16348,     11,    323,   1221,    369,   1817,   1196,   3034,    304,    279,   1102,     11,   1618,    633,   7869,  10784,     13,   1988,   2474,    279,   5392,   6738,    525,    311,    387,   7907,    438,   8651,   7354,     11,    279,   2856,   3019,    374,    311,   1618,   2711,  16348,    382,  14190,     11,    714,    279,   1196,    594,   3405,    374,    264,   3175,   3239,     11,    773,    279,  17847,   1265,   6923,    279,   5871,   5392,
+           6738,     13,   8704,    279,   2711,  16348,    374,   2567,   1156,    311,    633,    279,   1140,    315,   3847,     11,    429,    594,    279,   1156,   5392,   1618,     13,   5005,     11,   3055,    279,   2711,  16348,   4675,    279,   1196,  28360,     11,    279,   1790,   3019,   1035,    387,    311,   1618,    633,   7869,  10784,    369,   1817,    382,   3983,    279,   3491,    374,    429,    304,    419,  15048,     11,    279,  17847,    374,   9966,    311,   2550,    279,   5392,   6738,    438,    817,    279,  11221,     13,    576,   1196,  12492,    944,   3897,    279,   3059,    315,    279,    729,   6738,     11,    773,    279,  17847,   1969,   6923,    279,   5871,   5392,   6738,    311,    633,    279,   4226,    382,   4416,    279,   4396,   5486,    374,    311,   1156,   1618,   2711,  16348,    369,   5836,  12879,     13,   5005,     11,    369,   1817,   1196,   1730,     11,   1618,    633,   7869,  10784,     13,   4354,
+             11,    279,  17847,    646,   1172,   2550,    279,   1790,   5392,   1618,     13,  13824,     11,    714,    279,   3491,   2727,    330,   2461,   1817,    729,   1618,     11,    470,    264,   2951,   1633,    448,    729,    829,    323,   5977,   2878,   5392,  13429,  11874,   9492,   2217,  14190,     11,    279,   3491,   2727,    279,   1196,    594,   3239,    374,    330,   9885,    678,   3847,    304,   5836,  12879,    323,   3291,    752,    862,   5036,    323,   2790,   1973,  14713,   2217,    785,  17847,   3880,    311,   8253,    892,   5746,    311,   1618,     13,   8704,    279,   1196,   6801,    678,   3847,    304,  23463,     11,   1156,   2711,  16348,    374,   4362,    311,    633,    279,   1196,  28360,     13,   5005,     11,    369,   1817,   1196,     11,    633,   7869,  10784,    374,   4362,     13,   4354,     11,    279,  17847,    646,   1172,   1618,    825,    729,    518,    264,    882,     11,    714,    279,   3491,
+            374,  32930,    773,    429,    369,    279,   1196,   3239,     11,    279,  17847,   1231,   1184,    311,   1281,   5248,   5392,   6738,    382,   3983,    304,    419,   1142,     11,   2474,    279,   1156,   3019,    374,    311,    633,    279,   3847,    304,  23463,     11,    279,  17847,   1265,   1156,   1618,   2711,  16348,     13,   9646,    429,    594,   2814,     11,   1221,    369,   1817,   1196,     11,   1618,    633,   7869,  10784,    382,   3983,   2474,    279,  17847,    594,   2033,    374,    311,   6923,    279,   5392,   6738,   4362,     11,    279,   1156,   5392,   1618,    374,   2711,  16348,  43502,    428,  23729,  12879,  80984,  14190,     11,    714,   8365,    279,    633,   3317,  37129,    729,    374,   1083,   4362,     30,   6771,    594,   1490,    382,  14190,     11,    279,    633,   7869,  10784,    729,  47417,    279,   2790,   1973,   3311,     11,    773,    582,   1513,    944,   1184,    311,    633,    678,
+          10163,     11,   1101,    279,   2790,     13,   2055,    369,   1817,   1196,     11,   1618,    633,   7869,  10784,   4277,    842,     28,   1112,   3593,  54815,     11,    279,   7354,    525,   1447,     16,     13,   7143,   2711,  16348,  43502,    428,  23729,  12879,    899,    311,    633,   1196,  28360,    382,     17,     13,   1752,   1817,   1196,   3034,   5927,    504,   3019,    220,     16,     11,   1618,    633,   7869,  10784,   4277,    842,     28,    915,      8,    311,    633,    862,   2790,    382,   3983,   2474,    279,   3491,    374,    911,  23163,    279,   5392,   6738,     11,    279,   2856,   3019,    374,    311,   1618,   2711,  16348,     11,   1221,    369,   1817,   1102,     11,   1618,    633,   7869,  10784,    382,   3983,    304,    419,   3491,   6505,     11,    279,  17847,   1265,   1281,    279,   5871,   5392,   6738,     13,    576,   1196,    374,  10161,    369,    279,   1590,   4226,     11,    892,   1035,
+           1373,   5248,   5392,   6738,    382,   3983,   4092,    311,    279,   3491,   5114,     11,    279,  17847,   1265,   2550,    279,   5392,   6738,     13,   2055,   1156,     11,    279,  17847,   1265,   6923,    264,   5392,   1618,    369,   2711,  16348,     11,   1221,    369,   1817,   1196,    504,    429,   1102,     11,    264,   5392,   1618,    369,    633,   7869,  10784,    382,  11209,     11,    304,    279,   2266,    315,    279,   3491,     11,    279,  17847,    702,    311,  10279,    892,   5746,    311,   1618,     13,   8704,    279,   1196,    594,   3405,   7460,   2176,    279,   5036,    320,   8206,    525,   4363,    949,    315,    279,   2711,  16348,   1102,      8,    323,    279,   2790,   1973,  14713,    320,   8206,   1373,    633,   7869,  10784,    701,    279,   1156,   3019,    374,    311,   1618,   2711,  16348,    382,  54815,     11,    279,   1156,   5392,   1618,    374,   2711,  16348,    448,   3283,   5836,  12879,
+            624, 151668,    271, 151657,    198,   4913,    606,    788,    330,   1836,  16348,    497,    330,  16370,    788,   5212,   8926,    788,    330,  23729,  12879,  95642, 151658, 151645,    198, 151644,    872,    198, 151665,    198,     58,  13608,    307,   1210,    220,     16,     11,    364,    606,   1210,    364,  61686,   8275,    921, 151666, 151645,    198, 151644,  77091,    198, 151667,    198,  32313,     11,   1077,    594,   1490,     13,    576,   1196,   4588,    369,    678,   3847,    304,   5836,  12879,    323,    862,   5036,   3156,    448,   2790,   1973,  14713,    382,   5338,     11,    358,   2598,    279,   2711,  16348,    729,    448,   3283,    330,  23729,  12879,      1,    323,   2684,   1182,    264,   1196,    448,   3034,    220,     16,    323,    829,  29405,    382,   7039,     11,    358,   1184,    311,   1477,    700,  29405,    594,   2790,   1973,   3311,     13,    576,   1790,   3019,    374,    311,    990,    279,
+            633,   7869,  10784,    729,    448,   1196,    842,    220,     16,     13,   2938,   1265,   2968,    752,    279,   2790,   7391,    553,  29405,    382,   4416,    358,   1265,   1618,    633,   7869,  10784,    448,   1196,    842,    220,     16,     13,   9646,    358,    614,    429,     11,    358,    646,   3042,  29405,    594,    829,    323,   1059,   2790,   1973,   3311,    311,    279,   1196,    624, 151668,    271, 151657,    198,   4913,    606,    788,    330,    455,   7869,  10784,    497,    330,  16370,    788,   5212,    872,    842,    788,    220,     16,  11248, 151658, 151645,    198, 151644,    872,    198, 151665,    198,     16,     17,     17,     20,    198, 151666, 151645,    198, 151644,  77091,    198, 151667,    198]])
+==========
+{'attention_mask': tensor([[1, 1, 1,  ..., 1, 1, 1]]), 'max_length': 32000}

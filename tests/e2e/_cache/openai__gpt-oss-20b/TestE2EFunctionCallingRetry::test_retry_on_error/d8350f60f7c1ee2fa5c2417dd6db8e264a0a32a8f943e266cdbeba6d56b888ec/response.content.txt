@@ -1,0 +1,27 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.
+Calls to these tools must go to the commentary channel: 'functions'.<|end|><|start|>developer<|message|># Tools
+
+## functions
+
+namespace functions {
+
+// A function that fails the first time.
+type flaky_function = (_: {
+x: number,
+}) => any;
+
+} // namespace functions<|end|><|start|>user<|message|>Call the flaky_function with x=42. Retry if it fails, it should eventually work.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to call `functions.flaky_function` with x=42. If it fails initially, we should retry until it works. The user says "Retry if it fails, it should eventually work." So we must call the function in a loop until success. We need to wrap in a try/catch and call again on error. There's no maximum retries specified. I'd limit perhaps to a maximum attempts or infinite until success. Use a small delay between attempts? It's probably sufficient to just loop until it works. We need also to handle the function's result. We also may need to capture the result. Because user didn't specify what to do with the result, we just return it.
+
+We need to call the function: `functions.flaky_function({x:42})`. We treat errors as failures. Use a while loop. After success, break. Then respond. Should we respond with the result or a message? Likely just respond with the result. But we may need to catch error type: the function might throw some error. We'll catch it and continue.
+
+We must adhere to conversation style: after calling the function within a script, must print the result to the user. No debug info.
+
+Ok.<|end|><|start|>assistant to=functions.flaky_function<|channel|>commentary json<|message|>{"x": 42}<|call|><|start|>functions.flaky_function to=assistant<|channel|>commentary<|message|>"First call always fails!"<|end|><|start|>assistant<|channel|>analysis<|message|>It failed. We need to retry. Use a loop. Probably a while True. Let's do a retry with maybe 1-second delay. Use setTimeout? In Node? But we are ChatGPT, not actually running. We can just loop.
+
+We need to output result after success. The result will be returned maybe "success" or something. We should attempt again. Let's attempt again manually.<|end|><|start|>assistant<|channel|>commentary to=functions.flaky_function<|constrain|>json<|message|>{"x": 42}<|call|>

@@ -1,0 +1,31 @@
+<|im_start|>system
+You are a helpful assistant. Use the provided functions to answer questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_time", "description": "Get the current time in the user's time zone.", "parameters": {"properties": {}, "title": "get_time", "type": "object"}}}
+{"type": "function", "function": {"name": "working_function", "description": "A function that works correctly.", "parameters": {"properties": {}, "title": "working_function", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What time is it?<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user is asking, "What time is it?" So I need to figure out the right tool to use here.
+
+Looking at the provided functions, there's one called get_time that's supposed to return the current time in the user's time zone. The parameters for that function are empty, so I don't need any arguments. The other function is working_function, but its description says it works correctly, but it's probably not relevant here since the user is asking for the time.
+
+Since the user's question is straightforward about the current time, I should call get_time. The working_function might be a red herring, but since the user is asking for time, the get_time function is the correct choice. No parameters needed for get_time, so the tool call is simple.
+</think>
+
+<tool_call>
+{"name": "get_time", "arguments": {}}
+</tool_call><|im_end|>

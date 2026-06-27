@@ -1,0 +1,26 @@
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"role":"assistant","content":null,"tool_calls":[{"index":0,"id":"call_uvoyC6hFIS4ZJBynIKENBd4Z","type":"function","function":{"name":"add","arguments":""}}],"refusal":null},"finish_reason":null}],"usage":null,"obfuscation":"Y1hb9Ndg"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"{\""}}]},"finish_reason":null}],"usage":null,"obfuscation":"eQEAfK7OpR"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"a"}}]},"finish_reason":null}],"usage":null,"obfuscation":"lnrK2ZvbEL3R"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\":"}}]},"finish_reason":null}],"usage":null,"obfuscation":"TBdzbyIMFN"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"40"}}]},"finish_reason":null}],"usage":null,"obfuscation":"OhqYL8J0kti"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":",\""}}]},"finish_reason":null}],"usage":null,"obfuscation":"5LHcyEx8Xw"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"b"}}]},"finish_reason":null}],"usage":null,"obfuscation":"AXI6FM6C3JmU"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\":"}}]},"finish_reason":null}],"usage":null,"obfuscation":"opmpE8FRbB"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"10"}}]},"finish_reason":null}],"usage":null,"obfuscation":"wUN2AmEnSUF"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"}"}}]},"finish_reason":null}],"usage":null,"obfuscation":"p1pJ3qdwOmWJ"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[{"index":0,"delta":{},"finish_reason":"tool_calls"}],"usage":null,"obfuscation":"BoBZLUq4qgT"}
+
+data: {"id":"chatcmpl-DvGxuPPq4eTEQt8Tv0DrDCZLuQuB6","object":"chat.completion.chunk","created":1782542282,"model":"gpt-5-mini-2025-08-07","service_tier":"default","system_fingerprint":null,"choices":[],"usage":{"prompt_tokens":240,"completion_tokens":20,"total_tokens":260,"prompt_tokens_details":{"cached_tokens":0,"audio_tokens":0},"completion_tokens_details":{"reasoning_tokens":0,"audio_tokens":0,"accepted_prediction_tokens":0,"rejected_prediction_tokens":0}},"obfuscation":"53xc"}
+
+data: [DONE]
+

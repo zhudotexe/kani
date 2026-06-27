@@ -1,0 +1,149 @@
+{
+  "id": "resp_08cd2db6b4a744ff006a3f70440f7c819195df0972a68cd7c0",
+  "object": "response",
+  "created_at": 1782542404,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1782542408,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_08cd2db6b4a744ff006a3f70445f288191b9ddb1039940e993",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "gAAAAABqP3BIcjPrltmWwTTacoKq-J33xWkQOUz_5X8fO-RbVuubnf93YY6ysFIu-zk9jn2YunDHi-kPff9EMcbwHS6BtFqsv-qdOKkosX-jlGD2ejc3r0c4UjsHsriFKwDP_2xK3lwVeD0lk5ls8XcHo7epNOIGCC26N7R-4gEvtLKd5QzoEXi0SagWBMbS_wsy9We_vV9gMQihiQgyrvI0moBHxBzqtTdYdw_MueUFg-JjG45UG03v61HCWWXW5SwfmLI6-FloVcX9HUNEGvfA1K4t6GZU5kRJewXebmXSlALExT0M9MRmBN4q8ZrnAAq-0xh5MidmatQZX0BBb2KqienLZ3NVQ_w1pGrzoNzZ8C0EaHUs_ATHTcXpvqq2wdtdl_O2euv8Bzpe0XcOiU1gp45dKJwMFUNDFx5FTz8_3-lbsC2fseqmuaKJiSpjr6NBF6OG9QvSK1COVenZ3T5btEBZLFlnsML6HsE2LvI0AwfZKyVPSGjbA2lq0HLpmK4L1o49Bs993q6SfIDuaUz3e482wGD7H6Y33QQRKs2om5INvuYQiwv3RalwmTUeg98a-Mz1akJhFspqO1z7YgdiJSgDYozT8CwoZNO2L3nYez7PpsCLiu6dZ2RoHBhf83bqJWPQ3kiy5ZIFtjPkJwsd4wzG1AB3CGMEzLHBtR2B_QSv7RCvZrTwYHULtsdVj-qTfbyK_29gWdZQjVDO1o0rEqe3svPmhPEyqOOSzFhekkFkLaV6aAK7-__0_DFedZrl02D1M-RTel7njYAF_0jGBohqWk5i-TyRN-VT5yanYLQLFBlJ-ntAZ4XHHs7OrBrBR2NGlOvQynAD8odHtnaLzeGbEMd3cueSlJ_ML8yRMY0R4jeKiAwWye6FPhx7o7dRX1WsVWlSIoziY56RMLVgoMXe3peksT9FgD4p6rAUDardm6ZETmXMsP9XPZQilE3uOygS1TnxEwQukQ_ZqG6cESlDPs4AhrabFZctK6tze_YSah7SIPlLg-TL0LrQiwMCaD83svTOE5UZh1teHB-gD0ciWei022L7-k8zQfHRcuZ6lCuRJLHFsNJ5YhLcWcOC10C9iq64JoEympz8xTBg09YdOYQ2pHWewCYkI8dIrSBUaiebIIqc9kgy0iclEKxi0-3gz75wEJt0IUktH-UFCSkOkw6ED_cXFsKqTFPQAgHsivdjJsch_qLoSBCLUePSs5PjJ8Idoi-IVCR14TNqu-Jq3sIaUNZ6tWP72K3D-WabH0xu_LY1IQkvONvj7s7ib6raLv3wwLGNDbGGZ5BUugKxEoWzD4guRqdYkPSaSYCrT1okfe5ADymXbzNITRHaT2tvTTCrmhB_JORXjUcPzjoE5Gwv2gVoRYjhCJQozcvBjqHU9EB7tP1in7_Z8ewZuNqGTSkdrXVvcOhPPgSBC74eRSgf5JiZWI9hYFqHhvYj_sdckBTaKWqCKHuiVkgZ2Mzgi-P9P7zxbeNUnX_YJORKWY0It9cx5IUR59q2efsyvxseyKYAQSdQ6Qq0VQVCfh-LclcYR-ay83UDuknTEbIVaN65tIp0hk2qsS77es5uHerieCryTJ5rgSI7t9_vJasOuEWjrLah9JpCG85Uckt2qhIhUgk_DA5wFir_029S0EUQ39vHiNyHawFOSt9Kz4xVQtZiS2iBEtmDnHR-PDPPQCb14id2ZNkZCWwLpgg8_-RZa5GnPNAfifVzEWCVnGqDXN2ensvqTxOc22cxiwt3T9OEzGGgk8YKSfa2GUdkp5dOqR9OPPMZ10yRqv3LMOHMVLf0ZcW3ytzhBREecrjMSRDHZ6edqLCV_s_9u6SdultgQdtgV8rgQcWbPwAr46SGFHRacRnsnnd8a8tLuSdPd2euJ2FHo88TY0emrOetvOTJ-_tqX1JhEBHgOhR8tm12QiQbk9gkdwabDmFpoHqbLnEMN232iQ1F2m5wnG9R6mnlBhol4HKilKFf72mocIUxYmgaDGqWl4trS12XvnO-jBjERRUnI5hnIp81MQ5-0pO9uO-o8kTks8wysa-UhckCPVWCfHMTjA5B8A6o30vYlp6s06H2WzCaxjAPrfJXKxHziL06pev4A9bEUeXt2YuUIth5VyDcG7QkR6Vnv5XZM6x9xSojikklWsvQzv0j8-QzitY-M8R5BjTIqFv0yM4EnOOu9plLRnBVeqBxiUJutaQNAOdwz8F-AP1jGcm39LJ9aTsvnNEUwhJkYJ8Ke_YcQC65tMGeLTJwFisNbT6yHqB_KpaFsfOGeuEutDJ8eBJu56V3DWb6MsJDJulsJnwvTd0W7PQMI-tx4gwpAHVXL0FhVZ4N0t0EW-g0ReEDQFvtqgQBU55un9CdFYxFw1zAu_3ZcW_88Fi1P0mgjLRKH8DheYJpG3cqMDx-5FKT_1v4CwydyrVvF8OBcQzkrHxBadPtv_RfoCTIFzojMgxLEJWzShgkbH6Y_QXdTgZlwn_eY6jHd5XKp8qMs3qJopjpEDvLL_khasZcW2qDQhI0ScnVWE3l7DpLHh1FRc9y_AlcWQEG_OL0TofeYG6dwTGf69fO8adOyCfOwRNc3-1iulPTpDF9oN6GF3tx0ay45uT9CjB-GxufiVczgsaxs3hNL9nMSF-ESluOJP0OgRUBPw2YA6Y33-sGKrU-kuQmK8IdsSglJmMZahaOvahjK1ODDd4u4p1m3tLR0rFlehXbGrLrc-HQyoC_0z9HF1iruZh4ej33CWus3OmCA4oS5A5mfi6aGMVw6dTMnyazpI5cg3bZoavcIlmIBOrvvUlcHk41BxHwx5GVDpylSllmEL_sm-J9RwdAdpPX8AgecLvWfq3fWGH2MS38xrEfNwha7AKl4DMHgPJHArBgU3C3HHJefhDGPG4tp9o_3Fpj_qWTgPikVzXHp3h2RWITF8O4jzYvVxqSU68_UBtdgWw1TEYIML2gHGqwPfI1PNarN5MpFCjmfA1kB_kJp-PfHCQFK_3uqw1aQy-SdJ3DL77wqNFJWtY2oTqpKdbwFehUpfyQd1z8Hb3mVM337cj18vEVM5eV5I0aboCacm_7eoHzNc0gIEtcaKQZWjhPDk0M47M90sHwA86cwnazU-9htQQcOVp6YZ4=",
+      "summary": []
+    },
+    {
+      "id": "msg_08cd2db6b4a744ff006a3f70475b488191a5aaeb1a30a09d50",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "Here\u2019s what I found for Miami, FL:\n\n- Current weather: Humid, 85\u00b0F.\n\n- 3-day forecast:\n  - Day 1: Partly cloudy\n  - Day 2: Sunny\n  - Day 3: Rainy\n\nWould you like this in Celsius as well, or want more details (humidity, wind, or hourly forecasts)?"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "medium",
+    "mode": "standard",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tool_usage": {
+    "image_gen": {
+      "input_tokens": 0,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "total_tokens": 0
+    },
+    "web_search": {
+      "num_requests": 0
+    }
+  },
+  "tools": [
+    {
+      "type": "function",
+      "description": "Get the 3-day forecast for a location.",
+      "name": "get_forecast",
+      "parameters": {
+        "properties": {
+          "location": {
+            "description": "The city and state, e.g. San Francisco, CA",
+            "type": "string"
+          }
+        },
+        "required": [
+          "location"
+        ],
+        "title": "get_forecast",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Get the current weather in a given location.",
+      "name": "get_weather",
+      "parameters": {
+        "properties": {
+          "location": {
+            "description": "The city and state, e.g. San Francisco, CA",
+            "type": "string"
+          },
+          "unit": {
+            "enum": [
+              "fahrenheit",
+              "celsius"
+            ],
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "location",
+          "unit"
+        ],
+        "title": "get_weather",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 597,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 516,
+    "output_tokens_details": {
+      "reasoning_tokens": 384
+    },
+    "total_tokens": 1113
+  },
+  "user": null,
+  "metadata": {}
+}

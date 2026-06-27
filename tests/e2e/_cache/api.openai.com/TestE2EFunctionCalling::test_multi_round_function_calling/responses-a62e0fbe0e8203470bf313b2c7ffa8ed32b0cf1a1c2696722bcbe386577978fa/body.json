@@ -1,0 +1,151 @@
+{
+  "id": "resp_00e9deb75a410f0b006a3f702bbad8819f818f74b1ca4c73b3",
+  "object": "response",
+  "created_at": 1782542379,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1782542382,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_00e9deb75a410f0b006a3f702bfe9c819f91099983eb633684",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "gAAAAABqP3Avx2sTMH3T7erKqcvkB_YIQcFFKBGqr2ZfGkwd5hI0Bd7A8dQmS0Dp_WB9mhJ1Q4_qhb_fZdga36rTLA-hM-Ii_bBL2WggLjq9SswLGz6w5UweROBiTDFEqQ0pPE0dmsCPoWIvWPiMGFWo_2Mvha3YYx4qDIoPTqtQ_UyIqkuSC55PUVaQkLSduVhZom65oCuHtt9qXN6wWat27M_mztxq7dtz6j3SGVK-utZxCFPdr4RkQpSQlHQYSFLg8NgOlOqEgP6iDt_f052l5LofKzPVZuO0EOO4cGMpLn109IICT0BJ2bmKZhpmaqDiZi4w-u2CeYwveN7nMRmmYb7gH0fKmLd2g2TGQJvWbqpoqU8SXXwzrUZqYDeno1spLBiKJl8szgJ3AU3xLCvduFSz3CLH5482RBnIFXhPaLceQEd1hvQYZZl3SMJ2PfgRligqugb23llsodPTWD8ra_tPQjBLKcUTw0uKgh7lCi5Ff9B5albVTU6uybGVLq1qvgtXWNTL81JGPfvYt6ZzsXYsqso_ZwC0v5bTMnM5YkoOPyzW-n33YNKMrQtHLEKOWvt6qhJi3YyyV2Mj2x8lKtnU4aISsJ-Q6R5UOjj0qMYHSJpbw8GPthy7MedNcFU5l2kP_azSzROwJmoK9gNu2KPBF9-qBysDgM1pJRl2ObQglm3Rv41pG42Hcj3DdRl0HZ4SRoTqW-3a7SEhU0AAqW1iKLLvn5C0LV45xHoOKBZxRQNwtSh7YJPZiuR5mUSZ1I4JtINo4Y684LNtOcya7M9d683PZpwlaoxOsn694Q32HrSusJ5kbNMmBIDo0tnlEKO1w4lj9QOH4RmZ3ihpy5oMsAx39-rKq2cvLZkVDo2TIlyr4fZl3psNObuTyvNgAE304WI4l1t5P36-WOeVT8QHNqknkdlOfFXwWaPmP45VcEMUOld-OLS1ZlS0Vmvdo6CRoFzWkq3cKx1n3ulyr8h7biJoaGbKZUkUlPjACKZwK5RFDyN9bXtAqwn5PAFC7XWJ56AlnYvFPPPOo6VkprjvFGf6Ll1atmLf5mG8GITbGC69kneQcRlwHSIGWzxAKfvbJ0bC6w9vaTY26X1lOUuzYMg27dZWa9uVo3Bjbi67JvwAmoICWjHGKP9w5HLyi1BSixaiueLr6pI2Qyo3bxiCtEB-Il-yhWaKiIaB00yF7s2am_NCrsvYLKdxkNlo9Hj_COKUSFCkaE4nm1g9v_pfhV3FIzD-j0-mQhBCWhy0AXF-APx1Z8yg-g6Uc4iGqXBobm8qqs5KscNCDI0JJJC38CMYk3v-VyNSdch_JUvFIzI_u7SoQhEGSxA1HQyY_gm3jYTW_7q7BIFvtkXP1JG-0ii8jaJi-HWT-qpxFOB_7AW_RBrKK9Le3VCBAqXlhMe85VEsDRRAPvY8aj7YnHsWslIyfjqPQ1JIjwsSvLBXbvXhCOy2BuBIoFspJIegLkhI7GlwTSorq--QMsGj5rPXWbeYIsKAVEhQ5jj-00F3HlrVbLH1NRjcaBofTTfoIrqEcR151GQsVmm1Suj-xdYgEiHQbld_MZnJL1Zqx5SNNXxAsOwfrlOcqiiRl81O-vcd2OEZkcOO1M3RHdqdHse_T7AaVMXr-dHmCx50y65e-1FYJhzTxgY3IK7Tc-rUdN2zz9wSLNLz3qI7Q23CmU_bACLFmzbWzOUTF8ryLTdHlsqmAGcrqxtuqZU-DNTa6xx7Eq0v17pLHmz0US7d8ZdbBO5HMyKN_WtEmwx-AG043IDveApb_B07EP1HtMH2Jf3oUWtovrG4Ch6YFZzJUrNC888vDi-H4ks19tmKzH5gE13lXvpkeoiIeMM6N6Tl62vePDU42i4qkqclGHK9YS_Nwllgnj-nLdESWaRBNmTID7gWShugN3Tz51BEebSy4wOLliFKzFBFQrMXxPbkK1AfW_GZrhMgQiNb6-vP4TBnadDUWh2li_ug6XhuhNZTRhcz4u67lDFginb4yMwloC5l4bGdzwwOH67-3Y6Xgt1i8iE_jqVoB2x1LKnWxFzJ5yooHMcWNFd9ldKzu8QPuttzJ1Nx6Oa-6GjD1qdRDBmcfcs_XPAmHGFNxWcM-g8203m681SfpxgBgOHkgi_ZFmQt3KVd_LNIYHWkHI_1R5rXOlNHgZZ6CAJz10J9KC383RTEtXZITMmBg8mv0hziFOIwTyMYOgxdHtZz8WOWWxLoc8wr98jakEVQx2GF3c5lgpo-k805UXyMXSLJxTfey9VV0iWGHZsRaSwdKp2_scwS_CTpLDcNcLZRHXrinyJhomOwTbZruIgfay076f3eg8F0buhcAHD62JnNOgqLf8sDnvp71oTMGucxoaI41bJnnmGoXH_Bv-p2_IpsYgQir0OsQrni3j66Q0oW1f9yI339Dr0SJA7Z8szBu6g3CMxo04DLo2Wd4t2X7uL7WwCW11HhZwm-yuk-i6VkqsyH1t2MC0mCaquBThR97EmD66oUoqjzquhSx1EkLHn3bbN-jGLTwRkakZSrJEo0UqkVBJJViG6jTC9tUcUxw9yo0V534IBwNyInEi5EicnLi33Hii8O7sAzwDw7zUFfTF5sXC4QUiUNSD3ILxcNhOxfNIWGAaz8VthTpwT1bB_GZVghbU3Nw749uIJLAG5QVpTMy1J9EDegAGpqf8jfS4Awo2kAlsPp4hKi1ropvs7i8H3WhzbhwxH2XNCu_Ixl8lWzozQoWw-oIY8C4uofAwj0so3h_VPvG00rlqhlzgYaZBkOO6uDR_IireUlAVyyMhLIrMRnSCr4yy4LA-Q44kS8g0qZur6INE8SpYyBR-_lXjms9DkdK1QIUx9yCG2jNOBcUTCQYpAsGalS_djPcsrRNwRjSytHXx7D280cV8MSHE2BokU6kc5dZFn8Q_cu3XypbKlWICZk3sb3ZhRefdkPrx_I9yOiDiATaDelICuAqHGtaGERU8SbnrzU6Dh3uyo3yxsC80i_T7zmzGxebS4uaWkpB1Ppb6L2xBO6B8Gjy2bHpGxwko402JZm6RoQ7rTO-kK1In2FZdNB_4mVF-EZXGMV8LHvpjQ2RdJEKzIgxT9XqgdcfStNfDT_NbwinFN5AJL7Ab4ECDu_i6vP28xeZ4eqzZxETjgNl38U2nWh0i0vFB0ENz4DOPlM0FBJ35SXUTomV8Sejk7uq3dlamCioip0Ck95lawhdgmehzglcyVuPtpwJboOjUcrzocUS8jkUoqTslze2Mwlnt-nS7V-fJ7esH4EIty3YP0ghUPqfs5h5pmKzjbVHW5V1z5DNDWEUN54V1Sldjsp52L1YNzH5SPeeoA_jNi3AHiQWgaQdgX9vUB1p9x7iRHPgmmecCUhLJeDhPyviotKwdehpyx4pD_c4FUO8uDoBzz9DhxIJDVu9JGM8fNeAAX2jjE8GXZOVY5iHAB2aTUKhixttV41ZylrHpD8H5TspkC9PzXOakwnPgxuOPHRv1yYaQ9HSgG17vuQ7aZ31R693GsKQDWHvDYE6bGGdruejFEAjcToex8dTY4qPXQNQGmtYB5Xk78yHxVv3D7w7CqJ67pQpGlPel53w6xyP8w0nYxG-bh8898oNjJSFPLeFsXE0HZ6SoDL3kaGjAPsyTELAZQFPpraWs8QRo5QUSZWhDD93P_lChGb8pbEOtYhYojRcL82UWpSuKunf7raDp0=",
+      "summary": []
+    },
+    {
+      "id": "fc_00e9deb75a410f0b006a3f702ed328819fb66df9c22f312017",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"city\":\"San Francisco\"}",
+      "call_id": "call_YqTVul8jULZxamdHOBGPqwTu",
+      "name": "search_users"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "medium",
+    "mode": "standard",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tool_usage": {
+    "image_gen": {
+      "input_tokens": 0,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "total_tokens": 0
+    },
+    "web_search": {
+      "num_requests": 0
+    }
+  },
+  "tools": [
+    {
+      "type": "function",
+      "description": "Calculate the total amount spent by a user.",
+      "name": "get_order_total",
+      "parameters": {
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_order_total",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Get all orders for a specific user ID.",
+      "name": "get_user_orders",
+      "parameters": {
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_user_orders",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Search for users by city.",
+      "name": "search_users",
+      "parameters": {
+        "properties": {
+          "city": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "city"
+        ],
+        "title": "search_users",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 144,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 452,
+    "output_tokens_details": {
+      "reasoning_tokens": 384
+    },
+    "total_tokens": 596
+  },
+  "user": null,
+  "metadata": {}
+}

@@ -1,0 +1,6 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
+accept: */*
+content-type: application/json
+x-goog-api-key: *** REDACTED ***
+
+{"contents": [{"parts": [{"text": "Calculate: (2+3) * (4+5) * (6+7). Use functions for each step."}], "role": "user"}, {"parts": [{"functionCall": {"args": {"a": 2, "b": 3}, "name": "add"}, "thoughtSignature": "CtgDAQw51scfs2GuSpe7kcQVg_pVb73WgUN0O_ewzrGMOsZStiqQj18ELHSFUUioGfqLp1TB39Q2ljTj4H9gZy5dIuSTg3N11hFLqV1hYb1zxEVFFD2TYawmI_9Tv6pFJ_ZzrWqbSZXT7PV27rV-OyaCntk2da6qWO_157Vi3zc4hSxcYsnxrgcUbS4NPNwOuFsJOl4EloGXGjCuy-i84n39j-3dOhTDOZhQqrjWHNtvVj1T3NRA5UZd8ccB1QUrOjGXzwLbP7ahYp7q3CQ_ffbel9EdZneqdoTwpSkSgf7aHtAEu9TsxX1pC_E5fXmQteXb2k7OPgo9ldQp4OYtpSK1Q_crIfalRTiK38Kul25h2TV6qnMmnZ2_me--8vMbj9HNVL14ExKySehK2_gdiFJk-bPYut0BYSG7SX4yBe89jc_VLZG9JcFWkLl6IbSiUs80KwtK_kH_iAA_BUXXDhpkEbb9dMs5WARUSOqyjbbzpE7QncEckFhHgHlR-3LRUNwKTvky4ov9TVUKLAzLL0JsOWquL1wFms1tpht8w6fLo_RwGH_O4-JPsyQrK-rCta_31r5AblRH5I7_2AqkHsyx5LA25dt5OdUIqyOjhCzXaeOMFgX26lhSTQ=="}], "role": "model"}, {"parts": [{"functionResponse": {"id": "00000000-0000-0000-0000-000000000001", "name": "add", "response": {"result": "5"}}}], "role": "tool"}]}

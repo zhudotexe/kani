@@ -1,0 +1,38 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "functionCall": {
+              "name": "search_users",
+              "args": {
+                "city": "San Francisco"
+              }
+            },
+            "thoughtSignature": "CoAIAQw51sedtDtTHHdAx2+vzISRt2TObxdOQTtORcl4xLFpo2c+1Ho/ljUDo7UKY273M3TM37px+H40ePen8g2zAMnzMqUwWHaCzwq98yW/G0DZ6ev4rr+ECDrqlT983gCrmxaTsayQlgdwDT+lVdMMHna/1Gms61ylaJzYgyVa/bBHW/BWKH86eHSbhClQRfLg9CkhR0hNxyCuaMnBq0B2SFAL4uPtSKJyVTsJoqJh6THQYkkl60vYQ2cMB326fFz1v4J0+ZhMVLWWe9pFdnCjKsY+7vPkqeuao9g6YbEe3iBObTZKHVyq6c9JNb54C0MHxzercLgDKARi6icPt2xLVErIddLQx/Y6BWKaBQ8n2cXSiYwBjwEp2us6WZSo/TVMow8aVaWKHc6LwmRJxzLxQ++snJ3t+2RwORDo1spSCjgQMTtZl0uFfX0kcLYJpZSBU5saoyCEFp2hRUinS2PavCKhQv1W0O/jsa5pjHf0I/SP+lVSVfZNhOYSQ1+cGtUE/6QoQNeP+rNVVPURBsTfjr8CsBNphizW5grXVPcWN7RYmV/McmaNkfFGC8XMn9qgpHjaQauhgcEfJ5gwcBeo7WmnuV2VZntIuuv+gZu72AMz/agfIfW1XfjnEvE71kTco1Yw3i18bDDbXEyCXUq6Cnbo2Kh02kCcIhqYGDIxwML+s9kFWLMGKuylwzNgI7sKTbv5sP58LMl3FCYIv1aeaIp5ouTJ/GOyggQIfXYkcWY5ZreXkQaa2KibKSKgfwyYBVHBCpTaXCXweoBmrU+wQzIEaBmBpzMeQzUy3hJPt5wi/3s9yrEZh1iiqr/w+goT6a/SjQnInqXvujVbi9+No8womegPkrCD4xdMpXASMqRNmMxMBtGcTelmSBadeLCQizdmUlPFB/5NC/mA1WQRA2Mn8s6UDbOnvb5rCjzczQsJErMsads5W5ojMQIAfcnpq8nJvqgwF3cOeHsuU/5CBgtsxOwAyZnhzFIrMb8nXS6kDlvkHmgQMPF7YJowG26ca7pJP2SechhfxzgzqC99xHw4/2nzyKdY/6oVPlYTDpyLOCvT4SbreiLdpWWAH7x2mU/bI6Cwg7cTyTxge9tnKAsliOOQ+1lxwbNxrSPwa1g84+mmU+8p6D0GsJLoA/f6tKAq/JL1HTjEqZxAMKuZr9hUnUfpdfCdBrULeqWkwuMZnIRBjzsOE23kmtf/6plVIst9nUdnNPr0PhBAy8v9F/JLX1KQRANkO6OinVTTA2BnYDbvcFsFi0vRi2kw+wzYMq2T7GWLGn7Ffu148WsbDILtA3jC05XZFQ+xM0bYElXgKVp/07m2nxiZrCi7FmcDm6znBItNFg2AfW49IZoHlA=="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "finishMessage": "Model generated function call(s)."
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 168,
+    "candidatesTokenCount": 16,
+    "totalTokenCount": 460,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 168
+      }
+    ],
+    "thoughtsTokenCount": 276,
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "pG8_at6KG4vB1MkPp-7vuAM"
+}

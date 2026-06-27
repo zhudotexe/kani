@@ -1,0 +1,157 @@
+{
+  "id": "resp_00e9deb75a410f0b006a3f70313a84819f8696b3c0dafda43c",
+  "object": "response",
+  "created_at": 1782542385,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1782542388,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_00e9deb75a410f0b006a3f703178a8819f8d6d7a3ff690e4b6",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "gAAAAABqP3A09e63bOz-jDcDOmnJty12xHL36S2dg5_lmUNNnAdC7n6hsHQptBLMlVi75oZtL64wfvsGG4qz5Nfpt_XfbtHCN4rnqEBKnrtuFoOtAQj0-tnJeu_ywMZKIdBOVsXkJNq4LjBRj2FPYrfRpG7S0OcvfkZfk6vUEcxasL3-seJlwaQxOk-g8HvdX6e5Q_RU8QTPeIrcbo2vIwYeQ_DRDTxzH-R5JQO3av8Mw1cMAH4xJAIR9tGFWHGbvTze83wyG_i1b3y4WIPlRhkmGWB6RZbhU419sRkgnRaHCh5rgVFWfNxMUJNQIp1VQ6fy6K9iLImwJDRsx_QjCAilgBb1rPUSikXoOxGwe_8ARvNtviZ1l41jZ_1b5O2A5P8AmmEC87L78VTXF1RQc3Im1W6ReAIUK9QCnfSxlCkLPJDNfSeNPCDWYBJeQsI_auqRzj1442dAcxVqCeUxjrirwf93JdkjVDmsLqQ9wt43CXPJRgQ98kK9ocNkq0M620_mvQ-VXO_joPKKXSvE9TmZ8hfGRsxJId2wAfgXO5e_bvGg_mUT9EiLnmuBiHgRX9EVoiMRRntC1aS6Cn9wfJRrZ4oZpTU8sWudlOcwRn8C01j07kHwni_oSw8I9VO_4nxVYcAs-FS7eZ3VB_yritdrYx4Xf-aeN357YZ7-cUkCqir77Q6ltm5v2Z0L3Ai5G93QSWvfI8pgJap4IQdC-4PlH1BXRl-4yUYbGyrFZjRTxqSi-e-zW1KHiLX7fJCsjK_xsel_3gNxVUsX4myrq6fZZIszVjlNbdvG6t9qrViuwhyJMOhQMqjgStTPkR_oQz3Q9oZ-MZUd0WfXek-zkS2RukyqdcYd4w38qRCRW75uRV86FZuqvpmT0CdzOAijDRQHDFZcttxmSbtPxUvU-ghxGjSFguUgxeILHI0JTgLgQoT50eGnxwCNvEisHH7oUHa4w22Sd3w4kJIwyNah-s6tUd6iwvmPSe9lhx_7DbaLswMQMwtgXjUdCANX2bUcZRpyIHsTpSJkLJ9C_DaqLcNoVK3LuBkH8X8CRcEW_zFv-vgZSoux3rTS2oF-_50ifKQrG7L9uoyOKDR8qaF_EU7cH--pLQEqFJwNalqlagMuHbJD41_bqua4tgteJrBfZYd0X38T6jzDkUeKkXN1M3IUpwttuKjLUjnYOkFGp7tmVtSxhjqMTiZYeD2Q95hvxMwN6bUUj_TMxQZ9qD_5ujfoFDrzz_4mzhCjeGj8FCcqY3lpQPKVlvBH1LIfF7wYK3oHbR7HDjpX-R7IT39fo3fl3CSQgqkRlFPpRIjSu0eMWMgN1B2PGNLFwhduLwGGaTq8WryeXWCBj6KmatbYWLE0RnYyFSaojiR5fxdvR2Z9SOzGVlFSkS0RmbCXnDSc8DnpvjdMZPfqa2PEXmGV_T0rz2niUepyLV5lS0bEzHaGZkMfVb3BDG7qTTq896vw67C3-8-PFq7GvL2tidgl-loy4aaSONJ2yIdxql-rfVYtvIfPXt329aXacmrQGXmTzN3Skk0RQLj6HasNc02GZ4aimV_jy4zzDOaqYhmgsL4sKFVvqdHHY0x3QIWOybxdKmWAM5j6Zv01GEe4FjtVKWDpI9kV5spPv8vuKka71JOLpdnlgxU7pqhA7cSMHTFmKTNELhWjkCyx-mbY9u0JVsRkqFD5uKusJ0kBVukkj_ZNr_3ZcUxeLlxauV3qjk6hauDsSdmw9MbLv33aJyF3nuCmoXqTe7EAMSV56ibyChwD32ImlZAHh3nyNEFpPgswc9VCchSCwX88xqDlPmw-Iett80TXfV5SYYeWigQzTXjhXGruhokRUQ0YrjmccVH6HGh3BlM_ka3Oap-xeoL_E8_TpDmk3H_kM0vOeDYD_F8sh0ZB2yZisdCcF4XKJSXUeFbuOfs5jw-7mjABfsXlyKbxHTBAPBSUuEVukk1usaB6kVMtz_QxnKEc9bDFcvSWoPkGxiDCrRBZJGIWm0AiJaodYEAp_-129xUziLcBbqT8PoKT8p65AYTK93CLCIPM_Aipx-EHaJ0xaIuIhzjIahw-xxhFDy9SF26Ay8nDW7jGELEzaG-UuTcGufI-qmtV3UMjG1cv8H3gI_6DXEVlUlB-MMjNctK3uZk6idJaJGVXaN8xgS-nE_OK0gKlq8h0VDBZAdCyjYcPYzWwPkb5T9ubmvJ7agQL2FV5pOyr-zZu5hOjm8XR7g22p3ewWUQ7RJ72LW8fHWk60LfPoxIUc27jjqVO97AfYNe5LTP7fhhAQoTqEPUImT6w8E09dxxMD8TP53Qb8qyLXuIV8gAX-DYsOpGJDrZOzI051j9xQ3RY-A7Ouu2P38Qa3R50ZD4rTe4-nnMOWUwlR0gOyNFMhEN_phXG9zIIjcWsyCMQKtDXJKdAUSL8OISXWftKangd9HA527XhNSWwlT_XHnUONLcwaJywo_NCdV1CzO96at_oo-DDY9fF89pquPe2k7W1h52VGlupp2G7PXn88e_WC3Kw2AzJvfWaby9QHpBHzkkvPm_6XdxkeX-49pwtcYYKbFnUm8PzJ8_2pXgga4o3E3qaAZCB8QPc8xylyZ_e1Ku7JDEsi86mlEurF1tVVRkqP4YsnCYtcFcSMc3FI-F2W7ciHzaPX-urucNivWQrABfMYlXziIaRM3-X-0cjKqjiBlGa0N91vWPtiAquCFaOH9wjJCGFdncaBIPSJ7rSvJ2OgmN_xc8Hjm6gVzYb44bp2oYu9AH6Zl3r2x6KgQxXD4_Em1slnQLfEWIq1FJI1vhvBPMKv9hbOctl2FJ2WTEJe0VoafrN4tX1LaT8hqmSXrkl9lRBzCWR3RQ-Y6AdATSmBNwtmomIsHbLUYrZ7C_BtDAtFq1ZMVTha8kwChz3pZ3bC_z47-zea_9ynNG0iemz7s9GA2gpAnHQAe_aoRU7j9AuhTcdIJlA-wL0t_l2wR_AhKPpAFUIEc2wWcijo3J4a2rxMWHbhKxcBP86BvT2vrUM6y9n7Y_ls3v4kg4TGcgqHYYDOWfoLu3EaEDKoHSyq2EaHpF7e__VH4IS-zNUOIqSdqTyzrRAn8nqjDVcdXCFmb_HUpTgcaEquKRW7_xgrwg5TrHlFraNe68dDvtzKD1d8LoZpe2xa3J_Lnv5ud5nHP_7uNMaE0kOd1QWR8-jtU1yoa7jJoiSV3OESrK9bJ3ctv5-lwmrtcHuItnb_FoO15crDKfJqw==",
+      "summary": []
+    },
+    {
+      "id": "msg_00e9deb75a410f0b006a3f7033f164819fb0af2947cbc567f1",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "- Alice \u2014 $1,225"
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "medium",
+    "mode": "standard",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tool_usage": {
+    "image_gen": {
+      "input_tokens": 0,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "total_tokens": 0
+    },
+    "web_search": {
+      "num_requests": 0
+    }
+  },
+  "tools": [
+    {
+      "type": "function",
+      "description": "Calculate the total amount spent by a user.",
+      "name": "get_order_total",
+      "parameters": {
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_order_total",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Get all orders for a specific user ID.",
+      "name": "get_user_orders",
+      "parameters": {
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_user_orders",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Search for users by city.",
+      "name": "search_users",
+      "parameters": {
+        "properties": {
+          "city": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "city"
+        ],
+        "title": "search_users",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 775,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 408,
+    "output_tokens_details": {
+      "reasoning_tokens": 384
+    },
+    "total_tokens": 1183
+  },
+  "user": null,
+  "metadata": {}
+}

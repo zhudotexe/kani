@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "headers": {
+    "date": "Sat, 27 Jun 2026 06:27:13 GMT",
+    "content-type": "application/json",
+    "content-length": "20",
+    "connection": "keep-alive",
+    "request-id": "req_011CcTHkqyRj2B5wmQYrXncn",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "anthropic-organization-id": "cb409f94-8c93-4ff3-b5de-502af8eca0eb",
+    "server": "cloudflare",
+    "server-timing": "x-originResponse;dur=63",
+    "cf-cache-status": "DYNAMIC",
+    "x-robots-tag": "none",
+    "content-security-policy": "default-src 'none'; frame-ancestors 'none'",
+    "cf-ray": "a1226277e98520b2-IAD"
+  },
+  "body_path": "body.json"
+}

@@ -1,0 +1,151 @@
+{
+  "id": "resp_00e9deb75a410f0b006a3f702f63e8819f8d70b4a26d6fddd1",
+  "object": "response",
+  "created_at": 1782542383,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1782542384,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_00e9deb75a410f0b006a3f702fa5d4819f9491b86c671f0314",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "gAAAAABqP3AwNBetPDlLiQevs_gcE534LgE1Grp-ebqzcYdBuCAsVPLXuZ08zV2E9jYdHkEvErR2YPl--Eol6GURPz7_oCNsVo5gnWFVfHBIPSPbHN5NoCn0gKQEDhwKnx_FnkU1gWflSA5ShlQveg8hNnkoy2v9vMrhlwwbeW5BTJhR23n0-PNWI4QqTHw0qF7AUSCEsfwnDDrl8c_GqQGqOe4NJyykIsj_hgtRH9XTf9SELsaz2lCf5-BZyhkucPblfkwDcZGaR6vBH2ztUMm_MFXKAckK111Tnv6QqGQAVbEL953zZ98IAvwnIW1N0bhSPl1wflZhFpP7QdKdoAaLLvJska7qc6jG8OXGdSpRkFKc2EeAUGIoL-xuHUGWQVpNcTUF6R1J5E2kUL-MxKc5NuvZBwJrkYw6Ua3M_Nfxn946skZhMJ8q69Mjib1o4Q_L_yEqzEwohpWY6vwtoAmPZYwuiYuHlrmCe3D5VfvBMS6KvR2ERSsqW_KFaTcook9hB24F5-zeJBhoCLAPJaetwWOpyNSy8V5G4StsD4UTCAhfs57A8YgTzid8T6tasma4yKHcVJ6Gg_U-fX9aGaFZCv67DvP_ogbYlrg6WTtW0lEU9rJa0O7pK0DADt4pwlxlRB99ZINhOcNAROz7Vd2OwV5JMcHJxO5he3dNPms1oIRQjFt8tJzJm__4c7iJY-yU5RXH_QGTJnr3J2Pb65AID6q0zQz2ubt0LoUXoNo7SM-CM3qWQ9TAIr4sNt6-66Qeu5lr15VFHTpYX52PvTUm6rbdev6JgaLYxbj9rCnIwSxewetCKyfgtoM-pSGqHw1GomrhdaqS_M9odVT3gbwWUYcTlfRYXLpWZfk8LiD0gfX8CwZNPNFCrvTaIPIQkR0evRsmuj7ITvhOMnZCqOqKbNckvMgYBf9djmCbB-yM_morVSfNj5HTNeSa6i1Nhbsn-kEF1K3uK6O1Q6JExLyVGwRDq7KMTTQ1uMau1tZWD_qkm2HYkoVd9tlqRHJ4S-AQ8yGuL7ELicS5xmb3soGOoWHtuWAlKFRX320gVMJ-KuHBlsvhfJqCMwfuiLR3myz5lry2iT5FRWOUuR-6DCz3evxYbTQHW7CpKhgWDSpd8kppHprnXCiYBcblaLjs9j7cAOlaTTvtzhpyUa3MPtMRWCVyKI7E1uRc_uDZQshNwsOHa9xa03peUg8sapNo4aT-3ReG5rCtFLyGKjny5hO2GMaWnc04VEzBNZ-HVO_zC9DfKwSFTRUrvwPiGjZCVbuBDplK1DFC3J7V-WrsrjEQdsMslLaqMZIQpGBf_s3l-rIH8Egt07qsv29rM5hfAAb2aMHZmPcw_MqibowpRyArZOy43bNfLZkKsve6uYaFkGzxndEKXI7J7pZC0Ir8ho14ZtsszncGoUBFxxUpXbw50BeRfo88E3LGvwvl6Jkc8fMo9JOlkKSebeznMcfTws2Jkr8qi5nympJhZMlYPtelZUEiStR9l8IaXFjyMTlSHhwsHom407hxzNL8Y3OX4gNF78uQ3mg2kgFPA3n7dzVUY0AhknXR1wDIVbN67xUR0X-S7ZCnK9lTwYrSlkj4LVTa1uACqjMU",
+      "summary": []
+    },
+    {
+      "id": "fc_00e9deb75a410f0b006a3f70307690819fb548203d8a3829db",
+      "type": "function_call",
+      "status": "completed",
+      "arguments": "{\"user_id\":1}",
+      "call_id": "call_wAu7Q1sfyvDp6oDGtx3ZteMP",
+      "name": "get_order_total"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "medium",
+    "mode": "standard",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tool_usage": {
+    "image_gen": {
+      "input_tokens": 0,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "total_tokens": 0
+    },
+    "web_search": {
+      "num_requests": 0
+    }
+  },
+  "tools": [
+    {
+      "type": "function",
+      "description": "Calculate the total amount spent by a user.",
+      "name": "get_order_total",
+      "parameters": {
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_order_total",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Get all orders for a specific user ID.",
+      "name": "get_user_orders",
+      "parameters": {
+        "properties": {
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "title": "get_user_orders",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    },
+    {
+      "type": "function",
+      "description": "Search for users by city.",
+      "name": "search_users",
+      "parameters": {
+        "properties": {
+          "city": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "city"
+        ],
+        "title": "search_users",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 621,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 140,
+    "output_tokens_details": {
+      "reasoning_tokens": 64
+    },
+    "total_tokens": 761
+  },
+  "user": null,
+  "metadata": {}
+}

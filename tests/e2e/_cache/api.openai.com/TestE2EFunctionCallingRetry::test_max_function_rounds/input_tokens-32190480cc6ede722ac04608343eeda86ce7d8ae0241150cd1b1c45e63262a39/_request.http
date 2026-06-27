@@ -1,0 +1,6 @@
+POST https://api.openai.com/v1/responses/input_tokens
+accept: application/json
+authorization: *** REDACTED ***
+content-type: application/json
+
+{"input":[{"role":"system","content":"You are a calculator assistant. Use functions for every calculation."},{"role":"user","content":"Calculate: (2+3) * (4+5) * (6+7). Use functions for each step."}],"model":"gpt-5-nano","tools":[{"type":"function","name":"add","description":"Add two numbers together.","parameters":{"properties":{"a":{"type":"integer"},"b":{"type":"integer"}},"required":["a","b"],"title":"add","type":"object"}},{"type":"function","name":"divide","description":"Divide two numbers.","parameters":{"properties":{"a":{"type":"number"},"b":{"type":"number"}},"required":["a","b"],"title":"divide","type":"object"}},{"type":"function","name":"multiply","description":"Multiply two numbers together.","parameters":{"properties":{"a":{"type":"integer"},"b":{"type":"integer"}},"required":["a","b"],"title":"multiply","type":"object"}}]}

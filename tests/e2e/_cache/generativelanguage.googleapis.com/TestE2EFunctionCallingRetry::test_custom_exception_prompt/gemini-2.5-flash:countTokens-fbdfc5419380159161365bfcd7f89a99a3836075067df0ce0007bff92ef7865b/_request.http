@@ -1,6 +1,0 @@
-POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:countTokens
-accept: */*
-content-type: application/json
-x-goog-api-key: *** REDACTED ***
-
-{"contents": [{"parts": [{"text": "What time is it?"}], "role": "user"}, {"parts": [{"functionCall": {"args": {}, "name": "get_time"}, "thoughtSignature": "CrUBAQw51sefvJmvyO-iqYXVvdRNhkkJPjDov_9U0LtmK5IZSy3RIPrczJdeOzY_uE6k18hkeXyLOzlgZnZ4MEu-zW3YnUUOb6HM9elHz0wbMM1hcOK-BSj5VPLY8EtgTZbob7-hUWkeDwbN3L2t4q-a1uRJwx6hjeO8MtsbXh4oM84THEqvYFHfqDziVFLQ-iaqIRI_7GDSPkd341aQocME107LkYKeCZheMGa2ByDr0O3plf1GvA=="}], "role": "model"}, {"parts": [{"functionResponse": {"id": "00000000-0000-0000-0000-000000000001", "name": "get_time", "response": {"error": "CUSTOM ERROR HANDLER: The function get_time failed with error: The time API is currently offline (error 0xDEADBEEF).. Please inform the user about this error."}}}], "role": "tool"}]}

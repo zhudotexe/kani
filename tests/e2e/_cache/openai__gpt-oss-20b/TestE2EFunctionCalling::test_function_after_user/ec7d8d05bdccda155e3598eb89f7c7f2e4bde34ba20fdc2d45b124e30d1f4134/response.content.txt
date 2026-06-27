@@ -25,4 +25,4 @@ subject: string,
 body: string,
 }) => any;
 
-} // namespace functions<|end|><|start|>user<|message|>Send an email to john@example.com with subject "Meeting Tomorrow" and body "See you at 3pm"<|end|><|start|>assistant<|channel|>analysis<|message|>We need to call send_email function.<|end|><|start|>assistant<|channel|>commentary to=functions.send_email <|constrain|>json<|message|>{"recipient":"john@example.com","subject":"Meeting Tomorrow","body":"See you at 3pm"}<|call|>
+} // namespace functions<|end|><|start|>user<|message|>Send an email to john@example.com with subject "Meeting Tomorrow" and body "See you at 3pm"<|end|><|start|>assistant<|channel|>analysis<|message|>We need to send email via function. We'll produce JSON call.<|end|><|start|>assistant<|channel|>commentary to=functions.send_email <|constrain|>json<|message|>{"recipient":"john@example.com","subject":"Meeting Tomorrow","body":"See you at 3pm"}<|call|>

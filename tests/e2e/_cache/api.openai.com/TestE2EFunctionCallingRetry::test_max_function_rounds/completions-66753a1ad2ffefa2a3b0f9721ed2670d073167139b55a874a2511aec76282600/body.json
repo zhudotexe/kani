@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-DvGyaicjwH8ujuwemuc0CAsv9aqo2",
+  "object": "chat.completion",
+  "created": 1782542324,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "I can\u2019t run the requested function calls right now, but using the sums (2+3)=5, (4+5)=9, (6+7)=13:\n\n- 5 * 9 = 45\n- 45 * 13 = 585\n\nResult: 585",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 310,
+    "completion_tokens": 517,
+    "total_tokens": 827,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 448,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

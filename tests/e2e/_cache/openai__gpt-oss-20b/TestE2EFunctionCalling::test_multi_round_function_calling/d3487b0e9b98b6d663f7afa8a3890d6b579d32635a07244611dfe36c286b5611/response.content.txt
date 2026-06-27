@@ -30,4 +30,6 @@ type search_users = (_: {
 city: string,
 }) => any;
 
-} // namespace functions<|end|><|start|>user<|message|>Find all users in San Francisco and tell me their names and total order amounts.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to use function to search_users with city "San Francisco". Then get order totals for each user. We need to call function search_users. Then for each user get_order_total. Finally output names and totals.<|end|><|start|>assistant<|channel|>commentary to=functions.search_users <|constrain|>json<|message|>{"city":"San Francisco"}<|call|>
+} // namespace functions<|end|><|start|>user<|message|>Find all users in San Francisco and tell me their names and total order amounts.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to search for users by city "San Francisco" using search_users. Then for each user, we need to get orders total using get_order_total. We need to output names and total order amounts.
+
+Let's invoke search_users first.<|end|><|start|>assistant<|channel|>commentary to=functions.search_users <|constrain|>json<|message|>{"city":"San Francisco"}<|call|>

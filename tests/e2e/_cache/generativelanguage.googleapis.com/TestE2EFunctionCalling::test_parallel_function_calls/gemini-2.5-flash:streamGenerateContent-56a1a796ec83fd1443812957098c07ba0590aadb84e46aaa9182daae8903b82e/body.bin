@@ -1,0 +1,6 @@
+data: {"candidates": [{"content": {"parts": [{"text": "The weather in San"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 333,"candidatesTokenCount": 4,"totalTokenCount": 337,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 333}],"serviceTier": "standard"},"modelVersion": "gemini-2.5-flash","responseId": "o28_arfFLcPV1MkPutGWaQ"}
+
+data: {"candidates": [{"content": {"parts": [{"text": " Francisco, CA is Foggy, 65 degrees fahrenheit. In New York, NY"}],"role": "model"},"index": 0}],"usageMetadata": {"promptTokenCount": 333,"candidatesTokenCount": 23,"totalTokenCount": 356,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 333}],"serviceTier": "standard"},"modelVersion": "gemini-2.5-flash","responseId": "o28_arfFLcPV1MkPutGWaQ"}
+
+data: {"candidates": [{"content": {"parts": [{"text": " it is Sunny, 75 degrees fahrenheit."}],"role": "model"},"finishReason": "STOP","index": 0}],"usageMetadata": {"promptTokenCount": 333,"candidatesTokenCount": 34,"totalTokenCount": 367,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 333}],"serviceTier": "standard"},"modelVersion": "gemini-2.5-flash","responseId": "o28_arfFLcPV1MkPutGWaQ"}
+

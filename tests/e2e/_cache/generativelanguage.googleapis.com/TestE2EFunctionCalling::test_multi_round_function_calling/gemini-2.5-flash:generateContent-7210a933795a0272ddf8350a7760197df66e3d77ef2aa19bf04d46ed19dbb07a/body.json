@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Alice from San Francisco has a total order amount of 1225.",
+            "thoughtSignature": "CsgEAQw51sd4goiIBT6p1RyQ+IgcdCo8Ou5Z4OkBs/K7jDv+/+flqWhnrbYnVnu+JHgIWUbpi0gPwKwVOeQcIWOHe4FNr8rdI8WSSXI0Bhn+71wQfrMAX/WldNYN9zJaTOM0lkL7GZyWytua02akkC7zOH2vpptoUoZk3EJOg33xWAg8qtoX76vxGYogmNzH7x2XxBffTtbSqG4xgiOhucZ6y13/GsvGtIOHKhmh074z+xmTv9rZ2BRsepNrS7mTiRLNdN4q750fbnpk4FOkPPPNwuhaRcukRZDluG/wDt8i95zOJRjBYPgFWc9G7hXsJAhGu08eGzXSggzFlS4opFn9ZQFN/xjTIEDetjZjo710xCmSw4nS/OYADYIgiIsyiLCqcs4E7Jo7R7QtV42HN7vfcjkww5IerDpvE/wH4UT6Baxr+7NJF/4r85TGLOqW8YUVGsmaDMpREMzKS6Jdx8dUkYBZ4Fxnx1fBzTCElmvlFtvKx6ki3QDiR9WoUCzLeWyLwFLc9Y2xdiwDyzdWzmyXQcWPd6r14lV0c1ogpDEJV+v9qD0WoSNdqFI3t5HHg8bjw5yQEMYTmH22DxNwZWlQsM7+3VrHqs+n2XrcKjaIY3W4TCaesaFmMhXbcT0Y9kAcFI2mGFo4piS9T+ah9ctGBA3k6oe8M0PXmtpkcUIYxRyIqme1ewb2f4aMi6ZqeZSC6eFdGJDd63vjc4TiEhFdy9q1CdFtdD8303pYltGPj6Sd4c4mHtSOCelVPpqIgGqzBPtaPdKHAhc="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 252,
+    "candidatesTokenCount": 16,
+    "totalTokenCount": 426,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 252
+      }
+    ],
+    "thoughtsTokenCount": 158,
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "p28_apCDE5Wc1MkP8-mdcQ"
+}

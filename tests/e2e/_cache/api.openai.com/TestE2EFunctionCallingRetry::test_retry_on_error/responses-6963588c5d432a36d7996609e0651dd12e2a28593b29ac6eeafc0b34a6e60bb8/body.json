@@ -1,0 +1,119 @@
+{
+  "id": "resp_02e552b671d23eeb006a3f8f6dffa081a1975931387ec104e4",
+  "object": "response",
+  "created_at": 1782550382,
+  "status": "completed",
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1782550384,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "model": "gpt-5-nano-2025-08-07",
+  "moderation": null,
+  "output": [
+    {
+      "id": "rs_02e552b671d23eeb006a3f8f6e47ac81a19ef356beff494389",
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": "gAAAAABqP49wTNR5rAdymoBUTE5EJznOWq3yFP4PCiO83fZive3M9wxVvO8Qg5p7NnnO7ENuFULiar559X69uMypDVb0IcjaZBOpzHbSmjwpYi9UVdjPmUQaWvMA6Yq5io1SlvBBII5IjEhJXOsTE6Qjyy4IfBMvke1HIu44AnwvNnqIenl0sq7-jwv1fPv5fM_wGM7Ph73CEL-N-fOw2hkwR89g1njWG1xEQifAY5L0ej_NaOKvB9oRwIXldHR3H6aIV7yY6T8B8ryErElUP953ba8YxWm3SSTAPZ_Fdn_pfG2uQV15Xo3MzKsRSHkCDepSUIRlIAdjfKRUnZgJTVIuFlxSs1P9vWatjk6Sy6TuAk5XvPK-Zk6sxcq5N6IrUVNvmnM1HEYEU9dKUmkBBFRWYpU0Z5YQdynOXniTiG_F9BoXzKWfWMYWLnN2InOpConBNJ7RwLoVhtJ9OJCkHvAjVBJsmi6q9vQUF1_jy7MDK6p39LaT44yj2mOp9K7TEcdozOkH3r_Z9QZR69rfcuZdzHPg4EwYNBqZZRr6DdYFwXDCE3Sed4PmOZ_Ba1buNJkmXoP5RYbwKbdBWgmI3YJcXYl6VylakFHuCBEWvLXRJewRahhOVcqxQhNw2zWub-UL0okKLFByNk3iAMESpggxwLu6EEsI9xwkuJj4M1-IlvjM-p5wLdXiHwQu_VKjwSNblQk76-EUzw4A5FbnQ-YqHqlCdd6eZqWTGRbow-uGSAPwWoR9zEZOkuj1n3zwHQVbCD6OzFwUoE2Mv-uItS5HfhtFEsqkjn1_C8xD5q0qvcLC8zimlbb5lNcNjw1GVbohfjrhJqshWmxnWM1iHCqmk4gm2_oKLjWQCDEWjQLeFp9C1Hfj10yj9vop0cRC_HPjU2MEB_fn_T8AN5T6CHkH_UisNMLcq33O2GkSpmNDVj9jY5stt7y3N6UgfT245yUmcu_2OZyIVT4UCSwLnKa_UGDDATEj_v5Gu7IW_CefnsktlVRo6_5Gskm8yjvcGxYLogqHRr_q-6ID1RAgn4TVd5VOMUT0oMsPaptjA3LKP7TA4jpb_wBMheSd6HyrKb2gxP6bH5mNiiwb8x328j24JcTWWcBMaXMmfm1rZHB1BRtC24drqIOZdlilXJXNm2xXVvb90-VcB1FBDkLW2E1LfYwJTcqjtqa8rwBbtO5lZHinueUbU5zkoN7fQmNEazvf-2jalQfHvHZGNH8excuJ2vC0HgoOpI-WISDvcDVVCdGkFsLtJY9v7OZEILrFsfGw5dgi8J5r3yYqWLfBI7e4X9jNvFVxmW-NCAdc5cq_s5Pp7sCvrRn5mVuvuOk-FVQQWdmHVO6UIjJoXa-tQ6xPK_1z1msQRHlFe_Jn_8hJWMmrEMjX6PsMfKGnB_R_K7S3edy8JcaWRpcWlqpmfP_X__ejDY1TY8EDUtQ13XS9jVuq8YwlC8oayhUaI-gukJbogWp6jRb-n25qeABhPcwmu6Lx15X14rdY2dekKV7WRKuijZ5U1tWBZa2a7C2fIMRyqRmSr-qt-ijbM4uju3FcDW_3QZpv4y1axMJdTX7BVBQjMk4x07fk77caoQbOXbTtZxULCAQ9lNhdaJ-a6m9wWR8QMq_1lzhaxh3j4vI2bWhpiXLOd4E8gydYYdmSlyoHofT5BX598-8B9fY7xTG4pzOHRMzg6IwfEFM6paEPveRgtP9_ZiLqE42mpoS5M6UuCXkCzG3SlmxIN3Qp7xBad-99cGLv312_fBGu62avJfvnVCasNg_h6Mw_3gSxqeqa22xX48ZSoCRjXKLWyfeUItJtPbEhOdhsLu6S10ApWd0Qx99FnfOzwYx2Dt7ivJQIJOLiCgD1CfxVHF0knBzZW6JYG44BgoEiugU2cS_fFzm-ueWIVUqPnt4K48znTgMXK6omSBPk-1ZLJe5A1MK7chRjOvkVVS3a3cS3lb9B3-JBXHN_sm_S42j-dmFEbYo4GgV3reBC0hbDAEb8oBC_p2p3kNOR2JA3GQVJZqTDrvtmdZhf-E6VYOjK8o-8PAmngjv4me1ZAKMPHpotWE560icL-foC2v_CVSJHojBZf0hQpeLn1DqHqj5yY2VSuES7IxtvhXNTKccOgcTEuLzzN9iuB6Pj-bkd4mmUijMksJMIbuerKB3OaynO-CgUHywA6bgfCgg1",
+      "summary": []
+    },
+    {
+      "id": "msg_02e552b671d23eeb006a3f8f6faa6881a1b287563beabdf7bf",
+      "type": "message",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "annotations": [],
+          "logprobs": [],
+          "text": "First call failed (as designed). Retrying...\n\nSecond call succeeded: \"Success! x = 42\"\n\nFinal result: x = 42."
+        }
+      ],
+      "role": "assistant"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "medium",
+    "mode": "standard",
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tool_usage": {
+    "image_gen": {
+      "input_tokens": 0,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 0
+      },
+      "total_tokens": 0
+    },
+    "web_search": {
+      "num_requests": 0
+    }
+  },
+  "tools": [
+    {
+      "type": "function",
+      "description": "A function that fails the first time.",
+      "name": "flaky_function",
+      "parameters": {
+        "properties": {
+          "x": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x"
+        ],
+        "title": "flaky_function",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  ],
+  "top_logprobs": 0,
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 786,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 248,
+    "output_tokens_details": {
+      "reasoning_tokens": 192
+    },
+    "total_tokens": 1034
+  },
+  "user": null,
+  "metadata": {}
+}

@@ -1,0 +1,47 @@
+<|im_start|>system
+You are a helpful assistant. Use the provided functions to answer questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_time", "description": "Get the current time in the user's time zone.", "parameters": {"properties": {}, "title": "get_time", "type": "object"}}}
+{"type": "function", "function": {"name": "working_function", "description": "A function that works correctly.", "parameters": {"properties": {}, "title": "working_function", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What time is it?<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user is asking, "What time is it?" So I need to figure out the right tool to use here.
+
+Looking at the provided functions, there's one called get_time that's supposed to return the current time in the user's time zone. The parameters for that function are empty, so I don't need any arguments. The other function is working_function, but its description says it works correctly, but it's probably not relevant here since the user is asking for the time.
+
+Since the user's question is straightforward about the current time, I should call get_time. The working_function might be a red herring, but since the user is asking for time, the get_time function is the correct choice. No parameters needed for get_time, so the tool call is simple.
+</think>
+
+<tool_call>
+{"name": "get_time", "arguments": {}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+CUSTOM ERROR HANDLER: The function get_time failed with error: The time API is currently offline (error 0xDEADBEEF).. Please inform the user about this error.
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user asked for the time, and I called the get_time function. But the response came back with an error saying the time API is offline (error 0xDEADBEEF). Hmm, so the function didn't work. I need to tell the user that there's a problem.
+
+Wait, the error message is specific. The API is offline, so I can't get the current time. The user might not know why it's not working, so I should explain that the service is temporarily unavailable. Maybe mention the error code, but the user might not care about the technical details. Just say the time couldn't be retrieved right now.
+
+Also, check if there's another function I can use. The other function is working_function, but it's described as working correctly. However, the user's question is about time, so that function probably isn't related. The error message says the time API is down, so the working_function might not help here.
+
+I should inform the user that the time service is offline and maybe suggest checking back later. Keep it polite and clear. No need to mention the error code unless the user asks for details. Let me phrase it simply.
+</think>
+
+The current time could not be retrieved as the time API is currently offline. Please try again later.<|im_end|>

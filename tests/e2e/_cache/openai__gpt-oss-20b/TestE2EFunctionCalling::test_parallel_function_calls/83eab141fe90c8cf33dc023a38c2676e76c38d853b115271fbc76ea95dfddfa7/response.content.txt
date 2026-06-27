@@ -28,4 +28,8 @@ location: string,
 unit: "fahrenheit" | "celsius",
 }) => any;
 
-} // namespace functions<|end|><|start|>user<|message|>What's the weather in San Francisco and New York? Report in Fahrenheit.<|end|><|start|>assistant<|channel|>analysis<|message|>The user asks for weather in San Francisco and New York, report in Fahrenheit. We need to get current weather? Likely current weather. Provide results. Use get_weather for each location. Provide calls.<|end|><|start|>assistant<|channel|>commentary to=functions.get_weather <|constrain|>json<|message|>{"location":"San Francisco, CA","unit":"fahrenheit"}<|call|>
+} // namespace functions<|end|><|start|>user<|message|>What's the weather in San Francisco and New York? Report in Fahrenheit.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to answer the user's question. They ask: What's the weather in San Francisco and New York? Report in Fahrenheit.
+
+We need to use the get_weather function for each location. The function requires location and unit. We'll call get_weather twice, once with location "San Francisco, CA" unit "fahrenheit", once with location "New York, NY" unit "fahrenheit".
+
+We need to produce a final answer with the current conditions. Since we cannot know real-time data, we can pretend or show placeholder? But we are expected to call the function to fetch data. As ChatGPT, we need to call tool. So let's call the function get_weather for each. Output would be two calls. Probably we can do sequential.<|end|><|start|>assistant<|channel|>commentary to=functions.get_weather <|constrain|>json<|message|>{"location":"San Francisco, CA","unit":"fahrenheit"}<|call|>

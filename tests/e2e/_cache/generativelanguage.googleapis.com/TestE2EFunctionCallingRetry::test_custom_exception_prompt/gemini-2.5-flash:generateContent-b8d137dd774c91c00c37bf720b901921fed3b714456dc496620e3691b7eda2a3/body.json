@@ -1,0 +1,32 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "I am sorry, I cannot get the current time. The time API is currently offline. Please try again later.",
+            "thoughtSignature": "CssBAQw51sfXj2df7EjosMBXM/QZNdTNRg8udBx6EYJrkWHs5oEtVNidNVNQ2gT4citp4S1lYVKzc1u/XEZPONgbcU9nhqzi+yMxShL0YDpzNFCBLWnonqUywrMLOijv7A8cR2JyYOmFKYmJkF0fH8kPGJ4TrOczgF6g/VSJPzsSeoUld663iD4br8CtH54TsdlR43HjmOx1vOdDX16wNvB1uU2BRb9A90OUHx1denIcI251RgqvYzWKGT92nHkLQu/MlApP+v77roX4tvY="
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 143,
+    "candidatesTokenCount": 23,
+    "totalTokenCount": 207,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 143
+      }
+    ],
+    "thoughtsTokenCount": 41,
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "t28_atDEJ7DO_uMP3N3uaA"
+}

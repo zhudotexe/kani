@@ -1,0 +1,72 @@
+<|im_start|>system
+You are a weather assistant. Use the provided functions to answer weather questions.
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{"type": "function", "function": {"name": "get_forecast", "description": "Get the 3-day forecast for a location.", "parameters": {"properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}}, "required": ["location"], "title": "get_forecast", "type": "object"}}}
+{"type": "function", "function": {"name": "get_weather", "description": "Get the current weather in a given location.", "parameters": {"properties": {"location": {"description": "The city and state, e.g. San Francisco, CA", "type": "string"}, "unit": {"enum": ["fahrenheit", "celsius"], "title": "Unit", "type": "string"}}, "required": ["location", "unit"], "title": "get_weather", "type": "object"}}}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call><|im_end|>
+<|im_start|>user
+What's the weather in San Francisco and New York? Report in Fahrenheit.<|im_end|>
+<|im_start|>assistant
+<think>
+Okay, the user is asking for the weather in both San Francisco and New York, and they want it reported in Fahrenheit.
+
+First, I need to check the available functions. There's get_weather and get_forecast. Since the user is asking for the current weather, get_weather is the right choice. The forecast is for 3 days, but they didn't mention that, so current weather is needed.
+
+The get_weather function requires location and unit. The user specified Fahrenheit, so unit should be "fahrenheit". They mentioned two locations: San Francisco and New York. Wait, the function parameters take a single location. So I need to call get_weather twice, once for each city.
+
+Wait, the user says "San Francisco and New York", so two separate requests. Each function call should have one location. So I need to make two tool calls: one for San Francisco, CA, and another for New York, NY. The unit for both should be Fahrenheit as specified.
+
+Wait, the location parameter example is "San Francisco, CA", so I should include the state abbreviation. For New York, it's probably "New York, NY". Let me confirm that the function expects the city and state in the format like that.
+
+Yes, the example given is "San Francisco, CA", so each location should be formatted as city, state. So San Francisco, CA and New York, NY.
+
+Therefore, I need to generate two tool calls. Let me check the function parameters again. The get_weather function requires location (string) and unit (enum). Both locations need to be passed with unit as fahrenheit.
+
+So first tool call: get_weather with location "San Francisco, CA" and unit "fahrenheit".
+
+Second tool call: get_weather with location "New York, NY" and unit "fahrenheit".
+
+Wait, the user didn't specify the state for New York, but standardly it's NY. So "New York, NY" is correct.
+
+Yes, so two separate function calls for each city.
+</think>
+
+<tool_call>
+{"name": "get_weather", "arguments": {"location": "San Francisco, CA", "unit": "fahrenheit"}}
+</tool_call>
+<tool_call>
+{"name": "get_weather", "arguments": {"location": "New York, NY", "unit": "fahrenheit"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+Weather in San Francisco, CA: Foggy, 65 degrees fahrenheit.
+</tool_response>
+<tool_response>
+Weather in New York, NY: Sunny, 75 degrees fahrenheit.
+</tool_response><|im_end|>
+<|im_start|>assistant
+<think>
+Okay, let me process this. The user asked for the weather in San Francisco and New York in Fahrenheit. I called the get_weather function for both cities. The responses came back with San Francisco being foggy at 65°F and New York sunny at 75°F.
+
+I need to present this information clearly. The user probably wants a concise answer with both cities' details. Let me check if there's anything else needed. They specified Fahrenheit, which matches the unit used. No need for the forecast since they asked for current weather.
+
+So, structure the answer: state each city's weather with temperature. Use the same order as the user mentioned: San Francisco first, then New York. Make sure to mention the conditions (foggy, sunny) and temperatures in Fahrenheit. Keep it straightforward and friendly.
+</think>
+
+Here's the current weather for both locations in Fahrenheit:
+
+- **San Francisco, CA**: Foggy, 65°F  
+- **New York, NY**: Sunny, 75°F  
+
+Let me know if you'd like more details! 😊<|im_end|>

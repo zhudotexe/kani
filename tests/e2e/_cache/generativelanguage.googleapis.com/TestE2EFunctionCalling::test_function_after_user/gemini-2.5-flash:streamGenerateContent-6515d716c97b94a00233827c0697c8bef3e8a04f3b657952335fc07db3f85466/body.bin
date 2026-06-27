@@ -1,0 +1,2 @@
+data: {"candidates": [{"content": {"parts": [{"functionCall": {"name": "send_email","args": {"recipient": "john@example.com","subject": "Meeting Tomorrow","body": "See you at 3pm"}}}],"role": "model"},"finishReason": "STOP","index": 0,"finishMessage": "Model generated function call(s)."}],"usageMetadata": {"promptTokenCount": 140,"candidatesTokenCount": 35,"totalTokenCount": 175,"promptTokensDetails": [{"modality": "TEXT","tokenCount": 140}],"serviceTier": "standard"},"modelVersion": "gemini-2.5-flash","responseId": "rm8_aualKcXR1MkP24uagQE"}
+

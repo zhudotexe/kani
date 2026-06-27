@@ -1,0 +1,38 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "id": "msg_01DCBLdRw7Y7oQdzA5V3jop8",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "I'll call the flaky_function with x=42 and retry if it fails."
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01RGfKUb8zwDxuKjPEo62w5e",
+      "name": "flaky_function",
+      "input": {
+        "x": 42
+      },
+      "caller": {
+        "type": "direct"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 590,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 74,
+    "service_tier": "standard",
+    "inference_geo": "not_available"
+  }
+}

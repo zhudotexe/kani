@@ -1,0 +1,50 @@
+<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-10-21
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.
+Calls to these tools must go to the commentary channel: 'functions'.<|end|><|start|>developer<|message|># Tools
+
+## functions
+
+namespace functions {
+
+// A function that fails the first time.
+type flaky_function = (_: {
+x: number,
+}) => any;
+
+} // namespace functions<|end|><|start|>user<|message|>Call the flaky_function with x=42. Retry if it fails, it should eventually work.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to call `functions.flaky_function` with x=42. If it fails initially, we should retry until it works. The user says "Retry if it fails, it should eventually work." So we must call the function in a loop until success. We need to wrap in a try/catch and call again on error. There's no maximum retries specified. I'd limit perhaps to a maximum attempts or infinite until success. Use a small delay between attempts? It's probably sufficient to just loop until it works. We need also to handle the function's result. We also may need to capture the result. Because user didn't specify what to do with the result, we just return it.
+
+We need to call the function: `functions.flaky_function({x:42})`. We treat errors as failures. Use a while loop. After success, break. Then respond. Should we respond with the result or a message? Likely just respond with the result. But we may need to catch error type: the function might throw some error. We'll catch it and continue.
+
+We must adhere to conversation style: after calling the function within a script, must print the result to the user. No debug info.
+
+Ok.<|end|><|start|>assistant to=functions.flaky_function<|channel|>commentary json<|message|>{"x": 42}<|call|><|start|>functions.flaky_function to=assistant<|channel|>commentary<|message|>"First call always fails!"<|end|><|start|>assistant
+==========
+tensor([[200006,  17360, 200008,   3575,    553,  17554, 162016,     11,    261,   4410,   6439,   2359,  22203,    656,   7788,  17527,    558,  87447, 100594,     25,    220,   1323,     19,     12,   3218,    198,   6576,   3521,     25,    220,   1323,     20,     12,    702,     12,   2040,    279,  30377,    289,     25,  14093,    279,      2,  13888,  18403,     25,   8450,     11,  49159,     11,   1721,     13,  21030,   2804,    413,   7360,    395,   1753,   3176,    558,  63446,    316,   1879,   8437,   2804,    810,    316,    290,  49159,   9334,     25,    461,  44580,   6120, 200007, 200006,  77944, 200008,      2,  20574,    279,    877,   9964,    279,   4797,   9964,  95359,    355,   1114,    484,  28336,    290,   1577,   1058,    558,   2493, 182104,  21094,    314,  11350,     25,    405,     87,     25,   2086,    412,   9263,    871,   1062,    502,     92,    602,   9819,   9964, 200007, 200006,   1428, 200008,   4701,    290, 182104,  21094,    483,
+           1215,     28,   4689,     13, 147744,    538,    480,  28336,     11,    480,   1757,  17462,   1101,     13, 200007, 200006, 173781, 200005,  35644, 200008,   2167,   1309,    316,   2421,   2700,  44580,  18931,  20961,  21094,     63,    483,   1215,     28,   4689,     13,   1843,    480,  28336,  25998,     11,    581,   1757,  45364,   4609,    480,   5882,     13,    623,   1825,   5003,    392,  52062,    538,    480,  28336,     11,    480,   1757,  17462,   1101,   3692,   2632,    581,   2804,   2421,    290,   1114,    306,    261,  11453,   4609,   3505,     13,   1416,   1309,    316,  20404,    306,    261,   2075,   4308,    987,    326,   2421,   2418,    402,   2915,     13,  32711,    860,  10562, 147909,  10185,     13,  18754,   5967,  12951,    316,    261,  10562,  27747,    503,  48413,   4609,   3505,     13,   7649,    261,   3291,  13155,   2870,  27747,     30,   7744,   7038,  21920,    316,   1327,  11453,   4609,    480,   5882,     13,
+           1416,   1309,   1217,    316,   5318,    290,   1114,    885,   1534,     13,   1416,   1217,   1340,   1309,    316,  19374,    290,   1534,     13,  13602,   1825,   9289,  27018,   1412,    316,    621,    483,    290,   1534,     11,    581,   1327,    622,    480,    364,   2167,   1309,    316,   2421,    290,   1114,     25,   2700,  44580,  18931,  20961,  21094,   3972,     87,     25,   4689,   9263,  62102,   1416,   4665,  10664,    472,  52152,     13,   7649,    261,   2049,  11453,     13,   6311,   3505,     11,   2338,     13,   7801,   9570,     13,  18057,    581,   9570,    483,    290,   1534,    503,    261,   3176,     30,  52762,   1151,   1327,   9570,    483,    290,   1534,     13,   3072,    581,   1340,   1309,    316,   3494,   2915,   1490,     25,    290,   1114,   3572,   4268,   1236,   2915,     13,  46830,   3494,    480,    326,   4901,    364,   2167,   2804,  62289,    316,  15681,   2713,     25,   1934,  14471,    290,   1114,
+           3518,    261,  11713,     11,   2804,   2123,    290,   1534,    316,    290,   1825,     13,   3004,  15199,   5377,    364,  14999,     13, 200007, 200006, 173781,    316,     28,  44580,  18931,  20961,  21094, 200005,  12606,    815,   5701, 200008,  10848,     87,   1243,    220,   4689,     92, 200012, 200006,  44580,  18931,  20961,  21094,    316,     28, 173781, 200005,  12606,    815, 200008,      1,   7127,   2421,   3324,  28336,  18313, 200007, 200006, 173781]])
+==========
+{'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]),
+ 'max_length': 131072}

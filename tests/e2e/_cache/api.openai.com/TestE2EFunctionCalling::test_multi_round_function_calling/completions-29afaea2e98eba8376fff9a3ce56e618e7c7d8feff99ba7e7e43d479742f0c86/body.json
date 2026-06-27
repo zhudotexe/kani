@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-DvGy9qrGNk0iuRUGcehxSuKXRhH4e",
+  "object": "chat.completion",
+  "created": 1782542297,
+  "model": "gpt-5-mini-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "There is one user in San Francisco:\n\n- Alice \u2014 total orders amount: $1,225.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 301,
+    "completion_tokens": 23,
+    "total_tokens": 324,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}
