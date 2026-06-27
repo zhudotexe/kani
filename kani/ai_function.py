@@ -1,4 +1,5 @@
 import asyncio
+import functools
 import inspect
 import typing
 import warnings
@@ -80,6 +81,7 @@ class AIFunction:
         params = []
         sig = inspect.signature(self.inner)
         type_hints = typing.get_type_hints(self.inner)
+        type_hints_with_extras = typing.get_type_hints(self.inner, include_extras=True)
         for name, param in sig.parameters.items():
             # ensure param can be supplied thru kwargs
             if param.kind not in (inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY):
@@ -96,11 +98,12 @@ class AIFunction:
                 )
 
             # ensure type hint matches up
-            if name not in type_hints:
+            if name not in type_hints or name not in type_hints_with_extras:
                 raise RuntimeError(f"The schema generator could not find the type hint ({self.inner.__name__}#{name}).")
 
             # get aiparam and add it to the list
-            ai_param = get_aiparam(annotation)
+            # in case of from __future__ import annotations, we need to pull the resolved hint
+            ai_param = get_aiparam(type_hints_with_extras[name])
             params.append(
                 AIParamSchema(
                     name=name, t=type_hints[name], default=param.default, aiparam=ai_param, inspect_param=param
@@ -108,7 +111,8 @@ class AIFunction:
             )
         return params
 
-    def create_json_schema(self, include_desc=True) -> dict:
+    @functools.cache
+    def create_json_schema(self, include_desc=False) -> dict:
         """
         Create a JSON schema representing this function's parameters as a JSON object.
 
