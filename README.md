@@ -372,3 +372,6 @@ This research is based upon work supported in part by the Air Force Research Lab
 IARPA HIATUS Program (contract 2022-22072200005), and the NSF (Award 1928631). Approved for Public Release, Distribution
 Unlimited. The views and conclusions contained herein are those of the authors and should not be interpreted as
 necessarily representing the official policies, either expressed or implied, of IARPA, NSF, or the U.S. Government.
+
+Coding agent usage: All core library code in this library is hand-written and verified. Coding agents were used to 
+assist in writing tests and improve library test coverage.

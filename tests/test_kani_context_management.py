@@ -83,6 +83,26 @@ async def test_prompt_too_long():
         await ai.chat_round_str("a")
 
 
+class AlwaysFailPromptEngine(EngineForTests):
+    def prompt_len(self, messages, functions=None, **kwargs):
+        raise RuntimeError("token counting is broken")
+
+
+async def test_get_prompt_raises_when_engine_always_fails():
+    # if the engine's token counting raises (not PromptTooLong) for every length, surface a clear ValueError
+    ai = Kani(AlwaysFailPromptEngine(), desired_response_tokens=1, chat_history=[ChatMessage.user("a")])
+    with pytest.raises(ValueError, match="Could not find a valid prompt"):
+        await ai.get_prompt()
+
+
+async def test_prompt_too_long_with_no_chat_history():
+    # reserved tokens (always-included + response) alone exceed the context window
+    tiny = EngineForTests(max_context_size=5)
+    ai = Kani(tiny, desired_response_tokens=1, system_prompt="aaaaaa")  # 6-token prefix, max usable is 4
+    with pytest.raises(PromptTooLong, match="reserved tokens is too high"):
+        await ai.get_prompt()
+
+
 @settings(suppress_health_check=(HealthCheck.too_slow,), deadline=None)
 @given(st.data())
 async def test_spam(data):

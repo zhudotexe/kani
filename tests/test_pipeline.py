@@ -4,8 +4,10 @@ import pytest
 from hypothesis import given, strategies as st
 
 from kani import AIFunction, ChatMessage, ChatRole, FunctionCall, PromptPipeline, ToolCall
+from kani.exceptions import PromptError
 from kani.prompts.base import FilterMixin, PipelineStep
 from kani.prompts.examples import ALL_EXAMPLE_KWARGS, build_conversation
+from kani.prompts.steps import ConversationDict, ConversationFmt, EnsureBoundFunctionCalls
 from kani.prompts.types import PipelineMsgT
 
 
@@ -216,3 +218,119 @@ def test_apply():
             assert msg.role == ChatRole.SYSTEM
         else:
             assert msg == original
+
+
+# ==== EnsureBoundFunctionCalls ====
+def test_ensure_bound_binds_by_id():
+    step = EnsureBoundFunctionCalls()
+    msgs = [
+        ChatMessage.assistant(None, tool_calls=[ToolCall.from_function("f", call_id_="id1")]),
+        ChatMessage.function("f", "result", tool_call_id="id1"),
+    ]
+    out = step.execute(msgs, [])
+    assert len(out) == 2  # bound cleanly, nothing dropped
+
+
+def test_ensure_bound_binds_unambiguous_result_without_id():
+    step = EnsureBoundFunctionCalls()
+    msgs = [
+        ChatMessage.assistant(None, tool_calls=[ToolCall.from_function("f", call_id_="id1")]),
+        ChatMessage.function("f", "result"),  # no tool_call_id -> bound to the single pending call
+    ]
+    out = step.execute(msgs, [])
+    assert out[1].tool_call_id == "id1"
+
+
+def test_ensure_bound_errors_when_call_is_unsatisfied():
+    step = EnsureBoundFunctionCalls()
+    msgs = [
+        ChatMessage.assistant(None, tool_calls=[ToolCall.from_function("f", call_id_="id1")]),
+        ChatMessage.user("interrupting before the result"),
+    ]
+    with pytest.raises(PromptError, match="expected a FUNCTION message"):
+        step.execute(msgs, [])
+
+
+def test_ensure_bound_errors_on_ambiguous_result():
+    step = EnsureBoundFunctionCalls()
+    msgs = [
+        ChatMessage.assistant(
+            None,
+            tool_calls=[ToolCall.from_function("f", call_id_="id1"), ToolCall.from_function("g", call_id_="id2")],
+        ),
+        ChatMessage.function("f", "result"),  # no id, but two pending -> ambiguous
+    ]
+    with pytest.raises(PromptError, match="multiple tool calls are pending"):
+        step.execute(msgs, [])
+
+
+def test_ensure_bound_translates_ids():
+    step = EnsureBoundFunctionCalls(id_translator=lambda x: x.upper())
+    msgs = [
+        ChatMessage.assistant(None, tool_calls=[ToolCall.from_function("f", call_id_="id1")]),
+        ChatMessage.function("f", "result", tool_call_id="id1"),
+    ]
+    out = step.execute(msgs, [])
+    assert out[0].tool_calls[0].id == "ID1"
+    assert out[1].tool_call_id == "ID1"
+
+
+def test_ensure_bound_drops_orphaned_result():
+    step = EnsureBoundFunctionCalls()
+    # a FUNCTION result whose call was evicted from context is silently dropped
+    out = step.execute([ChatMessage.function("f", "orphan", tool_call_id="gone")], [])
+    assert out == []
+
+
+# ==== ConversationFmt terminal ====
+def test_conversation_fmt_formats_all_roles_and_generation_suffix():
+    step = ConversationFmt(
+        user_prefix="U:",
+        user_suffix="\n",
+        assistant_prefix="A:",
+        assistant_suffix="\n",
+        function_prefix="F:",
+        function_suffix="\n",
+        generation_suffix="A:",
+    )
+    msgs = [ChatMessage.user("hi"), ChatMessage.function("f", "res"), ChatMessage.assistant("hello")]
+    assert step.execute(msgs, []) == "U:hi\nF:res\nA:hello\nA:"
+
+
+def test_conversation_fmt_assistant_suffix_if_last_suppresses_generation():
+    step = ConversationFmt(
+        assistant_prefix="A:", assistant_suffix="</s>", assistant_suffix_if_last="", generation_suffix="GEN"
+    )
+    # ends on assistant with a custom last-suffix -> generation suffix is suppressed
+    assert step.execute([ChatMessage.assistant("last")], []) == "A:last"
+
+
+# ==== ConversationDict terminal ====
+def test_conversation_dict_default_roles():
+    step = ConversationDict()
+    msgs = [ChatMessage.system("s"), ChatMessage.user("u"), ChatMessage.assistant("a"), ChatMessage.function("fn", "r")]
+    out = step.execute(msgs, [])
+    assert [d["role"] for d in out] == ["system", "user", "assistant", "tool"]
+    assert out[1] == {"role": "user", "content": "u"}
+
+
+def test_conversation_dict_custom_roles_and_transforms():
+    step = ConversationDict(
+        function_role="function",
+        content_transform=lambda m: m.text.upper(),
+        additional_keys=lambda m: {"role_len": len(m.role.value)},
+    )
+    out = step.execute([ChatMessage.user("hi")], [])
+    assert out[0]["content"] == "HI"
+    assert out[0]["role_len"] == 4
+
+
+# ==== explain() (offline smoke test of the pipeline-description helpers) ====
+def test_explain_runs_offline_and_describes_multi_role_step(capsys):
+    # a multi-role filter exercises FilterMixin.explain_note + natural_join's 3+ element path
+    pipe = PromptPipeline().remove(role=[ChatRole.SYSTEM, ChatRole.USER, ChatRole.ASSISTANT])
+    pipe.explain()
+    out = capsys.readouterr().out
+    assert "Prompt Pipeline" in out
+    # the natural-joined role list appears in the step description
+    assert "system" in out and "assistant" in out

@@ -141,3 +141,9 @@ async def test_saveload_extra_arbitrary_types(save_format, tmp_path):
     loaded.load(tmp_path / f"pytest.{save_format}")
 
     assert "foo" in loaded.chat_history[0].extra
+
+
+def test_save_rejects_unknown_format(tmp_path):
+    ai = Kani(engine, chat_history=[ChatMessage.user("hi")])
+    with pytest.raises(ValueError, match="save_format must be"):
+        ai.save(tmp_path / "pytest.bogus", save_format="bogus")

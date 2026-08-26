@@ -2,7 +2,8 @@ import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
 
 from kani import ChatMessage, ChatRole, Kani
-from kani.engines.base import WrapperEngine
+from kani.engines.base import Completion, WrapperEngine
+from kani.streaming import DummyStream, StreamManager
 from tests.engine import EngineForTests, StreamingEngineForTests
 from tests.utils import flatten_chatmessages
 
@@ -62,3 +63,70 @@ async def test_spam_stream(eng, data):
 
         prompt = await ai.get_prompt()
         assert (await ai.prompt_token_len(prompt)) <= ai.max_context_size
+
+
+# ==== StreamManager unit tests ====
+async def _agen(items):
+    for item in items:
+        yield item
+
+
+async def test_stream_manager_builds_completion_from_tokens():
+    sm = StreamManager(_agen(["a", "b", "c "]), role=ChatRole.ASSISTANT)
+    tokens = [t async for t in sm]
+    assert tokens == ["a", "b", "c "]
+    msg = await sm.message()
+    assert msg.role == ChatRole.ASSISTANT
+    assert msg.content == "abc"  # concatenated and stripped
+
+
+async def test_stream_manager_message_without_iterating_consumes_stream():
+    sm = StreamManager(_agen(["hi ", "there"]), role=ChatRole.ASSISTANT)
+    msg = await sm.message()  # never iterated explicitly
+    assert msg.content == "hi there"
+
+
+async def test_stream_manager_await_is_message():
+    sm = StreamManager(_agen(["yo"]), role=ChatRole.ASSISTANT)
+    msg = await sm
+    assert msg.content == "yo"
+
+
+async def test_stream_manager_uses_engine_reported_completion():
+    comp = Completion(ChatMessage.assistant("final"))
+    sm = StreamManager(_agen(["fin", "al", comp]), role=ChatRole.ASSISTANT)
+    async for _ in sm:
+        pass
+    assert (await sm.completion()) is comp
+
+
+async def test_stream_manager_double_iteration_raises():
+    sm = StreamManager(_agen(["a"]), role=ChatRole.ASSISTANT)
+    async for _ in sm:
+        pass
+    with pytest.raises(RuntimeError, match="already been consumed"):
+        async for _ in sm:
+            pass
+
+
+async def test_stream_manager_value_after_completion_raises():
+    comp = Completion(ChatMessage.assistant("x"))
+    sm = StreamManager(_agen([comp, "extra"]), role=ChatRole.ASSISTANT)
+    with pytest.raises(RuntimeError, match="final yield"):
+        async for _ in sm:
+            pass
+
+
+async def test_stream_manager_rejects_unexpected_yield_type():
+    sm = StreamManager(_agen([123]), role=ChatRole.ASSISTANT)
+    with pytest.raises(TypeError, match="Expected yielded value"):
+        async for _ in sm:
+            pass
+
+
+async def test_dummy_stream_returns_original_message():
+    msg = ChatMessage.function("f", "result")
+    ds = DummyStream(msg)
+    tokens = [t async for t in ds]
+    assert tokens == ["result"]
+    assert (await ds.message()) is msg

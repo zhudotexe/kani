@@ -82,3 +82,22 @@ def test_support_multiple_tool_calls():
     msg = ChatMessage(role="function", content=None, tool_calls=[tool_call1, tool_call2])
 
     assert msg.tool_calls == [tool_call1, tool_call2]
+
+
+def test_function_call_warns_on_multiple_tool_calls():
+    msg = ChatMessage.assistant(None, tool_calls=[ToolCall.from_function("foo"), ToolCall.from_function("bar")])
+    with pytest.warns(UserWarning, match="multiple tool calls"):
+        fc = msg.function_call
+    # returns the first tool call's function for backwards-compat
+    assert fc.name == "foo"
+
+
+class _UnstringifiablePart(MessagePart):
+    """A part that does not override __str__, exercising the base fallback."""
+
+
+def test_messagepart_str_fallback_warns():
+    part = _UnstringifiablePart()
+    with pytest.warns(UserWarning, match="coerced into a string"):
+        text = str(part)
+    assert "_UnstringifiablePart" in text
