@@ -60,11 +60,13 @@ class Qwen3Parser(BaseToolCallParser):
             log.debug(f"Found tool content while parsing: {tool_content_match.group(1)}")
             try:
                 data = json.loads(tool_content_match[1])
-            except json.JSONDecodeError:
-                log.error(
-                    f"Could not decode tool content! Skipping this tool call:\n{tool_content_match[0]!r}!",
-                    exc_info=True,
+            except json.JSONDecodeError as e:
+                log.warning(
+                    f"Could not decode tool content: {e}! Skipping this tool call:\n{tool_content_match[0]!r}!",
                 )
+                continue
+            if not isinstance(data, dict):
+                log.warning(f"Extracted tool call is not a JSON dict - skipping:\n{data}")
                 continue
             tool_name = data.get("name", "undefined")
             tool_args = data.get("arguments", {})

@@ -100,7 +100,11 @@ class BaseParser(WrapperEngine):
         :meth:`parse_reasoning`.
         """
         # parse tool calls, merge if inner has tool calls
-        completion.message.content, tool_calls = self.parse_tool_calls(completion.message.text)
+        try:
+            completion.message.content, tool_calls = self.parse_tool_calls(completion.message.text)
+        except Exception as e:
+            log.exception(f"Exception in tool call parsing, returning message unchanged!", exc_info=e)
+            tool_calls = []
         if completion.message.tool_calls and tool_calls:
             warnings.warn(
                 f"Both the tool parser ({type(self).__name__}) and the wrapped engine's"
@@ -112,7 +116,10 @@ class BaseParser(WrapperEngine):
         completion.message.tool_calls = (completion.message.tool_calls or []) + tool_calls
 
         # parse reasoning
-        completion.message.content = self.parse_reasoning(completion.message.content)
+        try:
+            completion.message.content = self.parse_reasoning(completion.message.content)
+        except Exception as e:
+            log.exception(f"Exception in reasoning parsing, returning message unchanged!", exc_info=e)
         return completion
 
     async def predict(self, messages, functions=None, **hyperparams) -> BaseCompletion:

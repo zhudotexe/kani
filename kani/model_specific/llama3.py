@@ -1,10 +1,13 @@
 """Common builder for the LLaMAv3-chat prompt."""
 
 import json
+import logging
 
 from kani.model_specific import BaseToolCallParser
 from kani.models import ChatRole, FunctionCall, ToolCall
 from kani.prompts.pipeline import PromptPipeline
+
+log = logging.getLogger(__name__)
 
 # ===== Llama 3 =====
 # llama 3 only; 3.1 and 3.2 are handled by the chat template in HF
@@ -30,6 +33,7 @@ LLAMA3_PIPELINE = (
         system_suffix="<|eot_id|>",
     )
 )  # fmt: skip
+
 
 # from https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct/blob/main/tokenizer_config.json
 # {% set loop_messages = messages %}
@@ -70,6 +74,11 @@ class Llama3XToolCallParser(BaseToolCallParser):
                 case {"name": str(name)}:
                     tc = ToolCall.from_function_call(FunctionCall.with_args(name))
                     return "", [tc]
-        except json.JSONDecodeError:
+                case other:
+                    log.warning(f"Could not parse tool call - valid JSON but invalid data\n{other}")
+        except json.JSONDecodeError as e:
+            log.warning(
+                f"Could not decode tool content: {e}! Skipping this tool call:\n{content!r}!",
+            )
             return content, []
         return content, []

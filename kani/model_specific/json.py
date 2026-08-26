@@ -1,7 +1,10 @@
 import json
+import logging
 
 from kani.models import FunctionCall, ToolCall
 from .base import BaseToolCallParser
+
+log = logging.getLogger(__name__)
 
 
 class NaiveJSONToolCallParser(BaseToolCallParser):
@@ -31,7 +34,10 @@ class NaiveJSONToolCallParser(BaseToolCallParser):
                 case {"name": str(name), "parameters": dict(parameters)}:
                     tc = ToolCall.from_function_call(FunctionCall.with_args(name, **parameters))
                     return "", [tc]
-        except json.JSONDecodeError:
+                case other:
+                    log.warning(f"Could not parse tool call - valid JSON but invalid data\n{other}")
+        except json.JSONDecodeError as e:
+            log.warning(f"Could not decode JSON tool call: {e}\n{content}")
             return content, []
         return content, []
 

@@ -64,11 +64,12 @@ class DeepSeekR1Parser(BaseParser):
                 tool_name = tc_match["name"].strip()
                 tool_args = tc_match["args"].strip()
                 try:
-                    json.loads(tool_args)
+                    decoded_args = json.loads(tool_args)
+                    if not isinstance(decoded_args, dict):
+                        log.warning(f"Extracted tool args is not a JSON dict - skipping:\n{decoded_args}")
+                        continue
                 except json.JSONDecodeError:
-                    log.error(
-                        f"Could not decode tool content! Skipping this tool call:\n{tc_match[0]!r}!", exc_info=True
-                    )
+                    log.warning(f"Could not decode tool content! Skipping this tool call:\n{tc_match[0]!r}!")
                     continue
                 tool_call = ToolCall.from_function_call(FunctionCall(name=tool_name, arguments=tool_args))
                 tool_calls.append(tool_call)
