@@ -19,6 +19,7 @@ PROMPT_PIPELINE_REGISTRY = [
     ("Qwen/Qwen3-*", "kani.model_specific.qwen3.build_prompt_pipeline"),
     ("Qwen/Qwen3.5-*", "kani.model_specific.qwen3_5.build_prompt_pipeline"),
     ("Qwen/Qwen3.6-*", "kani.model_specific.qwen3_5.build_prompt_pipeline"),
+    ("Qwen/Qwen3.8-*", "kani.model_specific.qwen3_5.build_prompt_pipeline"),
 ]
 
 # list of (HF model id glob, path to import)
@@ -34,6 +35,7 @@ PARSER_REGISTRY = [
     ("Qwen/Qwen3-*", "kani.model_specific.qwen3.Qwen3Parser"),
     ("Qwen/Qwen3.5-*", "kani.model_specific.qwen3_5.Qwen3_5Parser"),
     ("Qwen/Qwen3.6-*", "kani.model_specific.qwen3_5.Qwen3_5Parser"),
+    ("Qwen/Qwen3.8-*", "kani.model_specific.qwen3_5.Qwen3_5Parser"),
 ]
 
 log = logging.getLogger(__name__)

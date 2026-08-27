@@ -62,6 +62,13 @@ def test_parser_for_hf_model_prefers_more_specific_thinking_pattern():
     assert parser_for_hf_model("Qwen/Qwen3-8B") is Qwen3Parser
 
 
+def test_parser_for_hf_model_dispatches_qwen3_5_family():
+    # the Qwen3.5/3.6/3.8 patterns all share the Qwen3_5Parser
+    assert parser_for_hf_model("Qwen/Qwen3.5-8B") is Qwen3_5Parser
+    assert parser_for_hf_model("Qwen/Qwen3.6-8B") is Qwen3_5Parser
+    assert parser_for_hf_model("Qwen/Qwen3.8-8B") is Qwen3_5Parser
+
+
 def test_parser_for_hf_model_returns_none_when_unknown():
     assert parser_for_hf_model("some-org/totally-unknown-model", search_parents=False) is None
 
@@ -498,7 +505,7 @@ def test_qwen3_5_parses_tool_call():
     assert content == "Let me check."
     assert len(tool_calls) == 1
     assert tool_calls[0].function.name == "get_weather"
-    # parameter values are captured as raw strings (not JSON-decoded)
+    # a value that isn't valid JSON is kept as a raw string
     assert tool_calls[0].function.kwargs == {"location": "Tokyo"}
 
 
@@ -507,7 +514,28 @@ def test_qwen3_5_parses_multiple_parameters():
     _, tool_calls = parser.parse_tool_calls(
         "<tool_call><function=f><parameter=a>1</parameter><parameter=b>two</parameter></function></tool_call>"
     )
-    assert tool_calls[0].function.kwargs == {"a": "1", "b": "two"}
+    # JSON-decodable values (1) are decoded; non-JSON values (two) stay raw strings
+    assert tool_calls[0].function.kwargs == {"a": 1, "b": "two"}
+
+
+def test_qwen3_5_json_decodes_object_like_parameter_values():
+    parser = Qwen3_5Parser(EngineForTests())
+    _, tool_calls = parser.parse_tool_calls(
+        "<tool_call><function=f>"
+        "<parameter=count>3</parameter>"
+        "<parameter=ratio>1.5</parameter>"
+        "<parameter=enabled>true</parameter>"
+        "<parameter=items>[1, 2, 3]</parameter>"
+        '<parameter=meta>{"k": "v"}</parameter>'
+        "</function></tool_call>"
+    )
+    assert tool_calls[0].function.kwargs == {
+        "count": 3,
+        "ratio": 1.5,
+        "enabled": True,
+        "items": [1, 2, 3],
+        "meta": {"k": "v"},
+    }
 
 
 def test_qwen3_5_parses_multiple_tool_calls_in_order():

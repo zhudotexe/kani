@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 
@@ -61,6 +62,10 @@ class Qwen3_5Parser(BaseParser):
         for param_match in param_matches:
             param_name = param_match[1]
             param_value = param_match[2]
+            try:  # for object-like values these are JSON, for string values they're just raw
+                param_value = json.loads(param_value)
+            except json.JSONDecodeError:
+                pass
             if param_name in tool_args:
                 log.warning(f"Duplicate tool parameter found: {param_name!r} while parsing:\n{content}")
             tool_args[param_name] = param_value
