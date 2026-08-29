@@ -77,6 +77,10 @@ google = [
     "google-genai>=1.0.0,<2.0.0",
 ]
 
+litellm = [
+    "litellm>=1.80.0,<1.87.0",
+]
+
 [project.urls]
 "Homepage" = "https://github.com/zhudotexe/kani"
 "Bug Tracker" = "https://github.com/zhudotexe/kani/issues"
