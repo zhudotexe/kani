@@ -6,6 +6,7 @@ CONTEXT_SIZES_BY_PREFIX = [
     ("gemini-2.5-pro-preview-tts", 8192),
     ("gemini-2.0-pro-exp", 1048576),
     ("gemini-1.5-flash", 1000000),
+    ("gemini-3.8-flash", 1048576),
     ("gemini-2.5-flash", 1048576),
     ("gemini-2.0-flash", 1048576),
     ("gemini-exp-1206", 1048576),

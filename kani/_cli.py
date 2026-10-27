@@ -24,8 +24,8 @@ CLI_EXAMPLES = (
     "examples:\n"
     "  kani openai:gpt-4.1-nano\n"
     "  kani huggingface:meta-llama/Meta-Llama-3-8B-Instruct\n"
-    "  kani anthropic:claude-sonnet-4-0\n"
-    "  kani google:gemini-2.5-flash"
+    "  kani anthropic:claude-sonnet-5-5\n"
+    "  kani google:gemini-3.8-flash"
 )
 
 

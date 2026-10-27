@@ -8,7 +8,7 @@ The :class:`.GoogleAIEngine` is used to make requests to the Google AI Studio AP
 
     # see https://ai.google.dev/gemini-api/docs/models for a list of model IDs
     from kani.engines.google import GoogleAIEngine
-    engine = GoogleAIEngine(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-2.5-flash")
+    engine = GoogleAIEngine(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-3.8-flash")
 
 Reference
 ---------

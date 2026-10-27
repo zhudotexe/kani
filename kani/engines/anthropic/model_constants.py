@@ -1,5 +1,6 @@
 CONTEXT_SIZES_BY_PREFIX = [
     ("claude-opus-4", 200000),
+    ("claude-sonnet-5-5", 1000000),
     ("claude-sonnet-4", 200000),
     ("claude-haiku-4", 200000),
     ("claude-3", 200000),
