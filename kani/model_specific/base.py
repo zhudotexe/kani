@@ -99,6 +99,12 @@ class BaseParser(WrapperEngine):
         Single-step parsing, if you prefer handling it all in one place. By default, calls :meth:`parse_tool_calls` and
         :meth:`parse_reasoning`.
         """
+        # parse reasoning
+        try:
+            completion.message.content = self.parse_reasoning(completion.message.content)
+        except Exception as e:
+            log.exception(f"Exception in reasoning parsing, returning message unchanged!", exc_info=e)
+
         # parse tool calls, merge if inner has tool calls
         try:
             completion.message.content, tool_calls = self.parse_tool_calls(completion.message.text)
@@ -115,11 +121,6 @@ class BaseParser(WrapperEngine):
             )
         completion.message.tool_calls = (completion.message.tool_calls or []) + tool_calls
 
-        # parse reasoning
-        try:
-            completion.message.content = self.parse_reasoning(completion.message.content)
-        except Exception as e:
-            log.exception(f"Exception in reasoning parsing, returning message unchanged!", exc_info=e)
         return completion
 
     async def predict(self, messages, functions=None, **hyperparams) -> BaseCompletion:
