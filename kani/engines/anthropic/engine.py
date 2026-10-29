@@ -170,7 +170,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
     def __init__(
         self,
         api_key: str = None,
-        model: str = "claude-sonnet-4-0",
+        model: str = "claude-sonnet-5-5",
         max_tokens: int = 2048,
         max_context_size: int = None,
         *,
@@ -183,7 +183,7 @@ class AnthropicEngine(TokenCached, BaseEngine):
         """
         :param api_key: Your Anthropic API key. By default, the API key will be read from the `ANTHROPIC_API_KEY`
             environment variable.
-        :param model: The id of the model to use (e.g. "claude-opus-4-0"). See
+        :param model: The id of the model to use (e.g. "claude-opus-5-5"). See
             https://docs.anthropic.com/en/docs/about-claude/models/overview for a list of models.
         :param max_tokens: The maximum number of tokens to sample at each generation (defaults to 2048).
             Generally, you should set this to the same number as your Kani's ``desired_response_tokens``.

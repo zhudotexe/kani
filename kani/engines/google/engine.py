@@ -61,7 +61,7 @@ class GoogleAIEngine(TokenCached, BaseEngine):
     def __init__(
         self,
         api_key: str = None,
-        model: str = "gemini-2.5-flash",
+        model: str = "gemini-3.8-flash",
         max_context_size: int = None,
         *,
         # client settings
@@ -76,7 +76,7 @@ class GoogleAIEngine(TokenCached, BaseEngine):
         """
         :param api_key: Your Gemini Developer API key. By default, the API key will be read from the `GEMINI_API_KEY`
             environment variable.
-        :param model: The id of the model to use (e.g. "gemini-2.5-flash"). See
+        :param model: The id of the model to use (e.g. "gemini-3.8-flash"). See
             https://ai.google.dev/gemini-api/docs/models for a list of models.
         :param max_tokens: The maximum number of tokens to sample at each generation (defaults to 512).
             Generally, you should set this to the same number as your Kani's ``desired_response_tokens``.

@@ -250,8 +250,8 @@ Examples:
 ```shell
 $ kani openai:gpt-4.1-nano
 $ kani huggingface:meta-llama/Meta-Llama-3-8B-Instruct
-$ kani anthropic:claude-sonnet-4-0
-$ kani google:gemini-2.5-flash
+$ kani anthropic:claude-sonnet-5-5
+$ kani google:gemini-3.8-flash
 ```
 
 This CLI helper automatically creates a Engine and Kani instance, and calls `chat_in_terminal()` so you can test LLMs

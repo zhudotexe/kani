@@ -8,7 +8,7 @@ The :class:`.AnthropicEngine` is used to make requests to the Anthropic API.
 
     # see https://docs.anthropic.com/claude/docs/models-overview for a list of model IDs
     from kani.engines.anthropic import AnthropicEngine
-    engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-sonnet-4-0")
+    engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-sonnet-5-5")
 
 Reference
 ---------
@@ -61,7 +61,7 @@ PDF File Inputs
     from kani.engines.anthropic import AnthropicEngine
     from kani.ext.multimodal_core import BinaryFilePart
 
-    engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-sonnet-4-0")
+    engine = AnthropicEngine(api_key=os.getenv("ANTHROPIC_API_KEY"), model="claude-sonnet-5-5")
     ai = Kani(engine)
 
     msg = await ai.chat_round([
