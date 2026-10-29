@@ -12,8 +12,8 @@ Valid engine IDs:
 Examples:
 $ kani oai:gpt-4.1-nano
 $ kani hf:meta-llama/Meta-Llama-3-8B-Instruct
-$ kani ant:claude-sonnet-4-0
-$ kani g:gemini-2.5-flash
+$ kani ant:claude-sonnet-5-5
+$ kani g:gemini-3.8-flash
 """
 
 import kani._cli
