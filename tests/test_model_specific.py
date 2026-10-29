@@ -260,7 +260,6 @@ def test_qwen3_thinking_parser_reasons_at_start():
 def test_parse_reasoning_splits_into_part_and_content():
     parser = Qwen3Parser(EngineForTests())  # reasoning tokens <think>/</think>
     result = parser.parse_reasoning("<think>weighing options</think>The answer is 42.")
-    assert isinstance(result, list)
     assert isinstance(result[0], ReasoningPart)
     assert result[0].content == "weighing options"
     assert result[1] == "The answer is 42."
@@ -268,7 +267,7 @@ def test_parse_reasoning_splits_into_part_and_content():
 
 def test_parse_reasoning_without_reasoning_is_passthrough():
     parser = Qwen3Parser(EngineForTests())
-    assert parser.parse_reasoning("no reasoning here") == "no reasoning here"
+    assert parser.parse_reasoning("no reasoning here") == (None, "no reasoning here")
 
 
 def test_qwen3_parse_completion_wires_tool_calls_and_reasoning():

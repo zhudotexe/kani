@@ -1,6 +1,7 @@
 import logging
 import re
 import warnings
+from typing import Optional
 
 from kani import ReasoningPart
 from kani.engines import Completion, WrapperEngine
@@ -77,22 +78,23 @@ class BaseParser(WrapperEngine):
         model_specific._has_initialized_model_specific_parser = True
 
     def parse_tool_calls(self, content: str) -> tuple[str, list[ToolCall]]:
-        """Given the string completion of the model, return the content without tool calls and the parsed tool calls."""
+        """Given the string completion of the model (with reasoning parts removed), return the content without tool
+        calls and the parsed tool calls."""
         # by default, do nothing
         return content, []
 
-    def parse_reasoning(self, content: str) -> str | list[MessagePart | str]:
+    def parse_reasoning(self, content: str) -> tuple[Optional[ReasoningPart], str]:
         """
-        Given the string completion of the model (after parsing tool calls), return the content with reasoning
+        Given the string completion of the model, return the content with reasoning
         transformed to ReasoningParts.
         """
         # by default, split on the reasoning_end_token and strip a reasoning_start_token from the start
         if self.reasoning_end_token is None or self.reasoning_end_token not in content:
-            return content
+            return None, content
         reasoning, content = content.rsplit(self.reasoning_end_token, 1)
         if self.reasoning_start_token is not None:
             reasoning = reasoning.strip().removeprefix(self.reasoning_start_token)
-        return [ReasoningPart(content=reasoning.strip()), content.strip()]
+        return ReasoningPart(content=reasoning.strip()), content.strip()
 
     def parse_completion(self, completion: BaseCompletion) -> BaseCompletion:
         """
@@ -101,15 +103,18 @@ class BaseParser(WrapperEngine):
         """
         # parse reasoning
         try:
-            completion.message.content = self.parse_reasoning(completion.message.content)
+            reasoning, post_reasoning = self.parse_reasoning(completion.message.content)
         except Exception as e:
             log.exception(f"Exception in reasoning parsing, returning message unchanged!", exc_info=e)
+            reasoning = None
+            post_reasoning = completion.message.content
 
         # parse tool calls, merge if inner has tool calls
         try:
-            completion.message.content, tool_calls = self.parse_tool_calls(completion.message.text)
+            content_without_tool_calls, tool_calls = self.parse_tool_calls(post_reasoning)
         except Exception as e:
             log.exception(f"Exception in tool call parsing, returning message unchanged!", exc_info=e)
+            content_without_tool_calls = post_reasoning
             tool_calls = []
         if completion.message.tool_calls and tool_calls:
             warnings.warn(
@@ -119,6 +124,11 @@ class BaseParser(WrapperEngine):
                 f"Tool parser: {tool_calls}\nInner completion: {completion.message.tool_calls}",
                 stacklevel=4,
             )
+
+        if reasoning is not None:
+            completion.message.content = [reasoning, content_without_tool_calls]
+        else:
+            completion.message.content = content_without_tool_calls
         completion.message.tool_calls = (completion.message.tool_calls or []) + tool_calls
 
         return completion
