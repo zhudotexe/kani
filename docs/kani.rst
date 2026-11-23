@@ -278,7 +278,7 @@ kani-multimodal-core documentation for more info.
     from kani.engines.openai import OpenAIEngine
     from kani.ext.multimodal_core import ImagePart
 
-    engine = OpenAIEngine(model="gpt-4.1-nano")
+    engine = OpenAIEngine(model="gpt-5.6-luna")
     ai = Kani(engine)
 
     # notice how the arg is a list of parts rather than a single str!
@@ -305,7 +305,7 @@ Examples:
 
 .. code-block:: shell
 
-    $ kani openai:gpt-4.1-nano
+    $ kani openai:gpt-5.6-luna
     $ kani huggingface:meta-llama/Meta-Llama-3-8B-Instruct
     $ kani anthropic:claude-sonnet-5-5
     $ kani google:gemini-3.8-flash

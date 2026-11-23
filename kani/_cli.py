@@ -22,7 +22,7 @@ OPTIONAL_LIBS = [
 ]
 CLI_EXAMPLES = (
     "examples:\n"
-    "  kani openai:gpt-4.1-nano\n"
+    "  kani openai:gpt-5.6-luna\n"
     "  kani huggingface:meta-llama/Meta-Llama-3-8B-Instruct\n"
     "  kani anthropic:claude-sonnet-5-5\n"
     "  kani google:gemini-3.8-flash"

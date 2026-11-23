@@ -11,6 +11,16 @@ def tokens_from_image_size(size: tuple[int, int], model_id: str, low_detail: boo
 
     See https://platform.openai.com/docs/guides/images-vision#calculating-costs for more details.
     """
+    if model_id == "gpt-5.6-luna":
+        # For this model, the API's default ("auto") uses "original" image sizing.
+        width, height = size
+        limit = 512 if low_detail else 65_535
+        if (largest := max(width, height)) > limit:
+            width = max(1, round(width * limit / largest))
+            height = max(1, round(height * limit / largest))
+        patches = math.ceil(width / 32) * math.ceil(height / 32)
+        return math.ceil(patches * 1.2)
+
     if low_detail:
         return 85
 
