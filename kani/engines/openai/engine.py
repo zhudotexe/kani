@@ -51,7 +51,7 @@ class OpenAIEngine(TokenCached, BaseEngine):
     def __init__(
         self,
         api_key: str = None,
-        model="gpt-4.1-nano",
+        model: str | None = None,
         max_context_size: int = None,
         *,
         api_type: Literal["chat_completions", "responses"] = None,
@@ -66,7 +66,8 @@ class OpenAIEngine(TokenCached, BaseEngine):
         """
         :param api_key: Your OpenAI API key. By default, the API key will be read from the `OPENAI_API_KEY` environment
             variable.
-        :param model: The id of the model to use (e.g. "gpt-4o-mini", "ft:gpt-3.5-turbo:my-org:custom_suffix:id").
+        :param model: The id of the model to use. Defaults to "gpt-5.6-luna" for the OpenAI API. For a custom
+            endpoint, omitting the model retains the legacy default; specify a model that your endpoint supports.
         :param max_context_size: The maximum amount of tokens allowed in the chat prompt. If None, uses the given
             model's full context size.
         :param api_type: Whether to use the Chat Completions API (default for most models) or Responses API (default for
@@ -87,6 +88,11 @@ class OpenAIEngine(TokenCached, BaseEngine):
         """
         if api_key and client:
             raise ValueError("You must supply no more than one of (api_key, client).")
+        use_luna_default = False
+        if model is None:
+            base_url = client.base_url if client is not None else api_base
+            use_luna_default = str(base_url).rstrip("/") == "https://api.openai.com/v1"
+            model = "gpt-5.6-luna" if use_luna_default else "gpt-4.1-nano"
         if max_context_size is None:
             matched_prefix, max_context_size = next(
                 (prefix, size) for prefix, size in CONTEXT_SIZES_BY_PREFIX if model.startswith(prefix)
@@ -104,6 +110,13 @@ class OpenAIEngine(TokenCached, BaseEngine):
                 'Please specify `api_type="chat_completions"` or `api_type="responses"` if this is incorrect.',
                 stacklevel=2,
             )
+
+        # Preserve non-reasoning behavior of the old implicit default without changing explicit models.
+        if use_luna_default:
+            if api_type == "chat_completions":
+                hyperparams.setdefault("reasoning_effort", "none")
+            elif api_type == "responses":
+                hyperparams.setdefault("reasoning", {"effort": "none"})
 
         super().__init__()
 

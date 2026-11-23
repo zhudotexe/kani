@@ -10,7 +10,7 @@ Valid engine IDs:
 * huggingface (aliases: hf)
 
 Examples:
-$ kani oai:gpt-4.1-nano
+$ kani oai:gpt-5.6-luna
 $ kani hf:meta-llama/Meta-Llama-3-8B-Instruct
 $ kani ant:claude-sonnet-5-5
 $ kani g:gemini-3.8-flash

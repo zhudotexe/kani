@@ -1,6 +1,7 @@
 # https://platform.openai.com/docs/models
 CONTEXT_SIZES_BY_PREFIX = [
     # gpt-5
+    ("gpt-5.6-luna", 1_050_000),
     ("gpt-5.5", 1_050_000),
     ("gpt-5.4", 1_050_000),
     ("gpt-5", 400000),
